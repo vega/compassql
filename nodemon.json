@@ -1,0 +1,7 @@
+{
+  "ext": "ts",
+  "ignore": [
+    "node_modules/*",
+    "bower_components/*"
+  ]
+}

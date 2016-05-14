@@ -1,0 +1,40 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "isolatedModules": false,
+        "jsx": "react",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "sourceMap": true
+    },
+    "filesGlob": [
+        "**/*.ts",
+        "**/*.tsx"
+    ],
+    "exclude": [
+        "node_modules",
+        "bower_components",
+        "data",
+        "_site",
+        "lib"
+    ],
+    "files": [
+        "src/cql.ts",
+        "src/generate.ts",
+        "src/schema.ts",
+        "src/util.ts",
+        "typings/chai.d.ts",
+        "typings/mocha.d.ts"
+    ],
+    "atom": {
+        "rewriteTsconfig": true
+    }
+}

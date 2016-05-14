@@ -1,0 +1,69 @@
+{
+  "name": "compassql",
+  "version": "0.1.0",
+  "description": "CompassQL visualization query language",
+  "main": "compassql.js",
+  "directories": {
+    "test": "test"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "build": "tsc && browserify src/cql.js -d -s cql | exorcist compassql.js.map > compassql.js",
+    "postbuild": "uglifyjs compassql.js -cm --source-map compassql.min.js.map > compassql.min.js",
+    "clean": "rm -f compassql.* & find src -name '*.js*' -type f -delete & find test -name '*.js*' -type f -delete",
+    "cover": "tsc && istanbul cover node_modules/.bin/_mocha -- --recursive",
+    "deploy": "npm run clean && npm run lint && npm run test && scripts/deploy.sh",
+    "lint": "tslint -c tslint.json src/*.ts test/*.ts src/**/*.ts test/**/*.ts",
+    "watch": "nodemon -x 'npm run build && npm run test:only && npm run lint'",
+    "tsc": "tsc",
+    "test": "tsc && npm run test:only",
+    "test:only": "mocha --recursive --require source-map-support/register",
+    "test:debug": "mocha --recursive --require source-map-support/register --debug-brk"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/uwdata/CompassQL.git"
+  },
+  "keywords": [
+    "visualization",
+    "recommendation"
+  ],
+  "author": {
+    "name": "UW Interactive Data Lab",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "collaborators": [
+    "Kanit Wongsuphasawat <kanitw@gmail.com> (http://kanitw.yellowpigz.com)",
+    "Dominik Moritz <domoritz@cs.washington.edu> (http://domoritz.de)",
+    "Jeffrey Heer <jheer@uw.edu> (http://jheer.org)"
+  ],
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/uwdata/compassql/issues"
+  },
+  "homepage": "https://github.com/uwdata/compassql#readme",
+  "devDependencies": {
+    "browserify": "^13.0.0",
+    "browserify-versionify": "^1.0.6",
+    "chai": "^3.4.1",
+    "exorcist": "^0.4.0",
+    "istanbul": "^0.4.2",
+    "mocha": "~2.4.4",
+    "nodemon": "^1.8.1",
+    "source-map-support": "^0.4.0",
+    "tsify": "^0.13.2",
+    "tslint": "^3.3.0",
+    "typescript": "^1.7.5",
+    "uglify-js": "^2.6.1"
+  },
+  "dependencies": {
+    "vega-lite": "^1.0.8"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-versionify"
+    ]
+  }
+}
