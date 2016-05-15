@@ -173,13 +173,13 @@ export interface EncodingQueryMap {
   [channel: string]: EncodingQuery;
 }
 
-export class Query {
+export class SpecQueryModel {
   private spec: SpecQuery;
   private encodingMap: EncodingQueryMap;
 
   public constructor(spec: SpecQuery) {
     this.spec = spec;
-    this.encodingMap = spec.encodings.reduce(function(m, encodingQuery) {
+    this.encodingMap = spec.encodings.reduce((m, encodingQuery) => {
       if (!isEnumSpec(encodingQuery.channel)) {
         m[encodingQuery.channel as string] = encodingQuery;
       }
@@ -187,11 +187,11 @@ export class Query {
     }, {} as EncodingQueryMap);
   }
 
-  public duplicate(): Query {
-    return new Query(duplicate(this.spec));
+  public duplicate(): SpecQueryModel {
+    return new SpecQueryModel(duplicate(this.spec));
   }
 
-  public setMark(mark: Mark) {
+  public setMark(mark: Mark | EnumSpec<Mark>) {
     this.spec.mark = mark;
   }
 
@@ -199,13 +199,46 @@ export class Query {
     return this.spec.mark;
   }
 
-  public setChannel(encodingQuery: EncodingQuery, channel: Channel) {
-    encodingQuery.channel = channel;
-    this.encodingMap[channel] = encodingQuery;
+  public getEncodingProperty(index: number, propertyType: PropertyType) {
+    return this.spec.encodings[index][propertyType];
   }
 
-  public getEncodingQuery(channel: Channel) {
+  public setEncodingProperty(index: number, propertyType: PropertyType, value: any) {
+    if (propertyType === PropertyType.CHANNEL) {
+      this.setChannel(this.spec.encodings[index], value);
+    } else {
+      this.spec.encodings[index][propertyType] = value;
+    }
+  }
+
+  private setChannel(encodingQuery: EncodingQuery, channel: Channel) {
+    // If there is an old channel
+    if (encodingQuery.channel) {
+      delete this.encodingMap[channel];
+    }
+
+    encodingQuery.channel = channel;
+
+    // If there is a new channel
+    if (channel) {
+      this.encodingMap[channel] = encodingQuery;
+    }
+  }
+
+  public channelUsed(channel: Channel) {
+    return !!this.encodingMap[channel];
+  }
+
+  public getEncodings() {
+    return this.spec.encodings;
+  }
+
+  public getEncodingQueryByChannel(channel: Channel) {
     return this.encodingMap[channel];
+  }
+
+  public getEncodingQueryByIndex(i: number) {
+    return this.spec.encodings[i];
   }
 
   public hasAllChannelAssigned() {
