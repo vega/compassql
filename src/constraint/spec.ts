@@ -1,3 +1,6 @@
+import {supportMark} from 'vega-lite/src/channel';
+import {Mark} from 'vega-lite/src/mark';
+
 import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 import {Property} from '../property';
@@ -16,6 +19,8 @@ export class SpecConstraintModel extends AbstractConstraintModel {
   }
 
   public satisfy(specQ: SpecQueryModel, schema: Schema) {
+    // TODO: Re-order logic to optimize the "requireAllProperties" check
+
     if (this.constraint.requireAllProperties) {
       // TODO: extract as a method and do unit test
       const hasRequiredPropertyAsEnumSpec = some(this.constraint.properties,
@@ -58,7 +63,29 @@ export interface SpecConstraint extends AbstractConstraint {
 
 export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
-    name: 'noRepeatChannel',
+    name: 'channelPermittedByMarkType',
+    description: 'Each encoding channel should be supported by the mark type',
+    properties: [Property.CHANNEL, Property.MARK],
+    requireAllProperties: false, // only require mark
+    strict: true,
+    satisfy: (specQ: SpecQueryModel, schema: Schema) => {
+      const mark = specQ.getMark();
+
+      // if mark is unspecified, no need to check
+      if (isEnumSpec(mark)) return true;
+
+      // TODO: can optimize this to detect only what's the changed property if needed.
+      return every(specQ.getEncodings(), (encQ) => {
+        // channel unspecified, no need to check
+        if (isEnumSpec(encQ.channel)) return true;
+
+        return supportMark(encQ.channel, mark as Mark);
+      });
+    }
+  },
+  // TODO: hasAllRequiredChannelForMark
+  {
+    name: 'noRepeatedChannel',
     description: 'Each encoding channel should only be used once.',
     properties: [Property.CHANNEL],
     requireAllProperties: false,
@@ -77,6 +104,29 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           return true;
         }
         return true; // unspecified channel is valid
+      });
+    }
+  },
+  {
+    name: 'noRepeatedField',
+    description: 'Each field should be mapped to only one channel',
+    properties: [Property.FIELD],
+    requireAllProperties: false,
+    strict: false, // over-encoding is sometimes good, but let's turn it off by default
+    satisfy: (specQ: SpecQueryModel, schema: Schema) => {
+      let usedField = {};
+
+      // the same field should not be encoded twice
+      return every(specQ.getEncodings(), (encQ) => {
+        if (!isEnumSpec(encQ.field)) {
+          // If field is specified, it should not be used already
+          if (usedField[encQ.field]) {
+            return false;
+          }
+          usedField[encQ.field] = true;
+          return true;
+        }
+        return true; // unspecified field is valid
       });
     }
   }

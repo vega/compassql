@@ -1,5 +1,7 @@
 import {Mark} from 'vega-lite/src/mark';
 
+// TODO: extract list of constraints into a constraint registry.
+
 import {ENCODING_CONSTRAINTS_BY_PROPERTY, EncodingConstraintModel} from './constraint/encoding';
 import {SPEC_CONSTRAINTS_BY_PROPERTY, SpecConstraintModel} from './constraint/spec';
 
@@ -9,6 +11,7 @@ import {EnumSpec, QueryConfig, SpecQuery, SpecQueryModel, initEnumSpec, isEnumSp
 import {Schema} from './Schema';
 import {every} from './util';
 
+export let ENUMERATOR_INDEX: {[property: string]: EnumeratorFactory} = {};
 
 export function generate(specQuery: SpecQuery, schema: Schema, opt: QueryConfig) {
   // 1. Detect enumeration specifiers, append them to enumJobs
@@ -22,7 +25,7 @@ export function generate(specQuery: SpecQuery, schema: Schema, opt: QueryConfig)
     // If the original specQuery contains enumSpec for this property type
     if (enumJob[property]) {
       // update answerset
-      answerSet = answerSet.reduce(generator[property](enumJob, schema, opt), []);
+      answerSet = answerSet.reduce(ENUMERATOR_INDEX[property](enumJob, schema, opt), []);
     }
   });
 
@@ -96,47 +99,57 @@ export function initEnumJobs(specQ: SpecQuery, schema: Schema, opt: QueryConfig)
   return enumJob;
 }
 
-export namespace generator {
-  export function mark(enumJob: EnumJob, schema: Schema, opt: QueryConfig) {
-    return (answerSets, specQ: SpecQueryModel) => {
-      const markEnumSpec = specQ.getMark() as EnumSpec<Mark>;
 
-      // enumerate the value
-      markEnumSpec.enumValues.forEach((mark) => {
-        specQ.setMark(mark);
+export interface Enumerator {
+  (answerSets: SpecQueryModel[], specQ: SpecQueryModel): SpecQueryModel[];
+}
 
-        // Check spec constraint
-        const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[Property.MARK] || [];
-        const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
-          return c.satisfy(specQ, schema);
-        });
+export interface EnumeratorFactory {
+  (enumJob: EnumJob, schema: Schema, opt: QueryConfig): Enumerator;
+}
 
-        if (satisfySpecConstraints) {
-          // emit
-          answerSets.push(specQ.duplicate());
-        }
+ENUMERATOR_INDEX[Property.MARK] = (enumJob: EnumJob, schema: Schema, opt: QueryConfig): Enumerator => {
+  return (answerSet, specQ: SpecQueryModel) => {
+    const markEnumSpec = specQ.getMark() as EnumSpec<Mark>;
+
+    // enumerate the value
+    markEnumSpec.enumValues.forEach((mark) => {
+      specQ.setMark(mark);
+
+      // Check spec constraint
+      const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[Property.MARK] || [];
+      const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
+        return c.satisfy(specQ, schema);
       });
 
-      // Reset to avoid side effect
-      specQ.setMark(markEnumSpec);
+      if (satisfySpecConstraints) {
+        // emit
+        answerSet.push(specQ.duplicate());
+      }
+    });
 
-      return answerSets;
-    };
-  }
+    // Reset to avoid side effect
+    specQ.setMark(markEnumSpec);
 
-  export function channel(enumJob: EnumJob, schema: Schema, opt: QueryConfig) {
-    return encoding(Property.CHANNEL, enumJob, schema, opt);
-  }
+    return answerSet;
+  };
+};
 
-  export function encoding(property: Property, enumJob: EnumJob, schema: Schema, opt: QueryConfig) {
-    return (answerSets, specQ: SpecQueryModel) => {
+ENCODING_PROPERTIES.forEach((property) => {
+  ENUMERATOR_INDEX[property] = EncodingPropertyGeneratorFactory(property);
+});
+
+export function EncodingPropertyGeneratorFactory(property: Property) {
+  return (enumJob: EnumJob, schema: Schema, opt: QueryConfig) => {
+    return (answerSet: SpecQueryModel[], specQ: SpecQueryModel) => {
       // index of encoding mappings that require enumeration
       const enumEncodingIndices: number[] = enumJob[property] as number[];
 
       function enumerate(jobIndex: number) {
         if (jobIndex === enumEncodingIndices.length) {
-          // emit
-          answerSets.push(specQ.duplicate());
+          // emit and terminate
+          answerSet.push(specQ.duplicate());
+          return;
         }
         const encodingIndex = enumEncodingIndices[jobIndex];
         const propEnumSpec = specQ.getEncodingProperty(encodingIndex, property);
@@ -146,6 +159,7 @@ export namespace generator {
           // Check encoding constraint
           const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[property] || [];
           const satisfyEncodingConstraints = every(encodingConstraints, (c: EncodingConstraintModel) => {
+            // TODO: check if the constraint is enabled
             return c.satisfy(specQ.getEncodingQueryByIndex(encodingIndex), schema);
           });
 
@@ -156,6 +170,7 @@ export namespace generator {
           // Check spec constraint
           const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[property] || [];
           const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
+            // TODO: check if the constraint is enabled
             return c.satisfy(specQ, schema);
           });
 
@@ -173,6 +188,8 @@ export namespace generator {
 
       // start enumerating from 0
       enumerate(0);
+
+      return answerSet;
     };
-  }
+  };
 }

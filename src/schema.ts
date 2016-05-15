@@ -25,10 +25,17 @@ export class Schema {
   }
 }
 
+export enum PrimitiveType {
+  STRING = 'string' as any,
+  NUMBER = 'number' as any,
+  BOOLEAN = 'boolean' as any,
+  DATE = 'date' as any
+}
+
 export interface FieldSchema {
   field: string;
   type?: Type;
   /** number, string, date  */
-  primitiveType: string;
-  title: string;
+  primitiveType: PrimitiveType;
+  title?: string;
 }

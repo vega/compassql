@@ -1,5 +1,8 @@
 import {Property} from '../property';
 
+/**
+ * Abstract interface for a constraint.
+ */
 export interface AbstractConstraint {
   name: string;
   description: string;
@@ -17,6 +20,9 @@ export interface AbstractConstraint {
   strict: boolean;
 }
 
+/**
+ * Abstract model for a constraint.
+ */
 export class AbstractConstraintModel {
   protected constraint: AbstractConstraint;
 

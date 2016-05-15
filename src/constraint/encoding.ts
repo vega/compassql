@@ -2,7 +2,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {Property} from '../property';
 import {EncodingQuery, isEnumSpec} from '../query';
-import {Schema} from '../schema';
+import {PrimitiveType, Schema} from '../schema';
 import {some} from '../util';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -22,6 +22,7 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
   }
 
   public satisfy(encodingQ: EncodingQuery, schema: Schema): boolean {
+    // TODO: Re-order logic to optimize the "requireAllProperties" check
     if (this.constraint.requireAllProperties) {
       // TODO: extract as a method and do unit test
       const hasRequiredPropertyAsEnumSpec = some(
@@ -57,8 +58,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       // TODO: some aggregate function are actually supported by ordinal
       return true; // no aggregate is okay with any type.
     }
-  },
-  {
+  },{
     name: 'onlyOneTypeOfFunction',
     description: 'Only of of aggregate, timeUnit, or bin should be applied at the same time.',
     properties: [Property.AGGREGATE, Property.TIMEUNIT, Property.BIN],
@@ -70,8 +70,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
         (!isEnumSpec(encodingQ.timeUnit) && !!encodingQ.timeUnit ? 1 : 0);
       return numFn <= 1;
     }
-  },
-  {
+  },{
     name: 'timeUnitAppliedForTemporal',
     description: 'Time unit should be applied to temporal field only.',
     properties: [Property.TYPE, Property.TIMEUNIT],
@@ -81,7 +80,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       if (encodingQ.timeUnit && encodingQ.type !== Type.TEMPORAL) {
         return false;
       }
-      return false;
+      return true;
     }
   // TODO: fill the rest of this
   // },{
@@ -96,10 +95,18 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     requireAllProperties: true,
     strict: true,
     satisfy: (encodingQ: EncodingQuery, schema: Schema) => {
-      if (!isEnumSpec(encodingQ.field) && !isEnumSpec(encodingQ.type)) {
-        // FIXME read schema
+      const primitiveType = schema.primitiveType(encodingQ.field as string);
+      const type = encodingQ.type;
+
+      switch (primitiveType) {
+        case PrimitiveType.BOOLEAN:
+        case PrimitiveType.STRING:
+          return type !== Type.QUANTITATIVE && type !== Type.TEMPORAL;
+        case PrimitiveType.DATE: // TODO: reconsider if date should support quantitative
+        case PrimitiveType.NUMBER:
+          return true;
       }
-      return true;
+      throw new Error('Not implemented');
     }
   }
   // TODO: scaleType must match data type

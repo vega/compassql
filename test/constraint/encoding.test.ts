@@ -7,11 +7,20 @@ import {Type} from 'vega-lite/src/type';
 
 import {ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
 import {EncodingQuery} from '../../src/query';
-import {Schema} from '../../src/schema';
+import {Schema, PrimitiveType} from '../../src/schema';
 import {duplicate} from '../../src/util';
 
 describe('constraints/encoding', () => {
-  const schema = new Schema([]);
+  const schema = new Schema([{
+    field: 'mynumber',
+    type: Type.QUANTITATIVE,
+    primitiveType: PrimitiveType.NUMBER
+  },{
+    field: 'mystring',
+    type: Type.ORDINAL,
+    primitiveType: PrimitiveType.STRING,
+  }]);
+
   describe('aggregateOpSupportedByType', () => {
     let encQ: EncodingQuery = {
         channel: Channel.X,
@@ -75,10 +84,46 @@ describe('constraints/encoding', () => {
   });
 
   describe('timeUnitAppliedForTemporal', () => {
-    // FIXME
+    let encQ: EncodingQuery = {
+        channel: Channel.X,
+        timeUnit: TimeUnit.MONTH,
+        field: 'A',
+        type: undefined
+      };
+
+    it('should return false if timeUnit is applied to non-temporal type', () => {
+      [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE].forEach((type) => {
+        encQ.type = type;
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['timeUnitAppliedForTemporal'].satisfy(encQ, schema));
+      });
+    });
+
+    it('should return true if aggregate is applied to quantitative field', () => {
+      // TODO: verify if this really works with temporal
+      encQ.type = Type.TEMPORAL;
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['timeUnitAppliedForTemporal'].satisfy(encQ, schema));
+    });
   });
 
   describe('typeMatchesPrimitiveType', () => {
-    // FIXME
+    let encQ: EncodingQuery = {
+      channel: Channel.X,
+      field: 'mystring',
+      type: undefined
+    };
+
+    it('should return false if string is used as quantitative or temporal', () => {
+      [Type.TEMPORAL, Type.QUANTITATIVE].forEach((type) => {
+        encQ.type = type;
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(encQ, schema));
+      });
+    });
+
+    it('should return true if string is used as ordinal or nominal ', () => {
+      [Type.NOMINAL, Type.ORDINAL].forEach((type) => {
+        encQ.type = type;
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(encQ, schema));
+      });
+    });
   });
 });
