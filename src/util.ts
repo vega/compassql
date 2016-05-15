@@ -32,6 +32,16 @@ export function forEach(obj, f, thisArg?) {
   }
 };
 
+export function every(arr, f) {
+    var i = 0, k;
+    for (k in arr) {
+      if (!f(arr[k], k, i++)) {
+        return false;
+      }
+    }
+    return true;
+};
+
 export function some(arr, f) {
     var i = 0, k;
     for (k in arr) {

@@ -68,22 +68,83 @@ export function initEnumJobs(specQ: SpecQuery, schema: Schema, opt: QueryConfig)
   return enumJob;
 }
 
+export namespace generator {
+  export function mark(enumJob: EnumJob, schema: Schema, opt: QueryConfig) {
+    return (answerSets, specQ: SpecQueryModel) => {
+      const markEnumSpec = specQ.getMark() as EnumSpec<Mark>;
 
+      // enumerate the value
+      markEnumSpec.enumValues.forEach((mark) => {
+        specQ.setMark(mark);
+
+        // Check spec constraint
+        const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[PropertyType.MARK] || [];
+        const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
+          return c.satisfy(specQ, schema);
+        });
+
+        if (satisfySpecConstraints) {
+          // emit
+          answerSets.push(specQ.duplicate());
         }
+      });
 
+      // Reset to avoid side effect
+      specQ.setMark(markEnumSpec);
 
+      return answerSets;
+    };
   }
 
+  export function channel(enumJob: EnumJob, schema: Schema, opt: QueryConfig) {
+    return encoding(PropertyType.CHANNEL, enumJob, schema, opt);
   }
 
+  export function encoding(propertyType: PropertyType, enumJob: EnumJob, schema: Schema, opt: QueryConfig) {
+    return (answerSets, specQ: SpecQueryModel) => {
+      // index of encoding mappings that require enumeration
+      const enumEncodingIndices: number[] = enumJob[propertyType] as number[];
 
+      function enumerate(jobIndex: number) {
+        if (jobIndex === enumEncodingIndices.length) {
+          // emit
+          answerSets.push(specQ.duplicate());
         }
+        const encodingIndex = enumEncodingIndices[jobIndex];
+        const propEnumSpec = specQ.getEncodingProperty(encodingIndex, propertyType);
+        propEnumSpec.enumValues.forEach((propVal) => {
+          specQ.setEncodingProperty(encodingIndex, propertyType, propVal);
 
-
+          // Check encoding constraint
+          const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[propertyType] || [];
+          const satisfyEncodingConstraints = every(encodingConstraints, (c: EncodingConstraintModel) => {
+            return c.satisfy(specQ.getEncodingQueryByIndex(encodingIndex), schema);
           });
+
+          if (!satisfyEncodingConstraints) {
+            return; // do not keep searching
           }
 
+          // Check spec constraint
+          const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[propertyType] || [];
+          const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
+            return c.satisfy(specQ, schema);
+          });
+
+          if (!satisfySpecConstraints) {
+            return; // do not keep searching
+          }
+
+          // If qualify all of the constraints, keep enumerating
+          enumerate(jobIndex + 1);
         });
+
+        // Reset to avoid side effect
+        specQ.setEncodingProperty(encodingIndex, propertyType, propEnumSpec);
+      }
+
+      // start enumerating from 0
+      enumerate(0);
     };
   }
 }
