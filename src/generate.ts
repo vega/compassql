@@ -1,23 +1,29 @@
 import {Mark} from 'vega-lite/src/mark';
 
-import {EnumJob, EnumSpec, PropertyType, QueryConfig, SpecQuery, SHORT_ENUM_SPEC, initEnumSpec, isEnumSpec} from './schema';
-import {duplicate} from './util';
+import {ENCODING_PROPERTIES, EnumJob, EnumSpec, PropertyType, QueryConfig, Schema, SpecQuery, SpecQueryModel, initEnumSpec, isEnumSpec} from './schema';
+import {ENCODING_CONSTRAINTS_BY_PROPERTY, EncodingConstraintModel} from './constraint/encoding';
+import {SPEC_CONSTRAINTS_BY_PROPERTY, SpecConstraintModel} from './constraint/spec';
 
-export function generate(specQuery: SpecQuery, schema: any /*FIXME*/, opt: QueryConfig) {
-  // 0. Initialize Answer Set with the input spec query as the only answer.
-  let answerSet = [specQuery];
+import {every} from './util';
 
+
+export function generate(specQuery: SpecQuery, schema: Schema, opt: QueryConfig) {
   // 1. Detect enumeration specifiers, append them to enumJobs
+  // and replace short enum specs with full ones.
   const enumJob = initEnumJobs(specQuery, schema, opt);
 
   // 2. Enumerate each of the properties based on propertyTypePrecedence.
-  opt.propertyTypePrecedence.forEach(function(propertyType) {
+
+  let answerSet = [new SpecQueryModel(specQuery)]; // Initialize Answer Set with only the input spec query.
+  opt.propertyTypePrecedence.forEach((propertyType) => {
     // If the original specQuery contains enumSpec for this property type
     if (enumJob[propertyType]) {
       // update answerset
-      answerSet = answerSet.reduce(generator[propertyType](opt), []);
+      answerSet = answerSet.reduce(generator[propertyType](enumJob, schema, opt), []);
     }
   });
+
+  return answerSet;
 }
 
 /**
@@ -26,7 +32,7 @@ export function generate(specQuery: SpecQuery, schema: any /*FIXME*/, opt: Query
  *
  * @return an enumJob object.
  */
-export function initEnumJobs(specQ: SpecQuery, schema: any, opt: QueryConfig): EnumJob {
+export function initEnumJobs(specQ: SpecQuery, schema: Schema, opt: QueryConfig): EnumJob {
   let enumJob: EnumJob = {};
 
   // FIXME replace 'M', 'C', 'A', etc. with proper constant names
@@ -51,7 +57,7 @@ export function initEnumJobs(specQ: SpecQuery, schema: any, opt: QueryConfig): E
         const defaultEnumSpecName = (propertyType + '').substr(0, 1) + index;
         const defaultEnumValues = propertyType === PropertyType.FIELD ?
           // For field, by default enumerate all fields
-          schema.map((schemaFieldDef) => schemaFieldDef.field):
+          schema.fields():
           // For other properties, take default enumValues from config.
           // The config name for each property is a plural form of the property.
           opt[propertyType+'s'];

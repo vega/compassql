@@ -4,12 +4,13 @@ import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
 import {initEnumJobs} from '../src/generate';
-import {DEFAULT_QUERY_CONFIG, PropertyType, SHORT_ENUM_SPEC, SpecQuery} from '../src/schema';
+import {DEFAULT_QUERY_CONFIG, Schema, PropertyType, SHORT_ENUM_SPEC, SpecQuery} from '../src/schema';
 import {duplicate} from '../src/util';
 
 
 describe('generate', function () {
   describe('initEnumJobs', () => {
+    const schema = new Schema([]);
 
     // Mark
     it('should have mark job if mark is a ShortEnumSpec.', () => {
@@ -17,7 +18,7 @@ describe('generate', function () {
         mark: SHORT_ENUM_SPEC,
         encodings: []
       };
-      const enumJob = initEnumJobs(specQ, null, DEFAULT_QUERY_CONFIG);
+      const enumJob = initEnumJobs(specQ, schema, DEFAULT_QUERY_CONFIG);
       assert.isTrue(enumJob.mark);
     });
 
@@ -28,7 +29,7 @@ describe('generate', function () {
         },
         encodings: []
       };
-      const enumJob = initEnumJobs(specQ, null, DEFAULT_QUERY_CONFIG);
+      const enumJob = initEnumJobs(specQ, schema, DEFAULT_QUERY_CONFIG);
       assert.isTrue(enumJob.mark);
     });
 
@@ -37,7 +38,7 @@ describe('generate', function () {
         mark: Mark.BAR,
         encodings: []
       };
-      const enumJob = initEnumJobs(specQ, null, DEFAULT_QUERY_CONFIG);
+      const enumJob = initEnumJobs(specQ, schema, DEFAULT_QUERY_CONFIG);
       assert.isNotOk(enumJob.mark);
     });
 
@@ -62,7 +63,7 @@ describe('generate', function () {
         // set to a short enum spec
         specQ.encodings[0][propertyType] = SHORT_ENUM_SPEC;
 
-        const enumJob = initEnumJobs(specQ, null, DEFAULT_QUERY_CONFIG);
+        const enumJob = initEnumJobs(specQ, schema, DEFAULT_QUERY_CONFIG);
         assert.isOk(enumJob[propertyType]);
       });
 
@@ -74,7 +75,7 @@ describe('generate', function () {
           enumValues: enumValues
         };
 
-        const enumJob = initEnumJobs(specQ, null, DEFAULT_QUERY_CONFIG);
+        const enumJob = initEnumJobs(specQ, schema, DEFAULT_QUERY_CONFIG);
         assert.isOk(enumJob[propertyType]);
       });
 
@@ -82,7 +83,7 @@ describe('generate', function () {
         let specQ = duplicate(templateSpecQ);
         // do not set to enum spec = make it specific
 
-        const enumJob = initEnumJobs(specQ, null, DEFAULT_QUERY_CONFIG);
+        const enumJob = initEnumJobs(specQ, schema, DEFAULT_QUERY_CONFIG);
         assert.isNotOk(enumJob[propertyType]);
       });
     });
