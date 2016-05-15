@@ -1,7 +1,8 @@
 import {Type} from 'vega-lite/src/type';
 
-import {EncodingQuery, PropertyType, Schema} from '../schema';
-import {isEnumSpec} from '../schema';
+import {Property} from '../property';
+import {EncodingQuery, isEnumSpec} from '../query';
+import {Schema} from '../schema';
 import {some} from '../util';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -24,8 +25,8 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
     if (this.constraint.requireAllProperties) {
       // TODO: extract as a method and do unit test
       const hasRequiredPropertyAsEnumSpec = some(
-        this.constraint.propertyTypes,
-        (propertyType) => isEnumSpec(encodingQ[propertyType])
+        this.constraint.properties,
+        (property) => isEnumSpec(encodingQ[property])
       );
       // If one of the required property is still an enum spec, do not check the constraint yet.
       if (hasRequiredPropertyAsEnumSpec) {
@@ -46,7 +47,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
   {
     name: 'aggregateOpSupportedByType',
     description: 'Aggregate function should be supported by data type.',
-    propertyTypes: [PropertyType.TYPE, PropertyType.AGGREGATE],
+    properties: [Property.TYPE, Property.AGGREGATE],
     requireAllProperties: true,
     strict: true,
     satisfy: (encodingQ: EncodingQuery, schema: Schema) => {
@@ -60,7 +61,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
   {
     name: 'onlyOneTypeOfFunction',
     description: 'Only of of aggregate, timeUnit, or bin should be applied at the same time.',
-    propertyTypes: [PropertyType.AGGREGATE, PropertyType.TIMEUNIT, PropertyType.BIN],
+    properties: [Property.AGGREGATE, Property.TIMEUNIT, Property.BIN],
     requireAllProperties: false,
     strict: true,
     satisfy: (encodingQ: EncodingQuery, schema: Schema) => {
@@ -73,7 +74,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
   {
     name: 'timeUnitAppliedForTemporal',
     description: 'Time unit should be applied to temporal field only.',
-    propertyTypes: [PropertyType.TYPE, PropertyType.TIMEUNIT],
+    properties: [Property.TYPE, Property.TIMEUNIT],
     requireAllProperties: true,
     strict: true,
     satisfy: (encodingQ: EncodingQuery, schema: Schema) => {
@@ -86,12 +87,12 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
   // },{
   //   name: 'binAppliedForQuantitative',
   //   description: 'bin should be applied to quantitative field only.',
-  //   propertyTypes: [PropertyType.TYPE, PropertyType.BIN]
+  //   properties: [Property.TYPE, Property.BIN]
   },
   {
     name: 'typeMatchesPrimitiveType',
     description: 'Data type should be supported by field\'s primitive type.',
-    propertyTypes: [PropertyType.FIELD, PropertyType.TYPE],
+    properties: [Property.FIELD, Property.TYPE],
     requireAllProperties: true,
     strict: true,
     satisfy: (encodingQ: EncodingQuery, schema: Schema) => {
@@ -110,11 +111,11 @@ export const ENCODING_CONSTRAINT_INDEX: {[name: string]: EncodingConstraintModel
     return m;
   }, {});
 
-export const ENCODING_CONSTRAINTS_BY_PROPERTY: {[propertyType: string]: EncodingConstraintModel[]} =
+export const ENCODING_CONSTRAINTS_BY_PROPERTY: {[property: string]: EncodingConstraintModel[]} =
   ENCODING_CONSTRAINTS.reduce((m, c: EncodingConstraintModel) => {
-    c.propertyTypes().forEach((propertyType) => {
-      m[propertyType] = m[propertyType] || [];
-      m[propertyType].push(c);
+    c.properties().forEach((property) => {
+      m[property] = m[property] || [];
+      m[property].push(c);
     });
     return m;
   }, {});

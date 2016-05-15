@@ -6,7 +6,8 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
-import {EncodingQuery, Schema} from '../../src/schema';
+import {EncodingQuery} from '../../src/query';
+import {Schema} from '../../src/schema';
 import {duplicate} from '../../src/util';
 
 describe('constraints/encoding', () => {

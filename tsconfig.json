@@ -31,6 +31,7 @@
         "src/constraint/encoding.ts",
         "src/constraint/spec.ts",
         "src/generate.ts",
+        "src/property.ts",
         "src/schema.ts",
         "src/util.ts",
         "test/generate.test.ts",

@@ -1,9 +1,9 @@
-import {PropertyType} from '../schema';
+import {Property} from '../property';
 
 export interface AbstractConstraint {
   name: string;
   description: string;
-  propertyTypes: PropertyType[];
+  properties: Property[];
 
   /**
    * Whether this constraint requires all specified properties types to be specific
@@ -32,8 +32,8 @@ export class AbstractConstraintModel {
     return this.constraint.description;
   }
 
-  public propertyTypes(): PropertyType[] {
-    return this.constraint.propertyTypes;
+  public properties(): Property[] {
+    return this.constraint.properties;
   }
 
   public strict(): boolean {

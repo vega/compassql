@@ -4,7 +4,9 @@ import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
 import {initEnumJobs} from '../src/generate';
-import {DEFAULT_QUERY_CONFIG, Schema, PropertyType, SHORT_ENUM_SPEC, SpecQuery} from '../src/schema';
+import {Property} from '../src/property';
+import {Schema} from '../src/schema';
+import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery} from '../src/query';
 import {duplicate} from '../src/util';
 
 
@@ -45,8 +47,8 @@ describe('generate', function () {
     // TODO: Transform
 
     // Encoding
-    const encodingPropertyTypes = [PropertyType.AGGREGATE, PropertyType.BIN,
-      PropertyType.CHANNEL, PropertyType.TIMEUNIT, PropertyType.FIELD];
+    const encodingproperties = [Property.AGGREGATE, Property.BIN,
+      Property.CHANNEL, Property.TIMEUNIT, Property.FIELD];
 
     // TODO: also test type
 
@@ -57,34 +59,34 @@ describe('generate', function () {
       ]
     };
 
-    encodingPropertyTypes.forEach((propertyType) => {
-      it('should have ' + propertyType + ' job if ' + propertyType + ' is a ShortEnumSpec.', () => {
+    encodingproperties.forEach((property) => {
+      it('should have ' + property + ' job if ' + property + ' is a ShortEnumSpec.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a short enum spec
-        specQ.encodings[0][propertyType] = SHORT_ENUM_SPEC;
+        specQ.encodings[0][property] = SHORT_ENUM_SPEC;
 
         const enumJob = initEnumJobs(specQ, schema, DEFAULT_QUERY_CONFIG);
-        assert.isOk(enumJob[propertyType]);
+        assert.isOk(enumJob[property]);
       });
 
-      it('should have ' + propertyType + ' job if ' + propertyType + ' is an EnumSpec.', () => {
+      it('should have ' + property + ' job if ' + property + ' is an EnumSpec.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a full enum spec
-        const enumValues = propertyType === PropertyType.FIELD ? ['A', 'B'] : DEFAULT_QUERY_CONFIG[propertyType +'s'];
-        specQ.encodings[0][propertyType] = {
+        const enumValues = property === Property.FIELD ? ['A', 'B'] : DEFAULT_QUERY_CONFIG[property +'s'];
+        specQ.encodings[0][property] = {
           enumValues: enumValues
         };
 
         const enumJob = initEnumJobs(specQ, schema, DEFAULT_QUERY_CONFIG);
-        assert.isOk(enumJob[propertyType]);
+        assert.isOk(enumJob[property]);
       });
 
-      it('should have ' + propertyType + ' job if ' + propertyType + ' is specific.', () => {
+      it('should have ' + property + ' job if ' + property + ' is specific.', () => {
         let specQ = duplicate(templateSpecQ);
         // do not set to enum spec = make it specific
 
         const enumJob = initEnumJobs(specQ, schema, DEFAULT_QUERY_CONFIG);
-        assert.isNotOk(enumJob[propertyType]);
+        assert.isNotOk(enumJob[property]);
       });
     });
   });

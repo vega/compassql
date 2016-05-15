@@ -1,6 +1,10 @@
-import {PropertyType, Schema, SpecQueryModel, isEnumSpec} from '../schema';
-import {every, some} from '../util';
 import {AbstractConstraint, AbstractConstraintModel} from './base';
+
+import {Property} from '../property';
+import {Schema} from '../schema';
+import {SpecQueryModel, isEnumSpec} from '../query';
+import {every, some} from '../util';
+
 
 export interface SpecConstraintChecker {
   (specQ: SpecQueryModel, schema: Schema): boolean;
@@ -14,24 +18,24 @@ export class SpecConstraintModel extends AbstractConstraintModel {
   public satisfy(specQ: SpecQueryModel, schema: Schema) {
     if (this.constraint.requireAllProperties) {
       // TODO: extract as a method and do unit test
-      const hasRequiredPropertyAsEnumSpec = some(this.constraint.propertyTypes,
-        (propertyType) => {
-          switch(propertyType) {
+      const hasRequiredPropertyAsEnumSpec = some(this.constraint.properties,
+        (property) => {
+          switch(property) {
             // Mark
-            case PropertyType.MARK:
+            case Property.MARK:
               return isEnumSpec(specQ.getMark());
 
             // TODO: transform
 
             // Encoding properties
-            case PropertyType.CHANNEL:
-            case PropertyType.AGGREGATE:
-            case PropertyType.BIN:
-            case PropertyType.TIMEUNIT:
-            case PropertyType.FIELD:
-            case PropertyType.TYPE:
+            case Property.CHANNEL:
+            case Property.AGGREGATE:
+            case Property.BIN:
+            case Property.TIMEUNIT:
+            case Property.FIELD:
+            case Property.TYPE:
               return some(specQ.getEncodings(), (encodingQuery) => {
-                return isEnumSpec(encodingQuery[propertyType]);
+                return isEnumSpec(encodingQuery[property]);
               });
             default:
               throw new Error('Unimplemnted');
@@ -56,7 +60,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'noRepeatChannel',
     description: 'Each encoding channel should only be used once.',
-    propertyTypes: [PropertyType.CHANNEL],
+    properties: [Property.CHANNEL],
     requireAllProperties: false,
     strict: true,
     satisfy: (specQ: SpecQueryModel, schema: Schema) => {
@@ -84,11 +88,11 @@ export const SPEC_CONSTRAINT_INDEX: {[name: string]: SpecConstraintModel} =
     return m;
   }, {});
 
-export const SPEC_CONSTRAINTS_BY_PROPERTY: {[propertyType: string]: SpecConstraintModel[]} =
+export const SPEC_CONSTRAINTS_BY_PROPERTY: {[property: string]: SpecConstraintModel[]} =
    SPEC_CONSTRAINTS.reduce((m, c: SpecConstraintModel) => {
-    c.propertyTypes().forEach((propertyType) => {
-      m[propertyType] = m[propertyType] || [];
-      m[propertyType].push(c);
+    c.properties().forEach((property) => {
+      m[property] = m[property] || [];
+      m[property].push(c);
     });
     return m;
   }, {});
