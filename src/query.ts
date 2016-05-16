@@ -1,9 +1,12 @@
 import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR, TEXT, DETAIL} from 'vega-lite/src/channel';
 import {Config} from 'vega-lite/src/config';
 import {AggregateOp} from 'vega-lite/src/aggregate';
+import {Encoding} from 'vega-lite/src/encoding';
+import {FieldDef} from 'vega-lite/src/fielddef';
 import {Mark} from 'vega-lite/src/mark';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/Type';
+import {Spec} from 'vega-lite/src/Spec';
 
 import {Property} from './property';
 import {duplicate, keys} from './util';
@@ -88,7 +91,7 @@ export interface SpecQuery {
   transform?: TransformQuery;
   encodings: EncodingQuery[];
 
-  // Let's not make these queries for now.
+  // TODO: make config query (not important at all, only for the sake of completeness.)
   config?: Config;
 }
 
@@ -167,6 +170,45 @@ export class SpecQueryModel {
   public hasAllChannelAssigned() {
     return keys(this.encodingMap).length === this.spec.encodings.length;
   }
+
+  /**
+   * Convert a query to a Vega-Lite spec if it is completed.
+   * @return a Vega-Lite spec if completed, null otherwise.
+   */
+  public toSpec(): Spec {
+    if (isEnumSpec(this.spec.mark)) return null;
+
+    let encoding: Encoding = {};
+
+    for (let i = 0; i < this.spec.encodings.length; i++) {
+      const encQ = this.spec.encodings[i];
+
+      // if channel is an enum spec, return null
+      if (isEnumSpec(encQ.channel)) return null;
+
+      // assemble other property into a field def.
+      let fieldDef: FieldDef = {};
+      const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE];
+      for (let j = 0; j < PROPERTIES.length; j++) {
+        const prop = PROPERTIES[j];
+
+        // if the property is an enum spec, return null
+        if (isEnumSpec(encQ[prop])) return null;
+
+        // otherwise, assign the proper to the field def
+        if (encQ[prop] !== undefined) {
+          fieldDef[prop] = encQ[prop];
+        }
+      }
+
+      encoding[encQ.channel as Channel] = fieldDef;
+    }
+    return {
+      // TODO: transform, config
+      mark: this.spec.mark as Mark,
+      encoding: encoding
+    };
+  }
 }
 
 export interface TransformQuery {
@@ -193,6 +235,7 @@ export interface EncodingQuery {
 
   field: Field | EnumSpec<Field> | ShortEnumSpec;
   type: Type | EnumSpec<Field> | ShortEnumSpec;
+  // TODO: value
 
   // TODO: scaleQuery, axisQuery, legendQuery
 }

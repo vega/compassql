@@ -35,6 +35,7 @@
         "src/schema.ts",
         "src/util.ts",
         "test/generate.test.ts",
+        "test/query.test.ts",
         "test/constraint/encoding.test.ts",
         "test/constraint/spec.test.ts",
         "typings/chai.d.ts",
