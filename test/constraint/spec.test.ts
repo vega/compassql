@@ -85,4 +85,46 @@ describe('constraints/spec', () => {
       assert.isFalse(SPEC_CONSTRAINT_INDEX['noRepeatedField'].satisfy(specQ, schema));
     });
   });
+
+
+  describe('omitMultipleNonPositionalChannels', () => {
+    it('should return true if there are zero non-positional channels', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema));
+    });
+
+    it('should return true if there are one non-positional channels', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+          {channel: Channel.SHAPE, field: 'C', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema));
+    });
+
+    it('should return false if there are multiple non-positional channels', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+          {channel: Channel.SHAPE, field: 'C', type: Type.NOMINAL},
+          {channel: Channel.COLOR, field: 'D', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema));
+    });
+  });
 });

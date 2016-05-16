@@ -1,4 +1,4 @@
-import {supportMark} from 'vega-lite/src/channel';
+import {Channel, supportMark} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -83,7 +83,33 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       });
     }
   },
+  // TODO: omitRawWithXYBothDimension
+  {
+    name: 'omitMultipleNonPositionalChannels',
+    description: 'Do not use multiple non-positional encoding channel to avoid over-encoding.',
+    properties: [Property.CHANNEL],
+    requireAllProperties: false,
+    strict: false,
+    satisfy: (specQ: SpecQueryModel, schema: Schema) => {
+      const encodings = specQ.getEncodings();
+      let nonPositionChannelCount = 0;
+      for (let i = 0; i < encodings.length; i++) {
+        const channel = encodings[i].channel;
+        if (!isEnumSpec(channel)) {
+          if (channel === Channel.COLOR || channel === Channel.SHAPE || channel === Channel.SIZE) {
+            nonPositionChannelCount += 1;
+            if (nonPositionChannelCount > 1) {
+              return false;
+            }
+          }
+        }
+      }
+      return true;
+    }
+  },
+
   // TODO: hasAllRequiredChannelForMark
+  // TODO: noRawTimeGroupingForAggregation
   {
     name: 'noRepeatedChannel',
     description: 'Each encoding channel should only be used once.',
