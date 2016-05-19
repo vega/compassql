@@ -4,13 +4,22 @@ import {Mark} from 'vega-lite/src/mark';
 import {Channel} from 'vega-lite/src/channel';
 import {Type} from 'vega-lite/src/type';
 
-import {SPEC_CONSTRAINT_INDEX} from '../../src/constraint/spec';
+import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX} from '../../src/constraint/spec';
 import {Schema} from '../../src/schema';
 import {DEFAULT_QUERY_CONFIG, SpecQueryModel} from '../../src/query';
 
 describe('constraints/spec', () => {
   const defaultOpt = DEFAULT_QUERY_CONFIG;
   const schema = new Schema([]);
+
+  // Make sure all non-strict constraints have their configs.
+  SPEC_CONSTRAINTS.forEach((constraint) => {
+    if (!constraint.strict()) {
+      it(constraint.name() + ' should have default config for all non-strict constraints', () => {
+        assert.isDefined(DEFAULT_QUERY_CONFIG[constraint.name()]);
+      });
+    }
+  });
 
   describe('channelPermittedByMarkType', () => {
     it('should return true for supported channel', () => {
@@ -165,7 +174,7 @@ describe('constraints/spec', () => {
       });
 
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema, defaultOpt));
-  });
+    });
 
     it('should return false if there are multiple non-positional channels', () => {
       const specQ = new SpecQueryModel({
@@ -180,7 +189,7 @@ describe('constraints/spec', () => {
 
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema, defaultOpt));
     });
-    });
+  });
 
   describe('omitNonPositionalOverPositionalChannels', () => {
     it('should return true if color/shape/size is used when both x and y are used', () => {
@@ -197,7 +206,7 @@ describe('constraints/spec', () => {
       });
     });
 
-    it('should return true if color/shape/size is used when either x or y is not used', () => {
+    it('should return false if color/shape/size is used when either x or y is not used', () => {
       [Channel.SHAPE, Channel.SIZE, Channel.COLOR].forEach((channel) => {
         const specQ = new SpecQueryModel({
           mark: Mark.POINT,

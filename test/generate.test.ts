@@ -7,7 +7,7 @@ import {initEnumJobs, ENUMERATOR_INDEX} from '../src/generate';
 import {Property} from '../src/property';
 import {Schema} from '../src/schema';
 import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery, SpecQueryModel} from '../src/query';
-import {duplicate} from '../src/util';
+import {duplicate, extend} from '../src/util';
 
 
 describe('generate', function () {
@@ -128,7 +128,7 @@ describe('generate', function () {
     describe('channel', () => {
       it('should correctly enumerate channels', () => {
         const enumJob = {channel: [0]};
-        const enumerator = ENUMERATOR_INDEX['channel'](enumJob, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX['channel'](enumJob, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitVerticalDotPlot: false}));
         const specQ = new SpecQueryModel({
           mark: Mark.POINT,
           encodings: [

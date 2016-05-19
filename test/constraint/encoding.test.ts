@@ -5,7 +5,7 @@ import {AggregateOp} from 'vega-lite/src/aggregate';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-import {ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
+import {ENCODING_CONSTRAINTS, ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
 import {EncodingQuery, DEFAULT_QUERY_CONFIG} from '../../src/query';
 import {Schema, PrimitiveType} from '../../src/schema';
 import {duplicate} from '../../src/util';
@@ -22,6 +22,15 @@ describe('constraints/encoding', () => {
     type: Type.ORDINAL,
     primitiveType: PrimitiveType.STRING,
   }]);
+
+  // Make sure all non-strict constraints have their configs.
+  ENCODING_CONSTRAINTS.forEach((constraint) => {
+    if (!constraint.strict()) {
+      it(constraint.name() + ' should have default config for all non-strict constraints', () => {
+        assert.isDefined(DEFAULT_QUERY_CONFIG[constraint.name()]);
+      });
+    }
+  });
 
   describe('aggregateOpSupportedByType', () => {
     let encQ: EncodingQuery = {

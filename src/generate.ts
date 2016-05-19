@@ -17,6 +17,8 @@ export function generate(specQuery: SpecQuery, schema: Schema, opt: QueryConfig 
   opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
   // 1. Detect enumeration specifiers, append them to enumJobs
   // and replace short enum specs with full ones.
+
+  // TODO: rename to enumSpecIndex?
   const enumJob = initEnumJobs(specQuery, schema, opt);
 
   // 2. Enumerate each of the properties based on propertyPrecedence.
@@ -120,7 +122,12 @@ ENUMERATOR_INDEX[Property.MARK] = (enumJob: EnumJob, schema: Schema, opt: QueryC
       // Check spec constraint
       const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[Property.MARK] || [];
       const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
-        return c.satisfy(specQ, schema, opt);
+        // Check if the constraint is enabled
+            return c.strict() || !!opt[c.name()] ?
+              // For strict constraint, or enabled non-strict, check the constraints
+              c.satisfy(specQ, schema, opt) :
+              // Otherwise, return true as we don't have to check the constraint yet.
+              true;
       });
 
       if (satisfySpecConstraints) {
@@ -140,8 +147,15 @@ ENCODING_PROPERTIES.forEach((property) => {
   ENUMERATOR_INDEX[property] = EncodingPropertyGeneratorFactory(property);
 });
 
+/**
+ * @return an answer set reducer factory for this type of property.
+ */
 export function EncodingPropertyGeneratorFactory(property: Property) {
+  /**
+   * @return as reducer that takes specQ as input and output to an input answer set array.
+   */
   return (enumJob: EnumJob, schema: Schema, opt: QueryConfig) => {
+
     return (answerSet: SpecQueryModel[], specQ: SpecQueryModel) => {
       // index of encoding mappings that require enumeration
       const enumEncodingIndices: number[] = enumJob[property] as number[];
@@ -160,8 +174,12 @@ export function EncodingPropertyGeneratorFactory(property: Property) {
           // Check encoding constraint
           const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[property] || [];
           const satisfyEncodingConstraints = every(encodingConstraints, (c: EncodingConstraintModel) => {
-            // TODO: check if the constraint is enabled
-            return c.satisfy(specQ.getEncodingQueryByIndex(encodingIndex), schema, opt);
+            // Check if the constraint is enabled
+            return c.strict() || !!opt[c.name()] ?
+              // For strict constraint, or enabled non-strict, check the constraints
+              c.satisfy(specQ.getEncodingQueryByIndex(encodingIndex), schema, opt) :
+              // Otherwise, return true as we don't have to check the constraint yet.
+              true;
           });
 
           if (!satisfyEncodingConstraints) {
@@ -171,8 +189,12 @@ export function EncodingPropertyGeneratorFactory(property: Property) {
           // Check spec constraint
           const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[property] || [];
           const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
-            // TODO: check if the constraint is enabled
-            return c.satisfy(specQ, schema, opt);
+            // Check if the constraint is enabled
+            return c.strict() || !!opt[c.name()] ?
+              // For strict constraint, or enabled non-strict, check the constraints
+              c.satisfy(specQ, schema, opt) :
+              // Otherwise, return true as we don't have to check the constraint yet.
+              true;
           });
 
           if (!satisfySpecConstraints) {

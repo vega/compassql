@@ -28,6 +28,7 @@ export class Schema {
 export enum PrimitiveType {
   STRING = 'string' as any,
   NUMBER = 'number' as any,
+  INTEGER = 'integer' as any,
   BOOLEAN = 'boolean' as any,
   DATE = 'date' as any
 }

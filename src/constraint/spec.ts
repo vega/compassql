@@ -155,12 +155,10 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     requireAllProperties: true,
     strict: false,
     satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      return some(NONSPATIAL_CHANNELS, (channel) => {
-        return specQ.channelUsed(channel) ?
+      return some(NONSPATIAL_CHANNELS, (channel) => specQ.channelUsed(channel)) ?
         // if non-positional channels are used, then both x and y must be used.
         specQ.channelUsed(Channel.X) && specQ.channelUsed(Channel.Y) :
         true;
-      });
     }
   },
   {

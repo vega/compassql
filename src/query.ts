@@ -33,7 +33,18 @@ export interface QueryConfig {
   /** Default types to enumerate */
   types?: Type[];
 
-  // TODO: bin, scaleType, etc.
+  // TODO: scaleType, etc.
+
+  // CONSTRAINTS
+  // Spec Constraints
+  omitFacetOverPositionalChannels?: boolean;
+  omitMultipleNonPositionalChannels?: boolean;
+  omitRepeatedField?: boolean;
+  omitNonPositionalOverPositionalChannels?: boolean;
+  omitVerticalDotPlot?: boolean;
+
+  // Encoding Constraints
+  typeMatchesSchemaType?: boolean;
 }
 
 export const DEFAULT_QUERY_CONFIG: QueryConfig = {
@@ -58,9 +69,21 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   // TODO: what about bin parameter
   bins: [true, false],
   timeUnits: [TimeUnit.MONTH],
-  types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL]
+  types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
-  // TODO: bin, scaleType, etc.
+  // TODO: scaleType, etc.
+
+
+  // CONSTRAINTS
+  // Spec Constraints
+  omitFacetOverPositionalChannels: true,
+  omitMultipleNonPositionalChannels: true,
+  omitRepeatedField: true,
+  omitNonPositionalOverPositionalChannels: true,
+  omitVerticalDotPlot: true,
+
+  // Encoding Constraints
+  typeMatchesSchemaType: true
 };
 
 /** Enum for a short form of the enumeration spec. */
