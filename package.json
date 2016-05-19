@@ -54,12 +54,14 @@
     "nodemon": "^1.8.1",
     "source-map-support": "^0.4.0",
     "tsify": "^0.13.2",
-    "tslint": "^3.3.0",
+    "tslint": "^3.10.0",
     "typescript": "^1.7.5",
+    "vega": "^2.5.2",
     "uglify-js": "^2.6.1"
   },
   "dependencies": {
-    "vega-lite": "^1.0.8"
+    "vega-lite": "^1.0.9",
+    "vega-datasets": "latest"
   },
   "browserify": {
     "transform": [
