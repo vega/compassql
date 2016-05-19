@@ -91,6 +91,16 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
   //   properties: [Property.TYPE, Property.BIN]
   },
   {
+    name: 'typeMatchesSchemaType',
+    description: 'Enumerated data type of a field should match the field\'s type in the schema.',
+    properties: [Property.FIELD, Property.TYPE],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      return schema.type(encodingQ.field as string) === encodingQ.type;
+    }
+  },
+  {
     name: 'typeMatchesPrimitiveType',
     description: 'Data type should be supported by field\'s primitive type.',
     properties: [Property.FIELD, Property.TYPE],
@@ -104,9 +114,12 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
         case PrimitiveType.BOOLEAN:
         case PrimitiveType.STRING:
           return type !== Type.QUANTITATIVE && type !== Type.TEMPORAL;
-        case PrimitiveType.DATE: // TODO: reconsider if date should support quantitative
         case PrimitiveType.NUMBER:
-          return true;
+        case PrimitiveType.INTEGER:
+          return type !== Type.TEMPORAL;
+        case PrimitiveType.DATE:
+          // TODO: add NOMINAL, ORDINAL support after we support this in Vega-Lite
+          return type === Type.TEMPORAL;
       }
       throw new Error('Not implemented');
     }

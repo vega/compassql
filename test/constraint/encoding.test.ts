@@ -107,6 +107,28 @@ describe('constraints/encoding', () => {
     });
   });
 
+  describe('typeMatchesSchemaType', () => {
+    let encQ: EncodingQuery = {
+      channel: Channel.X,
+      field: 'mystring',
+      type: undefined
+    };
+
+    it('should return false if type does not match schema\'s type', () => {
+      [Type.TEMPORAL, Type.QUANTITATIVE, Type.NOMINAL].forEach((type) => {
+        encQ.type = type;
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(encQ, schema, defaultOpt));
+      });
+    });
+
+    it('should return true if string matches schema\'s type ', () => {
+      [Type.ORDINAL].forEach((type) => {
+        encQ.type = type;
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(encQ, schema, defaultOpt));
+      });
+    });
+  });
+
   describe('typeMatchesPrimitiveType', () => {
     let encQ: EncodingQuery = {
       channel: Channel.X,

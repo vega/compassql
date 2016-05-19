@@ -83,7 +83,48 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       });
     }
   },
+  {
+    name: 'hasAllRequiredChannelsForMark',
+    description: 'All required channels for the specified mark should be specified',
+    properties: [Property.CHANNEL, Property.MARK],
+    requireAllProperties: true,
+    strict: true,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const mark = specQ.getMark();
+
+      switch (mark) {
+        case Mark.AREA:
+        case Mark.LINE:
+          return specQ.channelUsed(Channel.X) && specQ.channelUsed(Channel.Y);
+        case Mark.TEXT:
+          return specQ.channelUsed(Channel.TEXT);
+        case Mark.BAR:
+        case Mark.CIRCLE:
+        case Mark.POINT:
+        case Mark.SQUARE:
+        case Mark.TICK:
+          return true;
+        case Mark.RULE:
+          return specQ.channelUsed(Channel.X) || specQ.channelUsed(Channel.Y);
+      }
+      throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
+    }
+  },
+  // TODO: noBarWithLogScale
   // TODO: omitRawWithXYBothDimension
+  {
+    name: 'omitFacetOverPositionalChannels',
+    description: 'Do not use non-positional channels unless all positional channels are used',
+    properties: [Property.CHANNEL],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      return specQ.channelUsed(Channel.ROW) || specQ.channelUsed(Channel.COLUMN) ?
+      // if non-positional channels are used, then both x and y must be used.
+      specQ.channelUsed(Channel.X) && specQ.channelUsed(Channel.Y) :
+      true;
+    }
+  },
   {
     name: 'omitMultipleNonPositionalChannels',
     description: 'Do not use multiple non-positional encoding channel to avoid over-encoding.',
@@ -107,8 +148,58 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       return true;
     }
   },
+  {
+    name: 'omitNonPositionalOverPositionalChannels',
+    description: 'Do not use non-positional channels unless all positional channels are used',
+    properties: [Property.CHANNEL],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      return some(NONSPATIAL_CHANNELS, (channel) => {
+        return specQ.channelUsed(channel) ?
+        // if non-positional channels are used, then both x and y must be used.
+        specQ.channelUsed(Channel.X) && specQ.channelUsed(Channel.Y) :
+        true;
+      });
+    }
+  },
+  {
+    name: 'omitRepeatedField',
+    description: 'Each field should be mapped to only one channel',
+    properties: [Property.FIELD],
+    requireAllProperties: false,
+    strict: false, // over-encoding is sometimes good, but let's turn it off by default
+    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      let usedField = {};
 
-  // TODO: hasAllRequiredChannelForMark
+      // the same field should not be encoded twice
+      return every(specQ.getEncodings(), (encQ) => {
+        if (!isEnumSpec(encQ.field)) {
+          // If field is specified, it should not be used already
+          if (usedField[encQ.field]) {
+            return false;
+          }
+          usedField[encQ.field] = true;
+          return true;
+        }
+        return true; // unspecified field is valid
+      });
+    }
+  },
+  {
+    name: 'omitVerticalDotPlot',
+    description: 'Do not output vertical dot plot.',
+    properties: [Property.CHANNEL],
+    requireAllProperties: false,
+    strict: false,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const encodings = specQ.getEncodings();
+      if (encodings.length === 1 && encodings[0].channel === Channel.Y) {
+        return false;
+      }
+      return true;
+    }
+  },
   // TODO: noRawTimeGroupingForAggregation
   {
     name: 'noRepeatedChannel',
@@ -130,29 +221,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           return true;
         }
         return true; // unspecified channel is valid
-      });
-    }
-  },
-  {
-    name: 'noRepeatedField',
-    description: 'Each field should be mapped to only one channel',
-    properties: [Property.FIELD],
-    requireAllProperties: false,
-    strict: false, // over-encoding is sometimes good, but let's turn it off by default
-    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      let usedField = {};
-
-      // the same field should not be encoded twice
-      return every(specQ.getEncodings(), (encQ) => {
-        if (!isEnumSpec(encQ.field)) {
-          // If field is specified, it should not be used already
-          if (usedField[encQ.field]) {
-            return false;
-          }
-          usedField[encQ.field] = true;
-          return true;
-        }
-        return true; // unspecified field is valid
       });
     }
   }

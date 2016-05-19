@@ -12,7 +12,7 @@ import {Property} from './property';
 import {duplicate, keys} from './util';
 
 export interface QueryConfig {
-  propertyPrecedence: Property[];
+  propertyPrecedence?: Property[];
 
   /** Defautl marks to enumerate. */
   marks?: Mark[];
