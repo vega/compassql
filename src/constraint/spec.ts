@@ -1,16 +1,16 @@
-import {Channel, supportMark} from 'vega-lite/src/channel';
+import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 import {Property} from '../property';
 import {Schema} from '../schema';
-import {SpecQueryModel, isEnumSpec} from '../query';
+import {SpecQueryModel, isEnumSpec, QueryConfig} from '../query';
 import {every, some} from '../util';
 
 
 export interface SpecConstraintChecker {
-  (specQ: SpecQueryModel, schema: Schema): boolean;
+  (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig): boolean;
 }
 
 export class SpecConstraintModel extends AbstractConstraintModel {
@@ -18,7 +18,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
     super(specConstraint);
   }
 
-  public satisfy(specQ: SpecQueryModel, schema: Schema) {
+  public satisfy(specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) {
     // TODO: Re-order logic to optimize the "requireAllProperties" check
 
     if (this.constraint.requireAllProperties) {
@@ -52,7 +52,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
         return true; // Return true since the query still satisfy the constraint.
       }
     }
-    return (this.constraint as SpecConstraint).satisfy(specQ, schema);
+    return (this.constraint as SpecConstraint).satisfy(specQ, schema, opt);
   }
 }
 
@@ -68,7 +68,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.MARK],
     requireAllProperties: false, // only require mark
     strict: true,
-    satisfy: (specQ: SpecQueryModel, schema: Schema) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const mark = specQ.getMark();
 
       // if mark is unspecified, no need to check
@@ -90,7 +90,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     requireAllProperties: false,
     strict: false,
-    satisfy: (specQ: SpecQueryModel, schema: Schema) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const encodings = specQ.getEncodings();
       let nonPositionChannelCount = 0;
       for (let i = 0; i < encodings.length; i++) {
@@ -116,7 +116,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     requireAllProperties: false,
     strict: true,
-    satisfy: (specQ: SpecQueryModel, schema: Schema) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       let usedChannel = {};
 
       // channel for all encodings should be valid
@@ -139,7 +139,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.FIELD],
     requireAllProperties: false,
     strict: false, // over-encoding is sometimes good, but let's turn it off by default
-    satisfy: (specQ: SpecQueryModel, schema: Schema) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       let usedField = {};
 
       // the same field should not be encoded twice

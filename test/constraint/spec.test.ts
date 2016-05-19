@@ -6,9 +6,10 @@ import {Type} from 'vega-lite/src/type';
 
 import {SPEC_CONSTRAINT_INDEX} from '../../src/constraint/spec';
 import {Schema} from '../../src/schema';
-import {SpecQueryModel} from '../../src/query';
+import {DEFAULT_QUERY_CONFIG, SpecQueryModel} from '../../src/query';
 
 describe('constraints/spec', () => {
+  const defaultOpt = DEFAULT_QUERY_CONFIG;
   const schema = new Schema([]);
 
   describe('channelPermittedByMarkType', () => {
@@ -20,7 +21,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['channelPermittedByMarkType'].satisfy(specQ, schema));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['channelPermittedByMarkType'].satisfy(specQ, schema, defaultOpt));
     });
 
     it('should return false for unsupported channel', () => {
@@ -31,7 +32,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['channelPermittedByMarkType'].satisfy(specQ, schema));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['channelPermittedByMarkType'].satisfy(specQ, schema, defaultOpt));
     });
   });
 
@@ -44,7 +45,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specQ, schema));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specQ, schema, defaultOpt));
     });
 
     it('should return false when there are repeated channels', function() {
@@ -56,7 +57,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specQ, schema));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specQ, schema, defaultOpt));
     });
   });
 
@@ -70,7 +71,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['noRepeatedField'].satisfy(specQ, schema));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['noRepeatedField'].satisfy(specQ, schema, defaultOpt));
     });
 
     it('should return false when there are repeated field', function() {
@@ -82,7 +83,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['noRepeatedField'].satisfy(specQ, schema));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['noRepeatedField'].satisfy(specQ, schema, defaultOpt));
     });
   });
 
@@ -97,7 +98,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema, defaultOpt));
     });
 
     it('should return true if there are one non-positional channels', () => {
@@ -110,7 +111,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema, defaultOpt));
     });
 
     it('should return false if there are multiple non-positional channels', () => {
@@ -124,7 +125,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema, defaultOpt));
     });
   });
 });

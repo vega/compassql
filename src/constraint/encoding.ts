@@ -1,7 +1,7 @@
 import {Type} from 'vega-lite/src/type';
 
 import {Property} from '../property';
-import {EncodingQuery, isEnumSpec} from '../query';
+import {EncodingQuery, isEnumSpec, QueryConfig} from '../query';
 import {PrimitiveType, Schema} from '../schema';
 import {some} from '../util';
 
@@ -13,7 +13,7 @@ import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 /** A method for satisfying whether the provided encoding query satisfy the constraint. */
 export interface EncodingConstraintChecker {
-  (encodingQ: EncodingQuery, schema: Schema): boolean;
+  (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean;
 }
 
 export class EncodingConstraintModel extends AbstractConstraintModel {
@@ -21,7 +21,7 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
     super(constraint);
   }
 
-  public satisfy(encodingQ: EncodingQuery, schema: Schema): boolean {
+  public satisfy(encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean {
     // TODO: Re-order logic to optimize the "requireAllProperties" check
     if (this.constraint.requireAllProperties) {
       // TODO: extract as a method and do unit test
@@ -34,7 +34,7 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
         return true; // Return true since the query still satisfy the constraint.
       }
     }
-    return (this.constraint as EncodingConstraint).satisfy(encodingQ, schema);
+    return (this.constraint as EncodingConstraint).satisfy(encodingQ, schema, opt);
   }
 }
 
@@ -51,20 +51,22 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.AGGREGATE],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encodingQ: EncodingQuery, schema: Schema) => {
+    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encodingQ.aggregate) {
         return encodingQ.type !== Type.ORDINAL && encodingQ.type !== Type.NOMINAL;
       }
       // TODO: some aggregate function are actually supported by ordinal
       return true; // no aggregate is okay with any type.
     }
+  // TODO: minCardinalityForBin
+  // TODO: omitBinWithLogScale
   },{
     name: 'onlyOneTypeOfFunction',
     description: 'Only of of aggregate, timeUnit, or bin should be applied at the same time.',
     properties: [Property.AGGREGATE, Property.TIMEUNIT, Property.BIN],
     requireAllProperties: false,
     strict: true,
-    satisfy: (encodingQ: EncodingQuery, schema: Schema) => {
+    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       const numFn = (!isEnumSpec(encodingQ.aggregate) && !!encodingQ.aggregate ? 1 : 0) +
         (!isEnumSpec(encodingQ.bin) && !!encodingQ.bin ? 1 : 0) +
         (!isEnumSpec(encodingQ.timeUnit) && !!encodingQ.timeUnit ? 1 : 0);
@@ -76,7 +78,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.TIMEUNIT],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encodingQ: EncodingQuery, schema: Schema) => {
+    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encodingQ.timeUnit && encodingQ.type !== Type.TEMPORAL) {
         return false;
       }
@@ -94,7 +96,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.FIELD, Property.TYPE],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encodingQ: EncodingQuery, schema: Schema) => {
+    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       const primitiveType = schema.primitiveType(encodingQ.field as string);
       const type = encodingQ.type;
 

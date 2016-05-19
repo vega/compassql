@@ -7,13 +7,14 @@ import {SPEC_CONSTRAINTS_BY_PROPERTY, SpecConstraintModel} from './constraint/sp
 
 
 import {Property, ENCODING_PROPERTIES} from './property';
-import {EnumSpec, QueryConfig, SpecQuery, SpecQueryModel, initEnumSpec, isEnumSpec} from './query';
+import {EnumSpec, QueryConfig, SpecQuery, SpecQueryModel, initEnumSpec, isEnumSpec, DEFAULT_QUERY_CONFIG} from './query';
 import {Schema} from './Schema';
-import {every} from './util';
+import {every, extend} from './util';
 
 export let ENUMERATOR_INDEX: {[property: string]: EnumeratorFactory} = {};
 
-export function generate(specQuery: SpecQuery, schema: Schema, opt: QueryConfig) {
+export function generate(specQuery: SpecQuery, schema: Schema, opt: QueryConfig = {}) {
+  opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
   // 1. Detect enumeration specifiers, append them to enumJobs
   // and replace short enum specs with full ones.
   const enumJob = initEnumJobs(specQuery, schema, opt);
@@ -119,7 +120,7 @@ ENUMERATOR_INDEX[Property.MARK] = (enumJob: EnumJob, schema: Schema, opt: QueryC
       // Check spec constraint
       const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[Property.MARK] || [];
       const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
-        return c.satisfy(specQ, schema);
+        return c.satisfy(specQ, schema, opt);
       });
 
       if (satisfySpecConstraints) {
@@ -160,7 +161,7 @@ export function EncodingPropertyGeneratorFactory(property: Property) {
           const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[property] || [];
           const satisfyEncodingConstraints = every(encodingConstraints, (c: EncodingConstraintModel) => {
             // TODO: check if the constraint is enabled
-            return c.satisfy(specQ.getEncodingQueryByIndex(encodingIndex), schema);
+            return c.satisfy(specQ.getEncodingQueryByIndex(encodingIndex), schema, opt);
           });
 
           if (!satisfyEncodingConstraints) {
@@ -171,7 +172,7 @@ export function EncodingPropertyGeneratorFactory(property: Property) {
           const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[property] || [];
           const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
             // TODO: check if the constraint is enabled
-            return c.satisfy(specQ, schema);
+            return c.satisfy(specQ, schema, opt);
           });
 
           if (!satisfySpecConstraints) {
