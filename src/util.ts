@@ -2,7 +2,7 @@ export let isArray = Array.isArray || function (obj) {
   return {}.toString.call(obj) === '[object Array]';
 };
 
-export function isin(item, array) {
+export function isin(item: any, array: any[]) {
     return array.indexOf(item) !== -1;
 };
 

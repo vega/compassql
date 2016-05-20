@@ -61,6 +61,19 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
   // TODO: minCardinalityForBin
   // TODO: omitBinWithLogScale
   },{
+    name: 'binAppliedForQuantitative',
+    description: 'bin should be applied to quantitative field only.',
+    properties: [Property.TYPE, Property.BIN],
+    requireAllProperties: true,
+    strict: true,
+    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      if (encodingQ.bin) {
+        // If binned, the type must be quantitative
+        return encodingQ.type === Type.QUANTITATIVE;
+      }
+      return true;
+    }
+  },{
     name: 'onlyOneTypeOfFunction',
     description: 'Only of of aggregate, timeUnit, or bin should be applied at the same time.',
     properties: [Property.AGGREGATE, Property.TIMEUNIT, Property.BIN],
@@ -84,11 +97,6 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       }
       return true;
     }
-  // TODO: fill the rest of this
-  // },{
-  //   name: 'binAppliedForQuantitative',
-  //   description: 'bin should be applied to quantitative field only.',
-  //   properties: [Property.TYPE, Property.BIN]
   },
   {
     name: 'typeMatchesSchemaType',

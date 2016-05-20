@@ -9,7 +9,7 @@ import {Type} from 'vega-lite/src/Type';
 import {Spec} from 'vega-lite/src/Spec';
 
 import {Property} from './property';
-import {duplicate, keys} from './util';
+import {isin, duplicate, keys, some} from './util';
 
 export interface QueryConfig {
   propertyPrecedence?: Property[];
@@ -39,9 +39,16 @@ export interface QueryConfig {
   // Spec Constraints
   omitFacetOverPositionalChannels?: boolean;
   omitMultipleNonPositionalChannels?: boolean;
+  omitRawContinuousFieldForAggregatePlot?: boolean;
+  omitRawWithXYBothOrdinalScale?: boolean;
   omitRepeatedField?: boolean;
   omitNonPositionalOverPositionalChannels?: boolean;
   omitVerticalDotPlot?: boolean;
+
+  preferredBinAxis?: Channel;
+  preferredTemporalAxis?: Channel;
+  preferredOrdinalAxis?: Channel;
+  preferredNominalAxis?: Channel;
 
   // Encoding Constraints
   typeMatchesSchemaType?: boolean;
@@ -78,10 +85,16 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   // Spec Constraints
   omitFacetOverPositionalChannels: true,
   omitMultipleNonPositionalChannels: true,
+  omitRawContinuousFieldForAggregatePlot: true,
+  omitRawWithXYBothOrdinalScale: true,
   omitRepeatedField: true,
   omitNonPositionalOverPositionalChannels: true,
   omitVerticalDotPlot: true,
 
+  preferredBinAxis: Channel.X,
+  preferredTemporalAxis: Channel.X,
+  preferredOrdinalAxis: Channel.Y, // ordinal on y makes it easier to read.
+  preferredNominalAxis: Channel.Y, // nominal on y makes it easier to read.
   // Encoding Constraints
   typeMatchesSchemaType: true
 };
@@ -192,6 +205,18 @@ export class SpecQueryModel {
 
   public hasAllChannelAssigned() {
     return keys(this.encodingMap).length === this.spec.encodings.length;
+  }
+
+  public isDimension(channel: Channel) {
+    const encQ = this.encodingMap[channel];
+
+    return isin(encQ.type, [Type.NOMINAL, Type.ORDINAL]) ||
+      (!isEnumSpec(encQ.bin) && !!encQ.bin) ||
+      (encQ.type === Type.TEMPORAL && !isEnumSpec(encQ.timeUnit) && !!encQ.timeUnit);
+  }
+
+  public isAggregate() {
+    return some(this.spec.encodings, (encQ: EncodingQuery) => (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate));
   }
 
   /**

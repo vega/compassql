@@ -56,6 +56,35 @@ describe('constraints/encoding', () => {
     });
   });
 
+  describe('binAppliedForQuantitative', () => {
+    let encQ: EncodingQuery = {
+      channel: Channel.X,
+      bin: true,
+      field: 'A',
+      type: undefined
+    };
+
+    it('should return false if bin is applied to non-quantitative type', () => {
+      [Type.NOMINAL, Type.ORDINAL, Type.TEMPORAL].forEach((type) => {
+        encQ.type = type;
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['binAppliedForQuantitative'].satisfy(encQ, schema, defaultOpt));
+      });
+    });
+
+    it('should return true if bin is applied to quantitative type', () => {
+      encQ.type = Type.QUANTITATIVE;
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['binAppliedForQuantitative'].satisfy(encQ, schema, defaultOpt));
+    });
+
+    it('should return true for any non-binned field', () => {
+      encQ.bin = undefined;
+      [Type.NOMINAL, Type.ORDINAL, Type.TEMPORAL, Type.QUANTITATIVE].forEach((type) => {
+        encQ.type = type;
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['binAppliedForQuantitative'].satisfy(encQ, schema, defaultOpt));
+      });
+    });
+  });
+
   describe('onlyOneTypeOfFunction', () => {
     const encQ: EncodingQuery = {
         channel: Channel.X,

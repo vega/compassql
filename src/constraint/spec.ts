@@ -1,11 +1,12 @@
 import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
+import {Type} from 'vega-lite/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 import {Property} from '../property';
 import {Schema} from '../schema';
-import {SpecQueryModel, isEnumSpec, QueryConfig} from '../query';
+import {EncodingQuery, QueryConfig, SpecQueryModel, isEnumSpec} from '../query';
 import {every, some} from '../util';
 
 
@@ -61,6 +62,26 @@ export interface SpecConstraint extends AbstractConstraint {
   satisfy: SpecConstraintChecker;
 }
 
+/**
+ * Factory function for satisfy preferred type constraints.
+ */
+function satisfyPreferredType(theType: Type, configName: string) {
+  return (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    const xEncQ = specQ.getEncodingQueryByChannel(Channel.X);
+    const yEncQ = specQ.getEncodingQueryByChannel(Channel.Y);
+    const xIsTheType = xEncQ && xEncQ.type === theType;
+    const yIsTheType = yEncQ && yEncQ.type === theType;
+
+    return !yEncQ || !xEncQ ||      // have one axis
+      (xIsTheType && yIsTheType) || // Both X & Y are the type
+      (!xIsTheType && !yIsTheType) || // None of them are the type
+      // x is the only axis of the type and is the preferred one.
+      (xIsTheType && opt[configName] === Channel.X) ||
+      // y is the only axis of the type and is the preferred one.
+      (yIsTheType && opt[configName] === Channel.Y);
+  };
+}
+
 export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'channelPermittedByMarkType',
@@ -83,6 +104,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       });
     }
   },
+  // TODO: channelsSupportRoles
   {
     name: 'hasAllRequiredChannelsForMark',
     description: 'All required channels for the specified mark should be specified',
@@ -110,8 +132,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
     }
   },
-  // TODO: noBarWithLogScale
-  // TODO: omitRawWithXYBothDimension
+  // TODO: omitBarWithSize
   {
     name: 'omitFacetOverPositionalChannels',
     description: 'Do not use non-positional channels unless all positional channels are used',
@@ -125,6 +146,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       true;
     }
   },
+  // TODO: omitLengthForLogScale (Bar/Area)
   {
     name: 'omitMultipleNonPositionalChannels',
     description: 'Do not use multiple non-positional encoding channel to avoid over-encoding.',
@@ -162,6 +184,44 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
+    name: 'omitRawContinuousFieldForAggregatePlot',
+    description: 'Aggregate plot should not use raw continuous field as group by values. ' +
+      '(Quantitative should be binned. Temporal should have time unit.)',
+    properties: [Property.AGGREGATE, Property.TIMEUNIT, Property.BIN, Property.TYPE],
+    requireAllProperties: false,
+    strict: false,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+       if (specQ.isAggregate()) {
+         return every(specQ.getEncodings(), (encQ: EncodingQuery) => {
+           if (encQ.type === Type.TEMPORAL) {
+             // Temporal fields should have timeUnit or is still an enumSpec
+             return !!encQ.timeUnit;
+           }
+           if (encQ.type === Type.QUANTITATIVE) {
+             return !!encQ.bin;
+           }
+           return true;
+         });
+       }
+       return true;
+    }
+  },
+  {
+    name: 'omitRawWithXYBothOrdinalScale',
+    description: 'Raw plot should not have ordinal scales for both x and y',
+    // isDimension takes bin and timeUnit.
+    properties: [Property.CHANNEL, Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.TYPE],
+    // FIXME: rewrite a version that do not require all properties
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      if (!specQ.isAggregate()) {
+        return !(specQ.isDimension(Channel.X) && specQ.isDimension(Channel.Y));
+      }
+      return true;
+    }
+  },
+  {
     name: 'omitRepeatedField',
     description: 'Each field should be mapped to only one channel',
     properties: [Property.FIELD],
@@ -184,6 +244,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       });
     }
   },
+  // TODO: omitShapeWithBin
   {
     name: 'omitVerticalDotPlot',
     description: 'Do not output vertical dot plot.',
@@ -198,7 +259,50 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       return true;
     }
   },
-  // TODO: noRawTimeGroupingForAggregation
+  {
+    name: 'preferredBinAxis',
+    description: 'Always use preferred axis for a binned field.',
+    properties: [Property.CHANNEL, Property.BIN],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const xEncQ = specQ.getEncodingQueryByChannel(Channel.X);
+      const yEncQ = specQ.getEncodingQueryByChannel(Channel.Y);
+      const xBin = xEncQ && !!xEncQ.bin;
+      const yBin = yEncQ && !!yEncQ.bin;
+
+      return (xBin && yBin) || // Both X & Y are binned
+        (!xBin && !yBin) || // None of them are binned
+        // x is the only binned axis and is the preferred one.
+        (xBin && opt.preferredBinAxis === Channel.X) ||
+        // y is the only binned axis and is the preferred one.
+        (yBin && opt.preferredBinAxis === Channel.Y);
+    }
+  },
+  {
+    name: 'preferredTemporalAxis',
+    description: 'Always use preferred axis for a time field.',
+    properties: [Property.CHANNEL, Property.TYPE],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: satisfyPreferredType(Type.TEMPORAL, 'preferredTemporalAxis')
+  },
+  {
+    name: 'preferredOrdinalAxis',
+    description: 'Always use preferred axis for an ordinal field.',
+    properties: [Property.CHANNEL, Property.TYPE],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: satisfyPreferredType(Type.ORDINAL, 'preferredOrdinalAxis')
+  },
+  {
+    name: 'preferredNominalAxis',
+    description: 'Always use preferred axis for a nominal field.',
+    properties: [Property.CHANNEL, Property.TYPE],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: satisfyPreferredType(Type.NOMINAL, 'preferredNominalAxis')
+  },
   {
     name: 'noRepeatedChannel',
     description: 'Each encoding channel should only be used once.',

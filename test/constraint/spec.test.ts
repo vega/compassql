@@ -1,7 +1,9 @@
 import {assert} from 'chai';
 
 import {Mark} from 'vega-lite/src/mark';
+import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
+import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX} from '../../src/constraint/spec';
@@ -220,6 +222,124 @@ describe('constraints/spec', () => {
     });
   });
 
+  describe('omitRawContinuousFieldForAggregatePlot', () => {
+    it('should return false if the aggregate plot groups by a raw temporal field', () => {
+      const specQ = new SpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'C', type: Type.TEMPORAL}
+          ]
+        });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true if the aggregate plot groups by a temporal field with timeUnit', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, timeUnit: TimeUnit.MONTH, field: 'C', type: Type.TEMPORAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true if the aggregate plot groups by a temporal field with timeUnit as enumSpec', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, timeUnit: {enumValues: [TimeUnit.MONTH, undefined]}, field: 'C', type: Type.TEMPORAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return false if the aggregate plot groups by a raw quantitative field', () => {
+      const specQ = new SpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'C', type: Type.QUANTITATIVE}
+          ]
+        });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true if the aggregate plot groups by a binned quantitative field', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, bin: true, field: 'C', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true if the aggregate plot groups by a quantitative field with bin as enumSpec', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, bin: {enumValues: [true, false]}, field: 'C', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true for any raw plot', () => {
+      [TimeUnit.MONTH, undefined, {enumValues: [TimeUnit.MONTH, undefined]}].forEach((timeUnit) => {
+        const specQ = new SpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+            {channel: Channel.Y, timeUnit: timeUnit, field: 'C', type: Type.TEMPORAL}
+          ]
+        });
+
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+      });
+    });
+  });
+
+  describe('omitRawWithXYBothOrdinalScale', () => {
+    it('should return false if the raw spec has dimensions on both x and y', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawWithXYBothOrdinalScale'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true if the raw spec has dimensions on both x and y', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawWithXYBothOrdinalScale'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true for aggregate', () => {
+      // TODO:
+    });
+  });
+
   describe('omitRepeatedField', () => {
     it('should return true when there is no repeated field', function() {
       const specQ = new SpecQueryModel({
@@ -268,6 +388,168 @@ describe('constraints/spec', () => {
       });
 
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitVerticalDotPlot'].satisfy(specQ, schema, defaultOpt));
+    });
+  });
+
+  describe('preferredBinAxis', () => {
+    it('should return true if both axes are binned', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, bin: true, field: 'A', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, bin: true, field: 'B', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredBinAxis'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true if both axes are not binned', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, field: 'B', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredBinAxis'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true if the preferred axis is binned', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, bin: true, field: 'A', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, field: 'B', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredBinAxis'].satisfy(specQ, schema, defaultOpt));
+
+      // TODO: add another case for yEncQ
+    });
+
+    it('should return false if the non-preferred axis is the only one that is binned', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, bin: true, field: 'B', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['preferredBinAxis'].satisfy(specQ, schema, defaultOpt));
+
+      // TODO: add another case for yEncQ
+    });
+  });
+
+  describe('preferredTemporalAxis', () => {
+    it('should return true if both axes are temporal', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.TEMPORAL},
+          {channel: Channel.Y, field: 'B', type: Type.TEMPORAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredTemporalAxis'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true if both axes are not temporal', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, field: 'B', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredTemporalAxis'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true if the preferred axis is binned', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.TEMPORAL},
+          {channel: Channel.Y, field: 'B', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredTemporalAxis'].satisfy(specQ, schema, defaultOpt));
+
+      // TODO: add another case for yEncQ
+    });
+
+    it('should return false if the non-preferred axis is the only one that is temporal', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, field: 'B', type: Type.TEMPORAL}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['preferredTemporalAxis'].satisfy(specQ, schema, defaultOpt));
+
+      // TODO: add another case for yEncQ
+    });
+  });
+
+  describe('preferredOrdinalAxis', () => {
+    it('should return true if both axes are ordinal', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.ORDINAL},
+          {channel: Channel.Y, field: 'B', type: Type.ORDINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true if both axes are not ordinal', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.ORDINAL},
+          {channel: Channel.Y, field: 'B', type: Type.ORDINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true if the preferred axis is binned', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.Y, field: 'A', type: Type.ORDINAL},
+          {channel: Channel.X, field: 'B', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, defaultOpt));
+
+      // TODO: add another case for yEncQ
+    });
+
+    it('should return false if the non-preferred axis is the only one that is temporal', () => {
+      const specQ = new SpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.Y, field: 'A', type: Type.QUANTITATIVE},
+          {channel: Channel.X, field: 'B', type: Type.ORDINAL}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, defaultOpt));
+
+      // TODO: add another case for yEncQ
     });
   });
 });
