@@ -5,9 +5,9 @@ import {Mark} from 'vega-lite/src/mark';
 import {ENCODING_CONSTRAINTS_BY_PROPERTY, EncodingConstraintModel} from './constraint/encoding';
 import {SPEC_CONSTRAINTS_BY_PROPERTY, SpecConstraintModel} from './constraint/spec';
 
-
+import {SpecQueryModel} from './model';
 import {Property, ENCODING_PROPERTIES} from './property';
-import {EnumSpec, QueryConfig, SpecQuery, SpecQueryModel, initEnumSpec, isEnumSpec, DEFAULT_QUERY_CONFIG} from './query';
+import {EnumSpec, QueryConfig, SpecQuery, initEnumSpec, isEnumSpec, DEFAULT_QUERY_CONFIG} from './query';
 import {Schema} from './Schema';
 import {every, extend} from './util';
 

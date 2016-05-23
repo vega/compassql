@@ -4,7 +4,7 @@ import {Mark} from 'vega-lite/src/mark';
 import {Channel} from 'vega-lite/src/channel';
 import {Type} from 'vega-lite/src/type';
 
-import {SpecQueryModel} from '../src/query';
+import {SpecQueryModel} from '../src/model';
 
 describe('SpecQueryModel', () => {
   describe('toSpec', () => {

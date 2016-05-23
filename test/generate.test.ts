@@ -4,9 +4,10 @@ import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
 import {initEnumJobs, ENUMERATOR_INDEX} from '../src/generate';
+import {SpecQueryModel} from '../src/model';
 import {Property} from '../src/property';
 import {Schema} from '../src/schema';
-import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery, SpecQueryModel} from '../src/query';
+import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery} from '../src/query';
 import {duplicate, extend} from '../src/util';
 
 
