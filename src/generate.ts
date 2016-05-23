@@ -5,9 +5,9 @@ import {Mark} from 'vega-lite/src/mark';
 import {ENCODING_CONSTRAINTS_BY_PROPERTY, EncodingConstraintModel} from './constraint/encoding';
 import {SPEC_CONSTRAINTS_BY_PROPERTY, SpecConstraintModel} from './constraint/spec';
 
-import {SpecQueryModel} from './model';
+import {EnumSpecIndex, EnumSpecIndexTuple, SpecQueryModel} from './model';
 import {Property, ENCODING_PROPERTIES} from './property';
-import {EnumSpec, QueryConfig, SpecQuery, initEnumSpec, isEnumSpec, DEFAULT_QUERY_CONFIG} from './query';
+import {EnumSpec, QueryConfig, SpecQuery, DEFAULT_QUERY_CONFIG} from './query';
 import {Schema} from './Schema';
 import {every, extend} from './util';
 
@@ -15,91 +15,23 @@ export let ENUMERATOR_INDEX: {[property: string]: EnumeratorFactory} = {};
 
 export function generate(specQuery: SpecQuery, schema: Schema, opt: QueryConfig = {}) {
   opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
-  // 1. Detect enumeration specifiers, append them to enumJobs
-  // and replace short enum specs with full ones.
 
-  // TODO: rename to enumSpecIndex?
-  const enumJob = initEnumJobs(specQuery, schema, opt);
+  // 1. Build a SpecQueryModel, which also contains enumSpecIndex
+  const specModel = SpecQueryModel.build(specQuery, schema, opt);
+  const enumSpecIndex = specModel.enumSpecIndex;
 
   // 2. Enumerate each of the properties based on propertyPrecedence.
 
-  let answerSet = [new SpecQueryModel(specQuery)]; // Initialize Answer Set with only the input spec query.
+  let answerSet = [specModel]; // Initialize Answer Set with only the input spec query.
   opt.propertyPrecedence.forEach((property) => {
     // If the original specQuery contains enumSpec for this property type
-    if (enumJob[property]) {
+    if (enumSpecIndex[property]) {
       // update answerset
-      answerSet = answerSet.reduce(ENUMERATOR_INDEX[property](enumJob, schema, opt), []);
+      answerSet = answerSet.reduce(ENUMERATOR_INDEX[property](enumSpecIndex, schema, opt), []);
     }
   });
 
   return answerSet;
-}
-
-
-export interface EnumJob {
-  /** Whether this enumerate job requires enumerating mask. */
-  mark?: boolean;
-
-  /** List of indices of encoding mappings that require channel enumeration. */
-  channel?: number[];
-
-  /** List of indices of encoding mappings that require aggregate enumeration. */
-  aggregate?: number[];
-
-  /** List of indices of encoding mappings that require bin enumeration. */
-  bin?: number[];
-
-  /** List of indices of encoding mappings that require timeUnit enumeration. */
-  timeunit?: number[];
-
-  /** List of indices of encoding mappings that require field enumeration. */
-  field?: number[];
-
-  /** List of indices of encoding mappings that require type enumeration. */
-  type?: number[];
-}
-
-
-/**
- * Detect enumeration specifiers in the input specQuery and
- * replace short enum specs with full ones.
- *
- * @return an enumJob object.
- */
-export function initEnumJobs(specQ: SpecQuery, schema: Schema, opt: QueryConfig): EnumJob {
-  let enumJob: EnumJob = {};
-
-  // FIXME replace 'M', 'C', 'A', etc. with proper constant names
-
-  // mark
-  if (isEnumSpec(specQ.mark)) {
-    enumJob[Property.MARK] = true;
-    specQ.mark = initEnumSpec(specQ.mark, 'm', opt.marks);
-  }
-
-  // TODO: transform
-
-  // encodings
-  specQ.encodings.forEach((encQ, index) => {
-    // For each property of the encodingQuery, enumerate
-    ENCODING_PROPERTIES.forEach((property) => {
-      if(isEnumSpec(encQ[property])) {
-        // Add index of the encoding mapping to the property's enum job.
-        (enumJob[property] = enumJob[property] || []).push(index);
-
-        // Assign default enum spec name and enum values.
-        const defaultEnumSpecName = (property + '').substr(0, 1) + index;
-        const defaultEnumValues = property === Property.FIELD ?
-          // For field, by default enumerate all fields
-          schema.fields():
-          // For other properties, take default enumValues from config.
-          // The config name for each property is a plural form of the property.
-          opt[property+'s'];
-        encQ[property] = initEnumSpec(encQ[property], defaultEnumSpecName, defaultEnumValues);
-      }
-    });
-  });
-  return enumJob;
 }
 
 
@@ -108,10 +40,10 @@ export interface Enumerator {
 }
 
 export interface EnumeratorFactory {
-  (enumJob: EnumJob, schema: Schema, opt: QueryConfig): Enumerator;
+  (enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig): Enumerator;
 }
 
-ENUMERATOR_INDEX[Property.MARK] = (enumJob: EnumJob, schema: Schema, opt: QueryConfig): Enumerator => {
+ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig): Enumerator => {
   return (answerSet, specQ: SpecQueryModel) => {
     const markEnumSpec = specQ.getMark() as EnumSpec<Mark>;
 
@@ -137,7 +69,7 @@ ENUMERATOR_INDEX[Property.MARK] = (enumJob: EnumJob, schema: Schema, opt: QueryC
     });
 
     // Reset to avoid side effect
-    specQ.setMark(markEnumSpec);
+    specQ.resetMark();
 
     return answerSet;
   };
@@ -154,22 +86,22 @@ export function EncodingPropertyGeneratorFactory(property: Property) {
   /**
    * @return as reducer that takes specQ as input and output to an input answer set array.
    */
-  return (enumJob: EnumJob, schema: Schema, opt: QueryConfig) => {
+  return (enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig) => {
 
     return (answerSet: SpecQueryModel[], specQ: SpecQueryModel) => {
       // index of encoding mappings that require enumeration
-      const enumEncodingIndices: number[] = enumJob[property] as number[];
+      const indexTuples: EnumSpecIndexTuple<any>[] = enumSpecIndex[property];
 
       function enumerate(jobIndex: number) {
-        if (jobIndex === enumEncodingIndices.length) {
+        if (jobIndex === indexTuples.length) {
           // emit and terminate
           answerSet.push(specQ.duplicate());
           return;
         }
-        const encodingIndex = enumEncodingIndices[jobIndex];
-        const propEnumSpec = specQ.getEncodingProperty(encodingIndex, property);
+        const indexTuple = indexTuples[jobIndex];
+        const propEnumSpec = specQ.getEncodingProperty(indexTuple.index, property);
         propEnumSpec.enumValues.forEach((propVal) => {
-          specQ.setEncodingProperty(encodingIndex, property, propVal);
+          specQ.setEncodingProperty(indexTuple.index, property, propVal, indexTuple.enumSpec);
 
           // Check encoding constraint
           const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[property] || [];
@@ -177,7 +109,7 @@ export function EncodingPropertyGeneratorFactory(property: Property) {
             // Check if the constraint is enabled
             return c.strict() || !!opt[c.name()] ?
               // For strict constraint, or enabled non-strict, check the constraints
-              c.satisfy(specQ.getEncodingQueryByIndex(encodingIndex), schema, opt) :
+              c.satisfy(specQ.getEncodingQueryByIndex(indexTuple.index), schema, opt) :
               // Otherwise, return true as we don't have to check the constraint yet.
               true;
           });
@@ -206,7 +138,7 @@ export function EncodingPropertyGeneratorFactory(property: Property) {
         });
 
         // Reset to avoid side effect
-        specQ.setEncodingProperty(encodingIndex, property, propEnumSpec);
+        specQ.resetEncodingProperty(indexTuple.index, property, indexTuple.enumSpec);
       }
 
       // start enumerating from 0

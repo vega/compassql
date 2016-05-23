@@ -1,3 +1,7 @@
+export interface Dict<T> {
+  [key: string]: T;
+}
+
 export let isArray = Array.isArray || function (obj) {
   return {}.toString.call(obj) === '[object Array]';
 };

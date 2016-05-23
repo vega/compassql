@@ -73,6 +73,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       }
       return true;
     }
+  // TODO: channelsSupportRoles
   },{
     name: 'onlyOneTypeOfFunction',
     description: 'Only of of aggregate, timeUnit, or bin should be applied at the same time.',

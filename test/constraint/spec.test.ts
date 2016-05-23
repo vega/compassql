@@ -6,15 +6,18 @@ import {Channel} from 'vega-lite/src/channel';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-
 import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX} from '../../src/constraint/spec';
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
-import {DEFAULT_QUERY_CONFIG} from '../../src/query';
+import {DEFAULT_QUERY_CONFIG, SpecQuery} from '../../src/query';
 
 describe('constraints/spec', () => {
   const defaultOpt = DEFAULT_QUERY_CONFIG;
   const schema = new Schema([]);
+
+  function buildSpecQueryModel(specQ: SpecQuery) {
+    return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
+  }
 
   // Make sure all non-strict constraints have their configs.
   SPEC_CONSTRAINTS.forEach((constraint) => {
@@ -27,7 +30,7 @@ describe('constraints/spec', () => {
 
   describe('channelPermittedByMarkType', () => {
     it('should return true for supported channel', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.SHAPE, field: 'A', type: Type.NOMINAL}
@@ -38,7 +41,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return false for unsupported channel', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.SHAPE, field: 'A', type: Type.NOMINAL}
@@ -52,7 +55,7 @@ describe('constraints/spec', () => {
   describe('hasAllRequiredChannelsForMark', () => {
     it('should return true if area/line have both x and y', () => {
       [Mark.AREA, Mark.LINE].forEach((mark) => {
-        const specQ = new SpecQueryModel({
+        const specQ = buildSpecQueryModel({
           mark: mark,
           encodings: [
             {channel: Channel.X, field: '*', type: Type.NOMINAL},
@@ -66,7 +69,7 @@ describe('constraints/spec', () => {
     it('should return false if area/line have do not have x or y', () => {
       [Channel.X, Channel.Y, Channel.COLOR].forEach((channel) => {
         [Mark.AREA, Mark.LINE].forEach((mark) => {
-          const specQ = new SpecQueryModel({
+          const specQ = buildSpecQueryModel({
             mark: mark,
             encodings: [
               {channel: channel, field: '*', type: Type.NOMINAL}
@@ -92,7 +95,7 @@ describe('constraints/spec', () => {
 
   describe('noRepeatedChannel', () => {
     it('should return true when there is no repeated channels', function() {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.SHAPE, field: 'A', type: Type.NOMINAL}
@@ -103,7 +106,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return false when there are repeated channels', function() {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.SHAPE, field: 'A', type: Type.NOMINAL},
@@ -117,7 +120,7 @@ describe('constraints/spec', () => {
 
   describe('omitFacetOverPositionalChannels', () => {
     it('should return true if facet is not used', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.NOMINAL},
@@ -129,7 +132,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if facet is used when both x and y are used', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.NOMINAL},
@@ -142,7 +145,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if facet is used when x or y is not used', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.NOMINAL},
@@ -156,7 +159,7 @@ describe('constraints/spec', () => {
 
   describe('omitMultipleNonPositionalChannels', () => {
     it('should return true if there are zero non-positional channels', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.NOMINAL},
@@ -168,7 +171,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if there are one non-positional channels', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.NOMINAL},
@@ -181,7 +184,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return false if there are multiple non-positional channels', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.NOMINAL},
@@ -198,7 +201,7 @@ describe('constraints/spec', () => {
   describe('omitNonPositionalOverPositionalChannels', () => {
     it('should return true if color/shape/size is used when both x and y are used', () => {
       [Channel.SHAPE, Channel.SIZE, Channel.COLOR].forEach((channel) => {
-        const specQ = new SpecQueryModel({
+        const specQ = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
             {channel: Channel.X, field: 'A', type: Type.NOMINAL},
@@ -212,7 +215,7 @@ describe('constraints/spec', () => {
 
     it('should return false if color/shape/size is used when either x or y is not used', () => {
       [Channel.SHAPE, Channel.SIZE, Channel.COLOR].forEach((channel) => {
-        const specQ = new SpecQueryModel({
+        const specQ = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
             {channel: Channel.X, field: 'A', type: Type.NOMINAL},
@@ -226,7 +229,7 @@ describe('constraints/spec', () => {
 
   describe('omitRawContinuousFieldForAggregatePlot', () => {
     it('should return false if the aggregate plot groups by a raw temporal field', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
             {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
@@ -238,7 +241,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if the aggregate plot groups by a temporal field with timeUnit', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
@@ -250,7 +253,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if the aggregate plot groups by a temporal field with timeUnit as enumSpec', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
@@ -262,7 +265,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return false if the aggregate plot groups by a raw quantitative field', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
             {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
@@ -274,7 +277,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if the aggregate plot groups by a binned quantitative field', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
@@ -286,7 +289,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if the aggregate plot groups by a quantitative field with bin as enumSpec', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
@@ -299,7 +302,7 @@ describe('constraints/spec', () => {
 
     it('should return true for any raw plot', () => {
       [TimeUnit.MONTH, undefined, {enumValues: [TimeUnit.MONTH, undefined]}].forEach((timeUnit) => {
-        const specQ = new SpecQueryModel({
+        const specQ = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
             {channel: Channel.X, field: 'A', type: Type.NOMINAL},
@@ -314,7 +317,7 @@ describe('constraints/spec', () => {
 
   describe('omitRawWithXYBothOrdinalScale', () => {
     it('should return false if the raw spec has dimensions on both x and y', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.NOMINAL},
@@ -326,7 +329,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if the raw spec has dimensions on both x and y', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
@@ -344,7 +347,7 @@ describe('constraints/spec', () => {
 
   describe('omitRepeatedField', () => {
     it('should return true when there is no repeated field', function() {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.NOMINAL},
@@ -356,7 +359,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return false when there are repeated field', function() {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.NOMINAL},
@@ -370,7 +373,7 @@ describe('constraints/spec', () => {
 
   describe('omitVerticalDotPlot', () => {
     it('should return true for horizontal dot plot', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.NOMINAL}
@@ -382,7 +385,7 @@ describe('constraints/spec', () => {
 
 
     it('should return false for vertical dot plot', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.Y, field: 'A', type: Type.NOMINAL}
@@ -395,7 +398,7 @@ describe('constraints/spec', () => {
 
   describe('preferredBinAxis', () => {
     it('should return true if both axes are binned', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, bin: true, field: 'A', type: Type.QUANTITATIVE},
@@ -407,7 +410,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if both axes are not binned', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
@@ -419,7 +422,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if the preferred axis is binned', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, bin: true, field: 'A', type: Type.QUANTITATIVE},
@@ -433,7 +436,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return false if the non-preferred axis is the only one that is binned', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
@@ -449,7 +452,7 @@ describe('constraints/spec', () => {
 
   describe('preferredTemporalAxis', () => {
     it('should return true if both axes are temporal', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.TEMPORAL},
@@ -461,7 +464,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if both axes are not temporal', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
@@ -473,7 +476,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if the preferred axis is binned', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.TEMPORAL},
@@ -487,7 +490,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return false if the non-preferred axis is the only one that is temporal', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
@@ -503,7 +506,7 @@ describe('constraints/spec', () => {
 
   describe('preferredOrdinalAxis', () => {
     it('should return true if both axes are ordinal', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.ORDINAL},
@@ -515,7 +518,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if both axes are not ordinal', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.ORDINAL},
@@ -527,7 +530,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true if the preferred axis is binned', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.Y, field: 'A', type: Type.ORDINAL},
@@ -541,7 +544,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return false if the non-preferred axis is the only one that is temporal', () => {
-      const specQ = new SpecQueryModel({
+      const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.Y, field: 'A', type: Type.QUANTITATIVE},
