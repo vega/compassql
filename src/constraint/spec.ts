@@ -105,7 +105,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       });
     }
   },
-  // TODO: channelsSupportRoles
   {
     name: 'hasAllRequiredChannelsForMark',
     description: 'All required channels for the specified mark should be specified',
@@ -329,12 +328,14 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   }
 ].map((sc) => new SpecConstraintModel(sc));
 
+// For testing
 export const SPEC_CONSTRAINT_INDEX: {[name: string]: SpecConstraintModel} =
   SPEC_CONSTRAINTS.reduce((m: any, c: SpecConstraintModel) => {
     m[c.name()] = c;
     return m;
   }, {});
 
+//
 export const SPEC_CONSTRAINTS_BY_PROPERTY: {[property: string]: SpecConstraintModel[]} =
    SPEC_CONSTRAINTS.reduce((m, c: SpecConstraintModel) => {
     c.properties().forEach((property) => {

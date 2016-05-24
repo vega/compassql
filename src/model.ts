@@ -10,7 +10,7 @@ import {Spec} from 'vega-lite/src/Spec';
 import {Property, ENCODING_PROPERTIES} from './property';
 import {SpecQuery, EncodingQuery, EnumSpec, QueryConfig, initEnumSpec, isEnumSpec} from './query';
 import {Schema} from './schema';
-import {Dict, isin, duplicate, keys, some} from './util';
+import {Dict, isin, duplicate, some} from './util';
 
 /**
  * Part of EnumSpecIndex which lists all enumSpec in a specQuery.
@@ -71,6 +71,8 @@ function getDefaultName(prop: Property) {
  */
 export class SpecQueryModel {
   private _spec: SpecQuery;
+
+  /** channel => EncodingQuery */
   private _encodingMap: Dict<EncodingQuery>;
   private _enumSpecIndex: EnumSpecIndex;
   private _enumSpecAssignment: Dict<any>;
@@ -201,10 +203,6 @@ export class SpecQueryModel {
 
   public getEncodingQueryByIndex(i: number) {
     return this._spec.encodings[i];
-  }
-
-  public hasAllChannelAssigned() {
-    return keys(this._encodingMap).length === this._spec.encodings.length;
   }
 
   public isDimension(channel: Channel) {

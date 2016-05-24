@@ -39,4 +39,6 @@ export interface FieldSchema {
   /** number, string, date  */
   primitiveType: PrimitiveType;
   title?: string;
+
+  // TODO: cardinality
 }
