@@ -85,11 +85,9 @@ export class SpecQueryModel {
   public static build(specQ: SpecQuery, schema: Schema, opt: QueryConfig): SpecQueryModel {
     let enumSpecIndex: EnumSpecIndex = {};
 
-    // FIXME replace 'M', 'C', 'A', etc. with proper constant names
-
     // mark
     if (isEnumSpec(specQ.mark)) {
-      const name = 'm';
+      const name = getDefaultName(Property.MARK);
       specQ.mark = initEnumSpec(specQ.mark, name, opt.marks);
       enumSpecIndex.mark = { enumSpec: specQ.mark };
     }
@@ -102,7 +100,7 @@ export class SpecQueryModel {
       ENCODING_PROPERTIES.forEach((property) => {
         if(isEnumSpec(encQ[property])) {
           // Assign default enum spec name and enum values.
-          const defaultEnumSpecName = (property + '').substr(0, 1) + index;
+          const defaultEnumSpecName = getDefaultName(property) + index;
           const defaultEnumValues = property === Property.FIELD ?
             // For field, by default enumerate all fields
             schema.fields():
