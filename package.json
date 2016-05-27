@@ -42,6 +42,7 @@
   },
   "homepage": "https://github.com/uwdata/compassql#readme",
   "devDependencies": {
+    "d3": "^3.5.17",
     "browserify": "^13.0.0",
     "browserify-versionify": "^1.0.6",
     "chai": "^3.4.1",
