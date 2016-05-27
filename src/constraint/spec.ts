@@ -198,7 +198,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
              return !!encQ.timeUnit;
            }
            if (encQ.type === Type.QUANTITATIVE) {
-             return !!encQ.bin;
+             return !!encQ.bin || !!encQ.aggregate;
            }
            return true;
          });

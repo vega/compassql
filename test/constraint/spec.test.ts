@@ -300,6 +300,17 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
     });
 
+    it('should return true for a plot with only aggregated quantitative field.', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+    });
+
     it('should return true for any raw plot', () => {
       [TimeUnit.MONTH, undefined, {enumValues: [TimeUnit.MONTH, undefined]}].forEach((timeUnit) => {
         const specQ = buildSpecQueryModel({
