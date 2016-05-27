@@ -29,7 +29,7 @@ d3.json('node_modules/vega-datasets/data/cars.json', function(data) {
   });
   const schema = new cql.schema.Schema(fieldSchemas);
 
-  const answerSet = cql.generate(query, schema).map((answer) => answer.toSpec());
+  const answerSet = cql.generate(query, schema, {verbose: true}).map((answer) => answer.toSpec());
   console.log(answerSet.map((spec) => JSON.stringify(spec)));
   d3.select('#list').selectAll('div.vis')
     .data(answerSet)

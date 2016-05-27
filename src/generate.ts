@@ -27,7 +27,8 @@ export function generate(specQuery: SpecQuery, schema: Schema, opt: QueryConfig 
     // If the original specQuery contains enumSpec for this property type
     if (enumSpecIndex[property]) {
       // update answerset
-      answerSet = answerSet.reduce(ENUMERATOR_INDEX[property](enumSpecIndex, schema, opt), []);
+      const reducer = ENUMERATOR_INDEX[property](enumSpecIndex, schema, opt);
+      answerSet = answerSet.reduce(reducer, []);
     }
   });
 
@@ -55,11 +56,16 @@ ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema,
       const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[Property.MARK] || [];
       const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
         // Check if the constraint is enabled
-            return c.strict() || !!opt[c.name()] ?
-              // For strict constraint, or enabled non-strict, check the constraints
-              c.satisfy(specQ, schema, opt) :
-              // Otherwise, return true as we don't have to check the constraint yet.
-              true;
+          if (c.strict() || !!opt[c.name()]) {
+            // For strict constraint, or enabled non-strict, check the constraints
+            const satisfy = c.satisfy(specQ, schema, opt);
+            if (!satisfy && opt.verbose) {
+              console.log(c.name() + ' failed with ' + specQ.toShorthand() + ' for mark');
+            }
+            return satisfy;
+          }
+          // Otherwise, return true as we don't have to check the constraint yet.
+          return true;
       });
 
       if (satisfySpecConstraints) {
@@ -107,11 +113,17 @@ export function EncodingPropertyGeneratorFactory(property: Property) {
           const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[property] || [];
           const satisfyEncodingConstraints = every(encodingConstraints, (c: EncodingConstraintModel) => {
             // Check if the constraint is enabled
-            return c.strict() || !!opt[c.name()] ?
+            if (c.strict() || !!opt[c.name()]) {
               // For strict constraint, or enabled non-strict, check the constraints
-              c.satisfy(specQ.getEncodingQueryByIndex(indexTuple.index), schema, opt) :
-              // Otherwise, return true as we don't have to check the constraint yet.
-              true;
+              const satisfy = c.satisfy(specQ.getEncodingQueryByIndex(indexTuple.index), schema, opt);
+              if (!satisfy && opt.verbose) {
+                console.log(c.name() + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+              }
+              return satisfy;
+            }
+
+            // Otherwise, return true as we don't have to check the constraint yet.
+            return true;
           });
 
           if (!satisfyEncodingConstraints) {
@@ -122,11 +134,16 @@ export function EncodingPropertyGeneratorFactory(property: Property) {
           const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[property] || [];
           const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
             // Check if the constraint is enabled
-            return c.strict() || !!opt[c.name()] ?
+            if (c.strict() || !!opt[c.name()]) {
               // For strict constraint, or enabled non-strict, check the constraints
-              c.satisfy(specQ, schema, opt) :
-              // Otherwise, return true as we don't have to check the constraint yet.
-              true;
+              const satisfy = c.satisfy(specQ, schema, opt);
+              if (!satisfy && opt.verbose) {
+                console.log(c.name() + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+              }
+              return satisfy;
+            }
+            // Otherwise, return true as we don't have to check the constraint yet.
+            return true;
           });
 
           if (!satisfySpecConstraints) {

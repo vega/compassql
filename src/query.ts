@@ -8,6 +8,8 @@ import {Type} from 'vega-lite/src/Type';
 import {Property} from './property';
 
 export interface QueryConfig {
+  verbose?: boolean;
+
   propertyPrecedence?: Property[];
 
   /** Defautl marks to enumerate. */
@@ -51,6 +53,7 @@ export interface QueryConfig {
 }
 
 export const DEFAULT_QUERY_CONFIG: QueryConfig = {
+  verbose: false,
   propertyPrecedence: [
     // Projection
     Property.TYPE, // type is a constraint for field

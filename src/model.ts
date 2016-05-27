@@ -221,6 +221,35 @@ export class SpecQueryModel {
     return some(this._spec.encodings, (encQ: EncodingQuery) => (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate));
   }
 
+  public toShorthand(): string {
+    function enumSpecShort(value: any) {
+      return isEnumSpec(value) ? '*' : value;
+    }
+
+    return enumSpecShort(this._spec.mark) + '|' +
+      // TODO: transform
+      this._spec.encodings.map((encQ) => {
+        let fn = null;
+        if (encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
+          fn = encQ.aggregate;
+        } else if (encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
+          fn = encQ.timeUnit;
+        } else if (encQ.bin && !isEnumSpec(encQ.timeUnit)) {
+          fn = 'bin';
+        } else if (encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
+          fn = '*';
+        } else if (encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
+          fn = '*';
+        } else if (encQ.bin && !isEnumSpec(encQ.timeUnit)) {
+          fn = '*';
+        }
+
+        const fieldType = enumSpecShort(encQ.field) + ',' + enumSpecShort(encQ.type);
+        return enumSpecShort(encQ.channel) + ':' +
+          (fn ? fn + '(' + fieldType + ')' : fieldType);
+      });
+  }
+
   /**
    * Convert a query to a Vega-Lite spec if it is completed.
    * @return a Vega-Lite spec if completed, null otherwise.
