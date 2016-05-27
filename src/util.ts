@@ -6,6 +6,14 @@ export function isin(item: any, array: any[]) {
     return array.indexOf(item) !== -1;
 };
 
+export function keys(obj) {
+  var k = [], x;
+  for (x in obj) {
+    k.push(x);
+  }
+  return k;
+};
+
 export function duplicate(obj) {
   return JSON.parse(JSON.stringify(obj));
 };
