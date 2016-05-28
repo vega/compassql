@@ -21,10 +21,6 @@ export interface QueryConfig {
   /** Default aggregate ops to enumerate. */
   aggregates?: AggregateOp[];
 
-  /** Default bin to enumerate */
-  // TODO: what about bin parameter
-  bins?: boolean[];
-
   /** Default time units to enumerate */
   timeUnits?: TimeUnit[];
 
@@ -33,8 +29,16 @@ export interface QueryConfig {
 
   // TODO: scaleType, etc.
 
+  // SPECIAL MODE
+  /**
+   * Allow automatically adding a special count (autoCount) field for
+   * plots that contain neither unbinned quantitative field nor temporal field without time unit.
+   */
+  autoAddCount?: boolean;
+
   // CONSTRAINTS
   // Spec Constraints
+
   omitFacetOverPositionalChannels?: boolean;
   omitMultipleNonPositionalChannels?: boolean;
   omitRawContinuousFieldForAggregatePlot?: boolean;
@@ -65,7 +69,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
     Property.BIN,
     Property.TIMEUNIT,
     Property.AGGREGATE,
-    // Property.COUNT
+    Property.AUTOCOUNT,
 
     // Encoding
     Property.CHANNEL,
@@ -75,8 +79,6 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   marks: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TEXT, Mark.TICK],
   channels: [X, Y, ROW, COLUMN, SIZE, COLOR, TEXT, DETAIL],
   aggregates: [undefined, AggregateOp.MEAN],
-  // TODO: what about bin parameter
-  bins: [true, false],
   timeUnits: [TimeUnit.MONTH],
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
@@ -84,11 +86,11 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
 
   // CONSTRAINTS
-  // Spec Constraints
+  // Spec Constraints -- See description inside src/constraints/spec.ts
+  autoAddCount: false,
   omitFacetOverPositionalChannels: true,
   omitMultipleNonPositionalChannels: true,
   omitRawContinuousFieldForAggregatePlot: true,
-  omitRawWithXYBothOrdinalScaleOrBin: true,
   omitRepeatedField: true,
   omitNonPositionalOverPositionalChannels: true,
   omitVerticalDotPlot: true,
@@ -97,7 +99,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   preferredTemporalAxis: Channel.X,
   preferredOrdinalAxis: Channel.Y, // ordinal on y makes it easier to read.
   preferredNominalAxis: Channel.Y, // nominal on y makes it easier to read.
-  // Encoding Constraints
+  // Encoding Constraints -- See description inside src/constraints/encoding.ts
   typeMatchesSchemaType: true
 };
 
@@ -140,7 +142,8 @@ export interface SpecQuery {
 export function stringifySpecQuery (specQ: SpecQuery): string {
   const mark = enumSpecShort(specQ.mark);
   const encodings = specQ.encodings.map(stringifyEncodingQuery)
-                        .sort();  // sort at the end to ignore order
+                        .sort()
+                        .join('|');  // sort at the end to ignore order
 
   return mark + '|' +
       // TODO: transform
@@ -164,13 +167,15 @@ export interface EncodingQuery {
 
   // FieldDef
   aggregate?: AggregateOp | EnumSpec<AggregateOp> | ShortEnumSpec;
+  /** Internal flag for representing automatic count that are added to plots with only ordinal or binned fields. */
+  autoCount?: boolean | EnumSpec<boolean> | ShortEnumSpec;
   timeUnit?: TimeUnit | EnumSpec<TimeUnit> | ShortEnumSpec;
 
   // TODO: change to binQuery to support bin parameters
   bin?: boolean | EnumSpec<boolean> | ShortEnumSpec;
 
-  field: Field | EnumSpec<Field> | ShortEnumSpec;
-  type: Type | EnumSpec<Field> | ShortEnumSpec;
+  field?: Field | EnumSpec<Field> | ShortEnumSpec;
+  type?: Type | EnumSpec<Field> | ShortEnumSpec;
   // TODO: value
 
   // TODO: scaleQuery, axisQuery, legendQuery
@@ -188,14 +193,17 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     fn = encQ.timeUnit;
   } else if (encQ.bin && !isEnumSpec(encQ.bin)) {
     fn = 'bin';
+  } else if (encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
+    fn = 'count';
   } else if (
       (encQ.aggregate && isEnumSpec(encQ.aggregate)) ||
+      (encQ.autoCount && isEnumSpec(encQ.autoCount)) ||
       (encQ.timeUnit && isEnumSpec(encQ.timeUnit)) ||
       (encQ.bin && isEnumSpec(encQ.bin))
     ) {
     fn = SHORT_ENUM_SPEC + '';
   }
 
-  const fieldType = enumSpecShort(encQ.field) + ',' + enumSpecShort(encQ.type).substr(0,1);
+  const fieldType = enumSpecShort(encQ.field || '*') + ',' + enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1);
   return (fn ? fn + '(' + fieldType + ')' : fieldType);
 }

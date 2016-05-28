@@ -10,6 +10,7 @@ import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX} from '../../src/constraint/spec
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {DEFAULT_QUERY_CONFIG, SpecQuery} from '../../src/query';
+import {duplicate} from '../../src/util';
 
 describe('constraints/spec', () => {
   const defaultOpt = DEFAULT_QUERY_CONFIG;
@@ -26,6 +27,113 @@ describe('constraints/spec', () => {
         assert.isDefined(DEFAULT_QUERY_CONFIG[constraint.name()]);
       });
     }
+  });
+
+  describe('autoAddCount', () => {
+    function autoCountShouldBe(autoCount: boolean, when: string, baseSpecQ: SpecQuery) {
+      [true, false].forEach((satisfy) => {
+        it('should be ' + (satisfy ? autoCount + ' when ' : !autoCount + ' when (opposite of) ') + when, () => {
+          const specQ = duplicate(baseSpecQ);
+          specQ.encodings.push({
+            channel: Channel.Y,
+            autoCount: satisfy ? autoCount : !autoCount
+          });
+          const model = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
+          assert.equal(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(model, schema, defaultOpt), satisfy);
+        });
+      });
+    }
+
+    [Type.NOMINAL, Type.ORDINAL].forEach((type) => {
+      autoCountShouldBe(true, 'there is only a/an ' + type + ' field', {
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: type}
+        ]
+      });
+    });
+
+    [Type.QUANTITATIVE, Type.TEMPORAL].forEach((type) => {
+      autoCountShouldBe(false, 'there is only a temporal without timeUnit or an unbinned quantitative field', {
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: type}
+        ]
+      });
+    });
+
+    autoCountShouldBe(true, 'there is only a temporal field with timeUnit or an unbinned quantitative field', {
+      mark: Mark.POINT,
+      encodings: [
+        {channel: Channel.X, field: 'A', type: Type.TEMPORAL, timeUnit: TimeUnit.HOURS},
+        {channel: Channel.COLOR, field: 'A', type: Type.QUANTITATIVE, bin: true}
+      ]
+    });
+
+    autoCountShouldBe(false, 'there is an unbinned quantitative field', {
+      mark: Mark.POINT,
+      encodings: [
+        {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+      ]
+    });
+
+    autoCountShouldBe(false, 'there is a temporal field without time unit', {
+      mark: Mark.POINT,
+      encodings: [
+        {channel: Channel.X, field: 'A', type: Type.TEMPORAL}
+      ]
+    });
+
+    it('should return true for a raw plot that has only an unbinned quantitative field and a temporal field without time unit', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.Y, field: 'A', type: Type.QUANTITATIVE},
+          {channel: Channel.X, field: 'B', type: Type.TEMPORAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true if the raw spec has one unbinned quantitative field.', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return true if the raw spec has one temporal without time unit field.', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.TEMPORAL},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specQ, schema, defaultOpt));
+    });
+
+    it('should return false if the raw spec have only nominal, ordinal, binned quantitative or temporal with time unit fields.', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.SHAPE, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.COLOR, field: 'B', type: Type.ORDINAL},
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, bin: true},
+          {channel: Channel.Y, field: 'B', type: Type.TEMPORAL, timeUnit: TimeUnit.HOURS}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specQ, schema, defaultOpt));
+    });
+
   });
 
   describe('channelPermittedByMarkType', () => {
@@ -326,35 +434,6 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('omitRawWithXYBothOrdinalScaleOrBin', () => {
-    it('should return false if the raw spec has dimensions on both x and y', () => {
-      const specQ = buildSpecQueryModel({
-        mark: Mark.POINT,
-        encodings: [
-          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
-          {channel: Channel.Y, field: 'B', type: Type.NOMINAL}
-        ]
-      });
-
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawWithXYBothOrdinalScaleOrBin'].satisfy(specQ, schema, defaultOpt));
-    });
-
-    it('should return true if the raw spec has dimensions on both x and y', () => {
-      const specQ = buildSpecQueryModel({
-        mark: Mark.POINT,
-        encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
-          {channel: Channel.Y, field: 'B', type: Type.NOMINAL}
-        ]
-      });
-
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawWithXYBothOrdinalScaleOrBin'].satisfy(specQ, schema, defaultOpt));
-    });
-
-    it('should return true for aggregate', () => {
-      // TODO:
-    });
-  });
 
   describe('omitRepeatedField', () => {
     it('should return true when there is no repeated field', function() {

@@ -33,6 +33,9 @@ export interface EnumSpecIndex {
   /** List of indice tuples of encoding mappings that require aggregate enumeration. */
   aggregate?: EnumSpecIndexTuple<AggregateOp>[];
 
+  /** List of indice tuples of encoding mappings that require autoCount enumeration. */
+  autoCount?: EnumSpecIndexTuple<AggregateOp>[];
+
   /** List of indice tuples of encoding mappings that require bin enumeration. */
   bin?: EnumSpecIndexTuple<boolean>[];
 
@@ -54,6 +57,8 @@ function getDefaultName(prop: Property) {
       return 'c';
     case Property.AGGREGATE:
       return 'a';
+    case Property.AUTOCOUNT:
+      return '#';
     case Property.BIN:
       return 'b';
     case Property.TIMEUNIT:
@@ -64,6 +69,19 @@ function getDefaultName(prop: Property) {
       return 't';
   }
   throw new Error('Default name undefined');
+}
+
+export function getDefaultEnumValues(property: Property, schema: Schema, opt: QueryConfig) {
+  switch (property) {
+    case Property.FIELD:       // For field, by default enumerate all fields
+      return schema.fields();
+    case Property.BIN:         // True, False for boolean values
+    case Property.AUTOCOUNT:
+      return [false, true];
+  }
+  // For other properties, take default enumValues from config.
+  // The config name for each property is a plural form of the property.
+  return opt[property+'s'] || [];
 }
 
 /**
@@ -100,31 +118,57 @@ export class SpecQueryModel {
 
     // encodings
     specQ.encodings.forEach((encQ, index) => {
+      if (encQ.autoCount !== undefined) {
+        // This is only for testing purpose
+        console.warn('A field with autoCount should not be included as autoCount meant to be an internal object.');
+      }
+
       // For each property of the encodingQuery, enumerate
-      ENCODING_PROPERTIES.forEach((property) => {
-        if(isEnumSpec(encQ[property])) {
+      ENCODING_PROPERTIES.forEach((prop) => {
+        if(isEnumSpec(encQ[prop])) {
           // Assign default enum spec name and enum values.
-          const defaultEnumSpecName = getDefaultName(property) + index;
-          const defaultEnumValues = property === Property.FIELD ?
-            // For field, by default enumerate all fields
-            schema.fields():
-            // For other properties, take default enumValues from config.
-            // The config name for each property is a plural form of the property.
-            opt[property+'s'];
-          encQ[property] = initEnumSpec(encQ[property], defaultEnumSpecName, defaultEnumValues);
+          const defaultEnumSpecName = getDefaultName(prop) + index;
+          const defaultEnumValues = getDefaultEnumValues(prop, schema, opt);
+          encQ[prop] = initEnumSpec(encQ[prop], defaultEnumSpecName, defaultEnumValues);
 
           // Add index of the encoding mapping to the property's enum job.
-          (enumSpecIndex[property] = enumSpecIndex[property] || []).push({
-            enumSpec: encQ[property],
+          (enumSpecIndex[prop] = enumSpecIndex[prop] || []).push({
+            enumSpec: encQ[prop],
             index: index
           } as EnumSpecIndexTuple<any>);
         }
       });
     });
+
+    // AUTO COUNT
+    // Add Auto Count Field
+    if (opt.autoAddCount) {
+      const countEncQ = {
+        channel: {
+          name: getDefaultName(Property.CHANNEL) + specQ.encodings.length,
+          enumValues: getDefaultEnumValues(Property.CHANNEL, schema, opt)
+        },
+        autoCount: {
+          name: getDefaultName(Property.AUTOCOUNT) + specQ.encodings.length,
+          enumValues: [false, true]
+        },
+        type: Type.QUANTITATIVE
+      };
+      specQ.encodings.push(countEncQ);
+
+      const index = specQ.encodings.length - 1;
+      [Property.CHANNEL, Property.AUTOCOUNT].forEach((prop) => {
+        (enumSpecIndex[prop] = enumSpecIndex[prop] || []).push({
+            enumSpec: countEncQ[prop],
+            index: index
+          } as EnumSpecIndexTuple<any>);
+      });
+    }
+
     return new SpecQueryModel(specQ, enumSpecIndex);
   }
 
-  public constructor(spec: SpecQuery, enumSpecIndex: EnumSpecIndex, enumSpecAssignment: Dict<any> = {}) {
+  constructor(spec: SpecQuery, enumSpecIndex: EnumSpecIndex, enumSpecAssignment: Dict<any> = {}) {
     this._spec = spec;
     this._encodingMap = spec.encodings.reduce((m, encodingQuery) => {
       if (!isEnumSpec(encodingQuery.channel)) {
@@ -223,7 +267,9 @@ export class SpecQueryModel {
   }
 
   public isAggregate() {
-    return some(this._spec.encodings, (encQ: EncodingQuery) => (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate));
+    return some(this._spec.encodings, (encQ: EncodingQuery) => {
+      return (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate) || encQ.autoCount === true;
+    });
   }
 
   public toShorthand(): string {
@@ -258,6 +304,15 @@ export class SpecQueryModel {
         if (encQ[prop] !== undefined) {
           fieldDef[prop] = encQ[prop];
         }
+      }
+
+      // For count field that is automatically added, convert to correct vega-lite fieldDef
+      if (encQ.autoCount === true) {
+        fieldDef.aggregate = AggregateOp.COUNT;
+        fieldDef.field = '*';
+        fieldDef.type = Type.QUANTITATIVE;
+      } else if (encQ.autoCount === false) {
+        continue; // Do not include this in the output.
       }
 
       encoding[encQ.channel as Channel] = fieldDef;

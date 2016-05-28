@@ -1,14 +1,15 @@
 import {assert} from 'chai';
 
-import {Mark} from 'vega-lite/src/mark';
+import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
+import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
-import {SpecQueryModel} from '../src/model';
+import {SpecQueryModel, getDefaultEnumValues} from '../src/model';
 import {Property} from '../src/property';
-import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery} from '../src/query';
+import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery, isEnumSpec} from '../src/query';
 import {Schema} from '../src/schema';
-import {duplicate} from '../src/util';
+import {duplicate, extend} from '../src/util';
 
 describe('SpecQueryModel', () => {
   const schema = new Schema([]);
@@ -18,7 +19,7 @@ describe('SpecQueryModel', () => {
   }
 
   describe('build', () => {
-    it('should have cause side effect to the original query object.', () => {
+    it('should not cause side effect to the original query object.', () => {
       const specQ: SpecQuery = {
         mark: SHORT_ENUM_SPEC,
         encodings: []
@@ -61,7 +62,7 @@ describe('SpecQueryModel', () => {
     // TODO: Transform
 
     // Encoding
-    const encodingproperties = [Property.AGGREGATE, Property.BIN,
+    const encodingproperties = [Property.AGGREGATE, Property.AUTOCOUNT, Property.BIN,
       Property.CHANNEL, Property.TIMEUNIT, Property.FIELD];
 
     // TODO: also test type
@@ -86,7 +87,9 @@ describe('SpecQueryModel', () => {
       it('should have ' + property + ' enumSpecIndex if ' + property + ' is an EnumSpec.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a full enum spec
-        const enumValues = property === Property.FIELD ? ['A', 'B'] : DEFAULT_QUERY_CONFIG[property +'s'];
+        const enumValues = property === Property.FIELD ?
+          ['A', 'B'] :
+          getDefaultEnumValues(property, schema, DEFAULT_QUERY_CONFIG);
         specQ.encodings[0][property] = {
           enumValues: enumValues
         };
@@ -102,6 +105,59 @@ describe('SpecQueryModel', () => {
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
         assert.isNotOk(enumSpecIndex[property]);
       });
+    });
+
+    describe('autoCount', () => {
+      const specQ: SpecQuery = {
+        mark: Mark.POINT,
+        encodings: [{channel: Channel.X, field: 'a', type: Type.ORDINAL}]
+      };
+      const model = SpecQueryModel.build(specQ, schema, extend({}, DEFAULT_QUERY_CONFIG, {autoAddCount: true}));
+
+      it('should add new encoding if autoCount is enabled' , () => {
+        assert.equal(model.specQuery.encodings.length, 2);
+        assert.isTrue(isEnumSpec(model.specQuery.encodings[1].autoCount));
+      });
+
+      it('should add new channel and autoCount to the enumSpec', () => {
+        assert.equal(model.enumSpecIndex.autoCount[0].index, 1);
+        assert.equal(model.enumSpecIndex.channel[0].index, 1);
+      });
+    });
+  });
+
+  describe('isAggregate', () => {
+    it('should return false if the query is not aggregated', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.MAX}
+        ]
+      });
+
+      assert.isTrue(specQ.isAggregate());
+    });
+
+    it('should return true if the query is aggregated', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.MAX}
+        ]
+      });
+
+      assert.isTrue(specQ.isAggregate());
+    });
+
+    it('should return true if the query has autoCount = true', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, autoCount: true}
+        ]
+      });
+
+      assert.isTrue(specQ.isAggregate());
     });
   });
 
@@ -119,6 +175,43 @@ describe('SpecQueryModel', () => {
         mark: Mark.BAR,
         encoding: {
           x: {field: 'A', type: Type.QUANTITATIVE}
+        }
+      });
+    });
+
+    it('should return a correct Vega-Lite spec if the query has autoCount=true', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.ORDINAL},
+          {channel: Channel.Y, autoCount: true}
+        ]
+      });
+
+      const spec = specQ.toSpec();
+      assert.deepEqual(spec, {
+        mark: Mark.BAR,
+        encoding: {
+          x: {field: 'A', type: Type.ORDINAL},
+          y: {aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE}
+        }
+      });
+    });
+
+    it('should return a correct Vega-Lite spec if the query has autoCount=false', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.ORDINAL},
+          {channel: Channel.Y, autoCount: false}
+        ]
+      });
+
+      const spec = specQ.toSpec();
+      assert.deepEqual(spec, {
+        mark: Mark.BAR,
+        encoding: {
+          x: {field: 'A', type: Type.ORDINAL}
         }
       });
     });

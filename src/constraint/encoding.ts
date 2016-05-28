@@ -76,12 +76,13 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
   // TODO: channelsSupportRoles
   },{
     name: 'onlyOneTypeOfFunction',
-    description: 'Only of of aggregate, timeUnit, or bin should be applied at the same time.',
-    properties: [Property.AGGREGATE, Property.TIMEUNIT, Property.BIN],
+    description: 'Only of of aggregate, autoCount, timeUnit, or bin should be applied at the same time.',
+    properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN],
     requireAllProperties: false,
     strict: true,
     satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       const numFn = (!isEnumSpec(encodingQ.aggregate) && !!encodingQ.aggregate ? 1 : 0) +
+        (!isEnumSpec(encodingQ.autoCount) && !!encodingQ.autoCount ? 1 : 0) +
         (!isEnumSpec(encodingQ.bin) && !!encodingQ.bin ? 1 : 0) +
         (!isEnumSpec(encodingQ.timeUnit) && !!encodingQ.timeUnit ? 1 : 0);
       return numFn <= 1;

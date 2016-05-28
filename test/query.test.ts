@@ -93,6 +93,20 @@ describe('query', () => {
        assert.equal(str, '?,q');
     });
 
+    it('should return correct fieldDef string for autocount field', () => {
+       const str = stringifyEncodingQueryFieldDef({
+         channel: Channel.X, autoCount: true
+       });
+       assert.equal(str, 'count(*,q)');
+    });
+
+    it('should return correct fieldDef string for ambiguous autocount field', () => {
+       const str = stringifyEncodingQueryFieldDef({
+         channel: Channel.X, autoCount: SHORT_ENUM_SPEC
+       });
+       assert.equal(str, '?(*,q)');
+    });
+
     it('should return correct fieldDef string for ambiguous type', () => {
        const str = stringifyEncodingQueryFieldDef({
          channel: Channel.X, field: 'a', type: SHORT_ENUM_SPEC

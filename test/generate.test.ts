@@ -119,5 +119,38 @@ describe('generate', function () {
       });
     });
 
+    describe('aggregate', () => {
+      // TODO
+    });
+
+    describe('bin', () => {
+      // TODO
+    });
+
+    describe('timeUnit', () => {
+      // TODO
+    });
+
+    describe('field', () => {
+      // TODO
+    });
+
+    describe('type', () => {
+      // TODO
+    });
+  });
+
+  describe('autoAddCount', () => {
+    it('should output autoCount in the answer set', () => {
+      const query = {
+        mark: Mark.POINT,
+        encodings: [
+            { channel: Channel.X, field: 'Name', type: Type.ORDINAL},
+        ]
+      };
+      const answerSet = generate(query, schema, {autoAddCount: true});
+      assert.equal(answerSet.length, 1);
+      assert.isTrue(answerSet[0].getEncodings()[1].autoCount);
+    });
   });
 });

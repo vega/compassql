@@ -4,7 +4,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
 
-import {SpecQueryModel} from '../model';
+import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {Property} from '../property';
 import {Schema} from '../schema';
 import {EncodingQuery, QueryConfig, isEnumSpec} from '../query';
@@ -41,6 +41,8 @@ export class SpecConstraintModel extends AbstractConstraintModel {
             case Property.TIMEUNIT:
             case Property.FIELD:
             case Property.TYPE:
+              // If there is property that is enumSpec, we return true as
+              // we cannot check the constraint yet!
               return some(specQ.getEncodings(), (encodingQuery) => {
                 return isEnumSpec(encodingQuery[property]);
               });
@@ -84,6 +86,61 @@ function satisfyPreferredType(theType: Type, configName: string) {
 }
 
 export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
+  {
+    name: 'autoAddCount',
+    description: 'Automatically adding count only for plots with only ordinal, binned quantitative, or temporal with timeunti fields.',
+    properties: [Property.BIN, Property.TIMEUNIT, Property.TYPE, Property.AUTOCOUNT],
+    requireAllProperties: false,
+    strict: false,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const hasAutoCount =  some(specQ.getEncodings(), (encQ: EncodingQuery) => encQ.autoCount === true);
+
+      if (hasAutoCount) {
+        // Auto count should only be applied if all fields are nominal, ordinal, temporal with timeUnit, binned quantitative, or autoCount
+        return every(specQ.getEncodings(), (encQ: EncodingQuery) => {
+          if (encQ.autoCount !== undefined) {
+            return true;
+          }
+          switch (encQ.type) {
+            case Type.QUANTITATIVE:
+              return !!encQ.bin;
+            case Type.TEMPORAL:
+              return !!encQ.timeUnit;
+            case Type.ORDINAL:
+            case Type.NOMINAL:
+              return true;
+          }
+          throw new Error('Unsupported Type');
+        });
+      } else {
+        const neverHaveAutoCount = every(specQ.enumSpecIndex.autoCount, (indexTuple: EnumSpecIndexTuple<boolean>) => {
+          return !isEnumSpec(specQ.getEncodingQueryByIndex(indexTuple.index).autoCount);
+        });
+        if (neverHaveAutoCount) {
+          // If the query surely does not have autoCount
+          // then one of the field should be
+          // (1) unbinned quantitative
+          // (2) temporal without time unit
+          // (3) nominal or ordinal field
+          // or at least have potential to be (still ambiguous).
+          return some(specQ.getEncodings(), (encQ: EncodingQuery) => {
+            if (encQ.type === Type.QUANTITATIVE) {
+              if (encQ.autoCount === false) {
+                return false;
+              } else {
+                return !encQ.bin || isEnumSpec(encQ.bin);
+              }
+            } else if (encQ.type === Type.TEMPORAL) {
+              return !encQ.timeUnit || isEnumSpec(encQ.timeUnit);
+            }
+            return false; // nominal or ordinal
+          });
+        }
+      }
+
+      return true; // no auto count, no constraint
+    }
+  },
   {
     name: 'channelPermittedByMarkType',
     description: 'Each encoding channel should be supported by the mark type',
@@ -207,21 +264,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'omitRawWithXYBothOrdinalScaleOrBin',
-    description: 'Raw plot should not have ordinal scales for both x and y',
-    // isDimension takes bin and timeUnit.
-    properties: [Property.CHANNEL, Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.TYPE],
-    // FIXME: rewrite a version that do not require all properties
-    requireAllProperties: true,
-    strict: false,
-    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      if (!specQ.isAggregate()) {
-        return !(specQ.isDimension(Channel.X) && specQ.isDimension(Channel.Y));
-      }
-      return true;
-    }
-  },
-  {
     name: 'omitRepeatedField',
     description: 'Each field should be mapped to only one channel',
     properties: [Property.FIELD],
@@ -232,7 +274,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
       // the same field should not be encoded twice
       return every(specQ.getEncodings(), (encQ) => {
-        if (!isEnumSpec(encQ.field)) {
+        if (encQ.field && !isEnumSpec(encQ.field)) {
           // If field is specified, it should not be used already
           if (usedField[encQ.field]) {
             return false;

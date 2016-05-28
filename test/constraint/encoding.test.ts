@@ -98,7 +98,7 @@ describe('constraints/encoding', () => {
 
     it('should return true if there is only one function', () => {
       [
-        ['aggregate', AggregateOp.MEAN], ['timeUnit', TimeUnit.MONTH], ['bin', true]
+        ['aggregate', AggregateOp.MEAN], ['timeUnit', TimeUnit.MONTH], ['bin', true], , ['autoCount', true]
       ].forEach((tuple: any) => {
         let modifiedEncQ = duplicate(encQ);
         modifiedEncQ[tuple[0]] = tuple[1];
@@ -109,14 +109,16 @@ describe('constraints/encoding', () => {
 
     it('should return false if there are multiple functions', () => {
       [
-        [AggregateOp.MEAN, TimeUnit.MONTH, true],
-        [AggregateOp.MEAN, undefined, true],
-        [AggregateOp.MEAN, TimeUnit.MONTH, undefined],
-        [undefined, TimeUnit.MONTH, true]
+        [AggregateOp.MEAN, TimeUnit.MONTH, true, undefined],
+        [AggregateOp.MEAN, undefined, true, undefined],
+        [AggregateOp.MEAN, TimeUnit.MONTH, undefined, undefined],
+        [undefined, TimeUnit.MONTH, true, undefined],
+        [AggregateOp.MEAN, undefined, undefined, true],
       ].forEach((tuple) => {
         encQ.aggregate = tuple[0];
         encQ.timeUnit = tuple[1];
         encQ.bin = tuple[2];
+        encQ.autoCount = tuple[3];
 
         assert.isFalse(ENCODING_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(encQ, schema, defaultOpt));
       });
