@@ -38,7 +38,7 @@ export interface QueryConfig {
   omitFacetOverPositionalChannels?: boolean;
   omitMultipleNonPositionalChannels?: boolean;
   omitRawContinuousFieldForAggregatePlot?: boolean;
-  omitRawWithXYBothOrdinalScale?: boolean;
+  omitRawWithXYBothOrdinalScaleOrBin?: boolean;
   omitRepeatedField?: boolean;
   omitNonPositionalOverPositionalChannels?: boolean;
   omitVerticalDotPlot?: boolean;
@@ -85,7 +85,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   omitFacetOverPositionalChannels: true,
   omitMultipleNonPositionalChannels: true,
   omitRawContinuousFieldForAggregatePlot: true,
-  omitRawWithXYBothOrdinalScale: true,
+  omitRawWithXYBothOrdinalScaleOrBin: true,
   omitRepeatedField: true,
   omitNonPositionalOverPositionalChannels: true,
   omitVerticalDotPlot: true,

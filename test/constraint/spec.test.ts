@@ -326,7 +326,7 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('omitRawWithXYBothOrdinalScale', () => {
+  describe('omitRawWithXYBothOrdinalScaleOrBin', () => {
     it('should return false if the raw spec has dimensions on both x and y', () => {
       const specQ = buildSpecQueryModel({
         mark: Mark.POINT,
@@ -336,7 +336,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawWithXYBothOrdinalScale'].satisfy(specQ, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawWithXYBothOrdinalScaleOrBin'].satisfy(specQ, schema, defaultOpt));
     });
 
     it('should return true if the raw spec has dimensions on both x and y', () => {
@@ -348,7 +348,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawWithXYBothOrdinalScale'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawWithXYBothOrdinalScaleOrBin'].satisfy(specQ, schema, defaultOpt));
     });
 
     it('should return true for aggregate', () => {

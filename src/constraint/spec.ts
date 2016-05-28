@@ -207,7 +207,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'omitRawWithXYBothOrdinalScale',
+    name: 'omitRawWithXYBothOrdinalScaleOrBin',
     description: 'Raw plot should not have ordinal scales for both x and y',
     // isDimension takes bin and timeUnit.
     properties: [Property.CHANNEL, Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.TYPE],
