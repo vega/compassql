@@ -165,6 +165,11 @@ describe('constraints/encoding', () => {
         assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(encQ, schema, defaultOpt));
       });
     });
+
+    it('should return false if field does not exist', () => {
+      const invalidFieldEncQ = {channel: Channel.X, field: 'random', type: Type.NOMINAL};
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(invalidFieldEncQ, schema, defaultOpt));
+    });
   });
 
   describe('typeMatchesPrimitiveType', () => {
@@ -186,6 +191,11 @@ describe('constraints/encoding', () => {
         encQ.type = type;
         assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(encQ, schema, defaultOpt));
       });
+    });
+
+    it('should return false if field does not exist', () => {
+      const invalidFieldEncQ = {channel: Channel.X, field: 'random', type: Type.NOMINAL};
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(invalidFieldEncQ, schema, defaultOpt));
     });
   });
 });

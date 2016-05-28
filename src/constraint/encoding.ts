@@ -100,16 +100,6 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     }
   },
   {
-    name: 'typeMatchesSchemaType',
-    description: 'Enumerated data type of a field should match the field\'s type in the schema.',
-    properties: [Property.FIELD, Property.TYPE],
-    requireAllProperties: true,
-    strict: false,
-    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
-      return schema.type(encodingQ.field as string) === encodingQ.type;
-    }
-  },
-  {
     name: 'typeMatchesPrimitiveType',
     description: 'Data type should be supported by field\'s primitive type.',
     properties: [Property.FIELD, Property.TYPE],
@@ -129,8 +119,21 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
         case PrimitiveType.DATE:
           // TODO: add NOMINAL, ORDINAL support after we support this in Vega-Lite
           return type === Type.TEMPORAL;
+        case null:
+          // field does not exist in the schema
+          return false;
       }
       throw new Error('Not implemented');
+    }
+  },
+  {
+    name: 'typeMatchesSchemaType',
+    description: 'Enumerated data type of a field should match the field\'s type in the schema.',
+    properties: [Property.FIELD, Property.TYPE],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      return schema.type(encodingQ.field as string) === encodingQ.type;
     }
   }
   // TODO: scaleType must match data type

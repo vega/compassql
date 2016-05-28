@@ -16,12 +16,18 @@ export class Schema {
     return this.fieldSchemas.map((fieldSchema) => fieldSchema.field);
   }
 
+  /**
+   * @return primitive type of the field if exist, otherwise return null
+   */
   public primitiveType(field: string) {
-    return this.fieldSchemaIndex[field].primitiveType;
+    return this.fieldSchemaIndex[field] ? this.fieldSchemaIndex[field].primitiveType : null;
   }
 
+  /**
+   * @return type of measturement of the field if exist, otherwise return null
+   */
   public type(field: string) {
-    return this.fieldSchemaIndex[field].type;
+    return this.fieldSchemaIndex[field] ? this.fieldSchemaIndex[field].type : null;
   }
 }
 
