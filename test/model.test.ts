@@ -18,6 +18,16 @@ describe('SpecQueryModel', () => {
   }
 
   describe('build', () => {
+    it('should have cause side effect to the original query object.', () => {
+      const specQ: SpecQuery = {
+        mark: SHORT_ENUM_SPEC,
+        encodings: []
+      };
+      const specQueryModel = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
+      assert.equal(specQ.mark, SHORT_ENUM_SPEC);
+      assert.notEqual(specQ.mark, specQueryModel.specQuery);
+    });
+
     // Mark
     it('should have mark enumSpecIndex if mark is a ShortEnumSpec.', () => {
       const specQ: SpecQuery = {
