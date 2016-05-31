@@ -26,8 +26,8 @@ export class SpecConstraintModel extends AbstractConstraintModel {
     if (this.constraint.requireAllProperties) {
       // TODO: extract as a method and do unit test
       const hasRequiredPropertyAsEnumSpec = some(this.constraint.properties,
-        (property) => {
-          switch(property) {
+        (prop) => {
+          switch(prop) {
             // Mark
             case Property.MARK:
               return isEnumSpec(specQ.getMark());
@@ -44,7 +44,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
               // If there is property that is enumSpec, we return true as
               // we cannot check the constraint yet!
               return some(specQ.getEncodings(), (encQ) => {
-                return isEnumSpec(encQ[property]);
+                return isEnumSpec(encQ[prop]);
               });
             default:
               throw new Error('Unimplemnted');
@@ -378,11 +378,11 @@ export const SPEC_CONSTRAINT_INDEX: {[name: string]: SpecConstraintModel} =
   }, {});
 
 //
-export const SPEC_CONSTRAINTS_BY_PROPERTY: {[property: string]: SpecConstraintModel[]} =
+export const SPEC_CONSTRAINTS_BY_PROPERTY: {[prop: string]: SpecConstraintModel[]} =
    SPEC_CONSTRAINTS.reduce((m, c: SpecConstraintModel) => {
-    c.properties().forEach((property) => {
-      m[property] = m[property] || [];
-      m[property].push(c);
+    c.properties().forEach((prop) => {
+      m[prop] = m[prop] || [];
+      m[prop].push(c);
     });
     return m;
   }, {});

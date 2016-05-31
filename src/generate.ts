@@ -11,7 +11,7 @@ import {EnumSpec, QueryConfig, SpecQuery, DEFAULT_QUERY_CONFIG} from './query';
 import {Schema} from './Schema';
 import {every, extend} from './util';
 
-export let ENUMERATOR_INDEX: {[property: string]: EnumeratorFactory} = {};
+export let ENUMERATOR_INDEX: {[prop: string]: EnumeratorFactory} = {};
 
 export function generate(specQuery: SpecQuery, schema: Schema, opt: QueryConfig = {}) {
   opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
@@ -20,14 +20,14 @@ export function generate(specQuery: SpecQuery, schema: Schema, opt: QueryConfig 
   const specModel = SpecQueryModel.build(specQuery, schema, opt);
   const enumSpecIndex = specModel.enumSpecIndex;
 
-  // 2. Enumerate each of the properties based on propertyPrecedence.
+  // 2. Enumerate each of the properties based on propPrecedence.
 
   let answerSet = [specModel]; // Initialize Answer Set with only the input spec query.
-  opt.propertyPrecedence.forEach((property) => {
-    // If the original specQuery contains enumSpec for this property type
-    if (enumSpecIndex[property]) {
+  opt.propertyPrecedence.forEach((prop) => {
+    // If the original specQuery contains enumSpec for this prop type
+    if (enumSpecIndex[prop]) {
       // update answerset
-      const reducer = ENUMERATOR_INDEX[property](enumSpecIndex, schema, opt);
+      const reducer = ENUMERATOR_INDEX[prop](enumSpecIndex, schema, opt);
       answerSet = answerSet.reduce(reducer, []);
     }
   });
@@ -81,14 +81,14 @@ ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema,
   };
 };
 
-ENCODING_PROPERTIES.forEach((property) => {
-  ENUMERATOR_INDEX[property] = EncodingPropertyGeneratorFactory(property);
+ENCODING_PROPERTIES.forEach((prop) => {
+  ENUMERATOR_INDEX[prop] = EncodingPropertyGeneratorFactory(prop);
 });
 
 /**
- * @return an answer set reducer factory for this type of property.
+ * @return an answer set reducer factory for this type of prop.
  */
-export function EncodingPropertyGeneratorFactory(property: Property) {
+export function EncodingPropertyGeneratorFactory(prop: Property) {
   /**
    * @return as reducer that takes specQ as input and output to an input answer set array.
    */
@@ -96,7 +96,7 @@ export function EncodingPropertyGeneratorFactory(property: Property) {
 
     return (answerSet: SpecQueryModel[], specQ: SpecQueryModel) => {
       // index of encoding mappings that require enumeration
-      const indexTuples: EnumSpecIndexTuple<any>[] = enumSpecIndex[property];
+      const indexTuples: EnumSpecIndexTuple<any>[] = enumSpecIndex[prop];
 
       function enumerate(jobIndex: number) {
         if (jobIndex === indexTuples.length) {
@@ -105,12 +105,12 @@ export function EncodingPropertyGeneratorFactory(property: Property) {
           return;
         }
         const indexTuple = indexTuples[jobIndex];
-        const propEnumSpec = specQ.getEncodingProperty(indexTuple.index, property);
+        const propEnumSpec = specQ.getEncodingProperty(indexTuple.index, prop);
         propEnumSpec.enumValues.forEach((propVal) => {
-          specQ.setEncodingProperty(indexTuple.index, property, propVal, indexTuple.enumSpec);
+          specQ.setEncodingProperty(indexTuple.index, prop, propVal, indexTuple.enumSpec);
 
           // Check encoding constraint
-          const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[property] || [];
+          const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[prop] || [];
           const satisfyEncodingConstraints = every(encodingConstraints, (c: EncodingConstraintModel) => {
             // Check if the constraint is enabled
             if (c.strict() || !!opt[c.name()]) {
@@ -131,7 +131,7 @@ export function EncodingPropertyGeneratorFactory(property: Property) {
           }
 
           // Check spec constraint
-          const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[property] || [];
+          const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[prop] || [];
           const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
             // Check if the constraint is enabled
             if (c.strict() || !!opt[c.name()]) {
@@ -155,7 +155,7 @@ export function EncodingPropertyGeneratorFactory(property: Property) {
         });
 
         // Reset to avoid side effect
-        specQ.resetEncodingProperty(indexTuple.index, property, indexTuple.enumSpec);
+        specQ.resetEncodingProperty(indexTuple.index, prop, indexTuple.enumSpec);
       }
 
       // start enumerating from 0

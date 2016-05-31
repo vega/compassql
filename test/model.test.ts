@@ -74,36 +74,36 @@ describe('SpecQueryModel', () => {
       ]
     };
 
-    encodingproperties.forEach((property) => {
-      it('should have ' + property + ' enumSpecIndex if ' + property + ' is a ShortEnumSpec.', () => {
+    encodingproperties.forEach((prop) => {
+      it('should have ' + prop + ' enumSpecIndex if ' + prop + ' is a ShortEnumSpec.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a short enum spec
-        specQ.encodings[0][property] = SHORT_ENUM_SPEC;
+        specQ.encodings[0][prop] = SHORT_ENUM_SPEC;
 
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isOk(enumSpecIndex[property]);
+        assert.isOk(enumSpecIndex[prop]);
       });
 
-      it('should have ' + property + ' enumSpecIndex if ' + property + ' is an EnumSpec.', () => {
+      it('should have ' + prop + ' enumSpecIndex if ' + prop + ' is an EnumSpec.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a full enum spec
-        const enumValues = property === Property.FIELD ?
+        const enumValues = prop === Property.FIELD ?
           ['A', 'B'] :
-          getDefaultEnumValues(property, schema, DEFAULT_QUERY_CONFIG);
-        specQ.encodings[0][property] = {
+          getDefaultEnumValues(prop, schema, DEFAULT_QUERY_CONFIG);
+        specQ.encodings[0][prop] = {
           enumValues: enumValues
         };
 
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isOk(enumSpecIndex[property]);
+        assert.isOk(enumSpecIndex[prop]);
       });
 
-      it('should have ' + property + ' enumSpecIndex if ' + property + ' is specific.', () => {
+      it('should have ' + prop + ' enumSpecIndex if ' + prop + ' is specific.', () => {
         let specQ = duplicate(templateSpecQ);
         // do not set to enum spec = make it specific
 
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isNotOk(enumSpecIndex[property]);
+        assert.isNotOk(enumSpecIndex[prop]);
       });
     });
 

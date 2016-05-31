@@ -27,7 +27,7 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
       // TODO: extract as a method and do unit test
       const hasRequiredPropertyAsEnumSpec = some(
         this.constraint.properties,
-        (property) => isEnumSpec(encQ[property])
+        (prop) => isEnumSpec(encQ[prop])
       );
       // If one of the required property is still an enum spec, do not check the constraint yet.
       if (hasRequiredPropertyAsEnumSpec) {
@@ -146,11 +146,11 @@ export const ENCODING_CONSTRAINT_INDEX: {[name: string]: EncodingConstraintModel
     return m;
   }, {});
 
-export const ENCODING_CONSTRAINTS_BY_PROPERTY: {[property: string]: EncodingConstraintModel[]} =
+export const ENCODING_CONSTRAINTS_BY_PROPERTY: {[prop: string]: EncodingConstraintModel[]} =
   ENCODING_CONSTRAINTS.reduce((m, c: EncodingConstraintModel) => {
-    c.properties().forEach((property) => {
-      m[property] = m[property] || [];
-      m[property].push(c);
+    c.properties().forEach((prop) => {
+      m[prop] = m[prop] || [];
+      m[prop].push(c);
     });
     return m;
   }, {});
