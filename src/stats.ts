@@ -1,3 +1,5 @@
+import {EncodingQuery} from './query';
+
 export class Stats {
   private _fieldsStats: FieldStats[];
   private _fieldStatsIndex: {[field: string]: FieldStats};
@@ -10,8 +12,16 @@ export class Stats {
     }, {});
   }
 
-  public cardinality(field: string) {
-    return this._fieldStatsIndex[field].cardinality;
+  public cardinality(encQ: EncodingQuery) {
+    if (encQ.aggregate || encQ.autoCount) {
+      return 1;
+    } else if (encQ.bin) {
+      return 1; // FIXME
+    } else if (encQ.timeUnit) {
+      return 1; // FIXME
+    }
+
+    return this._fieldStatsIndex[encQ.field as string].cardinality;
   }
 }
 

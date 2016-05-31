@@ -7,22 +7,18 @@ import {Type} from 'vega-lite/src/type';
 import {generate} from '../src/generate';
 import {group, dataKey, encodingKey} from '../src/group';
 import {SHORT_ENUM_SPEC} from '../src/query';
-import {Schema} from '../src/schema';
-import {Stats} from '../src/stats';
 import {keys} from '../src/util';
 
+import {schema, stats} from './fixture';
 
 describe('group', () => {
-  const schema = new Schema([]);
-  const stats = new Stats([]);
-
   describe('dataKey', () => {
     it('should group visualization with same data', () => {
       const query = {
         mark: SHORT_ENUM_SPEC,
         encodings: [{
           channel: SHORT_ENUM_SPEC,
-          field: 'a',
+          field: 'Q',
           type: Type.QUANTITATIVE,
           aggregate: {
             name: 'a0',
@@ -30,7 +26,7 @@ describe('group', () => {
           }
         }, {
           channel: SHORT_ENUM_SPEC,
-          field: 'b',
+          field: 'O',
           type: Type.ORDINAL
         }]
       };
@@ -49,11 +45,11 @@ describe('group', () => {
         mark: SHORT_ENUM_SPEC,
         encodings: [{
           channel: {enumValues: [Channel.X, Channel.Y]},
-          field: 'a',
+          field: 'Q',
           type: Type.QUANTITATIVE
         }, {
           channel: {enumValues: [Channel.X, Channel.Y]},
-          field: 'b',
+          field: 'Q2',
           type: Type.QUANTITATIVE
         }]
       };
@@ -68,15 +64,15 @@ describe('group', () => {
         mark: SHORT_ENUM_SPEC,
         encodings: [{
           channel: Channel.X,
-          field: 'a',
+          field: 'Q',
           type: Type.QUANTITATIVE
         }, {
           channel: Channel.Y,
-          field: 'b',
+          field: 'Q1',
           type: Type.QUANTITATIVE
         }, {
           channel: {enumValues: [Channel.COLOR, Channel.SIZE]},
-          field: 'c',
+          field: 'Q2',
           type: Type.QUANTITATIVE
         }]
       };
@@ -91,15 +87,15 @@ describe('group', () => {
         mark: SHORT_ENUM_SPEC,
         encodings: [{
           channel: Channel.X,
-          field: 'a',
+          field: 'Q',
           type: Type.QUANTITATIVE
         }, {
           channel: Channel.Y,
-          field: 'b',
+          field: 'Q1',
           type: Type.QUANTITATIVE
         }, {
           channel: {enumValues: [Channel.COLOR, Channel.SHAPE]},
-          field: 'c',
+          field: 'O',
           type: Type.ORDINAL
         }]
       };
@@ -115,15 +111,15 @@ describe('group', () => {
         mark: SHORT_ENUM_SPEC,
         encodings: [{
           channel: {enumValues: [Channel.X, Channel.Y]},
-          field: 'a',
+          field: 'Q',
           type: Type.QUANTITATIVE
         }, {
           channel: {enumValues: [Channel.X, Channel.Y]},
-          field: 'b',
+          field: 'Q1',
           type: Type.QUANTITATIVE
         }, {
           channel: {enumValues: [Channel.COLOR, Channel.SIZE]},
-          field: 'c',
+          field: 'Q2',
           type: Type.QUANTITATIVE
         }]
       };
@@ -138,20 +134,20 @@ describe('group', () => {
         mark: SHORT_ENUM_SPEC,
         encodings: [{
           channel: Channel.X,
-          field: 'a',
+          field: 'Q',
           type: Type.QUANTITATIVE
         }, {
           channel: Channel.Y,
-          field: 'b',
+          field: 'Q1',
           type: Type.QUANTITATIVE
         }, {
           channel: {enumValues: [Channel.ROW, Channel.COLUMN]},
-          field: 'c',
+          field: 'O',
           type: Type.ORDINAL
         }, {
           channel: {enumValues: [Channel.ROW, Channel.COLUMN]},
-          field: 'd',
-          type: Type.ORDINAL
+          field: 'N',
+          type: Type.NOMINAL
         }]
       };
 
@@ -166,11 +162,11 @@ describe('group', () => {
         mark: SHORT_ENUM_SPEC,
         encodings: [{
           channel: Channel.X,
-          field: 'a',
+          field: 'Q',
           type: Type.QUANTITATIVE
         }, {
           channel: {enumValues: [Channel.Y, Channel.COLOR]},
-          field: 'c',
+          field: 'Q1',
           type: Type.QUANTITATIVE
         }]
       };

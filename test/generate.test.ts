@@ -10,14 +10,11 @@ import {ENUMERATOR_INDEX, generate} from '../src/generate';
 import {SpecQueryModel} from '../src/model';
 import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery} from '../src/query';
 import {Schema} from '../src/schema';
-import {Stats} from '../src/stats';
 import {extend, keys} from '../src/util';
 
+import {schema, stats} from './fixture';
 
 describe('generate', function () {
-  const schema = new Schema([]);
-  const stats = new Stats([]);
-
   function buildSpecQueryModel(specQ: SpecQuery) {
     return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
   }
@@ -53,8 +50,8 @@ describe('generate', function () {
       const specQ = buildSpecQueryModel({
         mark: {enumValues: [Mark.POINT, Mark.BAR]},
         encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
-          {channel: Channel.Y, field: 'A', type: Type.ORDINAL}
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, field: 'O', type: Type.ORDINAL}
         ]
       });
       const enumerator = ENUMERATOR_INDEX['mark'](specQ.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
@@ -69,8 +66,8 @@ describe('generate', function () {
       const specQ = buildSpecQueryModel({
         mark: {enumValues: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA]},
         encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
-          {channel: Channel.SHAPE, field: 'A', type: Type.ORDINAL}
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
+          {channel: Channel.SHAPE, field: 'O', type: Type.ORDINAL}
         ]
       });
       const enumerator = ENUMERATOR_INDEX['mark'](specQ.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
@@ -89,7 +86,7 @@ describe('generate', function () {
           encodings: [
             {
               channel: {enumValues: [Channel.X, Channel.Y]},
-              field: 'A',
+              field: 'Q',
               type: Type.QUANTITATIVE
             }
           ]
@@ -108,7 +105,7 @@ describe('generate', function () {
           encodings: [
             {
               channel: {enumValues: [Channel.X, Channel.SHAPE]},
-              field: 'A',
+              field: 'Q',
               type: Type.QUANTITATIVE
             }
           ]
@@ -147,7 +144,7 @@ describe('generate', function () {
       const query = {
         mark: Mark.POINT,
         encodings: [
-            { channel: Channel.X, field: 'Name', type: Type.ORDINAL},
+            { channel: Channel.X, field: 'O', type: Type.ORDINAL},
         ]
       };
       const answerSet = generate(query, schema, stats, {autoAddCount: true});

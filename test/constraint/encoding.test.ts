@@ -7,30 +7,13 @@ import {Type} from 'vega-lite/src/type';
 
 import {ENCODING_CONSTRAINTS, ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
 import {EncodingQuery, DEFAULT_QUERY_CONFIG} from '../../src/query';
-import {Schema, PrimitiveType} from '../../src/schema';
-import {Stats} from '../../src/stats';
 import {duplicate} from '../../src/util';
+
+import {schema, stats} from '../fixture';
 
 describe('constraints/encoding', () => {
   const defaultOpt = DEFAULT_QUERY_CONFIG;
 
-  const schema = new Schema([{
-    field: 'mynumber',
-    type: Type.QUANTITATIVE,
-    primitiveType: PrimitiveType.NUMBER
-  },{
-    field: 'mystring',
-    type: Type.ORDINAL,
-    primitiveType: PrimitiveType.STRING,
-  }]);
-
-  const stats = new Stats([{
-    field: 'mynumber',
-    cardinality: 100,
-  }, {
-    field: 'mystring',
-    cardinality: 10
-  }]);
 
   // Make sure all non-strict constraints have their configs.
   ENCODING_CONSTRAINTS.forEach((constraint) => {
@@ -273,7 +256,7 @@ describe('constraints/encoding', () => {
   describe('typeMatchesSchemaType', () => {
     let encQ: EncodingQuery = {
       channel: Channel.X,
-      field: 'mystring',
+      field: 'O',
       type: undefined
     };
 
@@ -300,7 +283,7 @@ describe('constraints/encoding', () => {
   describe('typeMatchesPrimitiveType', () => {
     let encQ: EncodingQuery = {
       channel: Channel.X,
-      field: 'mystring',
+      field: 'O',
       type: undefined
     };
 
