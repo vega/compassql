@@ -94,6 +94,7 @@ export class SpecQueryModel {
   private _encodingMap: Dict<EncodingQuery>;
   private _enumSpecIndex: EnumSpecIndex;
   private _enumSpecAssignment: Dict<any>;
+  private _schema: Schema;
 
   /**
    * Build an enumSpecIndex by detecting enumeration specifiers
@@ -165,10 +166,10 @@ export class SpecQueryModel {
       });
     }
 
-    return new SpecQueryModel(specQ, enumSpecIndex);
+    return new SpecQueryModel(specQ, enumSpecIndex, schema);
   }
 
-  constructor(spec: SpecQuery, enumSpecIndex: EnumSpecIndex, enumSpecAssignment: Dict<any> = {}) {
+  constructor(spec: SpecQuery, enumSpecIndex: EnumSpecIndex, schema: Schema, enumSpecAssignment: Dict<any> = {}) {
     this._spec = spec;
     this._encodingMap = spec.encodings.reduce((m, encQ) => {
       if (!isEnumSpec(encQ.channel)) {
@@ -179,10 +180,16 @@ export class SpecQueryModel {
 
     this._enumSpecIndex = enumSpecIndex;
     this._enumSpecAssignment = enumSpecAssignment;
+
+    this._schema = schema;
   }
 
   public get enumSpecIndex() {
     return this._enumSpecIndex;
+  }
+
+  public get schema() {
+    return this._schema;
   }
 
   public get specQuery() {
@@ -190,7 +197,7 @@ export class SpecQueryModel {
   }
 
   public duplicate(): SpecQueryModel {
-    return new SpecQueryModel(duplicate(this._spec), this._enumSpecIndex, duplicate(this._enumSpecAssignment));
+    return new SpecQueryModel(duplicate(this._spec), this._enumSpecIndex, this._schema, duplicate(this._enumSpecAssignment));
   }
 
   public setMark(mark: Mark) {

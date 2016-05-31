@@ -10,11 +10,13 @@ import {ENUMERATOR_INDEX, generate} from '../src/generate';
 import {SpecQueryModel} from '../src/model';
 import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery} from '../src/query';
 import {Schema} from '../src/schema';
+import {Stats} from '../src/stats';
 import {extend, keys} from '../src/util';
 
 
 describe('generate', function () {
   const schema = new Schema([]);
+  const stats = new Stats([]);
 
   function buildSpecQueryModel(specQ: SpecQuery) {
     return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
@@ -41,7 +43,7 @@ describe('generate', function () {
             };
         });
         var dataSchema = new Schema(fieldSchemas);
-        var answerSet = generate(query, dataSchema).map(function (answer) { return answer.toSpec(); });
+        var answerSet = generate(query, dataSchema, stats).map(function (answer) { return answer.toSpec(); });
         assert.isTrue(answerSet.length > 0);
     });
   });
@@ -55,7 +57,7 @@ describe('generate', function () {
           {channel: Channel.Y, field: 'A', type: Type.ORDINAL}
         ]
       });
-      const enumerator = ENUMERATOR_INDEX['mark'](specQ.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+      const enumerator = ENUMERATOR_INDEX['mark'](specQ.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
       const answerSet = enumerator([], specQ);
       assert.equal(answerSet.length, 2);
@@ -71,7 +73,7 @@ describe('generate', function () {
           {channel: Channel.SHAPE, field: 'A', type: Type.ORDINAL}
         ]
       });
-      const enumerator = ENUMERATOR_INDEX['mark'](specQ.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+      const enumerator = ENUMERATOR_INDEX['mark'](specQ.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
       const answerSet = enumerator([], specQ);
       assert.equal(answerSet.length, 1);
@@ -92,7 +94,7 @@ describe('generate', function () {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX['channel'](specQ.enumSpecIndex, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitVerticalDotPlot: false}));
+        const enumerator = ENUMERATOR_INDEX['channel'](specQ.enumSpecIndex, schema, stats, extend({}, DEFAULT_QUERY_CONFIG, {omitVerticalDotPlot: false}));
 
         const answerSet = enumerator([], specQ);
         assert.equal(answerSet.length, 2);
@@ -111,7 +113,7 @@ describe('generate', function () {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX['channel'](specQ.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX['channel'](specQ.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specQ);
         assert.equal(answerSet.length, 1);
@@ -148,7 +150,7 @@ describe('generate', function () {
             { channel: Channel.X, field: 'Name', type: Type.ORDINAL},
         ]
       };
-      const answerSet = generate(query, schema, {autoAddCount: true});
+      const answerSet = generate(query, schema, stats, {autoAddCount: true});
       assert.equal(answerSet.length, 1);
       assert.isTrue(answerSet[0].getEncodings()[1].autoCount);
     });

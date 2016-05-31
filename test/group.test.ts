@@ -8,11 +8,13 @@ import {generate} from '../src/generate';
 import {group, dataKey, encodingKey} from '../src/group';
 import {SHORT_ENUM_SPEC} from '../src/query';
 import {Schema} from '../src/schema';
+import {Stats} from '../src/stats';
 import {keys} from '../src/util';
 
 
 describe('group', () => {
   const schema = new Schema([]);
+  const stats = new Stats([]);
 
   describe('dataKey', () => {
     it('should group visualization with same data', () => {
@@ -33,7 +35,7 @@ describe('group', () => {
         }]
       };
 
-      const answerSet = generate(query, schema);
+      const answerSet = generate(query, schema, stats);
       const groups = group(answerSet, dataKey);
 
       // two because have two different aggregation
@@ -56,7 +58,7 @@ describe('group', () => {
         }]
       };
 
-      const answerSet = generate(query, schema);
+      const answerSet = generate(query, schema, stats);
       const groups = group(answerSet, encodingKey);
       assert.equal(keys(groups).length, 1);
     });
@@ -79,7 +81,7 @@ describe('group', () => {
         }]
       };
 
-      const answerSet = generate(query, schema);
+      const answerSet = generate(query, schema, stats);
       const groups = group(answerSet, encodingKey);
       assert.equal(keys(groups).length, 1);
     });
@@ -102,7 +104,7 @@ describe('group', () => {
         }]
       };
 
-      const answerSet = generate(query, schema);
+      const answerSet = generate(query, schema, stats);
       const groups = group(answerSet, encodingKey);
       assert.equal(keys(groups).length, 1);
     });
@@ -126,7 +128,7 @@ describe('group', () => {
         }]
       };
 
-      const answerSet = generate(query, schema);
+      const answerSet = generate(query, schema, stats);
       const groups = group(answerSet, encodingKey);
       assert.equal(keys(groups).length, 1);
     });
@@ -153,7 +155,7 @@ describe('group', () => {
         }]
       };
 
-      const answerSet = generate(query, schema);
+      const answerSet = generate(query, schema, stats);
       const groups = group(answerSet, encodingKey);
       assert.equal(keys(groups).length, 1);
     });
@@ -173,7 +175,7 @@ describe('group', () => {
         }]
       };
 
-      const answerSet = generate(query, schema, {omitNonPositionalOverPositionalChannels: false});
+      const answerSet = generate(query, schema, stats, {omitNonPositionalOverPositionalChannels: false});
       const groups = group(answerSet, encodingKey);
       assert.equal(keys(groups).length, 2);
     });

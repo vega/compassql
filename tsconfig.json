@@ -35,6 +35,7 @@
         "src/group.ts",
         "src/property.ts",
         "src/schema.ts",
+        "src/stats.ts",
         "src/util.ts",
         "test/generate.test.ts",
         "test/group.test.ts",

@@ -9,12 +9,14 @@ import {Type} from 'vega-lite/src/type';
 import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX} from '../../src/constraint/spec';
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
+import {Stats} from '../../src/stats';
 import {DEFAULT_QUERY_CONFIG, SpecQuery} from '../../src/query';
 import {duplicate} from '../../src/util';
 
 describe('constraints/spec', () => {
   const defaultOpt = DEFAULT_QUERY_CONFIG;
   const schema = new Schema([]);
+  const stats = new Stats([]);
 
   function buildSpecQueryModel(specQ: SpecQuery) {
     return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
@@ -39,7 +41,7 @@ describe('constraints/spec', () => {
             autoCount: satisfy ? autoCount : !autoCount
           });
           const model = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
-          assert.equal(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(model, schema, defaultOpt), satisfy);
+          assert.equal(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(model, schema, stats, defaultOpt), satisfy);
         });
       });
     }
@@ -93,7 +95,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if the raw spec has one unbinned quantitative field.', () => {
@@ -105,7 +107,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if the raw spec has one temporal without time unit field.', () => {
@@ -117,7 +119,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return false if the raw spec have only nominal, ordinal, binned quantitative or temporal with time unit fields.', () => {
@@ -131,7 +133,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specQ, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
   });
@@ -145,7 +147,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['channelPermittedByMarkType'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['channelPermittedByMarkType'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return false for unsupported channel', () => {
@@ -156,7 +158,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['channelPermittedByMarkType'].satisfy(specQ, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['channelPermittedByMarkType'].satisfy(specQ, schema, stats, defaultOpt));
     });
   });
 
@@ -170,7 +172,7 @@ describe('constraints/spec', () => {
             {channel: Channel.Y, field: '*', type: Type.QUANTITATIVE}
           ]
         });
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specQ, schema, defaultOpt));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specQ, schema, stats, defaultOpt));
       });
     });
 
@@ -183,7 +185,7 @@ describe('constraints/spec', () => {
               {channel: channel, field: '*', type: Type.NOMINAL}
             ]
           });
-          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specQ, schema, defaultOpt));
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specQ, schema, stats, defaultOpt));
         });
       });
     });
@@ -210,7 +212,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return false when there are repeated channels', function() {
@@ -222,7 +224,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specQ, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specQ, schema, stats, defaultOpt));
     });
   });
 
@@ -236,7 +238,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if facet is used when both x and y are used', () => {
@@ -249,7 +251,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if facet is used when x or y is not used', () => {
@@ -261,7 +263,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specQ, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specQ, schema, stats, defaultOpt));
     });
   });
 
@@ -275,7 +277,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if there are one non-positional channels', () => {
@@ -288,7 +290,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return false if there are multiple non-positional channels', () => {
@@ -302,7 +304,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specQ, schema, stats, defaultOpt));
     });
   });
 
@@ -317,7 +319,7 @@ describe('constraints/spec', () => {
             {channel: channel, field: 'C', type: Type.NOMINAL}
           ]
         });
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specQ, schema, defaultOpt));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specQ, schema, stats, defaultOpt));
       });
     });
 
@@ -330,7 +332,7 @@ describe('constraints/spec', () => {
             {channel: channel, field: 'C', type: Type.NOMINAL}
           ]
         });
-        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specQ, schema, defaultOpt));
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specQ, schema, stats, defaultOpt));
       });
     });
   });
@@ -345,7 +347,7 @@ describe('constraints/spec', () => {
           ]
         });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if the aggregate plot groups by a temporal field with timeUnit', () => {
@@ -357,7 +359,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if the aggregate plot groups by a temporal field with timeUnit as enumSpec', () => {
@@ -369,7 +371,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return false if the aggregate plot groups by a raw quantitative field', () => {
@@ -381,7 +383,7 @@ describe('constraints/spec', () => {
           ]
         });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if the aggregate plot groups by a binned quantitative field', () => {
@@ -393,7 +395,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if the aggregate plot groups by a quantitative field with bin as enumSpec', () => {
@@ -405,7 +407,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true for a plot with only aggregated quantitative field.', () => {
@@ -416,7 +418,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true for any raw plot', () => {
@@ -429,7 +431,7 @@ describe('constraints/spec', () => {
           ]
         });
 
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, defaultOpt));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specQ, schema, stats, defaultOpt));
       });
     });
   });
@@ -445,7 +447,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return false when there are repeated field', function() {
@@ -457,7 +459,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specQ, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specQ, schema, stats, defaultOpt));
     });
   });
 
@@ -470,7 +472,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitVerticalDotPlot'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitVerticalDotPlot'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
 
@@ -482,7 +484,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitVerticalDotPlot'].satisfy(specQ, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitVerticalDotPlot'].satisfy(specQ, schema, stats, defaultOpt));
     });
   });
 
@@ -496,7 +498,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredBinAxis'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredBinAxis'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if both axes are not binned', () => {
@@ -508,7 +510,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredBinAxis'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredBinAxis'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if the preferred axis is binned', () => {
@@ -520,7 +522,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredBinAxis'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredBinAxis'].satisfy(specQ, schema, stats, defaultOpt));
 
       // TODO: add another case for yEncQ
     });
@@ -534,7 +536,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['preferredBinAxis'].satisfy(specQ, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['preferredBinAxis'].satisfy(specQ, schema, stats, defaultOpt));
 
       // TODO: add another case for yEncQ
     });
@@ -550,7 +552,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredTemporalAxis'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredTemporalAxis'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if both axes are not temporal', () => {
@@ -562,7 +564,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredTemporalAxis'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredTemporalAxis'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if the preferred axis is binned', () => {
@@ -574,7 +576,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredTemporalAxis'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredTemporalAxis'].satisfy(specQ, schema, stats, defaultOpt));
 
       // TODO: add another case for yEncQ
     });
@@ -588,7 +590,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['preferredTemporalAxis'].satisfy(specQ, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['preferredTemporalAxis'].satisfy(specQ, schema, stats, defaultOpt));
 
       // TODO: add another case for yEncQ
     });
@@ -604,7 +606,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if both axes are not ordinal', () => {
@@ -616,7 +618,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, stats, defaultOpt));
     });
 
     it('should return true if the preferred axis is binned', () => {
@@ -628,7 +630,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, stats, defaultOpt));
 
       // TODO: add another case for yEncQ
     });
@@ -642,7 +644,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, stats, defaultOpt));
 
       // TODO: add another case for yEncQ
     });

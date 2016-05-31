@@ -8,12 +8,13 @@ import {SPEC_CONSTRAINTS_BY_PROPERTY, SpecConstraintModel} from './constraint/sp
 import {EnumSpecIndex, EnumSpecIndexTuple, SpecQueryModel} from './model';
 import {Property, ENCODING_PROPERTIES} from './property';
 import {EnumSpec, QueryConfig, SpecQuery, DEFAULT_QUERY_CONFIG} from './query';
-import {Schema} from './Schema';
+import {Schema} from './schema';
+import {Stats} from './stats';
 import {every, extend} from './util';
 
 export let ENUMERATOR_INDEX: {[prop: string]: EnumeratorFactory} = {};
 
-export function generate(specQuery: SpecQuery, schema: Schema, opt: QueryConfig = {}) {
+export function generate(specQuery: SpecQuery, schema: Schema, stats: Stats, opt: QueryConfig = {}) {
   opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
 
   // 1. Build a SpecQueryModel, which also contains enumSpecIndex
@@ -27,7 +28,7 @@ export function generate(specQuery: SpecQuery, schema: Schema, opt: QueryConfig 
     // If the original specQuery contains enumSpec for this prop type
     if (enumSpecIndex[prop]) {
       // update answerset
-      const reducer = ENUMERATOR_INDEX[prop](enumSpecIndex, schema, opt);
+      const reducer = ENUMERATOR_INDEX[prop](enumSpecIndex, schema, stats, opt);
       answerSet = answerSet.reduce(reducer, []);
     }
   });
@@ -41,10 +42,10 @@ export interface Enumerator {
 }
 
 export interface EnumeratorFactory {
-  (enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig): Enumerator;
+  (enumSpecIndex: EnumSpecIndex, schema: Schema, stats: Stats, opt: QueryConfig): Enumerator;
 }
 
-ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig): Enumerator => {
+ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema, stats: Stats, opt: QueryConfig): Enumerator => {
   return (answerSet, specQ: SpecQueryModel) => {
     const markEnumSpec = specQ.getMark() as EnumSpec<Mark>;
 
@@ -58,7 +59,7 @@ ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema,
         // Check if the constraint is enabled
           if (c.strict() || !!opt[c.name()]) {
             // For strict constraint, or enabled non-strict, check the constraints
-            const satisfy = c.satisfy(specQ, schema, opt);
+            const satisfy = c.satisfy(specQ, schema, stats, opt);
             if (!satisfy && opt.verbose) {
               console.log(c.name() + ' failed with ' + specQ.toShorthand() + ' for mark');
             }
@@ -88,11 +89,11 @@ ENCODING_PROPERTIES.forEach((prop) => {
 /**
  * @return an answer set reducer factory for this type of prop.
  */
-export function EncodingPropertyGeneratorFactory(prop: Property) {
+export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFactory {
   /**
    * @return as reducer that takes specQ as input and output to an input answer set array.
    */
-  return (enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig) => {
+  return (enumSpecIndex: EnumSpecIndex, schema: Schema, stats: Stats, opt: QueryConfig): Enumerator => {
 
     return (answerSet: SpecQueryModel[], specQ: SpecQueryModel) => {
       // index of encoding mappings that require enumeration
@@ -115,7 +116,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property) {
             // Check if the constraint is enabled
             if (c.strict() || !!opt[c.name()]) {
               // For strict constraint, or enabled non-strict, check the constraints
-              const satisfy = c.satisfy(specQ.getEncodingQueryByIndex(indexTuple.index), schema, opt);
+              const satisfy = c.satisfy(specQ.getEncodingQueryByIndex(indexTuple.index), schema, stats, opt);
               if (!satisfy && opt.verbose) {
                 console.log(c.name() + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
               }
@@ -136,7 +137,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property) {
             // Check if the constraint is enabled
             if (c.strict() || !!opt[c.name()]) {
               // For strict constraint, or enabled non-strict, check the constraints
-              const satisfy = c.satisfy(specQ, schema, opt);
+              const satisfy = c.satisfy(specQ, schema, stats, opt);
               if (!satisfy && opt.verbose) {
                 console.log(c.name() + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
               }
