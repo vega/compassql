@@ -13,7 +13,7 @@ import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 /** A method for satisfying whether the provided encoding query satisfy the constraint. */
 export interface EncodingConstraintChecker {
-  (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean;
+  (encQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean;
 }
 
 export class EncodingConstraintModel extends AbstractConstraintModel {
@@ -21,20 +21,20 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
     super(constraint);
   }
 
-  public satisfy(encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean {
+  public satisfy(encQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean {
     // TODO: Re-order logic to optimize the "requireAllProperties" check
     if (this.constraint.requireAllProperties) {
       // TODO: extract as a method and do unit test
       const hasRequiredPropertyAsEnumSpec = some(
         this.constraint.properties,
-        (property) => isEnumSpec(encodingQ[property])
+        (property) => isEnumSpec(encQ[property])
       );
       // If one of the required property is still an enum spec, do not check the constraint yet.
       if (hasRequiredPropertyAsEnumSpec) {
         return true; // Return true since the query still satisfy the constraint.
       }
     }
-    return (this.constraint as EncodingConstraint).satisfy(encodingQ, schema, opt);
+    return (this.constraint as EncodingConstraint).satisfy(encQ, schema, opt);
   }
 }
 
@@ -51,9 +51,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.AGGREGATE],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
-      if (encodingQ.aggregate) {
-        return encodingQ.type !== Type.ORDINAL && encodingQ.type !== Type.NOMINAL;
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      if (encQ.aggregate) {
+        return encQ.type !== Type.ORDINAL && encQ.type !== Type.NOMINAL;
       }
       // TODO: some aggregate function are actually supported by ordinal
       return true; // no aggregate is okay with any type.
@@ -66,10 +66,10 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.BIN],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
-      if (encodingQ.bin) {
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      if (encQ.bin) {
         // If binned, the type must be quantitative
-        return encodingQ.type === Type.QUANTITATIVE;
+        return encQ.type === Type.QUANTITATIVE;
       }
       return true;
     }
@@ -80,11 +80,11 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN],
     requireAllProperties: false,
     strict: true,
-    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
-      const numFn = (!isEnumSpec(encodingQ.aggregate) && !!encodingQ.aggregate ? 1 : 0) +
-        (!isEnumSpec(encodingQ.autoCount) && !!encodingQ.autoCount ? 1 : 0) +
-        (!isEnumSpec(encodingQ.bin) && !!encodingQ.bin ? 1 : 0) +
-        (!isEnumSpec(encodingQ.timeUnit) && !!encodingQ.timeUnit ? 1 : 0);
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      const numFn = (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate ? 1 : 0) +
+        (!isEnumSpec(encQ.autoCount) && !!encQ.autoCount ? 1 : 0) +
+        (!isEnumSpec(encQ.bin) && !!encQ.bin ? 1 : 0) +
+        (!isEnumSpec(encQ.timeUnit) && !!encQ.timeUnit ? 1 : 0);
       return numFn <= 1;
     }
   },{
@@ -93,8 +93,8 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.TIMEUNIT],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
-      if (encodingQ.timeUnit && encodingQ.type !== Type.TEMPORAL) {
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      if (encQ.timeUnit && encQ.type !== Type.TEMPORAL) {
         return false;
       }
       return true;
@@ -106,9 +106,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.FIELD, Property.TYPE],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
-      const primitiveType = schema.primitiveType(encodingQ.field as string);
-      const type = encodingQ.type;
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      const primitiveType = schema.primitiveType(encQ.field as string);
+      const type = encQ.type;
 
       switch (primitiveType) {
         case PrimitiveType.BOOLEAN:
@@ -133,8 +133,8 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.FIELD, Property.TYPE],
     requireAllProperties: true,
     strict: false,
-    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
-      return schema.type(encodingQ.field as string) === encodingQ.type;
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      return schema.type(encQ.field as string) === encQ.type;
     }
   }
   // TODO: scaleType must match data type

@@ -170,9 +170,9 @@ export class SpecQueryModel {
 
   constructor(spec: SpecQuery, enumSpecIndex: EnumSpecIndex, enumSpecAssignment: Dict<any> = {}) {
     this._spec = spec;
-    this._encodingMap = spec.encodings.reduce((m, encodingQuery) => {
-      if (!isEnumSpec(encodingQuery.channel)) {
-        m[encodingQuery.channel as string] = encodingQuery;
+    this._encodingMap = spec.encodings.reduce((m, encQ) => {
+      if (!isEnumSpec(encQ.channel)) {
+        m[encQ.channel as string] = encQ;
       }
       return m;
     }, {} as Dict<EncodingQuery>);
@@ -212,28 +212,28 @@ export class SpecQueryModel {
   }
 
   public setEncodingProperty(index: number, property: Property, value: any, enumSpec: EnumSpec<any>) {
-    const encodingQuery = this._spec.encodings[index];
-    if (property === Property.CHANNEL && encodingQuery.channel && !isEnumSpec(encodingQuery.channel)) {
+    const encQ = this._spec.encodings[index];
+    if (property === Property.CHANNEL && encQ.channel && !isEnumSpec(encQ.channel)) {
       // If there is an old channel
-      delete this._encodingMap[encodingQuery.channel as Channel];
+      delete this._encodingMap[encQ.channel as Channel];
     }
 
-    encodingQuery[property] = value;
+    encQ[property] = value;
     this._enumSpecAssignment[enumSpec.name] = value;
 
     if (property === Property.CHANNEL) {
       // If there is a new channel
-      this._encodingMap[value] = encodingQuery;
+      this._encodingMap[value] = encQ;
     }
   }
 
   public resetEncodingProperty(index: number, property: Property, enumSpec: EnumSpec<any>) {
-    const encodingQuery = this._spec.encodings[index];
+    const encQ = this._spec.encodings[index];
     if (property === Property.CHANNEL) {
-      delete this._encodingMap[encodingQuery.channel as Channel];
+      delete this._encodingMap[encQ.channel as Channel];
     }
     // reset it to enumSpec
-    encodingQuery[property] = enumSpec;
+    encQ[property] = enumSpec;
     // add remove value that is reset from the assignment map
     delete this._enumSpecAssignment[enumSpec.name];
   }

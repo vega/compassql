@@ -43,8 +43,8 @@ export class SpecConstraintModel extends AbstractConstraintModel {
             case Property.TYPE:
               // If there is property that is enumSpec, we return true as
               // we cannot check the constraint yet!
-              return some(specQ.getEncodings(), (encodingQuery) => {
-                return isEnumSpec(encodingQuery[property]);
+              return some(specQ.getEncodings(), (encQ) => {
+                return isEnumSpec(encQ[property]);
               });
             default:
               throw new Error('Unimplemnted');
