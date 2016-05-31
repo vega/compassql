@@ -40,7 +40,7 @@ export interface EnumSpecIndex {
   bin?: EnumSpecIndexTuple<boolean>[];
 
   /** List of indice tuples of encoding mappings that require timeUnit enumeration. */
-  timeunit?: EnumSpecIndexTuple<TimeUnit>[];
+  timeUnit?: EnumSpecIndexTuple<TimeUnit>[];
 
   /** List of indice tuples of encoding mappings that require field enumeration. */
   field?: EnumSpecIndexTuple<string>[];
