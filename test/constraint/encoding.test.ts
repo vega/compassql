@@ -81,114 +81,203 @@ describe('constraints/encoding', () => {
     [Channel.X, Channel.Y, Channel.COLOR, Channel.OPACITY, Channel.DETAIL].forEach((channel) => {
       it(channel + ' supports raw measure.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' supports aggregate measure.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' supports raw temporal measure.', () => {
         const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' supports timeUnit temporal dimension.', () => {
         const encQ = {channel: channel, field: 'T', type: Type.QUANTITATIVE, timeUnit: TimeUnit.MONTH};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' supports binned quantitative dimension.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' supports ordinal dimension.', () => {
         const encQ = {channel: channel, field: 'O', type: Type.ORDINAL};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' supports nominal dimension.', () => {
         const encQ = {channel: channel, field: 'N', type: Type.NOMINAL};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
     });
 
     [Channel.ROW, Channel.COLUMN, Channel.SHAPE].forEach((channel) => {
       it(channel + ' does not support raw measure.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' does not support aggregate measure.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' does not support raw temporal measure.', () => {
         const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' supports timeUnit temporal dimension.', () => {
         const encQ = {channel: channel, field: 'T', type: Type.QUANTITATIVE, timeUnit: TimeUnit.MONTH};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' supports binned quantitative dimension.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' supports ordinal dimension.', () => {
         const encQ = {channel: channel, field: 'O', type: Type.ORDINAL};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' supports nominal dimension.', () => {
         const encQ = {channel: channel, field: 'N', type: Type.NOMINAL};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
     });
 
     [Channel.SIZE, Channel.TEXT].forEach((channel) => {
       it(channel + ' supports raw measure.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' supports aggregate measure.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' supports raw temporal measure.', () => {
         const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' does not support timeUnit temporal dimension.', () => {
         const encQ = {channel: channel, field: 'T', type: Type.QUANTITATIVE, timeUnit: TimeUnit.MONTH};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' does not support binned quantitative dimension.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' does not support ordinal dimension.', () => {
         const encQ = {channel: channel, field: 'O', type: Type.ORDINAL};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
 
       it(channel + ' does not support  nominal dimension.', () => {
         const encQ = {channel: channel, field: 'N', type: Type.NOMINAL};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, stats, defaultOpt));
       });
     });
 
+  });
+
+  describe('maxCardinalityForCategoricalColor', () => {
+    it('should return true for nominal color that has low cardinality', () => {
+      ['O', 'O_10', 'O_20'].forEach((field) => {
+        const encQ: EncodingQuery = {
+          channel: Channel.COLOR,
+          field: field,
+          type: Type.NOMINAL
+        };
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['maxCardinalityForCategoricalColor'].satisfy(encQ, schema, stats, defaultOpt));
+      });
+    });
+
+    it('should return false for nominal color that has high cardinality', () => {
+      ['O_100'].forEach((field) => {
+        const encQ: EncodingQuery = {
+          channel: Channel.COLOR,
+          field: field,
+          type: Type.NOMINAL
+        };
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['maxCardinalityForCategoricalColor'].satisfy(encQ, schema, stats, defaultOpt));
+      });
+    });
+
+    // TODO: timeUnit with categorical color scale
+
+    // TODO: bin with categorical color scale
+  });
+
+
+  describe('maxCardinalityForFacet', () => {
+    it('should return true for nominal field that has low cardinality', () => {
+      [Channel.ROW, Channel.COLUMN].forEach((channel) => {
+        ['O', 'O_10'].forEach((field) => {
+          const encQ: EncodingQuery = {
+            channel: channel,
+            field: field,
+            type: Type.NOMINAL
+          };
+          assert.isTrue(ENCODING_CONSTRAINT_INDEX['maxCardinalityForFacet'].satisfy(encQ, schema, stats, defaultOpt));
+        });
+      });
+    });
+
+    it('should return false for nominal field that has high cardinality', () => {
+      [Channel.ROW, Channel.COLUMN].forEach((channel) => {
+        ['O_20', 'O_100'].forEach((field) => {
+          const encQ: EncodingQuery = {
+            channel: channel,
+            field: field,
+            type: Type.NOMINAL
+          };
+          assert.isFalse(ENCODING_CONSTRAINT_INDEX['maxCardinalityForFacet'].satisfy(encQ, schema, stats, defaultOpt));
+        });
+      });
+    });
+
+    // TODO: timeUnit
+
+    // TODO: bin
+  });
+
+  describe('maxCardinalityForShape', () => {
+    it('should return true for nominal shape that has low cardinality', () => {
+      ['O'].forEach((field) => {
+        const encQ: EncodingQuery = {
+          channel: Channel.SHAPE,
+          field: field,
+          type: Type.NOMINAL
+        };
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['maxCardinalityForShape'].satisfy(encQ, schema, stats, defaultOpt));
+      });
+    });
+
+    it('should return false for nominal shape that has high cardinality', () => {
+      ['O_10', 'O_20', 'O_100'].forEach((field) => {
+        const encQ: EncodingQuery = {
+          channel: Channel.SHAPE,
+          field: field,
+          type: Type.NOMINAL
+        };
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['maxCardinalityForShape'].satisfy(encQ, schema, stats, defaultOpt));
+      });
+    });
+
+    // TODO: timeUnit
+
+    // TODO: bin
   });
 
   describe('onlyOneTypeOfFunction', () => {

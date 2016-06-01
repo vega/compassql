@@ -154,6 +154,44 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
       return schema.type(encQ.field as string) === encQ.type;
     }
+  },{
+   name: 'maxCardinalityForCategoricalColor',
+    description: 'Categorical channel should not have too high cardinality',
+    properties: [Property.CHANNEL, Property.FIELD],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      // TODO: missing case where ordinal / temporal use categorical color
+      // (once we do so, need to add Property.BIN, Property.TIMEUNIT)
+      if (encQ.channel === Channel.COLOR && encQ.type === Type.NOMINAL) {
+        return stats.cardinality(encQ) <= opt.maxCardinalityForCategoricalColor;
+      }
+      return true; // other channel is irrelevant to this constraint
+    }
+  },{
+    name: 'maxCardinalityForFacet',
+    description: 'Row/column channel should not have too high cardinality',
+    properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      if (encQ.channel === Channel.ROW || encQ.channel === Channel.COLUMN) {
+        return stats.cardinality(encQ) <= opt.maxCardinalityForFacet;
+      }
+      return true; // other channel is irrelevant to this constraint
+    }
+  },{
+    name: 'maxCardinalityForShape',
+    description: 'Shape channel should not have too high cardinality',
+    properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      if (encQ.channel === Channel.SHAPE) {
+        return stats.cardinality(encQ) <= opt.maxCardinalityForShape;
+      }
+      return true; // other channel is irrelevant to this constraint
+    }
   }
   // TODO: scaleType must match data type
 ].map((ec: EncodingConstraint) => new EncodingConstraintModel(ec));
