@@ -8,9 +8,9 @@ import {Type} from 'vega-lite/src/type';
 import {Spec} from 'vega-lite/src/Spec';
 
 import {Property, ENCODING_PROPERTIES} from './property';
-import {SpecQuery, EncodingQuery, EnumSpec, QueryConfig, initEnumSpec, isEnumSpec, stringifySpecQuery} from './query';
+import {SpecQuery, EncodingQuery, EnumSpec, QueryConfig, initEnumSpec, isEnumSpec, isDimension, isMeasure, stringifySpecQuery} from './query';
 import {Schema} from './schema';
-import {Dict, isin, duplicate, some} from './util';
+import {Dict, duplicate, some} from './util';
 
 /**
  * Part of EnumSpecIndex which lists all enumSpec in a specQuery.
@@ -256,14 +256,12 @@ export class SpecQueryModel {
 
   public isDimension(channel: Channel) {
     const encQ = this._encodingMap[channel];
+    return encQ && isDimension(encQ);
+  }
 
-    if (!encQ) {
-      return false;
-    }
-
-    return isin(encQ.type, [Type.NOMINAL, Type.ORDINAL]) ||
-      (!isEnumSpec(encQ.bin) && !!encQ.bin) ||
-      (encQ.type === Type.TEMPORAL && !isEnumSpec(encQ.timeUnit) && !!encQ.timeUnit);
+  public isMeasure(channel: Channel) {
+    const encQ = this._encodingMap[channel];
+    return encQ && isMeasure(encQ);
   }
 
   public isAggregate() {

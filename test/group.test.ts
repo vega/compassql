@@ -145,11 +145,11 @@ describe('group', () => {
         }, {
           channel: {enumValues: [Channel.ROW, Channel.COLUMN]},
           field: 'c',
-          type: Type.QUANTITATIVE
+          type: Type.ORDINAL
         }, {
           channel: {enumValues: [Channel.ROW, Channel.COLUMN]},
           field: 'd',
-          type: Type.QUANTITATIVE
+          type: Type.ORDINAL
         }]
       };
 
