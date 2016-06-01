@@ -54,6 +54,10 @@ export interface QueryConfig {
   preferredNominalAxis?: Channel;
 
   // Encoding Constraints
+
+  maxCardinalityForCategoricalColor?: number;
+  maxCardinalityForFacet?: number;
+  maxCardinalityForShape?: number;
   typeMatchesSchemaType?: boolean;
 }
 
@@ -100,7 +104,11 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   preferredTemporalAxis: Channel.X,
   preferredOrdinalAxis: Channel.Y, // ordinal on y makes it easier to read.
   preferredNominalAxis: Channel.Y, // nominal on y makes it easier to read.
+
   // Encoding Constraints -- See description inside src/constraints/encoding.ts
+  maxCardinalityForCategoricalColor: 20,
+  maxCardinalityForFacet: 10,
+  maxCardinalityForShape: 6,
   typeMatchesSchemaType: true
 };
 

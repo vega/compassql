@@ -7,12 +7,13 @@ import {AbstractConstraint, AbstractConstraintModel} from './base';
 import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {Property} from '../property';
 import {Schema} from '../schema';
+import {Stats} from '../stats';
 import {EncodingQuery, QueryConfig, isEnumSpec} from '../query';
 import {every, some} from '../util';
 
 
 export interface SpecConstraintChecker {
-  (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig): boolean;
+  (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig): boolean;
 }
 
 export class SpecConstraintModel extends AbstractConstraintModel {
@@ -20,7 +21,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
     super(specConstraint);
   }
 
-  public satisfy(specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) {
+  public satisfy(specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) {
     // TODO: Re-order logic to optimize the "requireAllProperties" check
 
     if (this.constraint.requireAllProperties) {
@@ -56,7 +57,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
         return true; // Return true since the query still satisfy the constraint.
       }
     }
-    return (this.constraint as SpecConstraint).satisfy(specQ, schema, opt);
+    return (this.constraint as SpecConstraint).satisfy(specQ, schema, stats, opt);
   }
 }
 
@@ -69,7 +70,7 @@ export interface SpecConstraint extends AbstractConstraint {
  * Factory function for satisfy preferred type constraints.
  */
 function satisfyPreferredType(theType: Type, configName: string) {
-  return (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+  return (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
     const xEncQ = specQ.getEncodingQueryByChannel(Channel.X);
     const yEncQ = specQ.getEncodingQueryByChannel(Channel.Y);
     const xIsTheType = xEncQ && xEncQ.type === theType;
@@ -92,7 +93,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.BIN, Property.TIMEUNIT, Property.TYPE, Property.AUTOCOUNT],
     requireAllProperties: false,
     strict: false,
-    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
       const hasAutoCount =  some(specQ.getEncodings(), (encQ: EncodingQuery) => encQ.autoCount === true);
 
       if (hasAutoCount) {
@@ -147,7 +148,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.MARK],
     requireAllProperties: false, // only require mark
     strict: true,
-    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
       const mark = specQ.getMark();
 
       // if mark is unspecified, no need to check
@@ -168,7 +169,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.MARK],
     requireAllProperties: true,
     strict: true,
-    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
       const mark = specQ.getMark();
 
       switch (mark) {
@@ -196,7 +197,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     requireAllProperties: true,
     strict: false,
-    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
       return specQ.channelUsed(Channel.ROW) || specQ.channelUsed(Channel.COLUMN) ?
       // if non-positional channels are used, then both x and y must be used.
       specQ.channelUsed(Channel.X) && specQ.channelUsed(Channel.Y) :
@@ -210,7 +211,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     requireAllProperties: false,
     strict: false,
-    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
       const encodings = specQ.getEncodings();
       let nonPositionChannelCount = 0;
       for (let i = 0; i < encodings.length; i++) {
@@ -233,7 +234,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     requireAllProperties: true,
     strict: false,
-    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
       return some(NONSPATIAL_CHANNELS, (channel) => specQ.channelUsed(channel)) ?
         // if non-positional channels are used, then both x and y must be used.
         specQ.channelUsed(Channel.X) && specQ.channelUsed(Channel.Y) :
@@ -247,7 +248,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.AGGREGATE, Property.TIMEUNIT, Property.BIN, Property.TYPE],
     requireAllProperties: false,
     strict: false,
-    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
        if (specQ.isAggregate()) {
          return every(specQ.getEncodings(), (encQ: EncodingQuery) => {
            if (encQ.type === Type.TEMPORAL) {
@@ -269,7 +270,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.FIELD],
     requireAllProperties: false,
     strict: false, // over-encoding is sometimes good, but let's turn it off by default
-    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
       let usedField = {};
 
       // the same field should not be encoded twice
@@ -293,7 +294,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     requireAllProperties: false,
     strict: false,
-    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
       const encodings = specQ.getEncodings();
       if (encodings.length === 1 && encodings[0].channel === Channel.Y) {
         return false;
@@ -307,7 +308,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.BIN],
     requireAllProperties: true,
     strict: false,
-    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
       const xEncQ = specQ.getEncodingQueryByChannel(Channel.X);
       const yEncQ = specQ.getEncodingQueryByChannel(Channel.Y);
       const xBin = xEncQ && !!xEncQ.bin;
@@ -351,7 +352,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     requireAllProperties: false,
     strict: true,
-    satisfy: (specQ: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
       let usedChannel = {};
 
       // channel for all encodings should be valid

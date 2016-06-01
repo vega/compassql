@@ -4,6 +4,7 @@ import {Type} from 'vega-lite/src/type';
 import {Property} from '../property';
 import {EncodingQuery, isEnumSpec, isDimension, isMeasure, QueryConfig} from '../query';
 import {PrimitiveType, Schema} from '../schema';
+import {Stats} from '../stats';
 import {some} from '../util';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -14,7 +15,7 @@ import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 /** A method for satisfying whether the provided encoding query satisfy the constraint. */
 export interface EncodingConstraintChecker {
-  (encQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean;
+  (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig): boolean;
 }
 
 export class EncodingConstraintModel extends AbstractConstraintModel {
@@ -22,7 +23,7 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
     super(constraint);
   }
 
-  public satisfy(encQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean {
+  public satisfy(encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig): boolean {
     // TODO: Re-order logic to optimize the "requireAllProperties" check
     if (this.constraint.requireAllProperties) {
       // TODO: extract as a method and do unit test
@@ -35,7 +36,7 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
         return true; // Return true since the query still satisfy the constraint.
       }
     }
-    return (this.constraint as EncodingConstraint).satisfy(encQ, schema, opt);
+    return (this.constraint as EncodingConstraint).satisfy(encQ, schema, stats, opt);
   }
 }
 
@@ -52,7 +53,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.AGGREGATE],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
       if (encQ.aggregate) {
         return encQ.type !== Type.ORDINAL && encQ.type !== Type.NOMINAL;
       }
@@ -67,7 +68,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.BIN],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
       if (encQ.bin) {
         // If binned, the type must be quantitative
         return encQ.type === Type.QUANTITATIVE;
@@ -97,7 +98,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN],
     requireAllProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
       const numFn = (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate ? 1 : 0) +
         (!isEnumSpec(encQ.autoCount) && !!encQ.autoCount ? 1 : 0) +
         (!isEnumSpec(encQ.bin) && !!encQ.bin ? 1 : 0) +
@@ -110,7 +111,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.TIMEUNIT],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
       if (encQ.timeUnit && encQ.type !== Type.TEMPORAL) {
         return false;
       }
@@ -123,7 +124,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.FIELD, Property.TYPE],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
       const primitiveType = schema.primitiveType(encQ.field as string);
       const type = encQ.type;
 
@@ -150,8 +151,46 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.FIELD, Property.TYPE],
     requireAllProperties: true,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
       return schema.type(encQ.field as string) === encQ.type;
+    }
+  },{
+   name: 'maxCardinalityForCategoricalColor',
+    description: 'Categorical channel should not have too high cardinality',
+    properties: [Property.CHANNEL, Property.FIELD],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      // TODO: missing case where ordinal / temporal use categorical color
+      // (once we do so, need to add Property.BIN, Property.TIMEUNIT)
+      if (encQ.channel === Channel.COLOR && encQ.type === Type.NOMINAL) {
+        return stats.cardinality(encQ) <= opt.maxCardinalityForCategoricalColor;
+      }
+      return true; // other channel is irrelevant to this constraint
+    }
+  },{
+    name: 'maxCardinalityForFacet',
+    description: 'Row/column channel should not have too high cardinality',
+    properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      if (encQ.channel === Channel.ROW || encQ.channel === Channel.COLUMN) {
+        return stats.cardinality(encQ) <= opt.maxCardinalityForFacet;
+      }
+      return true; // other channel is irrelevant to this constraint
+    }
+  },{
+    name: 'maxCardinalityForShape',
+    description: 'Shape channel should not have too high cardinality',
+    properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      if (encQ.channel === Channel.SHAPE) {
+        return stats.cardinality(encQ) <= opt.maxCardinalityForShape;
+      }
+      return true; // other channel is irrelevant to this constraint
     }
   }
   // TODO: scaleType must match data type
