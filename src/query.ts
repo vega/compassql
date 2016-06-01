@@ -6,6 +6,7 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/Type';
 
 import {Property} from './property';
+import {isin} from './util';
 
 export interface QueryConfig {
   verbose?: boolean;
@@ -179,6 +180,17 @@ export interface EncodingQuery {
   // TODO: value
 
   // TODO: scaleQuery, axisQuery, legendQuery
+}
+
+export function isDimension(encQ: EncodingQuery) {
+  return isin(encQ.type, [Type.NOMINAL, Type.ORDINAL]) ||
+      (!isEnumSpec(encQ.bin) && !!encQ.bin) ||          // surely Q type
+      (!isEnumSpec(encQ.timeUnit) && !!encQ.timeUnit);  // surely T type
+}
+
+export function isMeasure(encQ: EncodingQuery) {
+  return (encQ.type === Type.QUANTITATIVE && !encQ.bin) ||
+      (encQ.type === Type.TEMPORAL && !encQ.timeUnit);
 }
 
 export function stringifyEncodingQuery(encQ: EncodingQuery): string {

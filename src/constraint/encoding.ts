@@ -1,7 +1,8 @@
+import {Channel, getSupportedRole} from 'vega-lite/src/channel';
 import {Type} from 'vega-lite/src/type';
 
 import {Property} from '../property';
-import {EncodingQuery, isEnumSpec, QueryConfig} from '../query';
+import {EncodingQuery, isEnumSpec, isDimension, isMeasure, QueryConfig} from '../query';
 import {PrimitiveType, Schema} from '../schema';
 import {some} from '../util';
 
@@ -73,7 +74,23 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       }
       return true;
     }
-  // TODO: channelsSupportRoles
+  },{
+    name: 'channelSupportsRole',
+    description: 'encoding channel should support the role of the field',
+    properties: [Property.CHANNEL, Property.TYPE, Property.BIN, Property.TIMEUNIT],
+    requireAllProperties: false,
+    strict: true,
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      if (isEnumSpec(encQ.channel)) return true; // not ready for checking yet!
+
+      const supportedRole = getSupportedRole(encQ.channel as Channel);
+      if (isDimension(encQ)) {
+        return supportedRole.dimension;
+      } else if (isMeasure(encQ)) {
+        return supportedRole.measure;
+      }
+      return true;
+    }
   },{
     name: 'onlyOneTypeOfFunction',
     description: 'Only of of aggregate, autoCount, timeUnit, or bin should be applied at the same time.',

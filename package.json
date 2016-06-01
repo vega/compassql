@@ -60,7 +60,7 @@
     "vega-datasets": "latest"
   },
   "dependencies": {
-    "vega-lite": "^1.0.10"
+    "vega-lite": "^1.0.11"
   },
   "browserify": {
     "transform": [

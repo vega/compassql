@@ -85,6 +85,120 @@ describe('constraints/encoding', () => {
     });
   });
 
+  describe('channelSupportsRole', () => {
+    [Channel.X, Channel.Y, Channel.COLOR, Channel.OPACITY, Channel.DETAIL].forEach((channel) => {
+      it(channel + ' supports raw measure.', () => {
+        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' supports aggregate measure.', () => {
+        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' supports raw temporal measure.', () => {
+        const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' supports timeUnit temporal dimension.', () => {
+        const encQ = {channel: channel, field: 'T', type: Type.QUANTITATIVE, timeUnit: TimeUnit.MONTH};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' supports binned quantitative dimension.', () => {
+        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' supports ordinal dimension.', () => {
+        const encQ = {channel: channel, field: 'O', type: Type.ORDINAL};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' supports nominal dimension.', () => {
+        const encQ = {channel: channel, field: 'N', type: Type.NOMINAL};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+    });
+
+    [Channel.ROW, Channel.COLUMN, Channel.SHAPE].forEach((channel) => {
+      it(channel + ' does not support raw measure.', () => {
+        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' does not support aggregate measure.', () => {
+        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN};
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' does not support raw temporal measure.', () => {
+        const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL};
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' supports timeUnit temporal dimension.', () => {
+        const encQ = {channel: channel, field: 'T', type: Type.QUANTITATIVE, timeUnit: TimeUnit.MONTH};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' supports binned quantitative dimension.', () => {
+        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' supports ordinal dimension.', () => {
+        const encQ = {channel: channel, field: 'O', type: Type.ORDINAL};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' supports nominal dimension.', () => {
+        const encQ = {channel: channel, field: 'N', type: Type.NOMINAL};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+    });
+
+    [Channel.SIZE, Channel.TEXT].forEach((channel) => {
+      it(channel + ' supports raw measure.', () => {
+        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' supports aggregate measure.', () => {
+        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' supports raw temporal measure.', () => {
+        const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL};
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' does not support timeUnit temporal dimension.', () => {
+        const encQ = {channel: channel, field: 'T', type: Type.QUANTITATIVE, timeUnit: TimeUnit.MONTH};
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' does not support binned quantitative dimension.', () => {
+        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' does not support ordinal dimension.', () => {
+        const encQ = {channel: channel, field: 'O', type: Type.ORDINAL};
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+
+      it(channel + ' does not support  nominal dimension.', () => {
+        const encQ = {channel: channel, field: 'N', type: Type.NOMINAL};
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, defaultOpt));
+      });
+    });
+
+  });
+
   describe('onlyOneTypeOfFunction', () => {
     const encQ: EncodingQuery = {
         channel: Channel.X,
