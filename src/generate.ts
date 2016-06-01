@@ -4,7 +4,7 @@ import {checkEncoding} from './constraint/encoding';
 import {checkSpec} from './constraint/spec';
 
 import {EnumSpecIndex, EnumSpecIndexTuple, SpecQueryModel} from './model';
-import {Property, ENCODING_PROPERTIES} from './property';
+import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from './property';
 import {EnumSpec, QueryConfig, SpecQuery, DEFAULT_QUERY_CONFIG} from './query';
 import {Schema} from './schema';
 import {Stats} from './stats';
@@ -69,12 +69,17 @@ ENCODING_PROPERTIES.forEach((prop) => {
   ENUMERATOR_INDEX[prop] = EncodingPropertyGeneratorFactory(prop);
 });
 
+NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
+  ENUMERATOR_INDEX[nestedProp.property] = EncodingPropertyGeneratorFactory(nestedProp.property);
+});
+
 /**
- * @return an answer set reducer factory for this type of prop.
+ * @param prop property type.
+ * @return an answer set reducer factory for the given prop.
  */
 export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFactory {
   /**
-   * @return as reducer that takes a specQueryModel as input and output to an input answer set array.
+   * @return as reducer that takes a specQueryModel as input and output an answer set array.
    */
   return (enumSpecIndex: EnumSpecIndex, schema: Schema, stats: Stats, opt: QueryConfig): Enumerator => {
 
@@ -105,6 +110,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
               propVal = undefined;
             }
             specM.setEncodingProperty(indexTuple.index, prop, propVal, indexTuple.enumSpec);
+
             // Check encoding constraint
             const violatedEncodingConstraint = checkEncoding(prop, indexTuple, specM, schema, stats, opt);
             if (violatedEncodingConstraint) {

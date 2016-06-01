@@ -40,6 +40,8 @@ export interface QueryConfig {
   /** Default types to enumerate */
   types?: Type[];
 
+  /** Default maxbins to enumerate */
+  maxBinsList?: number[];
   // TODO: scaleType, etc.
 
   // SPECIAL MODE
@@ -96,6 +98,8 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
     Property.AGGREGATE,
     Property.AUTOCOUNT,
 
+
+
     // Encoding
     Property.CHANNEL,
     Property.MARK
@@ -107,6 +111,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   timeUnits: [TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.DATE], // TODO: include hours and minutes
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
+  maxBinsList: [5, 10, 20],
   // TODO: scaleType, etc.
 
 
@@ -226,14 +231,17 @@ export interface EncodingQuery {
   autoCount?: boolean | EnumSpec<boolean> | ShortEnumSpec;
   timeUnit?: TimeUnit | EnumSpec<TimeUnit> | ShortEnumSpec;
 
-  // TODO: change to binQuery to support bin parameters
-  bin?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+  bin?: boolean | BinQuery | ShortEnumSpec;
 
   field?: Field | EnumSpec<Field> | ShortEnumSpec;
   type?: Type | EnumSpec<Field> | ShortEnumSpec;
   // TODO: value
 
   // TODO: scaleQuery, axisQuery, legendQuery
+}
+
+export interface BinQuery extends EnumSpec<boolean> {
+  maxbins?: number | EnumSpec<number> | ShortEnumSpec;
 }
 
 export function isDimension(encQ: EncodingQuery) {
