@@ -76,12 +76,13 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
   // TODO: channelsSupportRoles
   },{
     name: 'onlyOneTypeOfFunction',
-    description: 'Only of of aggregate, timeUnit, or bin should be applied at the same time.',
-    properties: [Property.AGGREGATE, Property.TIMEUNIT, Property.BIN],
+    description: 'Only of of aggregate, autoCount, timeUnit, or bin should be applied at the same time.',
+    properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN],
     requireAllProperties: false,
     strict: true,
     satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       const numFn = (!isEnumSpec(encodingQ.aggregate) && !!encodingQ.aggregate ? 1 : 0) +
+        (!isEnumSpec(encodingQ.autoCount) && !!encodingQ.autoCount ? 1 : 0) +
         (!isEnumSpec(encodingQ.bin) && !!encodingQ.bin ? 1 : 0) +
         (!isEnumSpec(encodingQ.timeUnit) && !!encodingQ.timeUnit ? 1 : 0);
       return numFn <= 1;
@@ -97,16 +98,6 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
         return false;
       }
       return true;
-    }
-  },
-  {
-    name: 'typeMatchesSchemaType',
-    description: 'Enumerated data type of a field should match the field\'s type in the schema.',
-    properties: [Property.FIELD, Property.TYPE],
-    requireAllProperties: true,
-    strict: false,
-    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
-      return schema.type(encodingQ.field as string) === encodingQ.type;
     }
   },
   {
@@ -129,8 +120,21 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
         case PrimitiveType.DATE:
           // TODO: add NOMINAL, ORDINAL support after we support this in Vega-Lite
           return type === Type.TEMPORAL;
+        case null:
+          // field does not exist in the schema
+          return false;
       }
       throw new Error('Not implemented');
+    }
+  },
+  {
+    name: 'typeMatchesSchemaType',
+    description: 'Enumerated data type of a field should match the field\'s type in the schema.',
+    properties: [Property.FIELD, Property.TYPE],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (encodingQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      return schema.type(encodingQ.field as string) === encodingQ.type;
     }
   }
   // TODO: scaleType must match data type
