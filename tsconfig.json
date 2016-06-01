@@ -27,11 +27,20 @@
         "lib"
     ],
     "files": [
+        "demo/index.ts",
         "src/cql.ts",
+        "src/constraint/encoding.ts",
+        "src/constraint/spec.ts",
         "src/generate.ts",
+        "src/property.ts",
         "src/schema.ts",
         "src/util.ts",
+        "test/generate.test.ts",
+        "test/model.test.ts",
+        "test/constraint/encoding.test.ts",
+        "test/constraint/spec.test.ts",
         "typings/chai.d.ts",
+        "typings/datalib.d.ts",
         "typings/mocha.d.ts"
     ],
     "atom": {

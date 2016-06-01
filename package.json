@@ -6,9 +6,6 @@
   "directories": {
     "test": "test"
   },
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "build": "tsc && browserify src/cql.js -d -s cql | exorcist compassql.js.map > compassql.js",
     "postbuild": "uglifyjs compassql.js -cm --source-map compassql.min.js.map > compassql.min.js",
@@ -45,21 +42,25 @@
   },
   "homepage": "https://github.com/uwdata/compassql#readme",
   "devDependencies": {
+    "d3": "^3.5.17",
     "browserify": "^13.0.0",
     "browserify-versionify": "^1.0.6",
     "chai": "^3.4.1",
+    "datalib": "^1.7.0",
     "exorcist": "^0.4.0",
     "istanbul": "^0.4.2",
     "mocha": "~2.4.4",
     "nodemon": "^1.8.1",
     "source-map-support": "^0.4.0",
     "tsify": "^0.13.2",
-    "tslint": "^3.3.0",
+    "tslint": "^3.10.0",
     "typescript": "^1.7.5",
-    "uglify-js": "^2.6.1"
+    "uglify-js": "^2.6.1",
+    "vega": "^2.5.2",
+    "vega-datasets": "latest"
   },
   "dependencies": {
-    "vega-lite": "^1.0.8"
+    "vega-lite": "^1.0.10"
   },
   "browserify": {
     "transform": [

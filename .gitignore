@@ -5,6 +5,7 @@ compassql.min.js.map
 compassql.js
 bower_components
 coverage
+demo/**/*.js
 src/**/*.js
 test/**/*.js
 **/*.js.map
