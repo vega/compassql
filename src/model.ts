@@ -75,13 +75,22 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
   switch (prop) {
     case Property.FIELD:       // For field, by default enumerate all fields
       return schema.fields();
+
     case Property.BIN:         // True, False for boolean values
     case Property.AUTOCOUNT:
       return [false, true];
+
+
+    case Property.MARK:
+    case Property.CHANNEL:
+    case Property.AGGREGATE:
+    case Property.TIMEUNIT:
+    case Property.TYPE:
+    // For other properties, take default enumValues from config.
+    // The config name for each prop is a plural form of the prop.
+    return opt[prop+'s'] || [];
   }
-  // For other properties, take default enumValues from config.
-  // The config name for each prop is a plural form of the prop.
-  return opt[prop+'s'] || [];
+  throw new Error('No default enumValues for ' + prop);
 }
 
 /**
