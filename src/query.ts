@@ -58,6 +58,7 @@ export interface QueryConfig {
   maxCardinalityForCategoricalColor?: number;
   maxCardinalityForFacet?: number;
   maxCardinalityForShape?: number;
+  minCardinalityForBin?: number;
   typeMatchesSchemaType?: boolean;
 }
 
@@ -109,6 +110,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   maxCardinalityForCategoricalColor: 20,
   maxCardinalityForFacet: 10,
   maxCardinalityForShape: 6,
+  minCardinalityForBin: 20,
   typeMatchesSchemaType: true
 };
 

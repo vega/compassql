@@ -29,3 +29,9 @@ export interface FieldStats {
   field: string;
   cardinality: number;
 }
+
+export interface Cardinality {
+  raw: number;
+  bin: {[params: string]: number};
+  timeUnit: {[timeunit: string]: number};
+}

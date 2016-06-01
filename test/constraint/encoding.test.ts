@@ -280,6 +280,10 @@ describe('constraints/encoding', () => {
     // TODO: bin
   });
 
+  describe('minCardinalityForBin', () => {
+    // TODO:
+  });
+
   describe('onlyOneTypeOfFunction', () => {
     const encQ: EncodingQuery = {
         channel: Channel.X,

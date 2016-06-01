@@ -192,6 +192,18 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       }
       return true; // other channel is irrelevant to this constraint
     }
+  },{
+    name: 'minCardinalityForBin',
+    description: 'Binned field should not have too low cardinality',
+    properties: [Property.FIELD, Property.BIN],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      if (encQ.bin) {
+        return stats.cardinality(encQ) >= opt.minCardinalityForBin;
+      }
+      return true; // other channel is irrelevant to this constraint
+    }
   }
   // TODO: scaleType must match data type
 ].map((ec: EncodingConstraint) => new EncodingConstraintModel(ec));
