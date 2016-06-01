@@ -59,10 +59,13 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
     Property.TYPE, // type is a constraint for field
     Property.FIELD,
 
+    // TODO: transform
+
     // Field Transform
-    Property.AGGREGATE,
     Property.BIN,
     Property.TIMEUNIT,
+    Property.AGGREGATE,
+    // Property.COUNT
 
     // Encoding
     Property.CHANNEL,
@@ -100,7 +103,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
 /** Enum for a short form of the enumeration spec. */
 export enum ShortEnumSpec {
-  ENUMSPEC = '*' as any
+  ENUMSPEC = '?' as any
 }
 
 export const SHORT_ENUM_SPEC = ShortEnumSpec.ENUMSPEC;
@@ -121,6 +124,10 @@ export function initEnumSpec(prop: any, defaultName: string, defaultEnumValues: 
   };
 }
 
+function enumSpecShort(value: any): string {
+  return (isEnumSpec(value) ? SHORT_ENUM_SPEC : value) + '';
+}
+
 export interface SpecQuery {
   mark: Mark | EnumSpec<Mark> | ShortEnumSpec;
   transform?: TransformQuery;
@@ -128,6 +135,16 @@ export interface SpecQuery {
 
   // TODO: make config query (not important at all, only for the sake of completeness.)
   config?: Config;
+}
+
+export function stringifySpecQuery (specQ: SpecQuery): string {
+  const mark = enumSpecShort(specQ.mark);
+  const encodings = specQ.encodings.map(stringifyEncodingQuery)
+                        .sort();  // sort at the end to ignore order
+
+  return mark + '|' +
+      // TODO: transform
+      encodings;
 }
 
 export interface TransformQuery {
@@ -157,4 +174,28 @@ export interface EncodingQuery {
   // TODO: value
 
   // TODO: scaleQuery, axisQuery, legendQuery
+}
+
+export function stringifyEncodingQuery(encQ: EncodingQuery): string {
+  return enumSpecShort(encQ.channel) + ':' + stringifyEncodingQueryFieldDef(encQ);
+}
+
+export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
+  let fn = null;
+  if (encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
+    fn = encQ.aggregate;
+  } else if (encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
+    fn = encQ.timeUnit;
+  } else if (encQ.bin && !isEnumSpec(encQ.bin)) {
+    fn = 'bin';
+  } else if (
+      (encQ.aggregate && isEnumSpec(encQ.aggregate)) ||
+      (encQ.timeUnit && isEnumSpec(encQ.timeUnit)) ||
+      (encQ.bin && isEnumSpec(encQ.bin))
+    ) {
+    fn = SHORT_ENUM_SPEC + '';
+  }
+
+  const fieldType = enumSpecShort(encQ.field) + ',' + enumSpecShort(encQ.type).substr(0,1);
+  return (fn ? fn + '(' + fieldType + ')' : fieldType);
 }

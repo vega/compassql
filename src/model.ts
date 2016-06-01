@@ -8,7 +8,7 @@ import {Type} from 'vega-lite/src/type';
 import {Spec} from 'vega-lite/src/Spec';
 
 import {Property, ENCODING_PROPERTIES} from './property';
-import {SpecQuery, EncodingQuery, EnumSpec, QueryConfig, initEnumSpec, isEnumSpec} from './query';
+import {SpecQuery, EncodingQuery, EnumSpec, QueryConfig, initEnumSpec, isEnumSpec, stringifySpecQuery} from './query';
 import {Schema} from './schema';
 import {Dict, isin, duplicate, some} from './util';
 
@@ -137,7 +137,6 @@ export class SpecQueryModel {
     this._enumSpecAssignment = enumSpecAssignment;
   }
 
-
   public get enumSpecIndex() {
     return this._enumSpecIndex;
   }
@@ -228,32 +227,7 @@ export class SpecQueryModel {
   }
 
   public toShorthand(): string {
-    function enumSpecShort(value: any) {
-      return isEnumSpec(value) ? '*' : value;
-    }
-
-    return enumSpecShort(this._spec.mark) + '|' +
-      // TODO: transform
-      this._spec.encodings.map((encQ) => {
-        let fn = null;
-        if (encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
-          fn = encQ.aggregate;
-        } else if (encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
-          fn = encQ.timeUnit;
-        } else if (encQ.bin && !isEnumSpec(encQ.timeUnit)) {
-          fn = 'bin';
-        } else if (encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
-          fn = '*';
-        } else if (encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
-          fn = '*';
-        } else if (encQ.bin && !isEnumSpec(encQ.timeUnit)) {
-          fn = '*';
-        }
-
-        const fieldType = enumSpecShort(encQ.field) + ',' + enumSpecShort(encQ.type);
-        return enumSpecShort(encQ.channel) + ':' +
-          (fn ? fn + '(' + fieldType + ')' : fieldType);
-      });
+    return stringifySpecQuery(this._spec);
   }
 
   /**
