@@ -1,6 +1,7 @@
 import {assert} from 'chai';
 
-import load = require('datalib/src/import/load');
+import {json} from 'datalib/src/import/readers';
+import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
@@ -10,6 +11,7 @@ import {ENUMERATOR_INDEX, generate} from '../src/generate';
 import {SpecQueryModel} from '../src/model';
 import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery} from '../src/query';
 import {Schema} from '../src/schema';
+import {Stats} from '../src/stats';
 import {extend, keys} from '../src/util';
 
 import {schema, stats} from './fixture';
@@ -26,23 +28,24 @@ describe('generate', function () {
           { channel: SHORT_ENUM_SPEC, field: { enumValues: ['Name', 'Origin'] }, type: SHORT_ENUM_SPEC},
       ]
     };
-    load({url: 'node_modules/vega-datasets/data/cars.json'}, function (data) {
-        var types = inferAll(data);
-        var fieldSchemas: any = keys(types).map(function (field) {
-            var primitiveType = types[field];
-            var type = primitiveType === 'number' || primitiveType === 'integer' ? 'quantitative' :
-                primitiveType === 'date' ? 'temporal' : 'nominal';
-            console.log('schema', field, type, primitiveType);
-            return {
-                field: field,
-                type: type,
-                primitiveType: types[field]
-            };
-        });
-        var dataSchema = new Schema(fieldSchemas);
-        var answerSet = generate(query, dataSchema, stats).map(function (answer) { return answer.toSpec(); });
-        assert.isTrue(answerSet.length > 0);
+
+    const data = json('node_modules/vega-datasets/data/cars.json');
+    var types = inferAll(data);
+    var fieldSchemas: any = keys(types).map(function (field) {
+        var primitiveType = types[field];
+        var type = primitiveType === 'number' || primitiveType === 'integer' ? 'quantitative' :
+            primitiveType === 'date' ? 'temporal' : 'nominal';
+        return {
+            field: field,
+            type: type,
+            primitiveType: types[field]
+        };
     });
+    const mySchema = new Schema(fieldSchemas);
+    const mySummary = summary(data);
+    const myStats = new Stats(mySummary);
+    const answerSet = generate(query, mySchema, myStats);
+    assert.isTrue(answerSet.length > 0);
   });
 
   describe('mark', () => {
