@@ -21,11 +21,15 @@ export class Stats {
       return 1; // FIXME
     }
 
-    return this._fieldStatsIndex[encQ.field as string].cardinality;
+    return this._fieldStatsIndex[encQ.field as string].distinct;
   }
 }
 
 export interface FieldStats {
   field: string;
-  cardinality: number;
+  distinct: number;
 }
+
+// export function computeStats(data): Stats{
+
+// }
