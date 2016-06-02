@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "build": "tsc && browserify src/cql.js -d -s cql | exorcist compassql.js.map > compassql.js",
+    "build": "browserify src/cql.ts -p tsify -d -s cql > compassql.js",
     "postbuild": "uglifyjs compassql.js -cm --source-map compassql.min.js.map > compassql.min.js",
     "clean": "rm -f compassql.* & find src -name '*.js*' -type f -delete & find test -name '*.js*' -type f -delete",
     "cover": "tsc && istanbul cover node_modules/.bin/_mocha -- --recursive",
