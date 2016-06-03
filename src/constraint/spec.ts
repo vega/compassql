@@ -242,6 +242,20 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
+    // TODO: we can be smarter and check if bar has occlusion
+    name: 'omitRawBar',
+    description: 'Don\'t use bar to visualize raw plot as they often lead to occlusion.',
+    properties: [Property.MARK, Property.AGGREGATE],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      if (specQ.getMark() === Mark.BAR) {
+        return specQ.isAggregate();
+      }
+      return true;
+    }
+  },
+  {
     name: 'omitRawContinuousFieldForAggregatePlot',
     description: 'Aggregate plot should not use raw continuous field as group by values. ' +
       '(Quantitative should be binned. Temporal should have time unit.)',

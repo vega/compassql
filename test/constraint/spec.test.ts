@@ -337,6 +337,32 @@ describe('constraints/spec', () => {
     });
   });
 
+  describe('omitRawBar', () => {
+    it('should return false for raw bar', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawBar'].satisfy(specQ, schema, stats, defaultOpt));
+    });
+
+    it('should return true for aggregate bar', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawBar'].satisfy(specQ, schema, stats, defaultOpt));
+    });
+  });
+
   describe('omitRawContinuousFieldForAggregatePlot', () => {
     it('should return false if the aggregate plot groups by a raw temporal field', () => {
       const specQ = buildSpecQueryModel({

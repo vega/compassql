@@ -51,7 +51,7 @@ describe('generate', function () {
   describe('mark', () => {
     it('should correctly enumerate marks', () => {
       const specQ = buildSpecQueryModel({
-        mark: {enumValues: [Mark.POINT, Mark.BAR]},
+        mark: {enumValues: [Mark.POINT, Mark.TICK]},
         encodings: [
           {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
           {channel: Channel.Y, field: 'O', type: Type.ORDINAL}
@@ -62,7 +62,7 @@ describe('generate', function () {
       const answerSet = enumerator([], specQ);
       assert.equal(answerSet.length, 2);
       assert.equal(answerSet[0].getMark(), Mark.POINT);
-      assert.equal(answerSet[1].getMark(), Mark.BAR);
+      assert.equal(answerSet[1].getMark(), Mark.TICK);
     });
 
     it('should not enumerate invalid mark', () => {
