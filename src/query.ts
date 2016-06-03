@@ -1,4 +1,4 @@
-import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR, TEXT, DETAIL} from 'vega-lite/src/channel';
+import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR} from 'vega-lite/src/channel';
 import {Config} from 'vega-lite/src/config';
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Mark} from 'vega-lite/src/mark';
@@ -82,8 +82,8 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
     Property.MARK
   ],
 
-  marks: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TEXT, Mark.TICK],
-  channels: [X, Y, ROW, COLUMN, SIZE, COLOR, TEXT, DETAIL],
+  marks: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK], // Mark.TEXT
+  channels: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT
   aggregates: [undefined, AggregateOp.MEAN],
   timeUnits: [TimeUnit.MONTH],
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
