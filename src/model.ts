@@ -1,5 +1,6 @@
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
+import {Data} from 'vega-lite/src/data';
 import {Encoding} from 'vega-lite/src/encoding';
 import {FieldDef} from 'vega-lite/src/fielddef';
 import {Mark} from 'vega-lite/src/mark';
@@ -10,7 +11,7 @@ import {Spec} from 'vega-lite/src/Spec';
 import {Property, ENCODING_PROPERTIES} from './property';
 import {SpecQuery, EncodingQuery, EnumSpec, QueryConfig, initEnumSpec, isEnumSpec, isDimension, isMeasure, stringifySpecQuery} from './query';
 import {Schema} from './schema';
-import {Dict, duplicate, some} from './util';
+import {Dict, duplicate, extend, some} from './util';
 
 /**
  * Part of EnumSpecIndex which lists all enumSpec in a specQuery.
@@ -294,7 +295,7 @@ export class SpecQueryModel {
    * Convert a query to a Vega-Lite spec if it is completed.
    * @return a Vega-Lite spec if completed, null otherwise.
    */
-  public toSpec(): Spec {
+  public toSpec(data?: Data): Spec {
     if (isEnumSpec(this._spec.mark)) return null;
 
     let encoding: Encoding = {};
@@ -331,10 +332,13 @@ export class SpecQueryModel {
 
       encoding[encQ.channel as Channel] = fieldDef;
     }
-    return {
+    return extend(
+      data ? { data: data } : {},
+      {
       // TODO: transform, config
       mark: this._spec.mark as Mark,
       encoding: encoding
-    };
+      }
+    );
   }
 }
