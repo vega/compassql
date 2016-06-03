@@ -3,39 +3,62 @@ import {SpecQuery} from '../src/query';
 
 declare var d3: any;
 declare var vg: any;
+declare var vl: any;
 declare var cql: any;
 
-var query: SpecQuery = {
-  mark: '*',
+const data = vg.util.json('node_modules/vega-datasets/data/cars.json');
+const types = vg.util.type.inferAll(data);
+const fieldSchemas: FieldSchema[] = vg.util.keys(types).map(function(field) {
+  const primitiveType = types[field];
+  const type = primitiveType === 'number' || primitiveType === 'integer' ? 'quantitative' :
+    primitiveType === 'date' ? 'temporal' : 'nominal';
+  console.log('schema', field, type, primitiveType);
+  return {
+    field: field,
+    type: type,
+    primitiveType: types[field] as PrimitiveType
+  };
+});
+const schema = new cql.schema.Schema(fieldSchemas);
+const summary = vg.util.summary(data);
+const stats = new cql.stats.Stats(summary);
+
+function generate(query: SpecQuery) {
+  const answerSet = cql.generate(query, schema, stats, {autoAddCount:true, verbose: true});
+
+  const sel = d3.select('#list').selectAll('div.vis')
+    .data(answerSet);
+  sel.enter()
+    .append('div')
+    .attr('class', 'vis')
+    .text((model) => model.toShorthand())
+    .append('div')
+    .attr('id', (_, index) => 'vis-' + index);
+
+  sel.each((model, index) => {
+      const spec = model.toSpec({
+        url: 'node_modules/vega-datasets/data/cars.json'
+      });
+      const vgSpec = vl.compile(spec).spec;
+      vg.parse.spec(vgSpec, function(chart) {
+        chart({el: '#vis-' + index}).update();
+      });
+    });
+
+  sel.exit().remove();
+}
+
+d3.select('#query').text(JSON.stringify({
+  mark: '?',
   encodings: [
-    {channel: '*', field: {enumValues: ['Name', 'Origin']}, type:'*'},
+    {channel: '?', field: {enumValues: ['Cylinders', 'Origin']}, type: '?'},
     // {channel: '*', field: '*', type:'*'},
     // {channel: '*', field: '*', type:'*'}
   ]
-};
+}, null, '  '));
 
-d3.json('node_modules/vega-datasets/data/cars.json', function(data) {
-  const types = vg.util.type.inferAll(data);
-  const fieldSchemas: FieldSchema[] = vg.util.keys(types).map(function(field) {
-    const primitiveType = types[field];
-    const type = primitiveType === 'number' || primitiveType === 'integer' ? 'quantitative' :
-      primitiveType === 'date' ? 'temporal' : 'nominal';
-    console.log('schema', field, type, primitiveType);
-    return {
-      field: field,
-      type: type,
-      primitiveType: types[field] as PrimitiveType
-    };
+d3.select('#parse')
+  .on('click', function() {
+    const query = JSON.parse(d3.select('#query').node().value);
+    generate(query);
   });
-  const schema = new cql.schema.Schema(fieldSchemas);
-
-  const answerSet = cql.generate(query, schema, {verbose: true}).map((answer) => answer.toSpec());
-  console.log(answerSet.map((spec) => JSON.stringify(spec)));
-  d3.select('#list').selectAll('div.vis')
-    .data(answerSet)
-    .enter()
-    .append('div')
-    .attr('class', 'vis')
-    .text((spec) => JSON.stringify(spec));
-
-});
