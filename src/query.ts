@@ -141,6 +141,13 @@ function enumSpecShort(value: any): string {
   return (isEnumSpec(value) ? SHORT_ENUM_SPEC : value) + '';
 }
 
+export interface Query {
+  spec: SpecQuery;
+  // TODO: group
+  // TODO: rank
+  config: QueryConfig;
+}
+
 export interface SpecQuery {
   mark: Mark | EnumSpec<Mark> | ShortEnumSpec;
   transform?: TransformQuery;

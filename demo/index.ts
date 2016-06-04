@@ -1,5 +1,5 @@
 import {FieldSchema, PrimitiveType} from '../src/schema';
-import {SpecQuery} from '../src/query';
+import {Query} from '../src/query';
 
 declare var d3: any;
 declare var vg: any;
@@ -23,8 +23,9 @@ const schema = new cql.schema.Schema(fieldSchemas);
 const summary = vg.util.summary(data);
 const stats = new cql.stats.Stats(summary);
 
-function generate(query: SpecQuery) {
-  const answerSet = cql.generate(query, schema, stats, {autoAddCount:true, verbose: true});
+function generate(query: Query) {
+  const config = cql.util.extend({verbose: true}, query.config);
+  const answerSet = cql.generate(query.spec, schema, stats, config);
 
   const sel = d3.select('#list').selectAll('div.vis')
     .data(answerSet);
@@ -49,12 +50,15 @@ function generate(query: SpecQuery) {
 }
 
 d3.select('#query').text(JSON.stringify({
-  mark: '?',
-  encodings: [
-    {channel: '?', field: {enumValues: ['Cylinders', 'Origin']}, type: '?'},
-    // {channel: '*', field: '*', type:'*'},
-    // {channel: '*', field: '*', type:'*'}
-  ]
+  spec: {
+    mark: '?',
+    encodings: [
+      {channel: '?', field: {enumValues: ['Cylinders', 'Origin']}, type: '?'},
+      // {channel: '*', field: '*', type:'*'},
+      // {channel: '*', field: '*', type:'*'}
+    ]
+  },
+  config: {}
 }, null, '  '));
 
 d3.select('#parse')
