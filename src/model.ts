@@ -132,6 +132,8 @@ export class SpecQueryModel {
       if (encQ.autoCount !== undefined) {
         // This is only for testing purpose
         console.warn('A field with autoCount should not be included as autoCount meant to be an internal object.');
+
+        encQ.type = Type.QUANTITATIVE; // autoCount is always quantitative
       }
 
       if (encQ.type === undefined) {
@@ -340,9 +342,9 @@ export class SpecQueryModel {
     return extend(
       data ? { data: data } : {},
       {
-      // TODO: transform, config
-      mark: this._spec.mark as Mark,
-      encoding: encoding
+        // TODO: transform, config
+        mark: this._spec.mark as Mark,
+        encoding: encoding
       }
     );
   }

@@ -184,7 +184,7 @@ describe('SpecQueryModel', () => {
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.ORDINAL},
-          {channel: Channel.Y, autoCount: true}
+          {channel: Channel.Y, autoCount: true, type: Type.QUANTITATIVE}
         ]
       });
 
