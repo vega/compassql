@@ -9,7 +9,7 @@ import {Type} from 'vega-lite/src/type';
 import {Spec} from 'vega-lite/src/Spec';
 
 import {Property, ENCODING_PROPERTIES} from './property';
-import {SpecQuery, EncodingQuery, EnumSpec, QueryConfig, initEnumSpec, isEnumSpec, isDimension, isMeasure, stringifySpecQuery} from './query';
+import {SHORT_ENUM_SPEC, SpecQuery, EncodingQuery, EnumSpec, QueryConfig, initEnumSpec, isEnumSpec, isDimension, isMeasure, stringifySpecQuery} from './query';
 import {Schema} from './schema';
 import {Dict, duplicate, extend, some} from './util';
 
@@ -132,6 +132,11 @@ export class SpecQueryModel {
       if (encQ.autoCount !== undefined) {
         // This is only for testing purpose
         console.warn('A field with autoCount should not be included as autoCount meant to be an internal object.');
+      }
+
+      if (encQ.type === undefined) {
+        // type is optional -- we automatically augment enum spec if not specified
+        encQ.type = SHORT_ENUM_SPEC;
       }
 
       // For each property of the encodingQuery, enumerate
