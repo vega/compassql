@@ -143,16 +143,37 @@ describe('generate', function () {
   });
 
   describe('autoAddCount', () => {
-    it('should output autoCount in the answer set', () => {
+    describe('ordinal only', () => {
+      it('should output autoCount in the answer set', () => {
+        const query = {
+          mark: Mark.POINT,
+          encodings: [
+              { channel: Channel.X, field: 'O', type: Type.ORDINAL},
+          ]
+        };
+        const answerSet = generate(query, schema, stats, {autoAddCount: true});
+        assert.equal(answerSet.length, 1);
+        assert.isTrue(answerSet[0].getEncodings()[1].autoCount);
+      });
+    });
+
+    describe('non-binned quantitative only', () => {
       const query = {
-        mark: Mark.POINT,
+        mark: {enumValues: [Mark.POINT, Mark.TICK]},
         encodings: [
-            { channel: Channel.X, field: 'O', type: Type.ORDINAL},
+          { channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
         ]
       };
       const answerSet = generate(query, schema, stats, {autoAddCount: true});
-      assert.equal(answerSet.length, 1);
-      assert.isTrue(answerSet[0].getEncodings()[1].autoCount);
+
+      it('should output autoCount=false', () => {
+        assert.isFalse(answerSet[0].getEncodingQueryByIndex(1).autoCount);
+        assert.isFalse(answerSet[1].getEncodingQueryByIndex(1).autoCount);
+      });
+
+      it('should not output duplicate results in the answer set', () => {
+        assert.equal(answerSet.length, 2);
+      });
     });
   });
 });
