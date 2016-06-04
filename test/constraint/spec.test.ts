@@ -337,29 +337,57 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('omitRawBar', () => {
-    it('should return false for raw bar', () => {
-      const specQ = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
-          {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
-        ]
+  describe('omitRawBarLineArea', () => {
+    [Mark.BAR, Mark.LINE, Mark.AREA].forEach((mark) => {
+      it('should return false for raw ' + mark, () => {
+        const specQ = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
+          ]
+        });
+
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawBarLineArea'].satisfy(specQ, schema, stats, defaultOpt));
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawBar'].satisfy(specQ, schema, stats, defaultOpt));
+      it('should return true for aggregate ' + mark, () => {
+        const specQ = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
+          ]
+        });
+
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawBarLineArea'].satisfy(specQ, schema, stats, defaultOpt));
+      });
     });
 
-    it('should return true for aggregate bar', () => {
-      const specQ = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.QUANTITATIVE},
-          {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
-        ]
+    [Mark.POINT, Mark.TICK, Mark.SQUARE].forEach((mark) => {
+      it('should return true for raw ' + mark, () => {
+        const specQ = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
+          ]
+        });
+
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawBarLineArea'].satisfy(specQ, schema, stats, defaultOpt));
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawBar'].satisfy(specQ, schema, stats, defaultOpt));
+      it('should return true for aggregate ' + mark, () => {
+        const specQ = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
+          ]
+        });
+
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawBarLineArea'].satisfy(specQ, schema, stats, defaultOpt));
+      });
     });
   });
 
