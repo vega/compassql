@@ -27,7 +27,6 @@
         "lib"
     ],
     "files": [
-        "demo/index.ts",
         "src/cql.ts",
         "src/constraint/encoding.ts",
         "src/constraint/spec.ts",
