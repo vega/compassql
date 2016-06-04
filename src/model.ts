@@ -339,6 +339,8 @@ export class SpecQueryModel {
 
       encoding[encQ.channel as Channel] = fieldDef;
     }
+
+    data = data || this._spec.data;
     return extend(
       data ? { data: data } : {},
       {

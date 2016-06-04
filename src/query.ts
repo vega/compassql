@@ -1,6 +1,7 @@
 import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR} from 'vega-lite/src/channel';
 import {Config} from 'vega-lite/src/config';
 import {AggregateOp} from 'vega-lite/src/aggregate';
+import {Data} from 'vega-lite/src/data';
 import {Mark} from 'vega-lite/src/mark';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/Type';
@@ -149,6 +150,7 @@ export interface Query {
 }
 
 export interface SpecQuery {
+  data?: Data;
   mark: Mark | EnumSpec<Mark> | ShortEnumSpec;
   transform?: TransformQuery;
   encodings: EncodingQuery[];
