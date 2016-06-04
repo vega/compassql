@@ -106,57 +106,65 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
           return;
         }
         const indexTuple = indexTuples[jobIndex];
-        const propEnumSpec = specQ.getEncodingProperty(indexTuple.index, prop);
-        propEnumSpec.enumValues.forEach((propVal) => {
-          specQ.setEncodingProperty(indexTuple.index, prop, propVal, indexTuple.enumSpec);
+        const encQ = specQ.getEncodingQueryByIndex(indexTuple.index);
 
-          // Check encoding constraint
-          const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[prop] || [];
-          const satisfyEncodingConstraints = every(encodingConstraints, (c: EncodingConstraintModel) => {
-            // Check if the constraint is enabled
-            if (c.strict() || !!opt[c.name()]) {
-              // For strict constraint, or enabled non-strict, check the constraints
-              const satisfy = c.satisfy(specQ.getEncodingQueryByIndex(indexTuple.index), schema, stats, opt);
-              if (!satisfy && opt.verbose) {
-                console.log(c.name() + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
-              }
-              return satisfy;
-            }
-
-            // Otherwise, return true as we don't have to check the constraint yet.
-            return true;
-          });
-
-          if (!satisfyEncodingConstraints) {
-            return; // do not keep searching
-          }
-
-          // Check spec constraint
-          const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[prop] || [];
-          const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
-            // Check if the constraint is enabled
-            if (c.strict() || !!opt[c.name()]) {
-              // For strict constraint, or enabled non-strict, check the constraints
-              const satisfy = c.satisfy(specQ, schema, stats, opt);
-              if (!satisfy && opt.verbose) {
-                console.log(c.name() + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
-              }
-              return satisfy;
-            }
-            // Otherwise, return true as we don't have to check the constraint yet.
-            return true;
-          });
-
-          if (!satisfySpecConstraints) {
-            return; // do not keep searching
-          }
-
-          // If qualify all of the constraints, keep enumerating
+        if (encQ.autoCount === false) { // TODO: encQ.excluded
+          // If this encoding query is excluded, there is no point enumerating other properties
+          // for this encoding query because they will be excluded anyway.
+          // Thus, we can just move on to the next encoding to enumerate.
           enumerate(jobIndex + 1);
-        });
+        } else {
+          const propEnumSpec = specQ.getEncodingProperty(indexTuple.index, prop);
+          propEnumSpec.enumValues.forEach((propVal) => {
+            specQ.setEncodingProperty(indexTuple.index, prop, propVal, indexTuple.enumSpec);
 
-        // Reset to avoid side effect
-        specQ.resetEncodingProperty(indexTuple.index, prop, indexTuple.enumSpec);
+            // Check encoding constraint
+            const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[prop] || [];
+            const satisfyEncodingConstraints = every(encodingConstraints, (c: EncodingConstraintModel) => {
+              // Check if the constraint is enabled
+              if (c.strict() || !!opt[c.name()]) {
+                // For strict constraint, or enabled non-strict, check the constraints
+                const satisfy = c.satisfy(specQ.getEncodingQueryByIndex(indexTuple.index), schema, stats, opt);
+                if (!satisfy && opt.verbose) {
+                  console.log(c.name() + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+                }
+                return satisfy;
+              }
+
+              // Otherwise, return true as we don't have to check the constraint yet.
+              return true;
+            });
+
+            if (!satisfyEncodingConstraints) {
+              return; // do not keep searching
+            }
+
+            // Check spec constraint
+            const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[prop] || [];
+            const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
+              // Check if the constraint is enabled
+              if (c.strict() || !!opt[c.name()]) {
+                // For strict constraint, or enabled non-strict, check the constraints
+                const satisfy = c.satisfy(specQ, schema, stats, opt);
+                if (!satisfy && opt.verbose) {
+                  console.log(c.name() + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+                }
+                return satisfy;
+              }
+              // Otherwise, return true as we don't have to check the constraint yet.
+              return true;
+            });
+
+            if (!satisfySpecConstraints) {
+              return; // do not keep searching
+            }
+
+            // If qualify all of the constraints, keep enumerating
+            enumerate(jobIndex + 1);
+          });
+          // Reset to avoid side effect
+          specQ.resetEncodingProperty(indexTuple.index, prop, indexTuple.enumSpec);
+        }
       }
 
       // start enumerating from 0
