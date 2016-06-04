@@ -1,0 +1,13 @@
+{
+  "spec": {
+    "data": {"url": "data/cars.json"},
+    "mark": "?",
+    "encodings": [
+      {
+        "channel": "x",
+        "field": "Origin",
+        "type": "ordinal"
+      }
+    ]
+  }
+}
