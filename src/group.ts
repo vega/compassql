@@ -2,7 +2,6 @@ import {Channel} from 'vega-lite/src/channel';
 
 import {SpecQueryModel} from './model';
 import {SHORT_ENUM_SPEC, EnumSpec, isEnumSpec, stringifyEncodingQueryFieldDef} from './query';
-import {Dict} from './util';
 
 /**
  * Registry for all possible grouping key functions.
@@ -16,23 +15,37 @@ export function registerKeyFn(name: string, keyFn: (specQ: SpecQueryModel) => st
   groupRegistry[name] = keyFn;
 }
 
+export const DATA = 'data';
+export const ENCODING = 'encoding';
+export const SPEC = 'spec';
+
+export interface SpecQueryModelGroup {
+  name: string;
+  items: SpecQueryModel[];
+}
+
 /**
  * Group the input spec query model by a key function registered in the group registry
  * @return
  */
-export function group(specQueries: SpecQueryModel[], keyFnName: string): Dict<SpecQueryModel[]> {
-  const keyFn: (specQ: SpecQueryModel) => string = groupRegistry[keyFnName];
-  return specQueries.reduce((groups, specQ) => {
+export function group(specQueries: SpecQueryModel[], keyFnName: string): SpecQueryModelGroup[] {
+  const keyFn: (specQ: SpecQueryModel) => string = groupRegistry[keyFnName || SPEC];
+  const groups: SpecQueryModelGroup[] = [];
+  let groupIndex = {}; // Dict<SpecQueryModel[]>
+  specQueries.forEach((specQ) => {
     const name = keyFn(specQ);
-    groups[name] = groups[name] || [];
-    groups[name].push(specQ);
-    return groups;
-  }, {} as Dict<SpecQueryModel[]>);
+    if (groupIndex[name]) {
+      groupIndex[name].items.push(specQ);
+    } else {
+      groupIndex[name] = {
+        name: name,
+        items: [specQ]
+      };
+      groups.push(groupIndex[name]);
+    }
+  });
+  return groups;
 }
-
-
-export const DATA = 'data';
-export const ENCODING = 'encoding';
 
 registerKeyFn(DATA, (specQ: SpecQueryModel) => {
   return specQ.getEncodings().map(stringifyEncodingQueryFieldDef)
@@ -76,3 +89,5 @@ registerKeyFn(ENCODING, (specQ: SpecQueryModel) => {
     .sort()
     .join('|');
 });
+
+registerKeyFn(SPEC, (specQ: SpecQueryModel) => JSON.stringify(specQ.specQuery));

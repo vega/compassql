@@ -7,7 +7,6 @@ import {Type} from 'vega-lite/src/type';
 import {generate} from '../src/generate';
 import {group, DATA, ENCODING} from '../src/group';
 import {SHORT_ENUM_SPEC} from '../src/query';
-import {keys} from '../src/util';
 
 import {schema, stats} from './fixture';
 
@@ -35,7 +34,9 @@ describe('group', () => {
       const groups = group(answerSet, DATA);
 
       // two because have two different aggregation
-      assert.equal(keys(groups).length, 2);
+      assert.equal(groups.length, 2);
+      assert.equal(groups[0].name, 'O,o|mean(Q,q)');
+      assert.equal(groups[1].name, 'O,o|median(Q,q)');
     });
   });
 
@@ -56,7 +57,7 @@ describe('group', () => {
 
       const answerSet = generate(query, schema, stats);
       const groups = group(answerSet, ENCODING);
-      assert.equal(keys(groups).length, 1);
+      assert.equal(groups.length, 1);
     });
 
     it('should group visualizations with different retinal variables', () => {
@@ -79,7 +80,7 @@ describe('group', () => {
 
       const answerSet = generate(query, schema, stats);
       const groups = group(answerSet, ENCODING);
-      assert.equal(keys(groups).length, 1);
+      assert.equal(groups.length, 1);
     });
 
     it('should group visualizations with different retinal variables', () => {
@@ -102,7 +103,7 @@ describe('group', () => {
 
       const answerSet = generate(query, schema, stats);
       const groups = group(answerSet, ENCODING);
-      assert.equal(keys(groups).length, 1);
+      assert.equal(groups.length, 1);
     });
 
 
@@ -126,7 +127,7 @@ describe('group', () => {
 
       const answerSet = generate(query, schema, stats);
       const groups = group(answerSet, ENCODING);
-      assert.equal(keys(groups).length, 1);
+      assert.equal(groups.length, 1);
     });
 
     it('should group transposed facets visualizations', () => {
@@ -153,7 +154,7 @@ describe('group', () => {
 
       const answerSet = generate(query, schema, stats);
       const groups = group(answerSet, ENCODING);
-      assert.equal(keys(groups).length, 1);
+      assert.equal(groups.length, 1);
     });
 
 
@@ -173,7 +174,7 @@ describe('group', () => {
 
       const answerSet = generate(query, schema, stats, {omitNonPositionalOverPositionalChannels: false});
       const groups = group(answerSet, ENCODING);
-      assert.equal(keys(groups).length, 2);
+      assert.equal(groups.length, 2);
     });
   });
 });
