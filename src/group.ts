@@ -2,22 +2,43 @@ import {Channel} from 'vega-lite/src/channel';
 
 import {SpecQueryModel} from './model';
 import {SHORT_ENUM_SPEC, EnumSpec, isEnumSpec, stringifyEncodingQueryFieldDef} from './query';
+import {Dict} from './util';
 
-export function group(specQueries: SpecQueryModel[], keyFn: (specQ: SpecQueryModel) => string) {
+/**
+ * Registry for all possible grouping key functions.
+ */
+let groupRegistry = {};
+
+/**
+ * Add a grouping function to the registry.
+ */
+export function registerKeyFn(name: string, keyFn: (specQ: SpecQueryModel) => string) {
+  groupRegistry[name] = keyFn;
+}
+
+/**
+ * Group the input spec query model by a key function registered in the group registry
+ * @return
+ */
+export function group(specQueries: SpecQueryModel[], keyFnName: string): Dict<SpecQueryModel[]> {
+  const keyFn: (specQ: SpecQueryModel) => string = groupRegistry[keyFnName];
   return specQueries.reduce((groups, specQ) => {
     const name = keyFn(specQ);
     groups[name] = groups[name] || [];
     groups[name].push(specQ);
     return groups;
-  }, {});
+  }, {} as Dict<SpecQueryModel[]>);
 }
 
-export function dataKey(specQ: SpecQueryModel)  {
 
+export const DATA = 'data';
+export const ENCODING = 'encoding';
+
+registerKeyFn(DATA, (specQ: SpecQueryModel) => {
   return specQ.getEncodings().map(stringifyEncodingQueryFieldDef)
               .sort()
               .join('|');
-}
+});
 
 function channelType(channel: Channel | EnumSpec<Channel>) {
   if (isEnumSpec(channel)) {
@@ -46,7 +67,7 @@ function channelType(channel: Channel | EnumSpec<Channel>) {
   return c + '';
 }
 
-export function encodingKey(specQ: SpecQueryModel) {
+registerKeyFn(ENCODING, (specQ: SpecQueryModel) => {
   // mark does not matter
   return specQ.getEncodings().map((encQ) => {
       const fieldDef = stringifyEncodingQueryFieldDef(encQ);
@@ -54,4 +75,4 @@ export function encodingKey(specQ: SpecQueryModel) {
     })
     .sort()
     .join('|');
-}
+});

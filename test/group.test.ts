@@ -5,14 +5,14 @@ import {Channel} from 'vega-lite/src/channel';
 import {Type} from 'vega-lite/src/type';
 
 import {generate} from '../src/generate';
-import {group, dataKey, encodingKey} from '../src/group';
+import {group, DATA, ENCODING} from '../src/group';
 import {SHORT_ENUM_SPEC} from '../src/query';
 import {keys} from '../src/util';
 
 import {schema, stats} from './fixture';
 
 describe('group', () => {
-  describe('dataKey', () => {
+  describe('data', () => {
     it('should group visualization with same data', () => {
       const query = {
         mark: SHORT_ENUM_SPEC,
@@ -32,14 +32,14 @@ describe('group', () => {
       };
 
       const answerSet = generate(query, schema, stats);
-      const groups = group(answerSet, dataKey);
+      const groups = group(answerSet, DATA);
 
       // two because have two different aggregation
       assert.equal(keys(groups).length, 2);
     });
   });
 
-  describe('encodingKey', () => {
+  describe('encoding', () => {
     it('should group transposed visualizations', () => {
       const query = {
         mark: SHORT_ENUM_SPEC,
@@ -55,7 +55,7 @@ describe('group', () => {
       };
 
       const answerSet = generate(query, schema, stats);
-      const groups = group(answerSet, encodingKey);
+      const groups = group(answerSet, ENCODING);
       assert.equal(keys(groups).length, 1);
     });
 
@@ -78,7 +78,7 @@ describe('group', () => {
       };
 
       const answerSet = generate(query, schema, stats);
-      const groups = group(answerSet, encodingKey);
+      const groups = group(answerSet, ENCODING);
       assert.equal(keys(groups).length, 1);
     });
 
@@ -101,7 +101,7 @@ describe('group', () => {
       };
 
       const answerSet = generate(query, schema, stats);
-      const groups = group(answerSet, encodingKey);
+      const groups = group(answerSet, ENCODING);
       assert.equal(keys(groups).length, 1);
     });
 
@@ -125,7 +125,7 @@ describe('group', () => {
       };
 
       const answerSet = generate(query, schema, stats);
-      const groups = group(answerSet, encodingKey);
+      const groups = group(answerSet, ENCODING);
       assert.equal(keys(groups).length, 1);
     });
 
@@ -152,7 +152,7 @@ describe('group', () => {
       };
 
       const answerSet = generate(query, schema, stats);
-      const groups = group(answerSet, encodingKey);
+      const groups = group(answerSet, ENCODING);
       assert.equal(keys(groups).length, 1);
     });
 
@@ -172,7 +172,7 @@ describe('group', () => {
       };
 
       const answerSet = generate(query, schema, stats, {omitNonPositionalOverPositionalChannels: false});
-      const groups = group(answerSet, encodingKey);
+      const groups = group(answerSet, ENCODING);
       assert.equal(keys(groups).length, 2);
     });
   });
