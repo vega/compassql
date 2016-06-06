@@ -227,6 +227,117 @@ describe('constraints/spec', () => {
     });
   });
 
+  describe('hasAppropriateGraphicTypeForMark', () => {
+    describe('bar, tick', () => {
+      it('should return true for graphics with one dimension and one measure on x/y', () => {
+        [Mark.BAR, Mark.TICK].forEach((mark) => {
+          const specQ = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+              {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE}
+            ]
+          });
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specQ, schema, stats, defaultOpt));
+        });
+      });
+
+      it('should return true for graphics with one binned dimension and one measure on x/y', () => {
+        [Mark.BAR, Mark.TICK].forEach((mark) => {
+          const specQ = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: Channel.X, field: 'Q1', type: Type.QUANTITATIVE, bin: true},
+              {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE}
+            ]
+          });
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specQ, schema, stats, defaultOpt));
+        });
+      });
+
+      it('should return true for graphics with one binned dimension and one measure on x/y', () => {
+        [Mark.BAR, Mark.TICK].forEach((mark) => {
+          const specQ = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: Channel.X, field: 'T', type: Type.TEMPORAL, timeUnit: TimeUnit.MONTH},
+              {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE}
+            ]
+          });
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specQ, schema, stats, defaultOpt));
+        });
+      });
+
+      it('should return false for graphics with two dimensions on x/y', () => {
+        [Mark.BAR, Mark.TICK].forEach((mark) => {
+          const specQ = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+              {channel: Channel.Y, field: 'N20', type: Type.NOMINAL}
+            ]
+          });
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specQ, schema, stats, defaultOpt));
+        });
+      });
+
+      it('should return false for graphics with two measures on x/y', () => {
+        [Mark.BAR, Mark.TICK].forEach((mark) => {
+          const specQ = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: Channel.X, field: 'Q1', type: Type.QUANTITATIVE},
+              {channel: Channel.Y, field: 'Q2', type: Type.QUANTITATIVE}
+            ]
+          });
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specQ, schema, stats, defaultOpt));
+        });
+      });
+
+
+      it('should return false for graphics with one temporal field and one quantitative field on x/y', () => {
+        [Mark.BAR, Mark.TICK].forEach((mark) => {
+          const specQ = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: Channel.X, field: 'T', type: Type.TEMPORAL},
+              {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE}
+            ]
+          });
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specQ, schema, stats, defaultOpt));
+        });
+      });
+    });
+
+    describe('line, area', () => {
+      it('should return true for aggregate line/area with at least one dimension', () => {
+        [Mark.BAR, Mark.TICK].forEach((mark) => {
+          const specQ = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+              {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+            ]
+          });
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specQ, schema, stats, defaultOpt));
+        });
+      });
+
+      it('should return false for aggregate line/area with no dimension', () => {
+        [Mark.BAR, Mark.TICK].forEach((mark) => {
+          const specQ = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: Channel.X, field: 'Q1', type: Type.QUANTITATIVE},
+              {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+            ]
+          });
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specQ, schema, stats, defaultOpt));
+        });
+      });
+    });
+  });
+
   describe('noRepeatedChannel', () => {
     it('should return true when there is no repeated channels', function() {
       const specQ = buildSpecQueryModel({

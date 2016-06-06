@@ -21,6 +21,11 @@ const fixtures: Fixture[] = [{
   primitiveType: PrimitiveType.NUMBER,
   distinct: 100
 },{
+  field: 'T',
+  type: Type.TEMPORAL,
+  primitiveType: PrimitiveType.DATE,
+  distinct: 100
+},{
   field: 'O',
   type: Type.ORDINAL,
   primitiveType: PrimitiveType.STRING,
@@ -42,9 +47,14 @@ const fixtures: Fixture[] = [{
   distinct: 100
 },{
   field: 'N',
-  type: Type.ORDINAL,
+  type: Type.NOMINAL,
   primitiveType: PrimitiveType.STRING,
   distinct: 6
+},{
+  field: 'N20',
+  type: Type.NOMINAL,
+  primitiveType: PrimitiveType.STRING,
+  distinct: 20
 }];
 
 export const schema = new Schema(fixtures);

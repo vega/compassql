@@ -52,6 +52,7 @@ export interface QueryConfig {
   // CONSTRAINTS
   // Spec Constraints
 
+  hasAppropriateGraphicTypeForMark?: boolean;
   omitFacetOverPositionalChannels?: boolean;
   omitMultipleNonPositionalChannels?: boolean;
   omitRawBarLineArea?: boolean;
@@ -106,6 +107,8 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   // CONSTRAINTS
   // Spec Constraints -- See description inside src/constraints/spec.ts
   autoAddCount: false,
+
+  hasAppropriateGraphicTypeForMark: true,
   omitFacetOverPositionalChannels: true,
   omitMultipleNonPositionalChannels: true,
   omitRawBarLineArea: true,

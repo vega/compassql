@@ -1,8 +1,6 @@
 import {assert} from 'chai';
 
-import {json} from 'datalib/src/import/readers';
-import {summary} from 'datalib/src/stats';
-import {inferAll} from 'datalib/src/import/type';
+import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
@@ -10,9 +8,7 @@ import {Type} from 'vega-lite/src/type';
 import {ENUMERATOR_INDEX, generate} from '../src/generate';
 import {SpecQueryModel} from '../src/model';
 import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery} from '../src/query';
-import {Schema} from '../src/schema';
-import {Stats} from '../src/stats';
-import {extend, keys} from '../src/util';
+import {extend} from '../src/util';
 
 import {schema, stats} from './fixture';
 
@@ -21,49 +17,74 @@ function buildSpecQueryModel(specQ: SpecQuery) {
 }
 
 describe('generate', function () {
-  it('should correct enumerate properties', () => {
-    const query = {
-      mark: SHORT_ENUM_SPEC,
-      encodings: [
-          { channel: SHORT_ENUM_SPEC, field: { enumValues: ['Name', 'Origin'] }, type: SHORT_ENUM_SPEC},
-      ]
-    };
-
-    const data = json('node_modules/vega-datasets/data/cars.json');
-    var types = inferAll(data);
-    var fieldSchemas: any = keys(types).map(function (field) {
-        var primitiveType = types[field];
-        var type = primitiveType === 'number' || primitiveType === 'integer' ? 'quantitative' :
-            primitiveType === 'date' ? 'temporal' : 'nominal';
-        return {
-            field: field,
-            type: type,
-            primitiveType: types[field]
+  describe('1D', () => {
+    describe('Q with aggregate=?, bin=?', () => {
+      it('should enumerate raw, bin, aggregate', () => {
+        const query = {
+          mark: Mark.POINT,
+          encodings: [{
+            channel: Channel.X,
+            bin: SHORT_ENUM_SPEC,
+            aggregate: SHORT_ENUM_SPEC,
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }]
         };
+        const answerSet = generate(query, schema, stats, {autoAddCount: true, verbose: true});
+        assert.equal(answerSet.length, 3);
+      });
     });
-    const mySchema = new Schema(fieldSchemas);
-    const mySummary = summary(data);
-    const myStats = new Stats(mySummary);
-    const answerSet = generate(query, mySchema, myStats);
-    assert.isTrue(answerSet.length > 0);
   });
 
-  describe('a quantitative field with aggregate, bin ambiguous', () => {
-    it('should enumerate raw, bin, aggregate', () => {
-      const query = {
-        mark: Mark.POINT,
-        encodings: [{
-          channel: Channel.X,
-          bin: SHORT_ENUM_SPEC,
-          aggregate: SHORT_ENUM_SPEC,
-          field: 'Q',
-          type: Type.QUANTITATIVE
-        }]
-      };
-      const answerSet = generate(query, schema, stats, {autoAddCount: true, verbose: true});
-      assert.equal(answerSet.length, 3);
+  describe('2D', () => {
+    describe('QxQ (raw)', () => {
+      it('should not return any of bar, tick, line, or area', () => {
+        const query = {
+          mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: Channel.X,
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          },{
+            channel: Channel.Y,
+            field: 'Q1',
+            type: Type.QUANTITATIVE
+          }]
+        };
+        const answerSet = generate(query, schema, stats, {autoAddCount: true, verbose: true});
+        answerSet.forEach((specM) => {
+          assert.notEqual(specM.getMark(), Mark.AREA);
+          assert.notEqual(specM.getMark(), Mark.LINE);
+          assert.notEqual(specM.getMark(), Mark.BAR);
+          assert.notEqual(specM.getMark(), Mark.TICK);
+        });
+      });
+    });
+    describe('A(Q) x A(Q)', () => {
+      it('should return neither line nor area', () => {
+        const query = {
+          mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: Channel.X,
+            aggregate: AggregateOp.MEAN,
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          },{
+            channel: Channel.Y,
+            aggregate: AggregateOp.MEAN,
+            field: 'Q1',
+            type: Type.QUANTITATIVE
+          }]
+        };
+        const answerSet = generate(query, schema, stats, {autoAddCount: true, verbose: true});
+        answerSet.forEach((specM) => {
+          assert.notEqual(specM.getMark(), Mark.AREA);
+          assert.notEqual(specM.getMark(), Mark.LINE);
+        });
+      });
     });
   });
+
 });
 
 describe('enumerator', () => {

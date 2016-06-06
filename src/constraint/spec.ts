@@ -8,7 +8,7 @@ import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {Property} from '../property';
 import {Schema} from '../schema';
 import {Stats} from '../stats';
-import {EncodingQuery, QueryConfig, isEnumSpec} from '../query';
+import {EncodingQuery, QueryConfig, isEnumSpec, isDimension} from '../query';
 import {every, isin, some} from '../util';
 
 
@@ -186,6 +186,39 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         case Mark.TICK:
         case Mark.RULE:
           return specQ.channelUsed(Channel.X) || specQ.channelUsed(Channel.Y);
+      }
+      throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
+    }
+  },
+  {
+    name: 'hasAppropriateGraphicTypeForMark',
+    description: 'Has appropriate graphic type for mark',
+    properties: [Property.CHANNEL, Property.MARK, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      const mark = specQ.getMark();
+
+      switch (mark) {
+        case Mark.AREA:
+        case Mark.LINE:
+          if (specQ.isAggregate()) {
+            // for aggregate line / area, we need at least one group-by dimension.
+            return some(specQ.getEncodings(), (encQ) => isDimension(encQ));
+          }
+          return true;
+        case Mark.TEXT:
+          // FIXME correctly when we add text
+          return true;
+        case Mark.BAR:
+        case Mark.TICK:
+          // Tick and Bar should have one and only one measure
+          return specQ.isMeasure(Channel.X) !== specQ.isMeasure(Channel.Y);
+        case Mark.CIRCLE:
+        case Mark.POINT:
+        case Mark.SQUARE:
+        case Mark.RULE:
+          return true;
       }
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
     }
