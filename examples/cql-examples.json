@@ -1,12 +1,12 @@
 {
   "1D": [
     {
-      "name": "1d-O-mark",
-      "title": "O with varying mark"
+      "name": "1d-N-mark",
+      "title": "N with varying mark"
     },
     {
-      "name": "1d-O",
-      "title": "O with varying mark & channel"
+      "name": "1d-N",
+      "title": "N with varying mark & channel"
     },
     {
       "name": "1d-Q",
@@ -19,6 +19,24 @@
     {
       "name": "1d-T",
       "title": "T with varying mark, channel & functions"
+    }
+  ],
+  "2D": [
+    {
+      "name": "2d-NxN",
+      "title": "NxN with varying mark & channels"
+    },
+    {
+      "name": "2d-NxQ",
+      "title": "NxQ with varying mark, channels & functions"
+    },
+    {
+      "name": "2d-QxQ",
+      "title": "QxQ with varying mark, channels & functions"
+    },
+    {
+      "name": "2d-QxT",
+      "title": "QxT with varying mark, channels & functions"
     }
   ]
 }

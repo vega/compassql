@@ -1,0 +1,24 @@
+{
+  "spec": {
+    "data": {"url": "data/cars.json"},
+    "mark": "?",
+    "encodings": [
+      {
+        "channel": "?",
+        "bin": "?",
+        "aggregate": "?",
+        "field": "Miles_per_Gallon",
+        "type": "quantitative"
+      },{
+        "channel": "?",
+        "timeunit": "?",
+        "field": "Year",
+        "type": "temporal"
+      }
+    ]
+  },
+  "groupBy": "data",
+  "config": {
+    "autoAddCount": true
+  }
+}
