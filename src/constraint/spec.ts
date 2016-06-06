@@ -183,7 +183,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         case Mark.POINT:
         case Mark.SQUARE:
         case Mark.TICK:
-          return true;
         case Mark.RULE:
           return specQ.channelUsed(Channel.X) || specQ.channelUsed(Channel.Y);
       }

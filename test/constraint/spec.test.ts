@@ -168,8 +168,8 @@ describe('constraints/spec', () => {
         const specQ = buildSpecQueryModel({
           mark: mark,
           encodings: [
-            {channel: Channel.X, field: '*', type: Type.NOMINAL},
-            {channel: Channel.Y, field: '*', type: Type.QUANTITATIVE}
+            {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE}
           ]
         });
         assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specQ, schema, stats, defaultOpt));
@@ -182,7 +182,7 @@ describe('constraints/spec', () => {
           const specQ = buildSpecQueryModel({
             mark: mark,
             encodings: [
-              {channel: channel, field: '*', type: Type.NOMINAL}
+              {channel: channel, field: 'N', type: Type.NOMINAL}
             ]
           });
           assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specQ, schema, stats, defaultOpt));
@@ -190,16 +190,40 @@ describe('constraints/spec', () => {
       });
     });
 
-    it('should return true for bar/circle/point/square/tick', () => {
-      // TODO:
+    it('should return true for bar/circle/point/square/tick/rule with x or y', () => {
+      [Channel.X, Channel.Y].forEach((channel) => {
+        [Mark.BAR, Mark.CIRCLE, Mark.POINT, Mark.SQUARE, Mark.TICK, Mark.RULE].forEach((mark) => {
+          const specQ = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: channel, field: 'N', type: Type.NOMINAL}
+            ]
+          });
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specQ, schema, stats, defaultOpt));
+        });
+      });
     });
 
-    it('should return true for rule if has x or y', () => {
-      // TODO:
+    it('should return false for bar/circle/point/square/tick/rule with neither x nor y', () => {
+      [Channel.COLOR, Channel.SHAPE].forEach((channel) => {
+        [Mark.BAR, Mark.CIRCLE, Mark.POINT, Mark.SQUARE, Mark.TEXT, Mark.RULE].forEach((mark) => {
+          const specQ = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: channel, field: 'N', type: Type.NOMINAL}
+            ]
+          });
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specQ, schema, stats, defaultOpt));
+        });
+      });
     });
 
-    it('should return false for rule if has neither x nor y', () => {
-      // TODO:
+    it('should return false for text without text channel', () => {
+      // TODO
+    });
+
+    it('should return true for text with text channel', () => {
+      // TODO
     });
   });
 
