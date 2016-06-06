@@ -16,11 +16,11 @@ import {extend, keys} from '../src/util';
 
 import {schema, stats} from './fixture';
 
-describe('generate', function () {
-  function buildSpecQueryModel(specQ: SpecQuery) {
-    return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
-  }
+function buildSpecQueryModel(specQ: SpecQuery) {
+  return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
+}
 
+describe('generate', function () {
   it('should correct enumerate properties', () => {
     const query = {
       mark: SHORT_ENUM_SPEC,
@@ -48,6 +48,25 @@ describe('generate', function () {
     assert.isTrue(answerSet.length > 0);
   });
 
+  describe('a quantitative field with aggregate, bin ambiguous', () => {
+    it('should enumerate raw, bin, aggregate', () => {
+      const query = {
+        mark: Mark.POINT,
+        encodings: [{
+          channel: Channel.X,
+          bin: SHORT_ENUM_SPEC,
+          aggregate: SHORT_ENUM_SPEC,
+          field: 'Q',
+          type: Type.QUANTITATIVE
+        }]
+      };
+      const answerSet = generate(query, schema, stats, {autoAddCount: true, verbose: true});
+      assert.equal(answerSet.length, 3);
+    });
+  });
+});
+
+describe('enumerator', () => {
   describe('mark', () => {
     it('should correctly enumerate marks', () => {
       const specQ = buildSpecQueryModel({

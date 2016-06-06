@@ -38,6 +38,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
             // Encoding properties
             case Property.CHANNEL:
             case Property.AGGREGATE:
+            case Property.AUTOCOUNT:
             case Property.BIN:
             case Property.TIMEUNIT:
             case Property.FIELD:
@@ -244,7 +245,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     // TODO: we can be smarter and check if bar has occlusion
     name: 'omitRawBarLineArea',
     description: 'Don\'t use bar, line or area to visualize raw plot as they often lead to occlusion.',
-    properties: [Property.MARK, Property.AGGREGATE],
+    properties: [Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
     requireAllProperties: true,
     strict: false,
     satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
@@ -258,7 +259,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitRawContinuousFieldForAggregatePlot',
     description: 'Aggregate plot should not use raw continuous field as group by values. ' +
       '(Quantitative should be binned. Temporal should have time unit.)',
-    properties: [Property.AGGREGATE, Property.TIMEUNIT, Property.BIN, Property.TYPE],
+    properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN, Property.TYPE],
     requireAllProperties: false,
     strict: false,
     satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
@@ -269,7 +270,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
              return !!encQ.timeUnit;
            }
            if (encQ.type === Type.QUANTITATIVE) {
-             return !!encQ.bin || !!encQ.aggregate;
+             return !!encQ.bin || !!encQ.aggregate || !!encQ.autoCount;
            }
            return true;
          });
