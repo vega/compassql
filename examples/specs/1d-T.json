@@ -1,0 +1,18 @@
+{
+  "spec": {
+    "data": {"url": "data/cars.json"},
+    "mark": "?",
+    "encodings": [
+      {
+        "channel": "?",
+        "timeUnit": "?",
+        "field": "Year",
+        "type": "temporal"
+      }
+    ]
+  },
+  "groupBy": "data",
+  "config": {
+    "autoAddCount": true
+  }
+}

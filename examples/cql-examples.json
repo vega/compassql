@@ -1,8 +1,24 @@
 {
-  "Automatic Mark": [
+  "1D": [
     {
-      "name": "mark-O",
-      "title": "Ordinal"
+      "name": "1d-O-mark",
+      "title": "O with varying mark"
+    },
+    {
+      "name": "1d-O",
+      "title": "O with varying mark & channel"
+    },
+    {
+      "name": "1d-Q",
+      "title": "Q with varying mark, channel & functions"
+    },
+    {
+      "name": "1d-Q-mark",
+      "title": "Q with varying mark"
+    },
+    {
+      "name": "1d-T",
+      "title": "T with varying mark, channel & functions"
     }
   ]
 }

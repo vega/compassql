@@ -1,0 +1,17 @@
+{
+  "spec": {
+    "data": {"url": "data/cars.json"},
+    "mark": "?",
+    "encodings": [
+      {
+        "channel": "?",
+        "field": "Origin",
+        "type": "ordinal"
+      }
+    ]
+  },
+  "groupBy": "data",
+  "config": {
+    "autoAddCount": true
+  }
+}
