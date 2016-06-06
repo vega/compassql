@@ -263,11 +263,13 @@ export class SpecQueryModel {
   }
 
   public channelUsed(channel: Channel) {
+    // do not include encoding that has autoCount = false because it is not a part of the output spec.
     return !!this._encodingMap[channel] && this._encodingMap[channel].autoCount !== false;
   }
 
   public getEncodings() {
-    return this._spec.encodings;
+    // do not include encoding that has autoCount = false because it is not a part of the output spec.
+    return this._spec.encodings.filter((encQ) => encQ.autoCount !== false);
   }
 
   public getEncodingQueryByChannel(channel: Channel) {

@@ -159,7 +159,7 @@ describe('generate', function () {
 
     describe('non-binned quantitative only', () => {
       const query = {
-        mark: {enumValues: [Mark.POINT, Mark.TICK]},
+        mark: Mark.POINT,
         encodings: [
           { channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
         ]
@@ -168,11 +168,33 @@ describe('generate', function () {
 
       it('should output autoCount=false', () => {
         assert.isFalse(answerSet[0].getEncodingQueryByIndex(1).autoCount);
-        assert.isFalse(answerSet[1].getEncodingQueryByIndex(1).autoCount);
       });
 
       it('should not output duplicate results in the answer set', () => {
-        assert.equal(answerSet.length, 2);
+        assert.equal(answerSet.length, 1);
+      });
+    });
+
+    describe('enumerate channel for a non-binned quantitative field', () => {
+      const query = {
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: {enumValues: [Channel.X, Channel.SIZE, Channel.COLOR]},
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+      const answerSet = generate(query, schema, stats, {autoAddCount: true});
+
+      it('should not output point with only size for color', () => {
+        answerSet.forEach((model) => {
+          model.getEncodings().forEach((encQ) => {
+            assert.notEqual(encQ.channel, Channel.COLOR);
+            assert.notEqual(encQ.channel, Channel.SIZE);
+          });
+        });
       });
     });
   });
