@@ -216,6 +216,26 @@ describe('SpecQueryModel', () => {
       });
     });
 
+
+    it('should return a correct Vega-Lite spec if the query has autoCount=false even if channel is unspecified', () => {
+      // Basically, we no longer enumerate ambiguous channel autoCount is false.
+      const specQ = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.ORDINAL},
+          {channel: SHORT_ENUM_SPEC, autoCount: false}
+        ]
+      });
+
+      const spec = specQ.toSpec();
+      assert.deepEqual(spec, {
+        mark: Mark.BAR,
+        encoding: {
+          x: {field: 'A', type: Type.ORDINAL}
+        }
+      });
+    });
+
     it('should return null if the query is incompleted', () => {
       const specQ = buildSpecQueryModel({
         mark: {enumValues: [Mark.BAR, Mark.POINT]},

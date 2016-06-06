@@ -309,12 +309,21 @@ export class SpecQueryModel {
 
     for (let i = 0; i < this._spec.encodings.length; i++) {
       const encQ = this._spec.encodings[i];
+      let fieldDef: FieldDef = {};
+
+      // For count field that is automatically added, convert to correct vega-lite fieldDef
+      if (encQ.autoCount === true) {
+        fieldDef.aggregate = AggregateOp.COUNT;
+        fieldDef.field = '*';
+        fieldDef.type = Type.QUANTITATIVE;
+      } else if (encQ.autoCount === false) {
+        continue; // Do not include this in the output.
+      }
 
       // if channel is an enum spec, return null
       if (isEnumSpec(encQ.channel)) return null;
 
       // assemble other property into a field def.
-      let fieldDef: FieldDef = {};
       const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE];
       for (let j = 0; j < PROPERTIES.length; j++) {
         const prop = PROPERTIES[j];
@@ -326,15 +335,6 @@ export class SpecQueryModel {
         if (encQ[prop] !== undefined) {
           fieldDef[prop] = encQ[prop];
         }
-      }
-
-      // For count field that is automatically added, convert to correct vega-lite fieldDef
-      if (encQ.autoCount === true) {
-        fieldDef.aggregate = AggregateOp.COUNT;
-        fieldDef.field = '*';
-        fieldDef.type = Type.QUANTITATIVE;
-      } else if (encQ.autoCount === false) {
-        continue; // Do not include this in the output.
       }
 
       encoding[encQ.channel as Channel] = fieldDef;
