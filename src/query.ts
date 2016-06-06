@@ -229,6 +229,11 @@ export function stringifyEncodingQuery(encQ: EncodingQuery): string {
 
 export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
   let fn = null;
+
+  if (encQ.autoCount === false) {
+    return '-';
+  }
+
   if (encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
     fn = encQ.aggregate;
   } else if (encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
