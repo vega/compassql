@@ -126,6 +126,38 @@ describe('SpecQueryModel', () => {
     });
   });
 
+  describe('channelUsed', () => {
+    it('should return true if channel is used for general fieldDef', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.MAX}
+        ]
+      });
+      assert.isTrue(specQ.channelUsed(Channel.X));
+    });
+
+    it('should return false if channel is used for general fieldDef', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.MAX}
+        ]
+      });
+      assert.isFalse(specQ.channelUsed(Channel.Y));
+    });
+
+    it('should return false if channel is used for disabled autoCount', () => {
+      const specQ = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, autoCount: false}
+        ]
+      });
+      assert.isFalse(specQ.channelUsed(Channel.X));
+    });
+  });
+
   describe('isAggregate', () => {
     it('should return false if the query is not aggregated', () => {
       const specQ = buildSpecQueryModel({

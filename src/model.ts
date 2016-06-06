@@ -263,7 +263,7 @@ export class SpecQueryModel {
   }
 
   public channelUsed(channel: Channel) {
-    return !!this._encodingMap[channel];
+    return !!this._encodingMap[channel] && this._encodingMap[channel].autoCount !== false;
   }
 
   public getEncodings() {
