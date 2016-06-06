@@ -116,6 +116,11 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
         } else {
           const propEnumSpec = specQ.getEncodingProperty(indexTuple.index, prop);
           propEnumSpec.enumValues.forEach((propVal) => {
+            if (propVal === null) {
+              // our duplicate() method use JSON.stringify, parse and thus can accidentally
+              // convert undefined in an array into null
+              propVal = undefined;
+            }
             specQ.setEncodingProperty(indexTuple.index, prop, propVal, indexTuple.enumSpec);
 
             // Check encoding constraint
