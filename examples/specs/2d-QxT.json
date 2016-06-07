@@ -1,18 +1,18 @@
 {
   "spec": {
-    "data": {"url": "data/cars.json"},
+    "data": {"url": "data/movies.json"},
     "mark": "?",
     "encodings": [
       {
         "channel": "?",
         "bin": "?",
         "aggregate": "?",
-        "field": "Miles_per_Gallon",
+        "field": "IMBD_Rating",
         "type": "quantitative"
       },{
         "channel": "?",
-        "timeunit": "?",
-        "field": "Year",
+        "timeUnit": "?",
+        "field": "Release_Date",
         "type": "temporal"
       }
     ]

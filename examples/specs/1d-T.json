@@ -1,12 +1,12 @@
 {
   "spec": {
-    "data": {"url": "data/cars.json"},
+    "data": {"url": "data/movies.json"},
     "mark": "?",
     "encodings": [
       {
         "channel": "?",
         "timeUnit": "?",
-        "field": "Year",
+        "field": "Release_Date",
         "type": "temporal"
       }
     ]
