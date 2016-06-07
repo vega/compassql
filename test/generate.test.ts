@@ -8,7 +8,7 @@ import {Type} from 'vega-lite/src/type';
 import {ENUMERATOR_INDEX, generate} from '../src/generate';
 import {SpecQueryModel} from '../src/model';
 import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery} from '../src/query';
-import {extend} from '../src/util';
+import {extend, some} from '../src/util';
 
 import {schema, stats} from './fixture';
 
@@ -38,23 +38,38 @@ describe('generate', function () {
 
   describe('2D', () => {
     describe('x:N,y:N', () => {
-      it('should return heatmap', () => {
-        const query = {
-          mark: Mark.POINT,
-          encodings: [{
-            channel: Channel.X,
-            field: 'N',
-            type: Type.NOMINAL
-          },{
-            channel: Channel.Y,
-            field: 'N20',
-            type: Type.NOMINAL
-          }],
-          config: {autoAddCount: true}
-        };
+      const query = {
+        mark: SHORT_ENUM_SPEC,
+        encodings: [{
+          channel: Channel.X,
+          field: 'N',
+          type: Type.NOMINAL
+        },{
+          channel: Channel.Y,
+          field: 'N20',
+          type: Type.NOMINAL
+        }],
+        config: {autoAddCount: true}
+      };
 
-        const answerSet = generate(query, schema, stats, {autoAddCount: true, verbose: true});
+      const answerSet = generate(query, schema, stats, {autoAddCount: true, verbose: true});
+
+      it('should return counted heatmaps', () => {
         assert.isTrue(answerSet.length > 0);
+        answerSet.forEach((specM) => {
+          assert.isTrue(some(specM.getEncodings(), (encQ) => {
+            return encQ.autoCount === true;
+          }));
+        });
+      });
+
+      it('should not use tick, bar, line or area', () => {
+        answerSet.forEach((specM) => {
+          assert.notEqual(specM.getMark(), Mark.AREA);
+          assert.notEqual(specM.getMark(), Mark.LINE);
+          assert.notEqual(specM.getMark(), Mark.BAR);
+          assert.notEqual(specM.getMark(), Mark.TICK);
+        });
       });
     });
 

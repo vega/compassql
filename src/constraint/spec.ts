@@ -8,7 +8,7 @@ import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {Property} from '../property';
 import {Schema} from '../schema';
 import {Stats} from '../stats';
-import {EncodingQuery, QueryConfig, isEnumSpec, isDimension} from '../query';
+import {EncodingQuery, QueryConfig, isEnumSpec, isMeasure} from '../query';
 import {every, isin, some} from '../util';
 
 
@@ -353,8 +353,12 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         case Mark.AREA:
         case Mark.LINE:
           if (specQ.isAggregate()) {
-            // for aggregate line / area, we need at least one group-by dimension.
-            return some(specQ.getEncodings(), (encQ) => isDimension(encQ));
+            const xEncQ = specQ.getEncodingQueryByChannel(Channel.X);
+            const yEncQ = specQ.getEncodingQueryByChannel(Channel.Y);
+
+            // for aggregate line / area, we need at least one group-by axis and one measure axis.
+            return xEncQ && yEncQ && (isMeasure(xEncQ) !== isMeasure(yEncQ));
+            // TODO: allow connected scatterplot
           }
           return true;
         case Mark.TEXT:
