@@ -37,7 +37,28 @@ describe('generate', function () {
   });
 
   describe('2D', () => {
-    describe('QxQ (raw)', () => {
+    describe('x:N,y:N', () => {
+      it('should return heatmap', () => {
+        const query = {
+          mark: Mark.POINT,
+          encodings: [{
+            channel: Channel.X,
+            field: 'N',
+            type: Type.NOMINAL
+          },{
+            channel: Channel.Y,
+            field: 'N20',
+            type: Type.NOMINAL
+          }],
+          config: {autoAddCount: true}
+        };
+
+        const answerSet = generate(query, schema, stats, {autoAddCount: true, verbose: true});
+        assert.isTrue(answerSet.length > 0);
+      });
+    });
+
+    describe('QxQ', () => {
       it('should not return any of bar, tick, line, or area', () => {
         const query = {
           mark: SHORT_ENUM_SPEC,
@@ -134,7 +155,8 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX['channel'](specQ.enumSpecIndex, schema, stats, extend({}, DEFAULT_QUERY_CONFIG, {omitVerticalDotPlot: false}));
+        const opt = extend({}, DEFAULT_QUERY_CONFIG, {omitVerticalDotPlot: false});
+        const enumerator = ENUMERATOR_INDEX['channel'](specQ.enumSpecIndex, schema, stats, opt);
 
         const answerSet = enumerator([], specQ);
         assert.equal(answerSet.length, 2);

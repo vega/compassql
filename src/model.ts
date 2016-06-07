@@ -101,7 +101,7 @@ export class SpecQueryModel {
   private _spec: SpecQuery;
 
   /** channel => EncodingQuery */
-  private _encodingMap: Dict<EncodingQuery>;
+  private _channelCount: Dict<number>;
   private _enumSpecIndex: EnumSpecIndex;
   private _enumSpecAssignment: Dict<any>;
   private _schema: Schema;
@@ -188,12 +188,12 @@ export class SpecQueryModel {
 
   constructor(spec: SpecQuery, enumSpecIndex: EnumSpecIndex, schema: Schema, enumSpecAssignment: Dict<any> = {}) {
     this._spec = spec;
-    this._encodingMap = spec.encodings.reduce((m, encQ) => {
-      if (!isEnumSpec(encQ.channel)) {
-        m[encQ.channel as string] = encQ;
+    this._channelCount = spec.encodings.reduce((m, encQ) => {
+      if (!isEnumSpec(encQ.channel) && encQ.autoCount !== false) {
+        m[encQ.channel as string] = 1;
       }
       return m;
-    }, {} as Dict<EncodingQuery>);
+    }, {} as Dict<number>);
 
     this._enumSpecIndex = enumSpecIndex;
     this._enumSpecAssignment = enumSpecAssignment;
@@ -239,22 +239,22 @@ export class SpecQueryModel {
     const encQ = this._spec.encodings[index];
     if (prop === Property.CHANNEL && encQ.channel && !isEnumSpec(encQ.channel)) {
       // If there is an old channel
-      delete this._encodingMap[encQ.channel as Channel];
+      this._channelCount[encQ.channel as Channel]--;
     }
 
     encQ[prop] = value;
     this._enumSpecAssignment[enumSpec.name] = value;
 
     if (prop === Property.CHANNEL) {
-      // If there is a new channel
-      this._encodingMap[value] = encQ;
+      // If there is a new channel, make sure it exists and add it to the count.
+      this._channelCount[value] = (this._channelCount[value] || 0) + 1;
     }
   }
 
   public resetEncodingProperty(index: number, prop: Property, enumSpec: EnumSpec<any>) {
     const encQ = this._spec.encodings[index];
     if (prop === Property.CHANNEL) {
-      delete this._encodingMap[encQ.channel as Channel];
+      this._channelCount[encQ.channel as Channel]--;
     }
     // reset it to enumSpec
     encQ[prop] = enumSpec;
@@ -264,7 +264,7 @@ export class SpecQueryModel {
 
   public channelUsed(channel: Channel) {
     // do not include encoding that has autoCount = false because it is not a part of the output spec.
-    return !!this._encodingMap[channel] && this._encodingMap[channel].autoCount !== false;
+    return this._channelCount[channel] > 0;
   }
 
   public getEncodings() {
@@ -273,7 +273,12 @@ export class SpecQueryModel {
   }
 
   public getEncodingQueryByChannel(channel: Channel) {
-    return this._encodingMap[channel];
+    for (let i = 0; i < this._spec.encodings.length; i++) {
+      if (this._spec.encodings[i].channel === channel) {
+        return this._spec.encodings[i];
+      }
+    }
+    return undefined;
   }
 
   public getEncodingQueryByIndex(i: number) {
@@ -281,12 +286,12 @@ export class SpecQueryModel {
   }
 
   public isDimension(channel: Channel) {
-    const encQ = this._encodingMap[channel];
+    const encQ = this.getEncodingQueryByChannel(channel);
     return encQ && isDimension(encQ);
   }
 
   public isMeasure(channel: Channel) {
-    const encQ = this._encodingMap[channel];
+    const encQ = this.getEncodingQueryByChannel(channel);
     return encQ && isMeasure(encQ);
   }
 
