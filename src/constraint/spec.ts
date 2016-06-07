@@ -213,39 +213,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
     }
   },
-  {
-    name: 'hasAppropriateGraphicTypeForMark',
-    description: 'Has appropriate graphic type for mark',
-    properties: [Property.CHANNEL, Property.MARK, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
-    requireAllProperties: true,
-    strict: false,
-    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
-      const mark = specQ.getMark();
-
-      switch (mark) {
-        case Mark.AREA:
-        case Mark.LINE:
-          if (specQ.isAggregate()) {
-            // for aggregate line / area, we need at least one group-by dimension.
-            return some(specQ.getEncodings(), (encQ) => isDimension(encQ));
-          }
-          return true;
-        case Mark.TEXT:
-          // FIXME correctly when we add text
-          return true;
-        case Mark.BAR:
-        case Mark.TICK:
-          // Tick and Bar should have one and only one measure
-          return specQ.isMeasure(Channel.X) !== specQ.isMeasure(Channel.Y);
-        case Mark.CIRCLE:
-        case Mark.POINT:
-        case Mark.SQUARE:
-        case Mark.RULE:
-          return true;
-      }
-      throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
-    }
-  },
   // TODO: omitBarWithSize
   {
     name: 'omitFacetOverPositionalChannels',
@@ -372,6 +339,40 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       return true;
     }
   },
+  // EXPENSIVE CONSTRAINTS -- check them later!
+  {
+    name: 'hasAppropriateGraphicTypeForMark',
+    description: 'Has appropriate graphic type for mark',
+    properties: [Property.CHANNEL, Property.MARK, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      const mark = specQ.getMark();
+
+      switch (mark) {
+        case Mark.AREA:
+        case Mark.LINE:
+          if (specQ.isAggregate()) {
+            // for aggregate line / area, we need at least one group-by dimension.
+            return some(specQ.getEncodings(), (encQ) => isDimension(encQ));
+          }
+          return true;
+        case Mark.TEXT:
+          // FIXME correctly when we add text
+          return true;
+        case Mark.BAR:
+        case Mark.TICK:
+          // Tick and Bar should have one and only one measure
+          return specQ.isMeasure(Channel.X) !== specQ.isMeasure(Channel.Y);
+        case Mark.CIRCLE:
+        case Mark.POINT:
+        case Mark.SQUARE:
+        case Mark.RULE:
+          return true;
+      }
+      throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
+    }
+  },
   {
     name: 'preferredBinAxis',
     description: 'Always use preferred axis for a binned field.',
@@ -415,7 +416,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     requireAllProperties: true,
     strict: false,
     satisfy: satisfyPreferredType(Type.NOMINAL, 'preferredNominalAxis')
-  }
+  },
 ].map((sc) => new SpecConstraintModel(sc));
 
 // For testing
