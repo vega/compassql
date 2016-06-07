@@ -1,5 +1,5 @@
 {
-  "1D": [
+  "1 Field": [
     {
       "name": "1d-N-mark",
       "title": "N with varying mark"
@@ -25,7 +25,7 @@
       "title": "T with varying mark, channel & functions"
     }
   ],
-  "2D": [
+  "2 Fields": [
     {
       "name": "2d-NxN",
       "title": "NxN with varying mark & channels"
@@ -45,6 +45,20 @@
     {
       "name": "2d-QxT",
       "title": "QxT with varying mark, channels & functions"
+    }
+  ],
+  "3 Fields": [
+    {
+      "name": "3d-NxOxQ",
+      "title": "NxOxQ with varying mark, channels & functions"
+    },
+    {
+      "name": "3d-NxQxQ",
+      "title": "NxQxQ with varying mark, channels & functions"
+    },
+    {
+      "name": "3d-OxQxQ",
+      "title": "OxQxQ with varying mark, channels & functions"
     }
   ]
 }
