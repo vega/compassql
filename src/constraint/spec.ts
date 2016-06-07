@@ -89,6 +89,29 @@ function satisfyPreferredType(theType: Type, configName: string) {
 
 export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
+    name: 'noRepeatedChannel',
+    description: 'Each encoding channel should only be used once.',
+    properties: [Property.CHANNEL],
+    requireAllProperties: false,
+    strict: true,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      let usedChannel = {};
+
+      // channel for all encodings should be valid
+      return every(specQ.getEncodings(), (encQ) => {
+        if (!isEnumSpec(encQ.channel)) {
+          // If channel is specified, it should no be used already
+          if (usedChannel[encQ.channel]) {
+            return false;
+          }
+          usedChannel[encQ.channel] = true;
+          return true;
+        }
+        return true; // unspecified channel is valid
+      });
+    }
+  },
+  {
     name: 'autoAddCount',
     description: 'Automatically adding count only for plots with only ordinal, binned quantitative, or temporal with timeunti fields.',
     properties: [Property.BIN, Property.TIMEUNIT, Property.TYPE, Property.AUTOCOUNT],
@@ -392,29 +415,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     requireAllProperties: true,
     strict: false,
     satisfy: satisfyPreferredType(Type.NOMINAL, 'preferredNominalAxis')
-  },
-  {
-    name: 'noRepeatedChannel',
-    description: 'Each encoding channel should only be used once.',
-    properties: [Property.CHANNEL],
-    requireAllProperties: false,
-    strict: true,
-    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
-      let usedChannel = {};
-
-      // channel for all encodings should be valid
-      return every(specQ.getEncodings(), (encQ) => {
-        if (!isEnumSpec(encQ.channel)) {
-          // If channel is specified, it should no be used already
-          if (usedChannel[encQ.channel]) {
-            return false;
-          }
-          usedChannel[encQ.channel] = true;
-          return true;
-        }
-        return true; // unspecified channel is valid
-      });
-    }
   }
 ].map((sc) => new SpecConstraintModel(sc));
 
