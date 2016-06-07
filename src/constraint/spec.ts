@@ -9,7 +9,7 @@ import {Property} from '../property';
 import {Schema} from '../schema';
 import {Stats} from '../stats';
 import {EncodingQuery, QueryConfig, isEnumSpec, isMeasure} from '../query';
-import {contains, every, isin, some} from '../util';
+import {contains, every, some} from '../util';
 
 
 export interface SpecConstraintChecker {
@@ -285,7 +285,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     requireAllProperties: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
-      if (isin(specM.getMark(), [Mark.BAR, Mark.LINE, Mark.AREA])) {
+      if (contains([Mark.BAR, Mark.LINE, Mark.AREA], specM.getMark())) {
         return specM.isAggregate();
       }
       return true;

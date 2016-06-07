@@ -229,7 +229,7 @@ describe('constraints/spec', () => {
 
   describe('hasAppropriateGraphicTypeForMark', () => {
     describe('bar, tick', () => {
-      it('should return true for graphics with one dimension and one measure on x/y', () => {
+      it('should return true for plots with one dimension and one measure on x/y', () => {
         [Mark.BAR, Mark.TICK].forEach((mark) => {
           const specM = buildSpecQueryModel({
             mark: mark,
@@ -242,7 +242,7 @@ describe('constraints/spec', () => {
         });
       });
 
-      it('should return true for graphics with one binned dimension and one measure on x/y', () => {
+      it('should return true for plots with one binned dimension and one measure on x/y', () => {
         [Mark.BAR, Mark.TICK].forEach((mark) => {
           const specM = buildSpecQueryModel({
             mark: mark,
@@ -255,7 +255,7 @@ describe('constraints/spec', () => {
         });
       });
 
-      it('should return true for graphics with one binned dimension and one measure on x/y', () => {
+      it('should return true for plots with one binned dimension and one measure on x/y', () => {
         [Mark.BAR, Mark.TICK].forEach((mark) => {
           const specM = buildSpecQueryModel({
             mark: mark,
@@ -268,7 +268,7 @@ describe('constraints/spec', () => {
         });
       });
 
-      it('should return false for graphics with two dimensions on x/y', () => {
+      it('should return false for plots with two dimensions on x/y', () => {
         [Mark.BAR, Mark.TICK].forEach((mark) => {
           const specM = buildSpecQueryModel({
             mark: mark,
@@ -293,7 +293,6 @@ describe('constraints/spec', () => {
           assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, stats, defaultOpt));
         });
       });
-
 
       it('should return false for graphics with one temporal field and one quantitative field on x/y', () => {
         [Mark.BAR, Mark.TICK].forEach((mark) => {

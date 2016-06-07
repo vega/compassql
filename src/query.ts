@@ -11,7 +11,7 @@ import {group} from './group';
 import {Property} from './property';
 import {Schema} from './schema';
 import {Stats} from './stats';
-import {isin} from './util';
+import {contains} from './util';
 
 export default function(query: Query, schema: Schema, stats: Stats) {
   const answerSet = generate(query.spec, schema, stats, query.config);
@@ -220,7 +220,7 @@ export interface EncodingQuery {
 }
 
 export function isDimension(encQ: EncodingQuery) {
-  return isin(encQ.type, [Type.NOMINAL, Type.ORDINAL]) ||
+  return contains([Type.NOMINAL, Type.ORDINAL], encQ.type) ||
       (!isEnumSpec(encQ.bin) && !!encQ.bin) ||          // surely Q type
       (!isEnumSpec(encQ.timeUnit) && !!encQ.timeUnit);  // surely T type
 }
