@@ -123,6 +123,9 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
             }
             specQ.setEncodingProperty(indexTuple.index, prop, propVal, indexTuple.enumSpec);
 
+
+            let violatedConstraint = null;
+
             // Check encoding constraint
             const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[prop] || [];
             const satisfyEncodingConstraints = every(encodingConstraints, (c: EncodingConstraintModel) => {
@@ -130,8 +133,8 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
               if (c.strict() || !!opt[c.name()]) {
                 // For strict constraint, or enabled non-strict, check the constraints
                 const satisfy = c.satisfy(specQ.getEncodingQueryByIndex(indexTuple.index), schema, stats, opt);
-                if (!satisfy && opt.verbose) {
-                  console.log(c.name() + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+                if (!satisfy) {
+                  violatedConstraint = '(enc) ' + c.name();
                 }
                 return satisfy;
               }
@@ -141,6 +144,9 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
             });
 
             if (!satisfyEncodingConstraints) {
+              if (opt.verbose) {
+                console.log(violatedConstraint + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+              }
               return; // do not keep searching
             }
 
@@ -151,8 +157,8 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
               if (c.strict() || !!opt[c.name()]) {
                 // For strict constraint, or enabled non-strict, check the constraints
                 const satisfy = c.satisfy(specQ, schema, stats, opt);
-                if (!satisfy && opt.verbose) {
-                  console.log(c.name() + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+                if (!satisfy) {
+                  violatedConstraint = '(spec) ' + c.name();
                 }
                 return satisfy;
               }
@@ -161,6 +167,9 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
             });
 
             if (!satisfySpecConstraints) {
+              if (opt.verbose) {
+                console.log(violatedConstraint + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+              }
               return; // do not keep searching
             }
 
