@@ -819,7 +819,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, stats, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['preferredOrdinalAxis'].satisfy(specQ, schema, stats, {preferredOrdinalAxis: Channel.Y}));
 
       // TODO: add another case for yEncQ
     });

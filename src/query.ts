@@ -119,7 +119,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
   preferredBinAxis: Channel.X,
   preferredTemporalAxis: Channel.X,
-  preferredOrdinalAxis: Channel.Y, // ordinal on y makes it easier to read.
+  preferredOrdinalAxis: null, // Channel.Y, // ordinal on y makes it easier to read.
   preferredNominalAxis: Channel.Y, // nominal on y makes it easier to read.
 
   // Encoding Constraints -- See description inside src/constraints/encoding.ts
