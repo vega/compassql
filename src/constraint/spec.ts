@@ -8,8 +8,8 @@ import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {Property} from '../property';
 import {Schema} from '../schema';
 import {Stats} from '../stats';
-import {EncodingQuery, QueryConfig, isDimension, isEnumSpec, isMeasure} from '../query';
-import {every, isin, some} from '../util';
+import {EncodingQuery, QueryConfig, isEnumSpec, isMeasure} from '../query';
+import {contains, every, isin, some} from '../util';
 
 
 export interface SpecConstraintChecker {
@@ -213,7 +213,20 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
     }
   },
-  // TODO: omitBarWithSize
+  {
+    name: 'omitBarTickWithSize',
+    description: 'Do not map field to size channel with bar and tick mark',
+    properties: [Property.CHANNEL, Property.MARK],
+    requireAllProperties: false,
+    strict: false,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      const mark = specQ.getMark();
+      if (contains([Mark.TICK, Mark.BAR], mark)) {
+        return !specQ.channelUsed(Channel.SIZE);
+      }
+      return true; // skip
+    }
+  },
   {
     name: 'omitFacetOverPositionalChannels',
     description: 'Do not use non-positional channels unless all positional channels are used',
@@ -222,9 +235,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     strict: false,
     satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
       return specQ.channelUsed(Channel.ROW) || specQ.channelUsed(Channel.COLUMN) ?
-      // if non-positional channels are used, then both x and y must be used.
-      specQ.channelUsed(Channel.X) && specQ.channelUsed(Channel.Y) :
-      true;
+        // if non-positional channels are used, then both x and y must be used.
+        specQ.channelUsed(Channel.X) && specQ.channelUsed(Channel.Y) :
+        true;
     }
   },
   // TODO: omitLengthForLogScale (Bar/Area)
@@ -373,10 +386,18 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           return true;
         case Mark.BAR:
         case Mark.TICK:
-          // TODO: Bar and tick's dimension should not be continuous (quant/time) scale
-          // TODO: bar and tick should not use size.
+          // Bar and tick should not use size.
+          if (specQ.channelUsed(Channel.SIZE)) {
+            return false;
+          }
+
           // Tick and Bar should have one and only one measure
-          return specQ.isMeasure(Channel.X) !== specQ.isMeasure(Channel.Y);
+          if (specQ.isMeasure(Channel.X) !== specQ.isMeasure(Channel.Y)) {
+            // TODO: Bar and tick's dimension should not be continuous (quant/time) scale
+
+            return true;
+          }
+          return false;
         case Mark.CIRCLE:
         case Mark.POINT:
         case Mark.SQUARE:

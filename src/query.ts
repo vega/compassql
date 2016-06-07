@@ -53,6 +53,7 @@ export interface QueryConfig {
   // Spec Constraints
 
   hasAppropriateGraphicTypeForMark?: boolean;
+  omitBarTickWithSize?: boolean;
   omitFacetOverPositionalChannels?: boolean;
   omitMultipleNonPositionalChannels?: boolean;
   omitRawBarLineArea?: boolean;
@@ -110,6 +111,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   autoAddCount: false,
 
   hasAppropriateGraphicTypeForMark: true,
+  omitBarTickWithSize: true,
   omitFacetOverPositionalChannels: true,
   omitMultipleNonPositionalChannels: true,
   omitRawBarLineArea: true,

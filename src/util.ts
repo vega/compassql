@@ -2,8 +2,13 @@ export interface Dict<T> {
   [key: string]: T;
 }
 
+// FIXME remove
 export function isin(item: any, array: any[]) {
-    return array.indexOf(item) !== -1;
+  return array.indexOf(item) !== -1;
+};
+
+export function contains(array: any[], item: any) {
+  return array.indexOf(item) !== -1;
 };
 
 export function keys(obj) {

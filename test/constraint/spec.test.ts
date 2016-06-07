@@ -391,6 +391,37 @@ describe('constraints/spec', () => {
     });
   });
 
+  describe('omitBarTickWithSize', () => {
+    it('should return false if bar/tick use size', () => {
+      [Mark.BAR, Mark.TICK].forEach((mark) => {
+        const specQ = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+            {channel: Channel.SIZE, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+          ]
+        });
+
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitBarTickWithSize'].satisfy(specQ, schema, stats, defaultOpt));
+      });
+    });
+
+    it('should return true if bar/tick do not use size', () => {
+      [Mark.BAR, Mark.TICK].forEach((mark) => {
+        const specQ = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+          ]
+        });
+
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarTickWithSize'].satisfy(specQ, schema, stats, defaultOpt));
+      });
+    });
+  });
+
   describe('omitFacetOverPositionalChannels', () => {
     it('should return true if facet is not used', () => {
       const specQ = buildSpecQueryModel({
