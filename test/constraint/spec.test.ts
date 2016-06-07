@@ -705,6 +705,21 @@ describe('constraints/spec', () => {
     });
   });
 
+  describe('omitRawTable', () => {
+    it('return false for raw plot with both x and y as dimensions.', () => {
+      [Mark.POINT, Mark.CIRCLE, Mark.SQUARE, Mark.LINE, Mark.AREA, Mark.BAR].forEach((mark) => {
+        const specQ = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'N20', type: Type.NOMINAL}
+          ]
+        });
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawTable'].satisfy(specQ, schema, stats, {autoAddCount: true}));
+      });
+    });
+  });
+
   describe('preferredBinAxis', () => {
     it('should return true if both axes are binned', () => {
       const specQ = buildSpecQueryModel({

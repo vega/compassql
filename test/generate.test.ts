@@ -30,7 +30,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, stats, {autoAddCount: true, verbose: true});
+        const answerSet = generate(query, schema, stats, {autoAddCount: true});
         assert.equal(answerSet.length, 3);
       });
     });
@@ -52,7 +52,7 @@ describe('generate', function () {
         config: {autoAddCount: true}
       };
 
-      const answerSet = generate(query, schema, stats, {autoAddCount: true, verbose: true});
+      const answerSet = generate(query, schema, stats, {autoAddCount: true});
 
       it('should return counted heatmaps', () => {
         assert.isTrue(answerSet.length > 0);
@@ -87,7 +87,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, stats, {autoAddCount: true, verbose: true});
+        const answerSet = generate(query, schema, stats, {autoAddCount: true});
         answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), Mark.AREA);
           assert.notEqual(specM.getMark(), Mark.LINE);
@@ -112,7 +112,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, stats, {autoAddCount: true, verbose: true});
+        const answerSet = generate(query, schema, stats, {autoAddCount: true});
         answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), Mark.AREA);
           assert.notEqual(specM.getMark(), Mark.LINE);
@@ -120,7 +120,37 @@ describe('generate', function () {
       });
     });
   });
+  describe('3D', () => {
+    describe('NxNxQ', () => {
+      const query = {
+        mark: SHORT_ENUM_SPEC,
+        encodings: [{
+          channel: SHORT_ENUM_SPEC,
+          field: 'N',
+          type: Type.NOMINAL
+        },{
+          channel: SHORT_ENUM_SPEC,
+          field: 'N20',
+          type: Type.NOMINAL
+        },{
+          channel: SHORT_ENUM_SPEC,
+          field: 'Q',
+          type: Type.QUANTITATIVE
+        }]
+      };
 
+      const answerSet = generate(query, schema, stats);
+
+      it('should return not generate a plot with both x and y as dimensions.', () => {
+        answerSet.forEach((specM) => {
+          assert.isFalse(
+            specM.getEncodingQueryByChannel(Channel.X).type === Type.NOMINAL &&
+            specM.getEncodingQueryByChannel(Channel.Y).type === Type.NOMINAL
+          );
+        });
+      });
+    });
+  });
 });
 
 describe('enumerator', () => {

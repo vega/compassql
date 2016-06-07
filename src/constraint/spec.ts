@@ -8,7 +8,7 @@ import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {Property} from '../property';
 import {Schema} from '../schema';
 import {Stats} from '../stats';
-import {EncodingQuery, QueryConfig, isEnumSpec, isMeasure} from '../query';
+import {EncodingQuery, QueryConfig, isDimension, isEnumSpec, isMeasure} from '../query';
 import {every, isin, some} from '../util';
 
 
@@ -355,8 +355,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           if (specQ.isAggregate()) {
             const xEncQ = specQ.getEncodingQueryByChannel(Channel.X);
             const yEncQ = specQ.getEncodingQueryByChannel(Channel.Y);
-            const xIsMeasure = isMeasure(xEncQ);
-            const yIsMeasure = isMeasure(yEncQ);
+            const xIsMeasure = xEncQ && isMeasure(xEncQ);
+            const yIsMeasure = yEncQ && isMeasure(yEncQ);
 
             // for aggregate line / area, we need at least one group-by axis and one measure axis.
             return xEncQ && yEncQ && (xIsMeasure !== yIsMeasure) &&
@@ -373,6 +373,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           return true;
         case Mark.BAR:
         case Mark.TICK:
+          // TODO: Bar and tick's dimension should not be continuous (quant/time) scale
+          // TODO: bar and tick should not use size.
           // Tick and Bar should have one and only one measure
           return specQ.isMeasure(Channel.X) !== specQ.isMeasure(Channel.Y);
         case Mark.CIRCLE:
@@ -382,6 +384,19 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           return true;
       }
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
+    }
+  },
+  {
+    name: 'omitRawTable',
+    description: 'Raw Plots with x and y are both dimensions should be omitted as they often lead to occlusion.',
+    properties: [Property.CHANNEL, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (specQ: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      if (specQ.isDimension(Channel.X) && specQ.isDimension(Channel.Y) && !specQ.isAggregate()) {
+        return false;
+      }
+      return true;
     }
   },
   {
