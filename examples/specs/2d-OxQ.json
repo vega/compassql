@@ -5,8 +5,14 @@
     "encodings": [
       {
         "channel": "?",
-        "field": "Origin",
-        "type": "nominal"
+        "field": "Cylinders",
+        "type": "ordinal"
+      },{
+        "channel": "?",
+        "bin": "?",
+        "aggregate": "?",
+        "field": "Horsepower",
+        "type": "quantitative"
       }
     ]
   },

@@ -355,9 +355,16 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           if (specQ.isAggregate()) {
             const xEncQ = specQ.getEncodingQueryByChannel(Channel.X);
             const yEncQ = specQ.getEncodingQueryByChannel(Channel.Y);
+            const xIsMeasure = isMeasure(xEncQ);
+            const yIsMeasure = isMeasure(yEncQ);
 
             // for aggregate line / area, we need at least one group-by axis and one measure axis.
-            return xEncQ && yEncQ && (isMeasure(xEncQ) !== isMeasure(yEncQ));
+            return xEncQ && yEncQ && (xIsMeasure !== yIsMeasure) &&
+              // and the dimension axis should not be nominal
+              // TODO: make this clause optional
+              !(!xIsMeasure && xEncQ.type === Type.NOMINAL) &&
+              !(!yIsMeasure && yEncQ.type === Type.NOMINAL)
+            ;
             // TODO: allow connected scatterplot
           }
           return true;

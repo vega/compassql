@@ -6,7 +6,7 @@
       {
         "channel": "x",
         "field": "Origin",
-        "type": "ordinal"
+        "type": "nominal"
       }
     ]
   },

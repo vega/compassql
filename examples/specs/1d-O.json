@@ -5,8 +5,8 @@
     "encodings": [
       {
         "channel": "?",
-        "field": "Origin",
-        "type": "nominal"
+        "field": "Cylinders",
+        "type": "ordinal"
       }
     ]
   },

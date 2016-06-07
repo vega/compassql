@@ -9,6 +9,10 @@
       "title": "N with varying mark & channel"
     },
     {
+      "name": "1d-O",
+      "title": "O with varying mark & channel"
+    },
+    {
       "name": "1d-Q",
       "title": "Q with varying mark, channel & functions"
     },
@@ -29,6 +33,10 @@
     {
       "name": "2d-NxQ",
       "title": "NxQ with varying mark, channels & functions"
+    },
+    {
+      "name": "2d-OxQ",
+      "title": "OxQ with varying mark, channels & functions"
     },
     {
       "name": "2d-QxQ",
