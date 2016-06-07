@@ -14,16 +14,16 @@ import {every, extend} from './util';
 
 export let ENUMERATOR_INDEX: {[prop: string]: EnumeratorFactory} = {};
 
-export function generate(specQuery: SpecQuery, schema: Schema, stats: Stats, opt: QueryConfig = {}) {
+export function generate(specQ: SpecQuery, schema: Schema, stats: Stats, opt: QueryConfig = {}) {
   opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
 
   // 1. Build a SpecQueryModel, which also contains enumSpecIndex
-  const specModel = SpecQueryModel.build(specQuery, schema, opt);
-  const enumSpecIndex = specModel.enumSpecIndex;
+  const specM = SpecQueryModel.build(specQ, schema, opt);
+  const enumSpecIndex = specM.enumSpecIndex;
 
   // 2. Enumerate each of the properties based on propPrecedence.
 
-  let answerSet = [specModel]; // Initialize Answer Set with only the input spec query.
+  let answerSet = [specM]; // Initialize Answer Set with only the input spec query.
   opt.propertyPrecedence.forEach((prop) => {
     // If the original specQuery contains enumSpec for this prop type
     if (enumSpecIndex[prop]) {
@@ -38,7 +38,7 @@ export function generate(specQuery: SpecQuery, schema: Schema, stats: Stats, opt
 
 
 export interface Enumerator {
-  (answerSets: SpecQueryModel[], specQ: SpecQueryModel): SpecQueryModel[];
+  (answerSets: SpecQueryModel[], specM: SpecQueryModel): SpecQueryModel[];
 }
 
 export interface EnumeratorFactory {
@@ -46,12 +46,12 @@ export interface EnumeratorFactory {
 }
 
 ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema, stats: Stats, opt: QueryConfig): Enumerator => {
-  return (answerSet, specQ: SpecQueryModel) => {
-    const markEnumSpec = specQ.getMark() as EnumSpec<Mark>;
+  return (answerSet, specM: SpecQueryModel) => {
+    const markEnumSpec = specM.getMark() as EnumSpec<Mark>;
 
     // enumerate the value
     markEnumSpec.enumValues.forEach((mark) => {
-      specQ.setMark(mark);
+      specM.setMark(mark);
 
       // Check spec constraint
       const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[Property.MARK] || [];
@@ -59,9 +59,9 @@ ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema,
         // Check if the constraint is enabled
           if (c.strict() || !!opt[c.name()]) {
             // For strict constraint, or enabled non-strict, check the constraints
-            const satisfy = c.satisfy(specQ, schema, stats, opt);
+            const satisfy = c.satisfy(specM, schema, stats, opt);
             if (!satisfy && opt.verbose) {
-              console.log(c.name() + ' failed with ' + specQ.toShorthand() + ' for mark');
+              console.log(c.name() + ' failed with ' + specM.toShorthand() + ' for mark');
             }
             return satisfy;
           }
@@ -71,12 +71,12 @@ ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema,
 
       if (satisfySpecConstraints) {
         // emit
-        answerSet.push(specQ.duplicate());
+        answerSet.push(specM.duplicate());
       }
     });
 
     // Reset to avoid side effect
-    specQ.resetMark();
+    specM.resetMark();
 
     return answerSet;
   };
@@ -91,22 +91,22 @@ ENCODING_PROPERTIES.forEach((prop) => {
  */
 export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFactory {
   /**
-   * @return as reducer that takes specQ as input and output to an input answer set array.
+   * @return as reducer that takes a specQueryModel as input and output to an input answer set array.
    */
   return (enumSpecIndex: EnumSpecIndex, schema: Schema, stats: Stats, opt: QueryConfig): Enumerator => {
 
-    return (answerSet: SpecQueryModel[], specQ: SpecQueryModel) => {
+    return (answerSet: SpecQueryModel[], specM: SpecQueryModel) => {
       // index of encoding mappings that require enumeration
       const indexTuples: EnumSpecIndexTuple<any>[] = enumSpecIndex[prop];
 
       function enumerate(jobIndex: number) {
         if (jobIndex === indexTuples.length) {
           // emit and terminate
-          answerSet.push(specQ.duplicate());
+          answerSet.push(specM.duplicate());
           return;
         }
         const indexTuple = indexTuples[jobIndex];
-        const encQ = specQ.getEncodingQueryByIndex(indexTuple.index);
+        const encQ = specM.getEncodingQueryByIndex(indexTuple.index);
 
         if (encQ.autoCount === false) { // TODO: encQ.excluded
           // If this encoding query is excluded, there is no point enumerating other properties
@@ -114,14 +114,14 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
           // Thus, we can just move on to the next encoding to enumerate.
           enumerate(jobIndex + 1);
         } else {
-          const propEnumSpec = specQ.getEncodingProperty(indexTuple.index, prop);
+          const propEnumSpec = specM.getEncodingProperty(indexTuple.index, prop);
           propEnumSpec.enumValues.forEach((propVal) => {
             if (propVal === null) {
               // our duplicate() method use JSON.stringify, parse and thus can accidentally
               // convert undefined in an array into null
               propVal = undefined;
             }
-            specQ.setEncodingProperty(indexTuple.index, prop, propVal, indexTuple.enumSpec);
+            specM.setEncodingProperty(indexTuple.index, prop, propVal, indexTuple.enumSpec);
 
 
             let violatedConstraint = null;
@@ -132,7 +132,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
               // Check if the constraint is enabled
               if (c.strict() || !!opt[c.name()]) {
                 // For strict constraint, or enabled non-strict, check the constraints
-                const satisfy = c.satisfy(specQ.getEncodingQueryByIndex(indexTuple.index), schema, stats, opt);
+                const satisfy = c.satisfy(specM.getEncodingQueryByIndex(indexTuple.index), schema, stats, opt);
                 if (!satisfy) {
                   violatedConstraint = '(enc) ' + c.name();
                 }
@@ -145,7 +145,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
 
             if (!satisfyEncodingConstraints) {
               if (opt.verbose) {
-                console.log(violatedConstraint + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+                console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + indexTuple.enumSpec.name);
               }
               return; // do not keep searching
             }
@@ -156,7 +156,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
               // Check if the constraint is enabled
               if (c.strict() || !!opt[c.name()]) {
                 // For strict constraint, or enabled non-strict, check the constraints
-                const satisfy = c.satisfy(specQ, schema, stats, opt);
+                const satisfy = c.satisfy(specM, schema, stats, opt);
                 if (!satisfy) {
                   violatedConstraint = '(spec) ' + c.name();
                 }
@@ -168,7 +168,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
 
             if (!satisfySpecConstraints) {
               if (opt.verbose) {
-                console.log(violatedConstraint + ' failed with ' + specQ.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+                console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + indexTuple.enumSpec.name);
               }
               return; // do not keep searching
             }
@@ -177,7 +177,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
             enumerate(jobIndex + 1);
           });
           // Reset to avoid side effect
-          specQ.resetEncodingProperty(indexTuple.index, prop, indexTuple.enumSpec);
+          specM.resetEncodingProperty(indexTuple.index, prop, indexTuple.enumSpec);
         }
       }
 

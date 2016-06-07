@@ -128,81 +128,81 @@ describe('SpecQueryModel', () => {
 
   describe('channelUsed', () => {
     it('should return true if channel is used for general fieldDef', () => {
-      const specQ = buildSpecQueryModel({
+      const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.MAX}
         ]
       });
-      assert.isTrue(specQ.channelUsed(Channel.X));
+      assert.isTrue(specM.channelUsed(Channel.X));
     });
 
     it('should return false if channel is used for general fieldDef', () => {
-      const specQ = buildSpecQueryModel({
+      const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.MAX}
         ]
       });
-      assert.isFalse(specQ.channelUsed(Channel.Y));
+      assert.isFalse(specM.channelUsed(Channel.Y));
     });
 
     it('should return false if channel is used for disabled autoCount', () => {
-      const specQ = buildSpecQueryModel({
+      const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, autoCount: false}
         ]
       });
-      assert.isFalse(specQ.channelUsed(Channel.X));
+      assert.isFalse(specM.channelUsed(Channel.X));
     });
   });
 
   describe('isAggregate', () => {
     it('should return false if the query is not aggregated', () => {
-      const specQ = buildSpecQueryModel({
+      const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.MAX}
         ]
       });
 
-      assert.isTrue(specQ.isAggregate());
+      assert.isTrue(specM.isAggregate());
     });
 
     it('should return true if the query is aggregated', () => {
-      const specQ = buildSpecQueryModel({
+      const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.MAX}
         ]
       });
 
-      assert.isTrue(specQ.isAggregate());
+      assert.isTrue(specM.isAggregate());
     });
 
     it('should return true if the query has autoCount = true', () => {
-      const specQ = buildSpecQueryModel({
+      const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, autoCount: true}
         ]
       });
 
-      assert.isTrue(specQ.isAggregate());
+      assert.isTrue(specM.isAggregate());
     });
   });
 
   describe('toSpec', () => {
     it('should return a Vega-Lite spec if the query is completed', () => {
-      const specQ = buildSpecQueryModel({
+      const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
 
-      const spec = specQ.toSpec();
+      const spec = specM.toSpec();
       assert.deepEqual(spec, {
         mark: Mark.BAR,
         encoding: {
@@ -212,7 +212,7 @@ describe('SpecQueryModel', () => {
     });
 
     it('should return a correct Vega-Lite spec if the query has autoCount=true', () => {
-      const specQ = buildSpecQueryModel({
+      const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.ORDINAL},
@@ -220,7 +220,7 @@ describe('SpecQueryModel', () => {
         ]
       });
 
-      const spec = specQ.toSpec();
+      const spec = specM.toSpec();
       assert.deepEqual(spec, {
         mark: Mark.BAR,
         encoding: {
@@ -231,7 +231,7 @@ describe('SpecQueryModel', () => {
     });
 
     it('should return a correct Vega-Lite spec if the query has autoCount=false', () => {
-      const specQ = buildSpecQueryModel({
+      const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.ORDINAL},
@@ -239,7 +239,7 @@ describe('SpecQueryModel', () => {
         ]
       });
 
-      const spec = specQ.toSpec();
+      const spec = specM.toSpec();
       assert.deepEqual(spec, {
         mark: Mark.BAR,
         encoding: {
@@ -251,7 +251,7 @@ describe('SpecQueryModel', () => {
 
     it('should return a correct Vega-Lite spec if the query has autoCount=false even if channel is unspecified', () => {
       // Basically, we no longer enumerate ambiguous channel autoCount is false.
-      const specQ = buildSpecQueryModel({
+      const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.ORDINAL},
@@ -259,7 +259,7 @@ describe('SpecQueryModel', () => {
         ]
       });
 
-      const spec = specQ.toSpec();
+      const spec = specM.toSpec();
       assert.deepEqual(spec, {
         mark: Mark.BAR,
         encoding: {
@@ -269,14 +269,14 @@ describe('SpecQueryModel', () => {
     });
 
     it('should return null if the query is incompleted', () => {
-      const specQ = buildSpecQueryModel({
+      const specM = buildSpecQueryModel({
         mark: {enumValues: [Mark.BAR, Mark.POINT]},
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
 
-      assert.isNull(specQ.toSpec());
+      assert.isNull(specM.toSpec());
     });
   });
 });

@@ -11,7 +11,7 @@ let groupRegistry = {};
 /**
  * Add a grouping function to the registry.
  */
-export function registerKeyFn(name: string, keyFn: (specQ: SpecQueryModel) => string) {
+export function registerKeyFn(name: string, keyFn: (specM: SpecQueryModel) => string) {
   groupRegistry[name] = keyFn;
 }
 
@@ -28,18 +28,18 @@ export interface SpecQueryModelGroup {
  * Group the input spec query model by a key function registered in the group registry
  * @return
  */
-export function group(specQueries: SpecQueryModel[], keyFnName: string): SpecQueryModelGroup[] {
-  const keyFn: (specQ: SpecQueryModel) => string = groupRegistry[keyFnName || SPEC];
+export function group(specModels: SpecQueryModel[], keyFnName: string): SpecQueryModelGroup[] {
+  const keyFn: (specM: SpecQueryModel) => string = groupRegistry[keyFnName || SPEC];
   const groups: SpecQueryModelGroup[] = [];
   let groupIndex = {}; // Dict<SpecQueryModel[]>
-  specQueries.forEach((specQ) => {
-    const name = keyFn(specQ);
+  specModels.forEach((specM) => {
+    const name = keyFn(specM);
     if (groupIndex[name]) {
-      groupIndex[name].items.push(specQ);
+      groupIndex[name].items.push(specM);
     } else {
       groupIndex[name] = {
         name: name,
-        items: [specQ]
+        items: [specM]
       };
       groups.push(groupIndex[name]);
     }
@@ -47,8 +47,8 @@ export function group(specQueries: SpecQueryModel[], keyFnName: string): SpecQue
   return groups;
 }
 
-registerKeyFn(DATA, (specQ: SpecQueryModel) => {
-  return specQ.getEncodings().map(stringifyEncodingQueryFieldDef)
+registerKeyFn(DATA, (specM: SpecQueryModel) => {
+  return specM.getEncodings().map(stringifyEncodingQueryFieldDef)
               .sort()
               .join('|');
 });
@@ -80,9 +80,9 @@ function channelType(channel: Channel | EnumSpec<Channel>) {
   return c + '';
 }
 
-registerKeyFn(ENCODING, (specQ: SpecQueryModel) => {
+registerKeyFn(ENCODING, (specM: SpecQueryModel) => {
   // mark does not matter
-  return specQ.getEncodings().map((encQ) => {
+  return specM.getEncodings().map((encQ) => {
       const fieldDef = stringifyEncodingQueryFieldDef(encQ);
       return channelType(encQ.channel) + ':' + fieldDef;
     })
@@ -90,4 +90,4 @@ registerKeyFn(ENCODING, (specQ: SpecQueryModel) => {
     .join('|');
 });
 
-registerKeyFn(SPEC, (specQ: SpecQueryModel) => JSON.stringify(specQ.specQuery));
+registerKeyFn(SPEC, (specM: SpecQueryModel) => JSON.stringify(specM.specQuery));

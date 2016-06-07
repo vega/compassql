@@ -156,32 +156,32 @@ describe('generate', function () {
 describe('enumerator', () => {
   describe('mark', () => {
     it('should correctly enumerate marks', () => {
-      const specQ = buildSpecQueryModel({
+      const specM = buildSpecQueryModel({
         mark: {enumValues: [Mark.POINT, Mark.TICK]},
         encodings: [
           {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
           {channel: Channel.Y, field: 'O', type: Type.ORDINAL}
         ]
       });
-      const enumerator = ENUMERATOR_INDEX['mark'](specQ.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+      const enumerator = ENUMERATOR_INDEX['mark'](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
-      const answerSet = enumerator([], specQ);
+      const answerSet = enumerator([], specM);
       assert.equal(answerSet.length, 2);
       assert.equal(answerSet[0].getMark(), Mark.POINT);
       assert.equal(answerSet[1].getMark(), Mark.TICK);
     });
 
     it('should not enumerate invalid mark', () => {
-      const specQ = buildSpecQueryModel({
+      const specM = buildSpecQueryModel({
         mark: {enumValues: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA]},
         encodings: [
           {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
           {channel: Channel.SHAPE, field: 'O', type: Type.ORDINAL}
         ]
       });
-      const enumerator = ENUMERATOR_INDEX['mark'](specQ.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+      const enumerator = ENUMERATOR_INDEX['mark'](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
-      const answerSet = enumerator([], specQ);
+      const answerSet = enumerator([], specM);
       assert.equal(answerSet.length, 1);
       assert.equal(answerSet[0].getMark(), Mark.POINT);
     });
@@ -190,7 +190,7 @@ describe('enumerator', () => {
   describe('encoding', () => {
     describe('channel', () => {
       it('should correctly enumerate channels', () => {
-        const specQ = buildSpecQueryModel({
+        const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
             {
@@ -201,16 +201,16 @@ describe('enumerator', () => {
           ]
         });
         const opt = extend({}, DEFAULT_QUERY_CONFIG, {omitVerticalDotPlot: false});
-        const enumerator = ENUMERATOR_INDEX['channel'](specQ.enumSpecIndex, schema, stats, opt);
+        const enumerator = ENUMERATOR_INDEX['channel'](specM.enumSpecIndex, schema, stats, opt);
 
-        const answerSet = enumerator([], specQ);
+        const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).channel, Channel.Y);
       });
 
       it('should not enumerate invalid channels', () => {
-        const specQ = buildSpecQueryModel({
+        const specM = buildSpecQueryModel({
           mark: Mark.BAR,
           encodings: [
             {
@@ -220,9 +220,9 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX['channel'](specQ.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX['channel'](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
-        const answerSet = enumerator([], specQ);
+        const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
       });
