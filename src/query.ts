@@ -7,7 +7,7 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/Type';
 
 import {generate} from './generate';
-import {group} from './group';
+import {nest} from './nest';
 import {Property} from './property';
 import {Schema} from './schema';
 import {Stats} from './stats';
@@ -15,7 +15,7 @@ import {contains} from './util';
 
 export default function(query: Query, schema: Schema, stats: Stats) {
   const answerSet = generate(query.spec, schema, stats, query.config);
-  const groupedAnswerSet = group(answerSet, query.groupBy);
+  const groupedAnswerSet = nest(answerSet, query.nest);
 
   return groupedAnswerSet;
 }
@@ -162,8 +162,7 @@ function enumSpecShort(value: any): string {
 
 export interface Query {
   spec: SpecQuery;
-  groupBy: string;
-  // TODO: rank
+  nest: string;
   config: QueryConfig;
 }
 

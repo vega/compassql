@@ -17,18 +17,19 @@ export function registerKeyFn(name: string, keyFn: (specM: SpecQueryModel) => st
 
 export const DATA = 'data';
 export const ENCODING = 'encoding';
+
 export const SPEC = 'spec';
 
 export interface SpecQueryModelGroup {
   name: string;
-  items: SpecQueryModel[];
+  items: SpecQueryModel[] | SpecQueryModelGroup[];
 }
 
 /**
  * Group the input spec query model by a key function registered in the group registry
  * @return
  */
-export function group(specModels: SpecQueryModel[], keyFnName: string): SpecQueryModelGroup[] {
+export function nest(specModels: SpecQueryModel[], keyFnName: string): SpecQueryModelGroup[] {
   const keyFn: (specM: SpecQueryModel) => string = groupRegistry[keyFnName || SPEC];
   const groups: SpecQueryModelGroup[] = [];
   let groupIndex = {}; // Dict<SpecQueryModel[]>
