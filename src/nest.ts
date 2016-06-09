@@ -1,7 +1,8 @@
 import {Channel} from 'vega-lite/src/channel';
 
 import {SpecQueryModel} from './model';
-import {SHORT_ENUM_SPEC, EnumSpec, isEnumSpec, stringifyEncodingQueryFieldDef} from './query';
+import {SHORT_ENUM_SPEC, EnumSpec, Nest, isEnumSpec, stringifyEncodingQueryFieldDef} from './query';
+import {Dict} from './util';
 
 /**
  * Registry for all possible grouping key functions.
@@ -17,35 +18,51 @@ export function registerKeyFn(name: string, keyFn: (specM: SpecQueryModel) => st
 
 export const DATA = 'data';
 export const ENCODING = 'encoding';
+export const TRANSPOSE = 'transpose';
 
 export const SPEC = 'spec';
 
 export interface SpecQueryModelGroup {
+  groupBy?: string;
   name: string;
-  items: SpecQueryModel[] | SpecQueryModelGroup[];
+  path: string;
+  items: (SpecQueryModel | SpecQueryModelGroup)[];
 }
 
 /**
  * Group the input spec query model by a key function registered in the group registry
  * @return
  */
-export function nest(specModels: SpecQueryModel[], keyFnName: string): SpecQueryModelGroup[] {
-  const keyFn: (specM: SpecQueryModel) => string = groupRegistry[keyFnName || SPEC];
-  const groups: SpecQueryModelGroup[] = [];
-  let groupIndex = {}; // Dict<SpecQueryModel[]>
+export function nest(specModels: SpecQueryModel[], nest: Nest[]): SpecQueryModelGroup {
+
+  const rootGroup: SpecQueryModelGroup = { name: '', path: '', items: []};
+  let groupIndex: Dict<SpecQueryModelGroup> = {};
+
   specModels.forEach((specM) => {
-    const name = keyFn(specM);
-    if (groupIndex[name]) {
-      groupIndex[name].items.push(specM);
-    } else {
-      groupIndex[name] = {
-        name: name,
-        items: [specM]
-      };
-      groups.push(groupIndex[name]);
+    let path = '';
+    let group: SpecQueryModelGroup = rootGroup;
+    for (let l = 0 ; l < nest.length; l++) {
+      group.groupBy = nest[l].groupBy;
+      const keyFn: (specM: SpecQueryModel) => string = groupRegistry[nest[l].groupBy];
+      const key = keyFn(specM);
+
+      path += '/' + key;
+      if (!groupIndex[path]) { // this item already exists on the path
+        groupIndex[path] = {
+          name: key,
+          path: path,
+          items: []
+        };
+        group.items.push(groupIndex[path]);
+      }
+      group = groupIndex[path];
     }
+    group.items.push(specM);
   });
-  return groups;
+
+  // TODO: order
+
+  return rootGroup;
 }
 
 registerKeyFn(DATA, (specM: SpecQueryModel) => {
@@ -86,6 +103,18 @@ registerKeyFn(ENCODING, (specM: SpecQueryModel) => {
   return specM.getEncodings().map((encQ) => {
       const fieldDef = stringifyEncodingQueryFieldDef(encQ);
       return channelType(encQ.channel) + ':' + fieldDef;
+    })
+    .sort()
+    .join('|');
+});
+
+registerKeyFn(TRANSPOSE, (specM: SpecQueryModel) => {
+  return specM.getMark() + '|' + specM.getEncodings().map((encQ) => {
+      const fieldDef = stringifyEncodingQueryFieldDef(encQ);
+      const channel = (encQ.channel === Channel.X || encQ.channel === Channel.Y) ? 'xy' :
+        (encQ.channel === Channel.ROW || encQ.channel === Channel.COLUMN) ? 'facet' :
+        encQ.channel;
+      return channel + ':' + fieldDef;
     })
     .sort()
     .join('|');

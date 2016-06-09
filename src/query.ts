@@ -162,8 +162,13 @@ function enumSpecShort(value: any): string {
 
 export interface Query {
   spec: SpecQuery;
-  nest: string;
+  nest: Nest[];
   config: QueryConfig;
+}
+
+export interface Nest {
+  groupBy: string;
+  orderGroupBy?: string;
 }
 
 export interface SpecQuery {
