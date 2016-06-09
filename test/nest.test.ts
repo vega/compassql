@@ -6,7 +6,7 @@ import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
 import {generate} from '../src/generate';
-import {nest, DATA, ENCODING, SpecQueryModelGroup} from '../src/nest';
+import {nest, DATA, ENCODING, TRANSPOSE, SpecQueryModelGroup} from '../src/nest';
 import {SHORT_ENUM_SPEC} from '../src/query';
 
 import {schema, stats} from './fixture';
@@ -42,25 +42,6 @@ describe('nest', () => {
   });
 
   describe('encoding', () => {
-    it('should group transposed visualizations', () => {
-      const query = {
-        mark: SHORT_ENUM_SPEC,
-        encodings: [{
-          channel: {enumValues: [Channel.X, Channel.Y]},
-          field: 'Q',
-          type: Type.QUANTITATIVE
-        }, {
-          channel: {enumValues: [Channel.X, Channel.Y]},
-          field: 'Q2',
-          type: Type.QUANTITATIVE
-        }]
-      };
-
-      const answerSet = generate(query, schema, stats);
-      const groups = nest(answerSet, [{groupBy: ENCODING}]).items;
-      assert.equal(groups.length, 1);
-    });
-
     it('should group visualizations with different retinal variables', () => {
       const query = {
         mark: SHORT_ENUM_SPEC,
@@ -130,52 +111,75 @@ describe('nest', () => {
       const groups = nest(answerSet, [{groupBy: ENCODING}]).items;
       assert.equal(groups.length, 1);
     });
+  });
 
-    it('should group transposed facets visualizations', () => {
-      const query = {
-        mark: SHORT_ENUM_SPEC,
-        encodings: [{
-          channel: Channel.X,
-          field: 'Q',
-          type: Type.QUANTITATIVE
-        }, {
-          channel: Channel.Y,
-          field: 'Q1',
-          type: Type.QUANTITATIVE
-        }, {
-          channel: {enumValues: [Channel.ROW, Channel.COLUMN]},
-          field: 'O',
-          type: Type.ORDINAL
-        }, {
-          channel: {enumValues: [Channel.ROW, Channel.COLUMN]},
-          field: 'N',
-          type: Type.NOMINAL
-        }]
-      };
+  describe('encoding/transpose', () => {
+    [ENCODING, TRANSPOSE].forEach((groupBy) => {
+        it(groupBy + ' should group transposed visualizations', () => {
+        const query = {
+          mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: {enumValues: [Channel.X, Channel.Y]},
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: {enumValues: [Channel.X, Channel.Y]},
+            field: 'Q2',
+            type: Type.QUANTITATIVE
+          }]
+        };
 
-      const answerSet = generate(query, schema, stats);
-      const groups = nest(answerSet, [{groupBy: ENCODING}]).items;
-      assert.equal(groups.length, 1);
-    });
+        const answerSet = generate(query, schema, stats);
+        const groups = nest(answerSet, [{groupBy: groupBy}]).items;
+        assert.equal(groups.length, 1);
+      });
+
+      it(groupBy + ' should group transposed facets visualizations', () => {
+        const query = {
+          mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: Channel.X,
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: Channel.Y,
+            field: 'Q1',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: {enumValues: [Channel.ROW, Channel.COLUMN]},
+            field: 'O',
+            type: Type.ORDINAL
+          }, {
+            channel: {enumValues: [Channel.ROW, Channel.COLUMN]},
+            field: 'N',
+            type: Type.NOMINAL
+          }]
+        };
+
+        const answerSet = generate(query, schema, stats);
+        const groups = nest(answerSet, [{groupBy: groupBy}]).items;
+        assert.equal(groups.length, 1);
+      });
 
 
-    it('should not group visualizations that map same variable to y and color', () => {
-      const query = {
-        mark: SHORT_ENUM_SPEC,
-        encodings: [{
-          channel: Channel.X,
-          field: 'Q',
-          type: Type.QUANTITATIVE
-        }, {
-          channel: {enumValues: [Channel.Y, Channel.COLOR]},
-          field: 'Q1',
-          type: Type.QUANTITATIVE
-        }]
-      };
+      it(groupBy + ' should not group visualizations that map same variable to y and color', () => {
+        const query = {
+          mark: Mark.POINT,
+          encodings: [{
+            channel: Channel.X,
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: {enumValues: [Channel.Y, Channel.COLOR]},
+            field: 'Q1',
+            type: Type.QUANTITATIVE
+          }]
+        };
 
-      const answerSet = generate(query, schema, stats, {omitNonPositionalOverPositionalChannels: false});
-      const groups = nest(answerSet, [{groupBy: ENCODING}]).items;
-      assert.equal(groups.length, 2);
+        const answerSet = generate(query, schema, stats, {omitNonPositionalOverPositionalChannels: false});
+        const groups = nest(answerSet, [{groupBy: groupBy}]).items;
+        assert.equal(groups.length, 2);
+      });
     });
   });
 
