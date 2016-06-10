@@ -98,9 +98,12 @@ function channelType(channel: Channel | EnumSpec<Channel>) {
     case Channel.PATH:
     case Channel.ORDER:
       return c + '';
+    /* istanbul ignore next */
+    default:
+      console.warn('channel type not implemented for ' + c);
+      return c + '';
   }
-  console.warn('channel type not implemented for ' + c);
-  return c + '';
+
 }
 
 registerKeyFn(ENCODING, (specM: SpecQueryModel) => {

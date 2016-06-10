@@ -60,6 +60,7 @@ ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema,
           if (c.strict() || !!opt[c.name()]) {
             // For strict constraint, or enabled non-strict, check the constraints
             const satisfy = c.satisfy(specM, schema, stats, opt);
+            /* istanbul ignore if */
             if (!satisfy && opt.verbose) {
               console.log(c.name() + ' failed with ' + specM.toShorthand() + ' for mark');
             }
@@ -144,6 +145,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
             });
 
             if (!satisfyEncodingConstraints) {
+              /* istanbul ignore if */
               if (opt.verbose) {
                 console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + indexTuple.enumSpec.name);
               }
@@ -167,6 +169,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
             });
 
             if (!satisfySpecConstraints) {
+              /* istanbul ignore if */
               if (opt.verbose) {
                 console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + indexTuple.enumSpec.name);
               }
