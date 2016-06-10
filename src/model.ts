@@ -164,11 +164,11 @@ export class SpecQueryModel {
       const countEncQ = {
         channel: {
           name: getDefaultName(Property.CHANNEL) + specQ.encodings.length,
-          enumValues: getDefaultEnumValues(Property.CHANNEL, schema, opt)
+          values: getDefaultEnumValues(Property.CHANNEL, schema, opt)
         },
         autoCount: {
           name: getDefaultName(Property.AUTOCOUNT) + specQ.encodings.length,
-          enumValues: [false, true]
+          values: [false, true]
         },
         type: Type.QUANTITATIVE
       };

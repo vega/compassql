@@ -157,7 +157,7 @@ describe('enumerator', () => {
   describe('mark', () => {
     it('should correctly enumerate marks', () => {
       const specM = buildSpecQueryModel({
-        mark: {enumValues: [Mark.POINT, Mark.TICK]},
+        mark: {values: [Mark.POINT, Mark.TICK]},
         encodings: [
           {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
           {channel: Channel.Y, field: 'O', type: Type.ORDINAL}
@@ -173,7 +173,7 @@ describe('enumerator', () => {
 
     it('should not enumerate invalid mark', () => {
       const specM = buildSpecQueryModel({
-        mark: {enumValues: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA]},
+        mark: {values: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA]},
         encodings: [
           {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
           {channel: Channel.SHAPE, field: 'O', type: Type.ORDINAL}
@@ -194,7 +194,7 @@ describe('enumerator', () => {
           mark: Mark.POINT,
           encodings: [
             {
-              channel: {enumValues: [Channel.X, Channel.Y]},
+              channel: {values: [Channel.X, Channel.Y]},
               field: 'Q',
               type: Type.QUANTITATIVE
             }
@@ -214,7 +214,7 @@ describe('enumerator', () => {
           mark: Mark.BAR,
           encodings: [
             {
-              channel: {enumValues: [Channel.X, Channel.SHAPE]},
+              channel: {values: [Channel.X, Channel.SHAPE]},
               field: 'Q',
               type: Type.QUANTITATIVE
             }
@@ -287,7 +287,7 @@ describe('enumerator', () => {
         mark: Mark.POINT,
         encodings: [
           {
-            channel: {enumValues: [Channel.X, Channel.SIZE, Channel.COLOR]},
+            channel: {values: [Channel.X, Channel.SIZE, Channel.COLOR]},
             field: 'Q',
             type: Type.QUANTITATIVE
           }

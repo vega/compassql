@@ -614,7 +614,7 @@ describe('constraints/spec', () => {
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
-          {channel: Channel.Y, timeUnit: {enumValues: [TimeUnit.MONTH, undefined]}, field: 'C', type: Type.TEMPORAL}
+          {channel: Channel.Y, timeUnit: {values: [TimeUnit.MONTH, undefined]}, field: 'C', type: Type.TEMPORAL}
         ]
       });
 
@@ -650,7 +650,7 @@ describe('constraints/spec', () => {
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
-          {channel: Channel.Y, bin: {enumValues: [true, false]}, field: 'C', type: Type.QUANTITATIVE}
+          {channel: Channel.Y, bin: {values: [true, false]}, field: 'C', type: Type.QUANTITATIVE}
         ]
       });
 
@@ -669,7 +669,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true for any raw plot', () => {
-      [TimeUnit.MONTH, undefined, {enumValues: [TimeUnit.MONTH, undefined]}].forEach((timeUnit) => {
+      [TimeUnit.MONTH, undefined, {values: [TimeUnit.MONTH, undefined]}].forEach((timeUnit) => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
@@ -690,7 +690,7 @@ describe('constraints/spec', () => {
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.NOMINAL},
-          {channel: Channel.Y, field: {enumValues: ['B']}, type: Type.NOMINAL}
+          {channel: Channel.Y, field: {values: ['B']}, type: Type.NOMINAL}
         ]
       });
 

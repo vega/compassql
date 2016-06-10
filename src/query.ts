@@ -141,17 +141,17 @@ export const SHORT_ENUM_SPEC = ShortEnumSpec.ENUMSPEC;
 
 export interface EnumSpec<T> {
   name?: string;
-  enumValues?: T[];
+  values?: T[];
 }
 
 export function isEnumSpec(prop: any) {
-  return prop === SHORT_ENUM_SPEC || (prop !== undefined && !!prop.enumValues);
+  return prop === SHORT_ENUM_SPEC || (prop !== undefined && !!prop.values);
 }
 
 export function initEnumSpec(prop: any, defaultName: string, defaultEnumValues: any[]): EnumSpec<any> {
   return {
     name: prop.name || defaultName,
-    enumValues: prop.enumValues || defaultEnumValues
+    values: prop.values || defaultEnumValues
   };
 }
 

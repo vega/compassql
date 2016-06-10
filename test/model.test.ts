@@ -42,7 +42,7 @@ describe('SpecQueryModel', () => {
     it('should have mark enumSpecIndex if mark is an EnumSpec.', () => {
       const specQ: SpecQuery = {
         mark: {
-          enumValues: [Mark.BAR]
+          values: [Mark.BAR]
         },
         encodings: []
       };
@@ -91,7 +91,7 @@ describe('SpecQueryModel', () => {
           ['A', 'B'] :
           getDefaultEnumValues(prop, schema, DEFAULT_QUERY_CONFIG);
         specQ.encodings[0][prop] = {
-          enumValues: enumValues
+          values: enumValues
         };
 
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
@@ -270,7 +270,7 @@ describe('SpecQueryModel', () => {
 
     it('should return null if the query is incompleted', () => {
       const specM = buildSpecQueryModel({
-        mark: {enumValues: [Mark.BAR, Mark.POINT]},
+        mark: {values: [Mark.BAR, Mark.POINT]},
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]

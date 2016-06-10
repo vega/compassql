@@ -23,7 +23,7 @@ describe('nest', () => {
             type: Type.QUANTITATIVE,
             aggregate: {
               name: 'a0',
-              enumValues: [AggregateOp.MEAN, AggregateOp.MEDIAN]
+              values: [AggregateOp.MEAN, AggregateOp.MEDIAN]
             }
           }, {
             channel: SHORT_ENUM_SPEC,
@@ -59,7 +59,7 @@ describe('nest', () => {
             field: 'Q1',
             type: Type.QUANTITATIVE
           }, {
-            channel: {enumValues: [Channel.COLOR, Channel.SIZE]},
+            channel: {values: [Channel.COLOR, Channel.SIZE]},
             field: 'Q2',
             type: Type.QUANTITATIVE
           }]
@@ -86,7 +86,7 @@ describe('nest', () => {
             field: 'Q1',
             type: Type.QUANTITATIVE
           }, {
-            channel: {enumValues: [Channel.COLOR, Channel.SHAPE]},
+            channel: {values: [Channel.COLOR, Channel.SHAPE]},
             field: 'O',
             type: Type.ORDINAL
           }]
@@ -106,15 +106,15 @@ describe('nest', () => {
         spec: {
           mark: SHORT_ENUM_SPEC,
           encodings: [{
-            channel: {enumValues: [Channel.X, Channel.Y]},
+            channel: {values: [Channel.X, Channel.Y]},
             field: 'Q',
             type: Type.QUANTITATIVE
           }, {
-            channel: {enumValues: [Channel.X, Channel.Y]},
+            channel: {values: [Channel.X, Channel.Y]},
             field: 'Q1',
             type: Type.QUANTITATIVE
           }, {
-            channel: {enumValues: [Channel.COLOR, Channel.SIZE]},
+            channel: {values: [Channel.COLOR, Channel.SIZE]},
             field: 'Q2',
             type: Type.QUANTITATIVE
           }]
@@ -136,11 +136,11 @@ describe('nest', () => {
           spec: {
             mark: SHORT_ENUM_SPEC,
             encodings: [{
-              channel: {enumValues: [Channel.X, Channel.Y]},
+              channel: {values: [Channel.X, Channel.Y]},
               field: 'Q',
               type: Type.QUANTITATIVE
             }, {
-              channel: {enumValues: [Channel.X, Channel.Y]},
+              channel: {values: [Channel.X, Channel.Y]},
               field: 'Q2',
               type: Type.QUANTITATIVE
             }]
@@ -167,11 +167,11 @@ describe('nest', () => {
               field: 'Q1',
               type: Type.QUANTITATIVE
             }, {
-              channel: {enumValues: [Channel.ROW, Channel.COLUMN]},
+              channel: {values: [Channel.ROW, Channel.COLUMN]},
               field: 'O',
               type: Type.ORDINAL
             }, {
-              channel: {enumValues: [Channel.ROW, Channel.COLUMN]},
+              channel: {values: [Channel.ROW, Channel.COLUMN]},
               field: 'N',
               type: Type.NOMINAL
             }]
@@ -195,7 +195,7 @@ describe('nest', () => {
               field: 'Q',
               type: Type.QUANTITATIVE
             }, {
-              channel: {enumValues: [Channel.Y, Channel.COLOR]},
+              channel: {values: [Channel.Y, Channel.COLOR]},
               field: 'Q1',
               type: Type.QUANTITATIVE
             }]
@@ -217,15 +217,15 @@ describe('nest', () => {
         spec: {
           mark: Mark.POINT,
           encodings: [{
-            channel: {enumValues: [Channel.X, Channel.Y]},
+            channel: {values: [Channel.X, Channel.Y]},
             field: 'Q',
             type: Type.QUANTITATIVE,
             aggregate: {
               name: 'a0',
-              enumValues: [AggregateOp.MEAN, AggregateOp.MEDIAN]
+              values: [AggregateOp.MEAN, AggregateOp.MEDIAN]
             }
           }, {
-            channel: {enumValues: [Channel.X, Channel.Y]},
+            channel: {values: [Channel.X, Channel.Y]},
             field: 'O',
             type: Type.ORDINAL
           }]
