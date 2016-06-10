@@ -1,8 +1,10 @@
 import {Channel} from 'vega-lite/src/channel';
 
 import {SpecQueryModel} from './model';
-import {SHORT_ENUM_SPEC, EnumSpec, Nest, isEnumSpec, stringifyEncodingQueryFieldDef} from './query';
+import {SHORT_ENUM_SPEC, EnumSpec, isEnumSpec, stringifyEncodingQueryFieldDef, Query} from './query';
+import {Stats} from './stats';
 import {Dict} from './util';
+
 
 /**
  * Registry for all possible grouping key functions.
@@ -29,11 +31,15 @@ export interface SpecQueryModelGroup {
   items: (SpecQueryModel | SpecQueryModelGroup)[];
 }
 
+export function isSpecQueryModelGroup(item: SpecQueryModel | SpecQueryModelGroup): item is SpecQueryModelGroup {
+  return item.hasOwnProperty('items');
+}
+
 /**
  * Group the input spec query model by a key function registered in the group registry
  * @return
  */
-export function nest(specModels: SpecQueryModel[], nest: Nest[]): SpecQueryModelGroup {
+export function nest(specModels: SpecQueryModel[], query: Query, stats: Stats): SpecQueryModelGroup {
 
   const rootGroup: SpecQueryModelGroup = { name: '', path: '', items: []};
   let groupIndex: Dict<SpecQueryModelGroup> = {};
@@ -41,9 +47,9 @@ export function nest(specModels: SpecQueryModel[], nest: Nest[]): SpecQueryModel
   specModels.forEach((specM) => {
     let path = '';
     let group: SpecQueryModelGroup = rootGroup;
-    for (let l = 0 ; l < nest.length; l++) {
-      group.groupBy = nest[l].groupBy;
-      const keyFn: (specM: SpecQueryModel) => string = groupRegistry[nest[l].groupBy];
+    for (let l = 0 ; l < query.nest.length; l++) {
+      group.groupBy = query.nest[l].groupBy;
+      const keyFn: (specM: SpecQueryModel) => string = groupRegistry[query.nest[l].groupBy];
       const key = keyFn(specM);
 
       path += '/' + key;
@@ -59,11 +65,10 @@ export function nest(specModels: SpecQueryModel[], nest: Nest[]): SpecQueryModel
     }
     group.items.push(specM);
   });
-
-  // TODO: order
-
   return rootGroup;
 }
+
+
 
 registerKeyFn(DATA, (specM: SpecQueryModel) => {
   return specM.getEncodings().map(stringifyEncodingQueryFieldDef)

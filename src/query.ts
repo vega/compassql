@@ -15,9 +15,8 @@ import {contains} from './util';
 
 export default function(query: Query, schema: Schema, stats: Stats) {
   const answerSet = generate(query.spec, schema, stats, query.config);
-  const groupedAnswerSet = nest(answerSet, query.nest);
-
-  return groupedAnswerSet;
+  const nestedAnswerSet = nest(answerSet, query, stats);
+  return nestedAnswerSet;
 }
 
 export interface QueryConfig {
@@ -162,8 +161,10 @@ function enumSpecShort(value: any): string {
 
 export interface Query {
   spec: SpecQuery;
-  nest: Nest[];
-  config: QueryConfig;
+  nest?: Nest[];
+  orderBy?: string;
+  chooseBy?: string;
+  config?: QueryConfig;
 }
 
 export interface Nest {
