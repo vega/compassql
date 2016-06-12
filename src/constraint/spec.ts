@@ -482,3 +482,33 @@ export const SPEC_CONSTRAINTS_BY_PROPERTY: {[prop: string]: SpecConstraintModel[
     });
     return m;
   }, {});
+
+
+/**
+ * Check all encoding constraints for a particular property and index tuple
+ */
+export function checkSpec(prop: Property, indexTuple: EnumSpecIndexTuple<any>,
+  specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig): string {
+
+  // Check encoding constraint
+  const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[prop] || [];
+
+  for (let i = 0; i < specConstraints.length; i++) {
+    const c = specConstraints[i];
+    // Check if the constraint is enabled
+    if (c.strict() || !!opt[c.name()]) {
+      // For strict constraint, or enabled non-strict, check the constraints
+
+      const satisfy = c.satisfy(specM, schema, stats, opt);
+      if (!satisfy) {
+        let violatedConstraint = '(spec) ' + c.name();
+        /* istanbul ignore if */
+        if (opt.verbose) {
+          console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+        }
+        return violatedConstraint;
+      }
+    }
+  }
+  return null;
+}

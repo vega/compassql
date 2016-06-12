@@ -1,6 +1,7 @@
 import {Channel, getSupportedRole} from 'vega-lite/src/channel';
 import {Type} from 'vega-lite/src/type';
 
+import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
 import {Property} from '../property';
 import {EncodingQuery, isEnumSpec, isDimension, isMeasure, QueryConfig} from '../query';
 import {PrimitiveType, Schema} from '../schema';
@@ -8,6 +9,7 @@ import {Stats} from '../stats';
 import {some} from '../util';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
+
 
 /**
  * Collection of constraints for a single encoding mapping.
@@ -210,3 +212,33 @@ export const ENCODING_CONSTRAINTS_BY_PROPERTY: {[prop: string]: EncodingConstrai
     });
     return m;
   }, {});
+
+/**
+ * Check all encoding constraints for a particular property and index tuple
+ */
+export function checkEncoding(prop: Property, indexTuple: EnumSpecIndexTuple<any>,
+  specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig): string {
+
+  // Check encoding constraint
+  const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[prop] || [];
+  const encQ = specM.getEncodingQueryByIndex(indexTuple.index);
+
+  for (let i = 0; i < encodingConstraints.length; i++) {
+    const c = encodingConstraints[i];
+    // Check if the constraint is enabled
+    if (c.strict() || !!opt[c.name()]) {
+      // For strict constraint, or enabled non-strict, check the constraints
+
+      const satisfy = c.satisfy(encQ, schema, stats, opt);
+      if (!satisfy) {
+        let violatedConstraint = '(enc) ' + c.name();
+        /* istanbul ignore if */
+        if (opt.verbose) {
+          console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+        }
+        return violatedConstraint;
+      }
+    }
+  }
+  return null;
+}

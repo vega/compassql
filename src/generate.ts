@@ -1,16 +1,14 @@
 import {Mark} from 'vega-lite/src/mark';
 
-// TODO: extract list of constraints into a constraint registry.
-
-import {ENCODING_CONSTRAINTS_BY_PROPERTY, EncodingConstraintModel} from './constraint/encoding';
-import {SPEC_CONSTRAINTS_BY_PROPERTY, SpecConstraintModel} from './constraint/spec';
+import {checkEncoding} from './constraint/encoding';
+import {checkSpec} from './constraint/spec';
 
 import {EnumSpecIndex, EnumSpecIndexTuple, SpecQueryModel} from './model';
 import {Property, ENCODING_PROPERTIES} from './property';
 import {EnumSpec, QueryConfig, SpecQuery, DEFAULT_QUERY_CONFIG} from './query';
 import {Schema} from './schema';
 import {Stats} from './stats';
-import {every, extend} from './util';
+import {extend} from './util';
 
 export let ENUMERATOR_INDEX: {[prop: string]: EnumeratorFactory} = {};
 
@@ -52,25 +50,9 @@ ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema,
     // enumerate the value
     markEnumSpec.values.forEach((mark) => {
       specM.setMark(mark);
-
       // Check spec constraint
-      const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[Property.MARK] || [];
-      const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
-        // Check if the constraint is enabled
-          if (c.strict() || !!opt[c.name()]) {
-            // For strict constraint, or enabled non-strict, check the constraints
-            const satisfy = c.satisfy(specM, schema, stats, opt);
-            /* istanbul ignore if */
-            if (!satisfy && opt.verbose) {
-              console.log(c.name() + ' failed with ' + specM.toShorthand() + ' for mark');
-            }
-            return satisfy;
-          }
-          // Otherwise, return true as we don't have to check the constraint yet.
-          return true;
-      });
-
-      if (satisfySpecConstraints) {
+      const violatedSpecConstraint = checkSpec(Property.MARK, enumSpecIndex.mark, specM, schema, stats, opt);
+      if (!violatedSpecConstraint) {
         // emit
         answerSet.push(specM.duplicate());
       }
@@ -123,62 +105,20 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
               propVal = undefined;
             }
             specM.setEncodingProperty(indexTuple.index, prop, propVal, indexTuple.enumSpec);
-
-
-            let violatedConstraint = null;
-
             // Check encoding constraint
-            const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[prop] || [];
-            const satisfyEncodingConstraints = every(encodingConstraints, (c: EncodingConstraintModel) => {
-              // Check if the constraint is enabled
-              if (c.strict() || !!opt[c.name()]) {
-                // For strict constraint, or enabled non-strict, check the constraints
-                const satisfy = c.satisfy(specM.getEncodingQueryByIndex(indexTuple.index), schema, stats, opt);
-                if (!satisfy) {
-                  violatedConstraint = '(enc) ' + c.name();
-                }
-                return satisfy;
-              }
-
-              // Otherwise, return true as we don't have to check the constraint yet.
-              return true;
-            });
-
-            if (!satisfyEncodingConstraints) {
-              /* istanbul ignore if */
-              if (opt.verbose) {
-                console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + indexTuple.enumSpec.name);
-              }
+            const violatedEncodingConstraint = checkEncoding(prop, indexTuple, specM, schema, stats, opt);
+            if (violatedEncodingConstraint) {
               return; // do not keep searching
             }
-
             // Check spec constraint
-            const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[prop] || [];
-            const satisfySpecConstraints = every(specConstraints, (c: SpecConstraintModel) => {
-              // Check if the constraint is enabled
-              if (c.strict() || !!opt[c.name()]) {
-                // For strict constraint, or enabled non-strict, check the constraints
-                const satisfy = c.satisfy(specM, schema, stats, opt);
-                if (!satisfy) {
-                  violatedConstraint = '(spec) ' + c.name();
-                }
-                return satisfy;
-              }
-              // Otherwise, return true as we don't have to check the constraint yet.
-              return true;
-            });
-
-            if (!satisfySpecConstraints) {
-              /* istanbul ignore if */
-              if (opt.verbose) {
-                console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + indexTuple.enumSpec.name);
-              }
+            const violatedSpecConstraint = checkSpec(prop, indexTuple, specM, schema, stats, opt);
+            if (violatedSpecConstraint) {
               return; // do not keep searching
             }
-
             // If qualify all of the constraints, keep enumerating
             enumerate(jobIndex + 1);
           });
+
           // Reset to avoid side effect
           specM.resetEncodingProperty(indexTuple.index, prop, indexTuple.enumSpec);
         }
