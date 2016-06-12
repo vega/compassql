@@ -26,6 +26,27 @@ export const ENCODING_PROPERTIES = [
   Property.TYPE
 ];
 
+export const DEFAULT_PROPERTY_PRECENCE: Property[] =  [
+  // Projection
+  Property.TYPE, // type is a constraint for field
+  Property.FIELD,
+
+  // TODO: transform
+
+  // Field Transform
+  Property.BIN,
+  Property.TIMEUNIT,
+  Property.AGGREGATE,
+  Property.AUTOCOUNT,
+
+  // Nested Property
+  Property.BIN_MAXBINS,
+
+  // Encoding
+  Property.CHANNEL,
+  Property.MARK
+];
+
 export interface NestedEncodingProperty {
   property: Property;
   parent: string;

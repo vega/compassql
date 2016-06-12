@@ -6,7 +6,7 @@ import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
 import {SpecQueryModel, getDefaultEnumValues} from '../src/model';
-import {Property, ENCODING_PROPERTIES} from '../src/property';
+import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
 import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery, isEnumSpec} from '../src/query';
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
@@ -98,6 +98,40 @@ describe('SpecQueryModel', () => {
       it('should not have ' + prop + ' enumSpecIndex if it is specific.', () => {
         let specQ = duplicate(templateSpecQ);
         // do not set to enum spec = make it specific
+
+        const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
+        assert.isNotOk(enumSpecIndex[prop]);
+      });
+    });
+
+    NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
+      const prop = nestedProp.property;
+      const parent = nestedProp.parent;
+      const child = nestedProp.child;
+
+      it('should have ' + prop + ' enumSpecIndex if it is a ShortEnumSpec.', () => {
+        let specQ = duplicate(templateSpecQ);
+        // set to a short enum spec
+        specQ.encodings[0][parent] = {};
+        specQ.encodings[0][parent][child] = SHORT_ENUM_SPEC;
+
+        const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
+        assert.isOk(enumSpecIndex[prop]);
+      });
+
+      it('should have ' + prop + ' enumSpecIndex if it is an EnumSpec.', () => {
+        let specQ = duplicate(templateSpecQ);
+        specQ.encodings[0][parent] = {};
+        specQ.encodings[0][parent][child] = {
+          values: getDefaultEnumValues(prop, schema, DEFAULT_QUERY_CONFIG)
+        };
+
+        const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
+        assert.isOk(enumSpecIndex[prop]);
+      });
+
+      it('should not have ' + prop + ' enumSpecIndex if it is specific.', () => {
+        let specQ = duplicate(templateSpecQ);
 
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
         assert.isNotOk(enumSpecIndex[prop]);

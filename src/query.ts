@@ -8,7 +8,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {generate} from './generate';
 import {nest} from './nest';
-import {Property} from './property';
+import {Property, DEFAULT_PROPERTY_PRECENCE} from './property';
 import {rank} from './ranking/ranking';
 import {Schema} from './schema';
 import {Stats} from './stats';
@@ -85,25 +85,7 @@ export interface QueryConfig {
 
 export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   verbose: false,
-  propertyPrecedence: [
-    // Projection
-    Property.TYPE, // type is a constraint for field
-    Property.FIELD,
-
-    // TODO: transform
-
-    // Field Transform
-    Property.BIN,
-    Property.TIMEUNIT,
-    Property.AGGREGATE,
-    Property.AUTOCOUNT,
-
-
-
-    // Encoding
-    Property.CHANNEL,
-    Property.MARK
-  ],
+  propertyPrecedence: DEFAULT_PROPERTY_PRECENCE,
 
   marks: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK], // Mark.TEXT
   channels: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT

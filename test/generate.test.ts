@@ -7,7 +7,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {ENUMERATOR_INDEX, generate} from '../src/generate';
 import {SpecQueryModel} from '../src/model';
-import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery} from '../src/query';
+import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, BinQuery, SpecQuery} from '../src/query';
 import {Property} from '../src/property';
 import {extend, some} from '../src/util';
 
@@ -152,6 +152,31 @@ describe('generate', function () {
       });
     });
   });
+
+  describe('bin_maxbins', () => {
+    describe('Qx#', () => {
+      const specQ = {
+        mark: Mark.BAR,
+        encodings: [
+          {
+            channel: Channel.X,
+            bin: {maxbins: {values: [10, 20, 30]}},
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+
+      const answerSet = generate(specQ, schema, stats);
+
+      it('should enumerate multiple maxbins parameter', () => {
+        assert.equal(answerSet.length, 3);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).bin['maxbins'], 10);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin['maxbins'], 20);
+        assert.equal(answerSet[2].getEncodingQueryByIndex(0).bin['maxbins'], 30);
+      });
+    });
+  });
 });
 
 describe('enumerator', () => {
@@ -235,6 +260,31 @@ describe('enumerator', () => {
 
     describe('bin', () => {
       // TODO
+    });
+
+    describe('maxbin', () => {
+      it('should correctly enumerate maxbins', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.BAR,
+          encodings: [
+            {
+              channel: Channel.X,
+              bin: {
+                maxbins: {values: [5, 10, 20]}
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.BIN_MAXBINS](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 3);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 5);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 10);
+        assert.equal((answerSet[2].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 20);
+      });
     });
 
     describe('timeUnit', () => {
