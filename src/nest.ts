@@ -44,31 +44,32 @@ export function nest(specModels: SpecQueryModel[], query: Query, stats: Stats): 
   const rootGroup: SpecQueryModelGroup = { name: '', path: '', items: []};
   let groupIndex: Dict<SpecQueryModelGroup> = {};
 
-  specModels.forEach((specM) => {
-    let path = '';
-    let group: SpecQueryModelGroup = rootGroup;
-    for (let l = 0 ; l < query.nest.length; l++) {
-      group.groupBy = query.nest[l].groupBy;
-      const keyFn: (specM: SpecQueryModel) => string = groupRegistry[query.nest[l].groupBy];
-      const key = keyFn(specM);
+  if (query.nest) {
+    specModels.forEach((specM) => {
+      let path = '';
+      let group: SpecQueryModelGroup = rootGroup;
+      for (let l = 0 ; l < query.nest.length; l++) {
+        group.groupBy = query.nest[l].groupBy;
 
-      path += '/' + key;
-      if (!groupIndex[path]) { // this item already exists on the path
-        groupIndex[path] = {
-          name: key,
-          path: path,
-          items: []
-        };
-        group.items.push(groupIndex[path]);
+        const keyFn: (specM: SpecQueryModel) => string = groupRegistry[query.nest[l].groupBy];
+        const key = keyFn(specM);
+
+        path += '/' + key;
+        if (!groupIndex[path]) { // this item already exists on the path
+          groupIndex[path] = {
+            name: key,
+            path: path,
+            items: []
+          };
+          group.items.push(groupIndex[path]);
+        }
+        group = groupIndex[path];
       }
-      group = groupIndex[path];
-    }
-    group.items.push(specM);
-  });
+      group.items.push(specM);
+    });
+  }
   return rootGroup;
 }
-
-
 
 registerKeyFn(DATA, (specM: SpecQueryModel) => {
   return specM.getEncodings().map(stringifyEncodingQueryFieldDef)
