@@ -6,7 +6,7 @@ import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
 import {SpecQueryModel, getDefaultEnumValues} from '../src/model';
-import {Property} from '../src/property';
+import {Property, ENCODING_PROPERTIES} from '../src/property';
 import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery, isEnumSpec} from '../src/query';
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
@@ -62,9 +62,6 @@ describe('SpecQueryModel', () => {
     // TODO: Transform
 
     // Encoding
-    const encodingproperties = [Property.AGGREGATE, Property.AUTOCOUNT, Property.BIN,
-      Property.CHANNEL, Property.TIMEUNIT, Property.FIELD];
-
     // TODO: also test type
 
     const templateSpecQ: SpecQuery = {
@@ -74,7 +71,7 @@ describe('SpecQueryModel', () => {
       ]
     };
 
-    encodingproperties.forEach((prop) => {
+    ENCODING_PROPERTIES.forEach((prop) => {
       it('should have ' + prop + ' enumSpecIndex if ' + prop + ' is a ShortEnumSpec.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a short enum spec
