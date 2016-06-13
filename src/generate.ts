@@ -95,14 +95,20 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
         }
         const indexTuple = indexTuples[jobIndex];
         const encQ = specM.getEncodingQueryByIndex(indexTuple.index);
+        const propEnumSpec = specM.getEncodingProperty(indexTuple.index, prop);
 
-        if (encQ.autoCount === false) { // TODO: encQ.excluded
-          // If this encoding query is excluded, there is no point enumerating other properties
-          // for this encoding query because they will be excluded anyway.
-          // Thus, we can just move on to the next encoding to enumerate.
+        if (
+            // TODO: encQ.exclude
+            // If this encoding query is an excluded autoCount, there is no point enumerating other properties
+            // for this encoding query because they will be excluded anyway.
+            // Thus, we can just move on to the next encoding to enumerate.
+            encQ.autoCount === false ||
+            // nested encoding property might have its parent set to false
+            // therefore, we no longer have to enumerate them
+            !propEnumSpec
+          ) { // TODO: encQ.excluded
           enumerate(jobIndex + 1);
         } else {
-          const propEnumSpec = specM.getEncodingProperty(indexTuple.index, prop);
           propEnumSpec.values.forEach((propVal) => {
             if (propVal === null) {
               // our duplicate() method use JSON.stringify, parse and thus can accidentally

@@ -12,7 +12,26 @@ export enum Property {
   TYPE = 'type' as any,
 
   // TODO: Filter (Field, Value?)
-  // TODO: SORT, SCALE_TYPE, AXIS, LEGEND
+  // TODO: SORT, SCALE, SCALE_TYPE, AXIS, AXIS_*, LEGEND, LEGEND_*
+}
+
+export function hasNestedProperty(prop: Property) {
+  switch (prop) {
+    case Property.BIN:
+      // TODO: SCALE, AXIS, LEGEND
+      return true;
+    case Property.MARK:
+    case Property.CHANNEL:
+    case Property.AGGREGATE:
+    case Property.AUTOCOUNT:
+    case Property.TIMEUNIT:
+    case Property.FIELD:
+    case Property.TYPE:
+    case Property.BIN_MAXBINS:
+      return false;
+  }
+  /* istanbul ignore next */
+  throw new Error('hasNestedProperty undefined for property ' + prop);
 }
 
 export const ENCODING_PROPERTIES = [

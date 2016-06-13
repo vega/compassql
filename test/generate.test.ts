@@ -97,6 +97,7 @@ describe('generate', function () {
         });
       });
     });
+
     describe('A(Q) x A(Q)', () => {
       it('should return neither line nor area', () => {
         const query = {
@@ -121,6 +122,7 @@ describe('generate', function () {
       });
     });
   });
+
   describe('3D', () => {
     describe('NxNxQ', () => {
       const query = {
@@ -155,25 +157,48 @@ describe('generate', function () {
 
   describe('bin_maxbins', () => {
     describe('Qx#', () => {
-      const specQ = {
-        mark: Mark.BAR,
-        encodings: [
-          {
-            channel: Channel.X,
-            bin: {maxbins: {values: [10, 20, 30]}},
-            field: 'Q',
-            type: Type.QUANTITATIVE
-          }
-        ]
-      };
-
-      const answerSet = generate(specQ, schema, stats);
-
       it('should enumerate multiple maxbins parameter', () => {
+        const specQ = {
+          mark: Mark.BAR,
+          encodings: [
+            {
+              channel: Channel.X,
+              bin: {maxbins: {values: [10, 20, 30]}},
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        };
+
+        const answerSet = generate(specQ, schema, stats);
         assert.equal(answerSet.length, 3);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).bin['maxbins'], 10);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin['maxbins'], 20);
         assert.equal(answerSet[2].getEncodingQueryByIndex(0).bin['maxbins'], 30);
+      });
+
+      it('should support enumerating both bin enablling and maxbins parameter', () => {
+        const specQ = {
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              bin: {
+                values: [true, false],
+                maxbins: {values: [10, 20, 30]}
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        };
+
+        const answerSet = generate(specQ, schema, stats);
+        assert.equal(answerSet.length, 4);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).bin['maxbins'], 10);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin['maxbins'], 20);
+        assert.equal(answerSet[2].getEncodingQueryByIndex(0).bin['maxbins'], 30);
+        assert.equal(answerSet[3].getEncodingQueryByIndex(0).bin, false);
       });
     });
   });

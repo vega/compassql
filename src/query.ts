@@ -147,7 +147,7 @@ export function isEnumSpec(prop: any) {
   return prop === SHORT_ENUM_SPEC || (prop !== undefined && !!prop.values);
 }
 
-export function initEnumSpec(prop: any, defaultName: string, defaultEnumValues: any[]): EnumSpec<any> {
+export function initEnumSpec(prop: any, defaultName: string, defaultEnumValues: any[]): EnumSpec<any> & any {
   return extend({}, {
       name: defaultName,
       values: defaultEnumValues
@@ -243,6 +243,7 @@ export function stringifyEncodingQuery(encQ: EncodingQuery): string {
 
 export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
   let fn = null;
+  const params: {key: string, value: any}[]=  [];
 
   if (encQ.autoCount === false) {
     return '-';
@@ -254,6 +255,9 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     fn = encQ.timeUnit;
   } else if (encQ.bin && !isEnumSpec(encQ.bin)) {
     fn = 'bin';
+    if (encQ.bin['maxbins']) {
+      params.push({key: 'maxbins', value: encQ.bin['maxbins']});
+    }
   } else if (encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
     fn = 'count';
   } else if (
@@ -265,6 +269,8 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     fn = SHORT_ENUM_SPEC + '';
   }
 
-  const fieldType = enumSpecShort(encQ.field || '*') + ',' + enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1);
+  const fieldType = enumSpecShort(encQ.field || '*') + ',' +
+    enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1) +
+    params.map((p) => ',' + p.key + '=' + p.value);
   return (fn ? fn + '(' + fieldType + ')' : fieldType);
 }

@@ -8,7 +8,7 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 
-import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, getNestedEncodingProperty} from './property';
+import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
 import {SHORT_ENUM_SPEC, SpecQuery, EncodingQuery, EnumSpec, QueryConfig, initEnumSpec, isEnumSpec, isDimension, isMeasure, stringifySpecQuery} from './query';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
@@ -283,6 +283,11 @@ export class SpecQueryModel {
 
     if (nestedProp) { // nested encoding property
       encQ[nestedProp.parent][nestedProp.child] = value;
+    } else if (hasNestedProperty(prop) && value === true) {
+      encQ[prop] = extend({},
+        encQ[prop], // copy all existing properties
+        {values: undefined, name: undefined} // except name and values to it no longer an enumSpec
+      );
     } else { // encoding property (non-nested)
       encQ[prop] = value;
     }
