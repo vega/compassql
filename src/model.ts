@@ -70,6 +70,7 @@ function getDefaultName(prop: Property) {
     case Property.TYPE:
       return 't';
   }
+  /* istanbul ignore next */
   throw new Error('Default name undefined');
 }
 
@@ -92,6 +93,7 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     // The config name for each prop is a plural form of the prop.
     return opt[prop+'s'] || [];
   }
+  /* istanbul ignore next */
   throw new Error('No default enumValues for ' + prop);
 }
 
