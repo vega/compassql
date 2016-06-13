@@ -72,7 +72,7 @@ describe('SpecQueryModel', () => {
     };
 
     ENCODING_PROPERTIES.forEach((prop) => {
-      it('should have ' + prop + ' enumSpecIndex if ' + prop + ' is a ShortEnumSpec.', () => {
+      it('should have ' + prop + ' enumSpecIndex if it is a ShortEnumSpec.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a short enum spec
         specQ.encodings[0][prop] = SHORT_ENUM_SPEC;
@@ -81,7 +81,7 @@ describe('SpecQueryModel', () => {
         assert.isOk(enumSpecIndex[prop]);
       });
 
-      it('should have ' + prop + ' enumSpecIndex if ' + prop + ' is an EnumSpec.', () => {
+      it('should have ' + prop + ' enumSpecIndex if it is an EnumSpec.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a full enum spec
         const enumValues = prop === Property.FIELD ?
@@ -95,7 +95,7 @@ describe('SpecQueryModel', () => {
         assert.isOk(enumSpecIndex[prop]);
       });
 
-      it('should have ' + prop + ' enumSpecIndex if ' + prop + ' is specific.', () => {
+      it('should not have ' + prop + ' enumSpecIndex if it is specific.', () => {
         let specQ = duplicate(templateSpecQ);
         // do not set to enum spec = make it specific
 
