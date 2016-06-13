@@ -683,6 +683,9 @@ describe('constraints/spec', () => {
     });
   });
 
+  describe('omitRawDetail', () => {
+    // TODO:
+  });
 
   describe('omitRepeatedField', () => {
     it('should return true when there is no repeated field', function() {
