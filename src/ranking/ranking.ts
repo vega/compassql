@@ -32,7 +32,7 @@ export function get(name: string) {
 }
 
 export function rank(group: SpecQueryModelGroup, query: Query, stats: Stats, level: number) {
-  if (level === query.nest.length) {
+  if (!query.nest || level === query.nest.length) {
     if (query.orderBy || query.chooseBy) {
       group.items.sort(comparator(query.orderBy || query.chooseBy, stats, query.config));
       if (query.chooseBy) {
