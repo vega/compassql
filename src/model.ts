@@ -4,9 +4,9 @@ import {Data} from 'vega-lite/src/data';
 import {Encoding} from 'vega-lite/src/encoding';
 import {FieldDef} from 'vega-lite/src/fielddef';
 import {Mark} from 'vega-lite/src/mark';
-import {TimeUnit} from 'vega-lite/src/TimeUnit';
+import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
-import {ExtendedUnitSpec} from 'vega-lite/src/Spec';
+import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 
 import {Property, ENCODING_PROPERTIES} from './property';
 import {SHORT_ENUM_SPEC, SpecQuery, EncodingQuery, EnumSpec, QueryConfig, initEnumSpec, isEnumSpec, isDimension, isMeasure, stringifySpecQuery} from './query';
