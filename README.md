@@ -9,6 +9,18 @@ You can install npm dependency with:
 npm install
 ```
 
+You can use the following npm commands such as
+
+```
+npm run build
+npm run lint
+npm run test
+npm run watch // watcher that build, lint, and test
+```
+
+(See package.json for Full list of commands.)
+
+
 You can use [this branch of vega-editor](https://github.com/vega/vega-editor/tree/compassql) to play with CompassQL.
 Make sure to link CompassQL to the editor
 
