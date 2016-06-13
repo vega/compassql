@@ -8,6 +8,7 @@ import {Type} from 'vega-lite/src/type';
 import {ENUMERATOR_INDEX, generate} from '../src/generate';
 import {SpecQueryModel} from '../src/model';
 import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery} from '../src/query';
+import {Property} from '../src/property';
 import {extend, some} from '../src/util';
 
 import {schema, stats} from './fixture';
@@ -163,7 +164,7 @@ describe('enumerator', () => {
           {channel: Channel.Y, field: 'O', type: Type.ORDINAL}
         ]
       });
-      const enumerator = ENUMERATOR_INDEX['mark'](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+      const enumerator = ENUMERATOR_INDEX[Property.MARK](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
       const answerSet = enumerator([], specM);
       assert.equal(answerSet.length, 2);
@@ -179,7 +180,7 @@ describe('enumerator', () => {
           {channel: Channel.SHAPE, field: 'O', type: Type.ORDINAL}
         ]
       });
-      const enumerator = ENUMERATOR_INDEX['mark'](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+      const enumerator = ENUMERATOR_INDEX[Property.MARK](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
       const answerSet = enumerator([], specM);
       assert.equal(answerSet.length, 1);
@@ -201,7 +202,7 @@ describe('enumerator', () => {
           ]
         });
         const opt = extend({}, DEFAULT_QUERY_CONFIG, {omitVerticalDotPlot: false});
-        const enumerator = ENUMERATOR_INDEX['channel'](specM.enumSpecIndex, schema, stats, opt);
+        const enumerator = ENUMERATOR_INDEX[Property.CHANNEL](specM.enumSpecIndex, schema, stats, opt);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
@@ -220,7 +221,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX['channel'](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.CHANNEL](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
