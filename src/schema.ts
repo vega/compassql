@@ -1,4 +1,4 @@
-import {Type} from 'vega-lite/src/Type';
+import {Type} from 'vega-lite/src/type';
 
 export class Schema {
   private fieldSchemas: FieldSchema[];
