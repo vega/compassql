@@ -4,7 +4,7 @@ import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Data} from 'vega-lite/src/data';
 import {Mark} from 'vega-lite/src/mark';
 import {TimeUnit} from 'vega-lite/src/timeunit';
-import {Type} from 'vega-lite/src/Type';
+import {Type} from 'vega-lite/src/type';
 
 import {generate} from './generate';
 import {nest} from './nest';
