@@ -390,6 +390,60 @@ describe('constraints/spec', () => {
     });
   });
 
+  describe('omitBarLineAreaWithOcclusion', () => {
+    [Mark.BAR, Mark.LINE, Mark.AREA].forEach((mark) => {
+      it('should return false for raw ' + mark, () => {
+        const specM = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
+          ]
+        });
+
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitBarLineAreaWithOcclusion'].satisfy(specM, schema, stats, defaultOpt));
+      });
+
+      it('should return true for aggregate ' + mark, () => {
+        const specM = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
+          ]
+        });
+
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarLineAreaWithOcclusion'].satisfy(specM, schema, stats, defaultOpt));
+      });
+    });
+
+    [Mark.POINT, Mark.TICK, Mark.SQUARE].forEach((mark) => {
+      it('should return true for raw ' + mark, () => {
+        const specM = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
+          ]
+        });
+
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarLineAreaWithOcclusion'].satisfy(specM, schema, stats, defaultOpt));
+      });
+
+      it('should return true for aggregate ' + mark, () => {
+        const specM = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
+          ]
+        });
+
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarLineAreaWithOcclusion'].satisfy(specM, schema, stats, defaultOpt));
+      });
+    });
+  });
+
   describe('omitBarTickWithSize', () => {
     it('should return false if bar/tick use size', () => {
       [Mark.BAR, Mark.TICK].forEach((mark) => {
@@ -530,60 +584,6 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('omitRawBarLineArea', () => {
-    [Mark.BAR, Mark.LINE, Mark.AREA].forEach((mark) => {
-      it('should return false for raw ' + mark, () => {
-        const specM = buildSpecQueryModel({
-          mark: mark,
-          encodings: [
-            {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
-            {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
-          ]
-        });
-
-        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawBarLineArea'].satisfy(specM, schema, stats, defaultOpt));
-      });
-
-      it('should return true for aggregate ' + mark, () => {
-        const specM = buildSpecQueryModel({
-          mark: mark,
-          encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.QUANTITATIVE},
-            {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
-          ]
-        });
-
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawBarLineArea'].satisfy(specM, schema, stats, defaultOpt));
-      });
-    });
-
-    [Mark.POINT, Mark.TICK, Mark.SQUARE].forEach((mark) => {
-      it('should return true for raw ' + mark, () => {
-        const specM = buildSpecQueryModel({
-          mark: mark,
-          encodings: [
-            {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
-            {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
-          ]
-        });
-
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawBarLineArea'].satisfy(specM, schema, stats, defaultOpt));
-      });
-
-      it('should return true for aggregate ' + mark, () => {
-        const specM = buildSpecQueryModel({
-          mark: mark,
-          encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.QUANTITATIVE},
-            {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
-          ]
-        });
-
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawBarLineArea'].satisfy(specM, schema, stats, defaultOpt));
-      });
-    });
-  });
-
   describe('omitRawContinuousFieldForAggregatePlot', () => {
     it('should return false if the aggregate plot groups by a raw temporal field', () => {
       const specM = buildSpecQueryModel({
@@ -710,6 +710,21 @@ describe('constraints/spec', () => {
     });
   });
 
+  describe('omitTableWithOcclusion', () => {
+    it('return false for raw plot with both x and y as dimensions.', () => {
+      [Mark.POINT, Mark.CIRCLE, Mark.SQUARE, Mark.LINE, Mark.AREA, Mark.BAR].forEach((mark) => {
+        const specM = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'N20', type: Type.NOMINAL}
+          ]
+        });
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitTableWithOcclusion'].satisfy(specM, schema, stats, {autoAddCount: true}));
+      });
+    });
+  });
+
   describe('omitVerticalDotPlot', () => {
     it('should return true for horizontal dot plot', () => {
       const specM = buildSpecQueryModel({
@@ -735,20 +750,6 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('omitRawTable', () => {
-    it('return false for raw plot with both x and y as dimensions.', () => {
-      [Mark.POINT, Mark.CIRCLE, Mark.SQUARE, Mark.LINE, Mark.AREA, Mark.BAR].forEach((mark) => {
-        const specM = buildSpecQueryModel({
-          mark: mark,
-          encodings: [
-            {channel: Channel.X, field: 'N', type: Type.NOMINAL},
-            {channel: Channel.Y, field: 'N20', type: Type.NOMINAL}
-          ]
-        });
-        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawTable'].satisfy(specM, schema, stats, {autoAddCount: true}));
-      });
-    });
-  });
 
   describe('preferredBinAxis', () => {
     it('should return true if both axes are binned', () => {

@@ -214,6 +214,20 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
+    // TODO: we can be smarter and check if bar has occlusion based on profiling statistics
+    name: 'omitBarLineAreaWithOcclusion',
+    description: 'Don\'t use bar, line or area to visualize raw plot as they often lead to occlusion.',
+    properties: [Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      if (contains([Mark.BAR, Mark.LINE, Mark.AREA], specM.getMark())) {
+        return specM.isAggregate();
+      }
+      return true;
+    }
+  },
+  {
     name: 'omitBarTickWithSize',
     description: 'Do not map field to size channel with bar and tick mark',
     properties: [Property.CHANNEL, Property.MARK],
@@ -275,20 +289,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         // if non-positional channels are used, then both x and y must be used.
         specM.channelUsed(Channel.X) && specM.channelUsed(Channel.Y) :
         true;
-    }
-  },
-  {
-    // TODO: we can be smarter and check if bar has occlusion
-    name: 'omitRawBarLineArea',
-    description: 'Don\'t use bar, line or area to visualize raw plot as they often lead to occlusion.',
-    properties: [Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
-    requireAllProperties: true,
-    strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
-      if (contains([Mark.BAR, Mark.LINE, Mark.AREA], specM.getMark())) {
-        return specM.isAggregate();
-      }
-      return true;
     }
   },
   {
@@ -365,7 +365,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       switch (mark) {
         case Mark.AREA:
         case Mark.LINE:
-          if (specM.isAggregate()) {
+          if (specM.isAggregate()) { // TODO: refactor based on profiling statistics
             const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
             const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
             const xIsMeasure = xEncQ && isMeasure(xEncQ);
@@ -408,13 +408,16 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'omitRawTable',
+    name: 'omitTableWithOcclusion',
     description: 'Raw Plots with x and y are both dimensions should be omitted as they often lead to occlusion.',
     properties: [Property.CHANNEL, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
     requireAllProperties: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
-      if (specM.isDimension(Channel.X) && specM.isDimension(Channel.Y) && !specM.isAggregate()) {
+      if (specM.isDimension(Channel.X) &&
+          specM.isDimension(Channel.Y) &&
+          !specM.isAggregate() // TODO: refactor based on statistics
+        ) {
         return false;
       }
       return true;

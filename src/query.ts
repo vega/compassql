@@ -52,15 +52,15 @@ export interface QueryConfig {
   // Spec Constraints
 
   hasAppropriateGraphicTypeForMark?: boolean;
+  omitBarLineAreaWithOcclusion?: boolean;
   omitBarTickWithSize?: boolean;
   omitFacetOverPositionalChannels?: boolean;
   omitMultipleNonPositionalChannels?: boolean;
-  omitRawBarLineArea?: boolean;
   omitRawContinuousFieldForAggregatePlot?: boolean;
-  omitRawTable?: boolean;
   omitRawWithXYBothOrdinalScaleOrBin?: boolean;
   omitRepeatedField?: boolean;
   omitNonPositionalOverPositionalChannels?: boolean;
+  omitTableWithOcclusion?: boolean;
   omitVerticalDotPlot?: boolean;
 
   preferredBinAxis?: Channel;
@@ -110,14 +110,14 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   autoAddCount: false,
 
   hasAppropriateGraphicTypeForMark: true,
+  omitBarLineAreaWithOcclusion: true,
   omitBarTickWithSize: true,
   omitFacetOverPositionalChannels: true,
   omitMultipleNonPositionalChannels: true,
-  omitRawBarLineArea: true,
-  omitRawTable: true,
   omitRawContinuousFieldForAggregatePlot: true,
   omitRepeatedField: true,
   omitNonPositionalOverPositionalChannels: true,
+  omitTableWithOcclusion: true,
   omitVerticalDotPlot: true,
 
   preferredBinAxis: Channel.X,
