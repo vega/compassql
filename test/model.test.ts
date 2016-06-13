@@ -62,6 +62,11 @@ describe('SpecQueryModel', () => {
     // TODO: Transform
 
     // Encoding
+    describe('type', () => {
+      it('should automatically enumerate type if type is not specified', () => {
+        // TODO: test
+      });
+    });
     // TODO: also test type
 
     const templateSpecQ: SpecQuery = {
