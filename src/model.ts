@@ -6,10 +6,11 @@ import {FieldDef} from 'vega-lite/src/fielddef';
 import {Mark} from 'vega-lite/src/mark';
 import {TimeUnit} from 'vega-lite/src/TimeUnit';
 import {Type} from 'vega-lite/src/type';
-import {Spec} from 'vega-lite/src/Spec';
+import {ExtendedUnitSpec} from 'vega-lite/src/Spec';
 
 import {Property, ENCODING_PROPERTIES} from './property';
 import {SHORT_ENUM_SPEC, SpecQuery, EncodingQuery, EnumSpec, QueryConfig, initEnumSpec, isEnumSpec, isDimension, isMeasure, stringifySpecQuery} from './query';
+import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend, some} from './util';
 
@@ -105,6 +106,8 @@ export class SpecQueryModel {
   private _enumSpecIndex: EnumSpecIndex;
   private _enumSpecAssignment: Dict<any>;
   private _schema: Schema;
+
+  private _rankingScore: Dict<RankingScore> = {};
 
   /**
    * Build an enumSpecIndex by detecting enumeration specifiers
@@ -309,7 +312,7 @@ export class SpecQueryModel {
    * Convert a query to a Vega-Lite spec if it is completed.
    * @return a Vega-Lite spec if completed, null otherwise.
    */
-  public toSpec(data?: Data): Spec {
+  public toSpec(data?: Data): ExtendedUnitSpec {
     if (isEnumSpec(this._spec.mark)) return null;
 
     let encoding: Encoding = {};
@@ -356,5 +359,13 @@ export class SpecQueryModel {
         encoding: encoding
       }
     );
+  }
+
+  public getRankingScore(rankingName: string) {
+    return this._rankingScore[rankingName];
+  }
+
+  public setRankingScore(rankingName: string, score: RankingScore) {
+    this._rankingScore[rankingName] = score;
   }
 }

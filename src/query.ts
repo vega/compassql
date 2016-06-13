@@ -9,6 +9,7 @@ import {Type} from 'vega-lite/src/Type';
 import {generate} from './generate';
 import {nest} from './nest';
 import {Property} from './property';
+import {rank} from './ranking/ranking';
 import {Schema} from './schema';
 import {Stats} from './stats';
 import {contains} from './util';
@@ -16,7 +17,7 @@ import {contains} from './util';
 export default function(query: Query, schema: Schema, stats: Stats) {
   const answerSet = generate(query.spec, schema, stats, query.config);
   const nestedAnswerSet = nest(answerSet, query, stats);
-  return nestedAnswerSet;
+  return rank(nestedAnswerSet, query, stats, 0);
 }
 
 export interface QueryConfig {
@@ -74,6 +75,10 @@ export interface QueryConfig {
   maxCardinalityForFacet?: number;
   maxCardinalityForShape?: number;
   typeMatchesSchemaType?: boolean;
+
+  // Effectiveness Preference
+  maxGoodCardinalityForColor?: number; // FIXME: revise
+  maxGoodCardinalityForFacet?: number; // FIXME: revise
 }
 
 export const DEFAULT_QUERY_CONFIG: QueryConfig = {
@@ -126,10 +131,17 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   preferredNominalAxis: Channel.Y, // nominal on y makes it easier to read.
 
   // Encoding Constraints -- See description inside src/constraints/encoding.ts
+
+
   maxCardinalityForCategoricalColor: 20,
   maxCardinalityForFacet: 10,
   maxCardinalityForShape: 6,
-  typeMatchesSchemaType: true
+  typeMatchesSchemaType: true,
+
+  // Ranking Preference
+
+  maxGoodCardinalityForFacet: 5, // FIXME: revise
+  maxGoodCardinalityForColor: 7, // FIXME: revise
 };
 
 /** Enum for a short form of the enumeration spec. */

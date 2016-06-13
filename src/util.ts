@@ -28,6 +28,16 @@ export function every(arr, f) {
     return true;
 };
 
+export function forEach(obj, f, thisArg?) {
+  if (obj.forEach) {
+    obj.forEach.call(thisArg, f);
+  } else {
+    for (var k in obj) {
+      f.call(thisArg, obj[k], k, obj);
+    }
+  }
+};
+
 export function some(arr, f) {
     var i = 0, k;
     for (k in arr) {

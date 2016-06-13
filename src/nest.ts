@@ -25,14 +25,24 @@ export const TRANSPOSE = 'transpose';
 export const SPEC = 'spec';
 
 export interface SpecQueryModelGroup {
-  groupBy?: string;
   name: string;
   path: string;
   items: (SpecQueryModel | SpecQueryModelGroup)[];
+  groupBy?: string;
+  orderGroupBy?: string;
 }
 
 export function isSpecQueryModelGroup(item: SpecQueryModel | SpecQueryModelGroup): item is SpecQueryModelGroup {
   return item.hasOwnProperty('items');
+}
+
+export function getTopItem(g: SpecQueryModelGroup): SpecQueryModel {
+  const topItem = g.items[0];
+  if (isSpecQueryModelGroup(topItem)) {
+    return getTopItem(topItem);
+  } else {
+    return topItem;
+  }
 }
 
 /**
@@ -50,6 +60,7 @@ export function nest(specModels: SpecQueryModel[], query: Query, stats: Stats): 
       let group: SpecQueryModelGroup = rootGroup;
       for (let l = 0 ; l < query.nest.length; l++) {
         group.groupBy = query.nest[l].groupBy;
+        group.orderGroupBy = query.nest[l].orderGroupBy;
 
         const keyFn: (specM: SpecQueryModel) => string = groupRegistry[query.nest[l].groupBy];
         const key = keyFn(specM);

@@ -14,5 +14,6 @@
     {"groupBy": "data"},
     {"groupBy": "encoding", "orderGroupBy": "effectiveness"},
     {"groupBy": "transpose", "orderGroupBy": "effectiveness"}
-  ]
+  ],
+  "orderBy": "effectiveness"
 }
