@@ -15,6 +15,7 @@ You can use the following npm commands such as
 npm run build
 npm run lint
 npm run test
+npm run cover       // see test coverage  (see coverage/lcov-report/index.html)
 npm run watch       // watcher that build, lint, and test
 npm run test-debug  // useful for debugging unit-test with vscode
 ```
@@ -36,6 +37,10 @@ npm run vendor -- -l compassql
 
 (You might want to [link your local version of Vega-Lite](https://github.com/vega/vega-editor/tree/compassql#local-testing--debugging) as well.)
 
+
+## Main API
+
+The main method is `cql.query`, which is in `src/query.ts`.
 
 ## Directory Structure
 
