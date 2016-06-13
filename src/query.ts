@@ -8,11 +8,11 @@ import {Type} from 'vega-lite/src/type';
 
 import {generate} from './generate';
 import {nest} from './nest';
-import {Property} from './property';
+import {Property, DEFAULT_PROPERTY_PRECENCE} from './property';
 import {rank} from './ranking/ranking';
 import {Schema} from './schema';
 import {Stats} from './stats';
-import {contains} from './util';
+import {contains, extend} from './util';
 
 export default function(query: Query, schema: Schema, stats: Stats) {
   const answerSet = generate(query.spec, schema, stats, query.config);
@@ -40,6 +40,8 @@ export interface QueryConfig {
   /** Default types to enumerate */
   types?: Type[];
 
+  /** Default maxbins to enumerate */
+  maxBinsList?: number[];
   // TODO: scaleType, etc.
 
   // SPECIAL MODE
@@ -83,23 +85,7 @@ export interface QueryConfig {
 
 export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   verbose: false,
-  propertyPrecedence: [
-    // Projection
-    Property.TYPE, // type is a constraint for field
-    Property.FIELD,
-
-    // TODO: transform
-
-    // Field Transform
-    Property.BIN,
-    Property.TIMEUNIT,
-    Property.AGGREGATE,
-    Property.AUTOCOUNT,
-
-    // Encoding
-    Property.CHANNEL,
-    Property.MARK
-  ],
+  propertyPrecedence: DEFAULT_PROPERTY_PRECENCE,
 
   marks: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK], // Mark.TEXT
   channels: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT
@@ -107,6 +93,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   timeUnits: [TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.DATE], // TODO: include hours and minutes
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
+  maxBinsList: [5, 10, 20],
   // TODO: scaleType, etc.
 
 
@@ -160,11 +147,11 @@ export function isEnumSpec(prop: any) {
   return prop === SHORT_ENUM_SPEC || (prop !== undefined && !!prop.values);
 }
 
-export function initEnumSpec(prop: any, defaultName: string, defaultEnumValues: any[]): EnumSpec<any> {
-  return {
-    name: prop.name || defaultName,
-    values: prop.values || defaultEnumValues
-  };
+export function initEnumSpec(prop: any, defaultName: string, defaultEnumValues: any[]): EnumSpec<any> & any {
+  return extend({}, {
+      name: defaultName,
+      values: defaultEnumValues
+    }, prop);
 }
 
 function enumSpecShort(value: any): string {
@@ -226,14 +213,17 @@ export interface EncodingQuery {
   autoCount?: boolean | EnumSpec<boolean> | ShortEnumSpec;
   timeUnit?: TimeUnit | EnumSpec<TimeUnit> | ShortEnumSpec;
 
-  // TODO: change to binQuery to support bin parameters
-  bin?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+  bin?: boolean | BinQuery | ShortEnumSpec;
 
   field?: Field | EnumSpec<Field> | ShortEnumSpec;
   type?: Type | EnumSpec<Field> | ShortEnumSpec;
   // TODO: value
 
   // TODO: scaleQuery, axisQuery, legendQuery
+}
+
+export interface BinQuery extends EnumSpec<boolean> {
+  maxbins?: number | EnumSpec<number> | ShortEnumSpec;
 }
 
 export function isDimension(encQ: EncodingQuery) {
@@ -253,6 +243,7 @@ export function stringifyEncodingQuery(encQ: EncodingQuery): string {
 
 export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
   let fn = null;
+  const params: {key: string, value: any}[]=  [];
 
   if (encQ.autoCount === false) {
     return '-';
@@ -264,6 +255,9 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     fn = encQ.timeUnit;
   } else if (encQ.bin && !isEnumSpec(encQ.bin)) {
     fn = 'bin';
+    if (encQ.bin['maxbins']) {
+      params.push({key: 'maxbins', value: encQ.bin['maxbins']});
+    }
   } else if (encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
     fn = 'count';
   } else if (
@@ -275,6 +269,8 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     fn = SHORT_ENUM_SPEC + '';
   }
 
-  const fieldType = enumSpecShort(encQ.field || '*') + ',' + enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1);
+  const fieldType = enumSpecShort(encQ.field || '*') + ',' +
+    enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1) +
+    params.map((p) => ',' + p.key + '=' + p.value);
   return (fn ? fn + '(' + fieldType + ')' : fieldType);
 }

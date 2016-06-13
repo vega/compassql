@@ -60,5 +60,11 @@
       "name": "3d-OxQxQ",
       "title": "OxQxQ with varying mark, channels & functions"
     }
+  ],
+  "Nested Property": [
+    {
+      "name": "bin_maxbins",
+      "title": "Histogram with varying maxbins parameters."
+    }
   ]
 }

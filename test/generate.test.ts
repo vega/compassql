@@ -7,7 +7,8 @@ import {Type} from 'vega-lite/src/type';
 
 import {ENUMERATOR_INDEX, generate} from '../src/generate';
 import {SpecQueryModel} from '../src/model';
-import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery} from '../src/query';
+import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, BinQuery, SpecQuery} from '../src/query';
+import {Property} from '../src/property';
 import {extend, some} from '../src/util';
 
 import {schema, stats} from './fixture';
@@ -96,6 +97,7 @@ describe('generate', function () {
         });
       });
     });
+
     describe('A(Q) x A(Q)', () => {
       it('should return neither line nor area', () => {
         const query = {
@@ -120,6 +122,7 @@ describe('generate', function () {
       });
     });
   });
+
   describe('3D', () => {
     describe('NxNxQ', () => {
       const query = {
@@ -151,6 +154,54 @@ describe('generate', function () {
       });
     });
   });
+
+  describe('bin_maxbins', () => {
+    describe('Qx#', () => {
+      it('should enumerate multiple maxbins parameter', () => {
+        const specQ = {
+          mark: Mark.BAR,
+          encodings: [
+            {
+              channel: Channel.X,
+              bin: {maxbins: {values: [10, 20, 30]}},
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        };
+
+        const answerSet = generate(specQ, schema, stats);
+        assert.equal(answerSet.length, 3);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).bin['maxbins'], 10);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin['maxbins'], 20);
+        assert.equal(answerSet[2].getEncodingQueryByIndex(0).bin['maxbins'], 30);
+      });
+
+      it('should support enumerating both bin enablling and maxbins parameter', () => {
+        const specQ = {
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              bin: {
+                values: [true, false],
+                maxbins: {values: [10, 20, 30]}
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        };
+
+        const answerSet = generate(specQ, schema, stats);
+        assert.equal(answerSet.length, 4);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).bin['maxbins'], 10);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin['maxbins'], 20);
+        assert.equal(answerSet[2].getEncodingQueryByIndex(0).bin['maxbins'], 30);
+        assert.equal(answerSet[3].getEncodingQueryByIndex(0).bin, false);
+      });
+    });
+  });
 });
 
 describe('enumerator', () => {
@@ -163,7 +214,7 @@ describe('enumerator', () => {
           {channel: Channel.Y, field: 'O', type: Type.ORDINAL}
         ]
       });
-      const enumerator = ENUMERATOR_INDEX['mark'](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+      const enumerator = ENUMERATOR_INDEX[Property.MARK](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
       const answerSet = enumerator([], specM);
       assert.equal(answerSet.length, 2);
@@ -179,7 +230,7 @@ describe('enumerator', () => {
           {channel: Channel.SHAPE, field: 'O', type: Type.ORDINAL}
         ]
       });
-      const enumerator = ENUMERATOR_INDEX['mark'](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+      const enumerator = ENUMERATOR_INDEX[Property.MARK](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
       const answerSet = enumerator([], specM);
       assert.equal(answerSet.length, 1);
@@ -201,7 +252,7 @@ describe('enumerator', () => {
           ]
         });
         const opt = extend({}, DEFAULT_QUERY_CONFIG, {omitVerticalDotPlot: false});
-        const enumerator = ENUMERATOR_INDEX['channel'](specM.enumSpecIndex, schema, stats, opt);
+        const enumerator = ENUMERATOR_INDEX[Property.CHANNEL](specM.enumSpecIndex, schema, stats, opt);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
@@ -220,7 +271,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX['channel'](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.CHANNEL](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -234,6 +285,31 @@ describe('enumerator', () => {
 
     describe('bin', () => {
       // TODO
+    });
+
+    describe('maxbin', () => {
+      it('should correctly enumerate maxbins', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.BAR,
+          encodings: [
+            {
+              channel: Channel.X,
+              bin: {
+                maxbins: {values: [5, 10, 20]}
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.BIN_MAXBINS](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 3);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 5);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 10);
+        assert.equal((answerSet[2].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 20);
+      });
     });
 
     describe('timeUnit', () => {
