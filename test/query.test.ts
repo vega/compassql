@@ -6,9 +6,18 @@ import {Type} from 'vega-lite/src/type';
 
 import {assert} from 'chai';
 
-import {SHORT_ENUM_SPEC, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery} from '../src/query';
+import {SHORT_ENUM_SPEC, initEnumSpec, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery} from '../src/query';
 
 describe('query', () => {
+  describe('initEnumSpec', () => {
+    it('should return full enumSpec with other properties preserved', () => {
+      const binQuery = initEnumSpec({values: [true, false], maxbins: 30}, 'b1', [true, false]);
+      assert.deepEqual(binQuery.values, [true, false]);
+      assert.equal(binQuery['maxbins'], 30);
+      assert.equal(binQuery.name, 'b1');
+    });
+  });
+
   describe('stringifySpecQuery', () => {
     it('should return correct spec string for specific specQuery', () => {
       const str = stringifySpecQuery({

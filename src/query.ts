@@ -12,7 +12,7 @@ import {Property, DEFAULT_PROPERTY_PRECENCE} from './property';
 import {rank} from './ranking/ranking';
 import {Schema} from './schema';
 import {Stats} from './stats';
-import {contains} from './util';
+import {contains, extend} from './util';
 
 export default function(query: Query, schema: Schema, stats: Stats) {
   const answerSet = generate(query.spec, schema, stats, query.config);
@@ -148,10 +148,10 @@ export function isEnumSpec(prop: any) {
 }
 
 export function initEnumSpec(prop: any, defaultName: string, defaultEnumValues: any[]): EnumSpec<any> {
-  return {
-    name: prop.name || defaultName,
-    values: prop.values || defaultEnumValues
-  };
+  return extend({}, {
+      name: defaultName,
+      values: defaultEnumValues
+    }, prop);
 }
 
 function enumSpecShort(value: any): string {
