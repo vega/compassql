@@ -683,6 +683,41 @@ describe('constraints/spec', () => {
     });
   });
 
+  describe('omitRawDetail', () => {
+    it('should return true when raw data does not have the detail channel', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, stats, defaultOpt));
+    });
+
+    it('should return false when raw data has a detail channel', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.DETAIL, field: 'A', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, stats, defaultOpt));
+    });
+
+    it('should return true if any of the encoding channels contain aggregate', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.DETAIL, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, stats, defaultOpt));
+    });
+  });
 
   describe('omitRepeatedField', () => {
     it('should return true when there is no repeated field', function() {

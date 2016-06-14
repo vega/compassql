@@ -315,6 +315,21 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
+    name: 'omitRawDetail',
+    description: 'Do not use detail channel with raw plot.',
+    properties: [Property.CHANNEL, Property.AGGREGATE, Property.AUTOCOUNT],
+    requireAllProperties: true,
+    strict: true,
+    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      if (specM.isAggregate()) {
+        return true;
+      }
+      return every(specM.getEncodings(), (encQ) => {
+        return encQ.channel !== Channel.DETAIL;
+      });
+    }
+  },
+  {
     name: 'omitRepeatedField',
     description: 'Each field should be mapped to only one channel',
     properties: [Property.FIELD],
