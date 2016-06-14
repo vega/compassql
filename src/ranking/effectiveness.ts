@@ -12,12 +12,11 @@ import * as vlShorthand from 'vega-lite/src/shorthand';
 import {Type} from 'vega-lite/src/type';
 import {UnitSpec} from 'vega-lite/src/spec';
 
-
 export function effectiveness(specM: SpecQueryModel, stats: Stats, opt: QueryConfig) {
   return old.rankEncodings(specM.toSpec(), stats, opt);
 }
 
-namespace old {
+export namespace old {
   // bad score not specified in the table above
   var UNUSED_POSITION = 0.5;
 

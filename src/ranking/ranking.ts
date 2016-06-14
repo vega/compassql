@@ -4,7 +4,8 @@ import {Query, QueryConfig} from '../query';
 import {Stats} from '../stats';
 import {Dict} from '../util';
 
-import{effectiveness} from './effectiveness';
+export import effectiveness = require('./effectiveness/effectiveness');
+import{effectiveness as effectiveness2} from './effectiveness';
 
 export interface RankingScore {
   score: number;
@@ -64,11 +65,9 @@ function getScore(model: SpecQueryModel, rankingName: string, stats: Stats, opt:
 
 export function comparator(name: string, stats: Stats, opt: QueryConfig) {
   return (m1: SpecQueryModel, m2: SpecQueryModel) => {
-
     return getScore(m2, name, stats, opt).score - getScore(m1, name, stats, opt).score;
   };
 }
-
 
 export function groupComparator(name: string, stats: Stats, opt: QueryConfig) {
   return (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup) => {
@@ -78,6 +77,7 @@ export function groupComparator(name: string, stats: Stats, opt: QueryConfig) {
   };
 }
 
-
 export const EFFECTIVENESS = 'effectiveness';
-register(EFFECTIVENESS, effectiveness);
+register(EFFECTIVENESS, effectiveness.default);
+
+register(EFFECTIVENESS +'2', effectiveness2);

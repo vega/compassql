@@ -1,3 +1,5 @@
+import {isArray} from 'datalib/src/util';
+
 export interface Dict<T> {
   [key: string]: T;
 }
@@ -55,3 +57,12 @@ export function extend(obj, b, ...rest) {
   }
   return obj;
 };
+
+export function nestedMap(array: any[], f): any[] {
+  return array.map((a) => {
+    if (isArray(a)) {
+      return nestedMap(a, f);
+    }
+    return f(a);
+  });
+}
