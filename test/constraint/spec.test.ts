@@ -10,7 +10,7 @@ import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX} from '../../src/constraint/spec
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {Stats} from '../../src/stats';
-import {DEFAULT_QUERY_CONFIG, SpecQuery, SHORT_ENUM_SPEC} from '../../src/query';
+import {DEFAULT_QUERY_CONFIG, SpecQuery} from '../../src/query';
 import {duplicate} from '../../src/util';
 
 describe('constraints/spec', () => {
