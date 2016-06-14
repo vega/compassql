@@ -10,7 +10,7 @@ import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX} from '../../src/constraint/spec
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {Stats} from '../../src/stats';
-import {DEFAULT_QUERY_CONFIG, SpecQuery} from '../../src/query';
+import {DEFAULT_QUERY_CONFIG, SpecQuery, SHORT_ENUM_SPEC} from '../../src/query';
 import {duplicate} from '../../src/util';
 
 describe('constraints/spec', () => {
@@ -684,7 +684,39 @@ describe('constraints/spec', () => {
   });
 
   describe('omitRawDetail', () => {
-    // TODO:
+    it('should return true when raw data does not have the detail channel', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, stats, defaultOpt));
+    });
+
+    it('should return false when raw data has a detail channel', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.DETAIL, field: 'A', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, stats, defaultOpt));
+    });
+
+    it('should return true if any of the encoding channels contain aggregate', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.DETAIL, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, stats, defaultOpt));
+    });
   });
 
   describe('omitRepeatedField', () => {
