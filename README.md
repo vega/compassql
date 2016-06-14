@@ -54,3 +54,7 @@ The main method is `cql.query`, which is in `src/query.ts`.
 For example, `test/constraint/` test files inside `src/constraint/`.
 - `typings/` - TypeScript typing declaration for dependencies.
 Some of them are downloaded from the TypeStrong community.
+
+## Pro-Tip
+
+- When you add a new source file to the project, don't forget to the file to `files` in `tsconfig.json`.
