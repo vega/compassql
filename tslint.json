@@ -36,8 +36,6 @@
     "no-inferrable-types": false,
     "no-internal-module": true,
     "no-shadowed-variable": true,
-    "no-string-literal": false,
-    "// no-string-literal": "We need this for fixture",
     "no-trailing-whitespace": true,
     "no-unreachable": true,
     "no-unused-expression": true,
