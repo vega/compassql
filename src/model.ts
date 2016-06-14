@@ -4,11 +4,11 @@ import {Data} from 'vega-lite/src/data';
 import {Encoding} from 'vega-lite/src/encoding';
 import {FieldDef} from 'vega-lite/src/fielddef';
 import {Mark} from 'vega-lite/src/mark';
-import {TimeUnit} from 'vega-lite/src/TimeUnit';
+import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
-import {ExtendedUnitSpec} from 'vega-lite/src/Spec';
+import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 
-import {Property, ENCODING_PROPERTIES} from './property';
+import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
 import {SHORT_ENUM_SPEC, SpecQuery, EncodingQuery, EnumSpec, QueryConfig, initEnumSpec, isEnumSpec, isDimension, isMeasure, stringifySpecQuery} from './query';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
@@ -41,6 +41,9 @@ export interface EnumSpecIndex {
   /** List of indice tuples of encoding mappings that require bin enumeration. */
   bin?: EnumSpecIndexTuple<boolean>[];
 
+  /** List of indice tuple for encoding mappings that require enumerating bin.maxbins */
+  maxbin?: EnumSpecIndexTuple<number>[];
+
   /** List of indice tuples of encoding mappings that require timeUnit enumeration. */
   timeUnit?: EnumSpecIndexTuple<TimeUnit>[];
 
@@ -63,6 +66,8 @@ function getDefaultName(prop: Property) {
       return '#';
     case Property.BIN:
       return 'b';
+    case Property.BIN_MAXBINS:
+      return 'b-mb';
     case Property.TIMEUNIT:
       return 'tu';
     case Property.FIELD:
@@ -70,6 +75,7 @@ function getDefaultName(prop: Property) {
     case Property.TYPE:
       return 't';
   }
+  /* istanbul ignore next */
   throw new Error('Default name undefined');
 }
 
@@ -82,16 +88,19 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     case Property.AUTOCOUNT:
       return [false, true];
 
+    case Property.BIN_MAXBINS:
+      return opt.maxBinsList;
 
     case Property.MARK:
     case Property.CHANNEL:
     case Property.AGGREGATE:
     case Property.TIMEUNIT:
     case Property.TYPE:
-    // For other properties, take default enumValues from config.
-    // The config name for each prop is a plural form of the prop.
-    return opt[prop+'s'] || [];
+      // For other properties, take default enumValues from config.
+      // The config name for each prop is a plural form of the prop.
+      return opt[prop+'s'] || [];
   }
+  /* istanbul ignore next */
   throw new Error('No default enumValues for ' + prop);
 }
 
@@ -157,6 +166,27 @@ export class SpecQueryModel {
             enumSpec: encQ[prop],
             index: index
           } as EnumSpecIndexTuple<any>);
+        }
+      });
+
+      // For each nested property of the encoding query  (e.g., encQ.bin.maxbins)
+      NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
+        const propObj = encQ[nestedProp.parent]; // the property object e.g., encQ.bin
+        if (propObj) {
+          const prop = nestedProp.property;
+          const child = nestedProp.child;
+          if (isEnumSpec(propObj[child])) {
+            // Assign default enum spec name and enum values.
+            const defaultEnumSpecName = getDefaultName(prop) + index;
+            const defaultEnumValues = getDefaultEnumValues(prop, schema, opt);
+            propObj[child] = initEnumSpec(propObj[child], defaultEnumSpecName, defaultEnumValues);
+
+            // Add index of the encoding mapping to the property's enum job.
+            (enumSpecIndex[prop] = enumSpecIndex[prop] || []).push({
+              enumSpec: propObj[child],
+              index: index
+            } as EnumSpecIndexTuple<any>);
+          }
         }
       });
     });
@@ -235,17 +265,33 @@ export class SpecQueryModel {
   }
 
   public getEncodingProperty(index: number, prop: Property) {
-    return this._spec.encodings[index][prop];
+    const encQ = this._spec.encodings[index];
+    const nestedProp = getNestedEncodingProperty(prop);
+    if (nestedProp) { // nested encoding property
+      return encQ[nestedProp.parent][nestedProp.child];
+    }
+    return encQ[prop]; // encoding property (non-nested)
   }
 
   public setEncodingProperty(index: number, prop: Property, value: any, enumSpec: EnumSpec<any>) {
     const encQ = this._spec.encodings[index];
+    const nestedProp = getNestedEncodingProperty(prop);
     if (prop === Property.CHANNEL && encQ.channel && !isEnumSpec(encQ.channel)) {
       // If there is an old channel
       this._channelCount[encQ.channel as Channel]--;
     }
 
-    encQ[prop] = value;
+    if (nestedProp) { // nested encoding property
+      encQ[nestedProp.parent][nestedProp.child] = value;
+    } else if (hasNestedProperty(prop) && value === true) {
+      encQ[prop] = extend({},
+        encQ[prop], // copy all existing properties
+        {values: undefined, name: undefined} // except name and values to it no longer an enumSpec
+      );
+    } else { // encoding property (non-nested)
+      encQ[prop] = value;
+    }
+
     this._enumSpecAssignment[enumSpec.name] = value;
 
     if (prop === Property.CHANNEL) {
@@ -256,11 +302,18 @@ export class SpecQueryModel {
 
   public resetEncodingProperty(index: number, prop: Property, enumSpec: EnumSpec<any>) {
     const encQ = this._spec.encodings[index];
+    const nestedProp = getNestedEncodingProperty(prop);
     if (prop === Property.CHANNEL) {
       this._channelCount[encQ.channel as Channel]--;
     }
+
     // reset it to enumSpec
-    encQ[prop] = enumSpec;
+    if (nestedProp) { // nested encoding property
+      encQ[nestedProp.parent][nestedProp.child] = enumSpec;
+    } else { // encoding property (non-nested)
+      encQ[prop] = enumSpec;
+    }
+
     // add remove value that is reset from the assignment map
     delete this._enumSpecAssignment[enumSpec.name];
   }

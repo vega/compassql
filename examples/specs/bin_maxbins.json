@@ -1,0 +1,23 @@
+{
+  "spec": {
+    "data": {"url": "data/cars.json"},
+    "mark": "bar",
+    "encodings": [
+      {
+        "channel": "x",
+        "bin": {"maxbins": "?"},
+        "field": "Miles_per_Gallon",
+        "type": "quantitative"
+      }
+    ]
+  },
+  "nest": [
+    {"groupBy": "data"},
+    {"groupBy": "encoding", "orderGroupBy": "effectiveness"},
+    {"groupBy": "transpose", "orderGroupBy": "effectiveness"}
+  ],
+  "orderBy": "effectiveness",
+  "config": {
+    "autoAddCount": true
+  }
+}
