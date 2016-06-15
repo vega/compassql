@@ -2,69 +2,69 @@
   "1 Field": [
     {
       "name": "1d-N-mark",
-      "title": "N with varying mark"
+      "title": "N - mark?, channel?"
     },
     {
       "name": "1d-N",
-      "title": "N with varying mark & channel"
+      "title": "N - mark?, channel?"
     },
     {
       "name": "1d-O",
-      "title": "O with varying mark & channel"
+      "title": "O - mark?, channel?"
     },
     {
       "name": "1d-Q",
-      "title": "Q with varying mark, channel & functions"
+      "title": "?(Q) - mark?, channel?"
     },
     {
       "name": "1d-Q-mark",
-      "title": "Q with varying mark"
+      "title": "Q - mark?"
     },
     {
       "name": "1d-T",
-      "title": "T with varying mark, channel & functions"
+      "title": "?(T) - mark?, channel?"
     }
   ],
   "2 Fields": [
     {
       "name": "2d-NxN",
-      "title": "NxN with varying mark & channels"
+      "title": "NxN - mark?, channel?"
     },
     {
       "name": "2d-NxQ",
-      "title": "NxQ with varying mark, channels & functions"
+      "title": "Nx?(Q) - mark?, channel?"
     },
     {
       "name": "2d-OxQ",
-      "title": "OxQ with varying mark, channels & functions"
+      "title": "Ox?(Q) - mark?, channel?"
     },
     {
       "name": "2d-QxQ",
-      "title": "QxQ with varying mark, channels & functions"
+      "title": "?(Q)x?(Q) - mark?, channel?"
     },
     {
       "name": "2d-QxT",
-      "title": "QxT with varying mark, channels & functions"
+      "title": "?(Q)x?(T) - mark?, channel?"
     }
   ],
   "3 Fields": [
     {
       "name": "3d-NxOxQ",
-      "title": "NxOxQ with varying mark, channels & functions"
+      "title": "NxOx?(Q) - mark?, channel?"
     },
     {
       "name": "3d-NxQxQ",
-      "title": "NxQxQ with varying mark, channels & functions"
+      "title": "Nx?(Q)x?(Q) - mark?, channel?"
     },
     {
       "name": "3d-OxQxQ",
-      "title": "OxQxQ with varying mark, channels & functions"
+      "title": "Ox?(Q)x?(Q) - mark?, channel?"
     }
   ],
   "Nested Property": [
     {
       "name": "bin_maxbins",
-      "title": "Histogram with varying maxbins parameters."
+      "title": "Histogram - maxbins?"
     }
   ]
 }
