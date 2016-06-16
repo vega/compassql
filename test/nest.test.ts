@@ -6,6 +6,7 @@ import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
 import {generate} from '../src/generate';
+import {extend} from '../src/util';
 import {nest, FIELD, FIELD_TRANSFORM, ENCODING, TRANSPOSE, SpecQueryModelGroup} from '../src/nest';
 import {SHORT_ENUM_SPEC, DEFAULT_QUERY_CONFIG} from '../src/query';
 
@@ -41,6 +42,31 @@ describe('nest', () => {
       // two because have two different aggregation
       assert.equal(groups.length, 1);
       assert.equal(groups[0].name, 'O|Q');
+    });
+
+    it('should group histogram and raw plots in the same group', () => {
+      const query = {
+        spec: {
+        mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: SHORT_ENUM_SPEC,
+            field: 'Q',
+            type: Type.QUANTITATIVE,
+            bin: SHORT_ENUM_SPEC,
+            aggregate: SHORT_ENUM_SPEC
+          }]
+        },
+        nest: [{groupBy: FIELD}, {groupBy: FIELD_TRANSFORM}],
+        config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG)
+      };
+
+      const answerSet = generate(query.spec, schema, stats);
+      const groups = nest(answerSet, query, stats).items as SpecQueryModelGroup[] ;
+
+      // two because have two different aggregation
+      assert.equal(groups.length, 1);
+      assert.equal(groups[0].name, 'Q');
+      assert.equal(groups[0].items.length, 3);
     });
   });
 
