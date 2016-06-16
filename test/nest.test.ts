@@ -6,14 +6,14 @@ import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
 import {generate} from '../src/generate';
-import {nest, DATA, ENCODING, TRANSPOSE, SpecQueryModelGroup} from '../src/nest';
+import {nest, FIELD_TRANSFORM, ENCODING, TRANSPOSE, SpecQueryModelGroup} from '../src/nest';
 import {SHORT_ENUM_SPEC, DEFAULT_QUERY_CONFIG} from '../src/query';
 
 import {schema, stats} from './fixture';
 
 describe('nest', () => {
-  describe('data', () => {
-    it('should group visualization with same data', () => {
+  describe('field', () => {
+    it('should group visualization with same fields', () => {
       const query = {
         spec: {
         mark: SHORT_ENUM_SPEC,
@@ -31,7 +31,7 @@ describe('nest', () => {
             type: Type.ORDINAL
           }]
         },
-        nest: [{groupBy: DATA}],
+        nest: [{groupBy: FIELD_TRANSFORM}],
         config: DEFAULT_QUERY_CONFIG
       };
 
@@ -211,8 +211,8 @@ describe('nest', () => {
     });
   });
 
-  describe('data, encoding', () => {
-    it('should group visualization with same data, then by encoding', () => {
+  describe('field, encoding', () => {
+    it('should group visualization with same field, then by encoding', () => {
       const query = {
         spec: {
           mark: Mark.POINT,
@@ -230,7 +230,7 @@ describe('nest', () => {
             type: Type.ORDINAL
           }]
         },
-        nest: [{groupBy: DATA}, {groupBy: ENCODING}],
+        nest: [{groupBy: FIELD_TRANFORM}, {groupBy: ENCODING}],
         config: DEFAULT_QUERY_CONFIG
       };
 
