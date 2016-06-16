@@ -194,11 +194,11 @@ describe('SpecQueryModel', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.MAX}
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
 
-      assert.isTrue(specM.isAggregate());
+      assert.isFalse(specM.isAggregate());
     });
 
     it('should return true if the query is aggregated', () => {
