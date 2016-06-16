@@ -6,7 +6,7 @@ import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
 import {generate} from '../src/generate';
-import {nest, FIELD_TRANSFORM, ENCODING, TRANSPOSE, SpecQueryModelGroup} from '../src/nest';
+import {nest, FIELD, FIELD_TRANSFORM, ENCODING, TRANSPOSE, SpecQueryModelGroup} from '../src/nest';
 import {SHORT_ENUM_SPEC, DEFAULT_QUERY_CONFIG} from '../src/query';
 
 import {schema, stats} from './fixture';
@@ -14,6 +14,38 @@ import {schema, stats} from './fixture';
 describe('nest', () => {
   describe('field', () => {
     it('should group visualization with same fields', () => {
+      const query = {
+        spec: {
+        mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: SHORT_ENUM_SPEC,
+            field: 'Q',
+            type: Type.QUANTITATIVE,
+            aggregate: {
+              name: 'a0',
+              values: [AggregateOp.MEAN, AggregateOp.MEDIAN]
+            }
+          }, {
+            channel: SHORT_ENUM_SPEC,
+            field: 'O',
+            type: Type.ORDINAL
+          }]
+        },
+        nest: [{groupBy: FIELD}],
+        config: DEFAULT_QUERY_CONFIG
+      };
+
+      const answerSet = generate(query.spec, schema, stats);
+      const groups = nest(answerSet, query, stats).items as SpecQueryModelGroup[] ;
+
+      // two because have two different aggregation
+      assert.equal(groups.length, 1);
+      assert.equal(groups[0].name, 'O|Q');
+    });
+  });
+
+  describe('fieldTransform', () => {
+    it('should group visualization with same fields and transformations', () => {
       const query = {
         spec: {
         mark: SHORT_ENUM_SPEC,
@@ -211,8 +243,8 @@ describe('nest', () => {
     });
   });
 
-  describe('field, encoding', () => {
-    it('should group visualization with same field, then by encoding', () => {
+  describe('fieldTransform, encoding', () => {
+    it('should group visualization with same fields and transformations, then by encoding', () => {
       const query = {
         spec: {
           mark: Mark.POINT,
@@ -230,7 +262,7 @@ describe('nest', () => {
             type: Type.ORDINAL
           }]
         },
-        nest: [{groupBy: FIELD_TRANFORM}, {groupBy: ENCODING}],
+        nest: [{groupBy: FIELD_TRANSFORM}, {groupBy: ENCODING}],
         config: DEFAULT_QUERY_CONFIG
       };
 
