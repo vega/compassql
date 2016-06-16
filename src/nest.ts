@@ -18,7 +18,7 @@ export function registerKeyFn(name: string, keyFn: (specM: SpecQueryModel) => st
   groupRegistry[name] = keyFn;
 }
 
-export const DATA = 'data';
+export const FIELD = 'field';
 export const ENCODING = 'encoding';
 export const TRANSPOSE = 'transpose';
 
@@ -82,7 +82,7 @@ export function nest(specModels: SpecQueryModel[], query: Query, stats: Stats): 
   return rootGroup;
 }
 
-registerKeyFn(DATA, (specM: SpecQueryModel) => {
+registerKeyFn(FIELD, (specM: SpecQueryModel) => {
   return specM.getEncodings().map(stringifyEncodingQueryFieldDef)
               .sort()
               .join('|');

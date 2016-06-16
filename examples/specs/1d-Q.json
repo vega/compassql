@@ -13,7 +13,7 @@
     ]
   },
   "nest": [
-    {"groupBy": "data"},
+    {"groupBy": "field"},
     {"groupBy": "encoding", "orderGroupBy": "effectiveness"},
     {"groupBy": "transpose", "orderGroupBy": "effectiveness"}
   ],
