@@ -193,9 +193,11 @@ export function stringifySpecQuery (specQ: SpecQuery): string {
   const encodings = specQ.encodings.map(stringifyEncodingQuery)
                         .sort()
                         .join('|');  // sort at the end to ignore order
+  const _stack = stack(specQ);
 
   return mark + '|' +
       // TODO: transform
+      (_stack !== StackOffset.NONE ? 'stack=' + _stack + '|' : '') +
       encodings;
 }
 

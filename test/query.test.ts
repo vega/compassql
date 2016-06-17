@@ -117,6 +117,18 @@ describe('query', () => {
       assert.equal(str, 'point|x:a,q');
     });
 
+    it('should include stack for stacked specQuery', () => {
+      const str = stringifySpecQuery({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'q', type: Type.QUANTITATIVE, aggregate: AggregateOp.SUM},
+          {channel: Channel.Y, field: 'n', type: Type.NOMINAL},
+          {channel: Channel.COLOR, field: 'n1', type: Type.NOMINAL}
+        ]
+      });
+      assert.equal(str, 'bar|stack=zero|color:n1,n|x:sum(q,q)|y:n,n');
+    });
+
     it('should return correct spec string for ambiguous specQuery', () => {
       const str = stringifySpecQuery({
         mark: SHORT_ENUM_SPEC,
