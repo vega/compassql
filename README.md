@@ -18,6 +18,7 @@ npm run test
 npm run cover       // see test coverage  (see coverage/lcov-report/index.html)
 npm run watch       // watcher that build, lint, and test
 npm run test-debug  // useful for debugging unit-test with vscode
+npm run clean       // useful for wiping out js files that's created from other branch
 ```
 
 (See package.json for Full list of commands.)
