@@ -12,7 +12,7 @@ import {Property, DEFAULT_PROPERTY_PRECENCE} from './property';
 import {rank} from './ranking/ranking';
 import {Schema} from './schema';
 import {Stats} from './stats';
-import {contains, extend} from './util';
+import {contains, extend, some} from './util';
 
 export default function(query: Query, schema: Schema, stats: Stats) {
   const answerSet = generate(query.spec, schema, stats, query.config);
@@ -179,6 +179,12 @@ export interface SpecQuery {
 
   // TODO: make config query (not important at all, only for the sake of completeness.)
   config?: Config;
+}
+
+export function isAggregate(specQ: SpecQuery) {
+  return some(specQ.encodings, (encQ: EncodingQuery) => {
+    return (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate) || encQ.autoCount === true;
+  });
 }
 
 export function stringifySpecQuery (specQ: SpecQuery): string {

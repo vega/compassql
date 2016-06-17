@@ -9,10 +9,11 @@ import {Type} from 'vega-lite/src/type';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
-import {SHORT_ENUM_SPEC, SpecQuery, EncodingQuery, EnumSpec, QueryConfig, initEnumSpec, isEnumSpec, isDimension, isMeasure, stringifySpecQuery} from './query';
+import {SHORT_ENUM_SPEC, SpecQuery, EnumSpec, QueryConfig} from './query';
+import {initEnumSpec, isAggregate, isEnumSpec, isDimension, isMeasure, stringifySpecQuery} from './query';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
-import {Dict, duplicate, extend, some} from './util';
+import {Dict, duplicate, extend} from './util';
 
 /**
  * Part of EnumSpecIndex which lists all enumSpec in a specQuery.
@@ -352,9 +353,7 @@ export class SpecQueryModel {
   }
 
   public isAggregate() {
-    return some(this._spec.encodings, (encQ: EncodingQuery) => {
-      return (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate) || encQ.autoCount === true;
-    });
+    return isAggregate(this._spec);
   }
 
   public toShorthand(): string {
