@@ -178,6 +178,73 @@ export namespace rule2field {
   // TODO: O x BIN(Q) x #
 }
 
+export namespace ruleAxisPreference {
+  export const SET_AXIS_PREFERRENCE: RuleSet<SpecQueryModel> = {
+    name: 'Axis Preference',
+    rules: []
+  };
+
+  function countplot(dimType: Type, dimChannel: Channel, countChannel: Channel, dimMixins?) {
+    return build({
+      mark: 'point',
+      encodings: [
+        {channel: countChannel, aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE},
+        extend({channel: dimChannel, field: 'N', type: dimType}, dimMixins)
+      ]
+    });
+  }
+
+  [BAR, POINTS, TICK, LINE, AREA].forEach((mark) => {
+    SET_AXIS_PREFERRENCE.rules.push({
+      name: 'Nx# Count Plot (' + mark + ')',
+      items: [countplot(Type.NOMINAL, Y, X), countplot(Type.NOMINAL, X,Y)]
+    });
+
+    SET_AXIS_PREFERRENCE.rules.push({
+      name: 'Ox# Count Plot (' + mark + ')',
+      items: [countplot(Type.ORDINAL, Y, X), countplot(Type.ORDINAL, X,Y)]
+    });
+
+    SET_AXIS_PREFERRENCE.rules.push({
+      name: 'Tx# Count Plot (' + mark + ')',
+      items: [countplot(Type.TEMPORAL, X, Y), countplot(Type.TEMPORAL, Y, X)]
+    });
+
+    SET_AXIS_PREFERRENCE.rules.push({
+      name: 'BIN(Q)x# Count Plot (' + mark + ')',
+      items: [countplot(Type.QUANTITATIVE, X, Y, {bin: true}), countplot(Type.QUANTITATIVE, Y, X, {bin: true})]
+    });
+  });
+}
+
+
+export namespace ruleFacetPreference {
+  export const SET_FACET_PREFERENCE: RuleSet<SpecQueryModel> = {
+    name: 'Facet Preference',
+    rules: []
+  };
+
+  function facetedPlot(facet: Channel) {
+    return build({
+      mark: 'point',
+      encodings: [
+        {channel: X, field: 'Q', type: Type.QUANTITATIVE},
+        {channel: Y, field: 'Q1', type: Type.QUANTITATIVE},
+        {channel: facet, field: 'N', type: Type.NOMINAL}
+      ]
+    });
+  }
+
+  [BAR, POINTS, TICK, LINE, AREA].forEach((mark) => {
+    SET_FACET_PREFERENCE.rules.push({
+      name: 'Row over column',
+      items: [facetedPlot(Channel.ROW), facetedPlot(Channel.COLUMN)]
+    });
+  });
+}
+
+
+
 function getScore(specM: SpecQueryModel) {
   const featureScores = effectiveness(specM, stats, DEFAULT_QUERY_CONFIG);
   return featureScores.features.reduce((s, featureScore) => {
@@ -192,5 +259,13 @@ describe('effectiveness', () => {
 
   describe('mark for plots with 2 fields', () => {
     testRuleSet(rule2field.SET2D, getScore, (specM) => specM.toShorthand()) ;
+  });
+
+  describe('axis preference', () => {
+    testRuleSet(ruleAxisPreference.SET_AXIS_PREFERRENCE, getScore, (specM) => specM.toShorthand()) ;
+  });
+
+  describe('facet preference', () => {
+    testRuleSet(ruleFacetPreference.SET_FACET_PREFERENCE, getScore, (specM) => specM.toShorthand()) ;
   });
 });
