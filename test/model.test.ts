@@ -63,8 +63,20 @@ describe('SpecQueryModel', () => {
 
     // Encoding
     describe('type', () => {
-      it('should automatically enumerate type if type is not specified', () => {
+      it('should automatically add type as enumspec and index it', () => {
         // TODO: test
+        const specQ: SpecQuery = {
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: 'A'}
+          ]
+        };
+
+        const specM = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
+        // check if is enumspec
+        assert.isTrue(isEnumSpec(specM.getEncodingQueryByIndex(0).type));
+        // check if enumeration Specifier Index has an index for type
+        assert.isOk(specM.enumSpecIndex.type);
       });
     });
     // TODO: also test type
