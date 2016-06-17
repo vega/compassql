@@ -5,8 +5,9 @@ import {AggregateOp} from 'vega-lite/src/aggregate';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
+import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {ENCODING_CONSTRAINTS, ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
-import {EncodingQuery, DEFAULT_QUERY_CONFIG} from '../../src/query';
+import {EncodingQuery} from '../../src/query';
 import {duplicate} from '../../src/util';
 
 import {schema, stats} from '../fixture';

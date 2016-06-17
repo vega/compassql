@@ -1,9 +1,10 @@
 import {Channel, getSupportedRole} from 'vega-lite/src/channel';
 import {Type} from 'vega-lite/src/type';
 
+import {QueryConfig} from '../config';
 import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
 import {Property} from '../property';
-import {EncodingQuery, isEnumSpec, isDimension, isMeasure, QueryConfig} from '../query';
+import {EncodingQuery, isEnumSpec, isDimension, isMeasure} from '../query';
 import {PrimitiveType, Schema} from '../schema';
 import {Stats} from '../stats';
 import {some} from '../util';

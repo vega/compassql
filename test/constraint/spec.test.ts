@@ -7,10 +7,12 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX} from '../../src/constraint/spec';
+
+import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {Stats} from '../../src/stats';
-import {DEFAULT_QUERY_CONFIG, SpecQuery} from '../../src/query';
+import {SpecQuery} from '../../src/query';
 import {duplicate} from '../../src/util';
 
 describe('constraints/spec', () => {

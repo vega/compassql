@@ -5,11 +5,12 @@ import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
+import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
-import {contains, extend} from '../src/util';
 import {SpecQueryModel} from '../src/model';
 import {nest, FIELD, FIELD_TRANSFORM, ENCODING, TRANSPOSE, SpecQueryModelGroup} from '../src/nest';
-import {SHORT_ENUM_SPEC, DEFAULT_QUERY_CONFIG} from '../src/query';
+import {SHORT_ENUM_SPEC} from '../src/query';
+import {contains, extend} from '../src/util';
 
 import {schema, stats} from './fixture';
 

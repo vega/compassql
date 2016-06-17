@@ -5,11 +5,12 @@ import {Type} from 'vega-lite/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
 
+import {QueryConfig} from '../config';
 import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {Property} from '../property';
 import {Schema} from '../schema';
 import {Stats} from '../stats';
-import {EncodingQuery, QueryConfig, isEnumSpec, isMeasure} from '../query';
+import {EncodingQuery, isEnumSpec, isMeasure} from '../query';
 import {contains, every, some} from '../util';
 
 

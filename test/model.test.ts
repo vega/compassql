@@ -5,9 +5,10 @@ import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
+import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel, getDefaultEnumValues} from '../src/model';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
-import {DEFAULT_QUERY_CONFIG, SHORT_ENUM_SPEC, SpecQuery, isEnumSpec} from '../src/query';
+import {SHORT_ENUM_SPEC, SpecQuery, isEnumSpec} from '../src/query';
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
 

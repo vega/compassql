@@ -1,6 +1,7 @@
+import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
 import {SpecQueryModelGroup, getTopItem} from '../nest';
-import {Query, QueryConfig} from '../query';
+import {Query} from '../query';
 import {Stats} from '../stats';
 import {Dict} from '../util';
 

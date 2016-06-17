@@ -1,6 +1,8 @@
 import {Channel} from 'vega-lite/src/channel';
+
+import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../../config';
 import {SpecQueryModel} from '../../model';
-import {EncodingQuery, QueryConfig, stringifyEncodingQueryFieldDef, DEFAULT_QUERY_CONFIG} from '../../query';
+import {EncodingQuery, stringifyEncodingQueryFieldDef} from '../../query';
 import {Stats} from '../../stats';
 import {Dict, extend, forEach, keys} from '../../util';
 
@@ -100,7 +102,7 @@ export namespace PreferredAxisScore {
   export const PREFERRED_AXIS = 'preferredAxis';
 
   // FIXME support doing this at runtime
-  export function init(opt?: QueryConfig) {
+  export function init(opt: QueryConfig = {}) {
     opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
     let score: Dict<number> = {};
 

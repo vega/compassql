@@ -8,8 +8,9 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 
+import {QueryConfig} from './config';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
-import {SHORT_ENUM_SPEC, SpecQuery, EnumSpec, QueryConfig} from './query';
+import {SHORT_ENUM_SPEC, SpecQuery, EnumSpec} from './query';
 import {initEnumSpec, isAggregate, isEnumSpec, isDimension, isMeasure, stack, stringifySpecQuery} from './query';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';

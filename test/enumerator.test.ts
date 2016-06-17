@@ -4,10 +4,11 @@ import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
+import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
 import {ENUMERATOR_INDEX} from '../src/enumerator';
 import {SpecQueryModel} from '../src/model';
-import {DEFAULT_QUERY_CONFIG, BinQuery, SpecQuery} from '../src/query';
+import {BinQuery, SpecQuery} from '../src/query';
 import {Property} from '../src/property';
 import {extend} from '../src/util';
 

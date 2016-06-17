@@ -1,6 +1,8 @@
 import {ENUMERATOR_INDEX} from '../src/enumerator';
+
+import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {SpecQueryModel} from './model';
-import {QueryConfig, SpecQuery, DEFAULT_QUERY_CONFIG} from './query';
+import {SpecQuery} from './query';
 import {Schema} from './schema';
 import {Stats} from './stats';
 import {extend} from './util';
