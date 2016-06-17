@@ -1,4 +1,4 @@
-import {ENUMERATOR_INDEX} from '../src/enumerator.ts';
+import {ENUMERATOR_INDEX} from '../src/enumerator';
 import {SpecQueryModel} from './model';
 import {QueryConfig, SpecQuery, DEFAULT_QUERY_CONFIG} from './query';
 import {Schema} from './schema';
