@@ -1,8 +1,8 @@
 import {Channel} from 'vega-lite/src/channel';
 import {SpecQueryModel} from '../../model';
-import {EncodingQuery, QueryConfig, stringifyEncodingQueryFieldDef} from '../../query';
+import {EncodingQuery, QueryConfig, stringifyEncodingQueryFieldDef, DEFAULT_QUERY_CONFIG} from '../../query';
 import {Stats} from '../../stats';
-import {Dict, forEach, keys} from '../../util';
+import {Dict, extend, forEach, keys} from '../../util';
 
 
 import {FeatureScore, getExtendedType, getFeatureScore} from './effectiveness';
@@ -93,6 +93,88 @@ export namespace TypeChannelScore {
       // TODO: add plus for over-encoding of one field
     });
     return features;
+  }
+}
+
+export namespace PreferredAxisScore {
+  export const PREFERRED_AXIS = 'preferredAxis';
+
+  // FIXME support doing this at runtime
+  export function init(opt?: QueryConfig) {
+    opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
+    let score: Dict<number> = {};
+
+    const preferredAxes = [{
+      feature: 'bin_' + Q,
+      opt: 'preferredBinAxis'
+    },{
+      feature: T,
+      opt: 'preferredTemporalAxis'
+    },{
+      feature: O,
+      opt: 'preferredOrdinalAxis'
+    },{
+      feature: N,
+      opt: 'preferredNominalAxis'
+    }];
+
+    preferredAxes.forEach((preferredAxis) => {
+      if (opt[preferredAxis.opt] === Channel.X) {
+        // penalize the other axis
+        score[preferredAxis.feature + '_' + Channel.Y] = -0.01;
+      } else if (opt[preferredAxis.opt] === Channel.Y) {
+        // penalize the other axis
+        score[preferredAxis.feature + '_' + Channel.X] = -0.01;
+      }
+    });
+
+    return score;
+  }
+
+  export function featurize(type, channel) {
+    return type + '_' + channel;
+  }
+
+  export function getScore(specM: SpecQueryModel, stats: Stats, opt: QueryConfig): FeatureScore[] {
+    return specM.getEncodings().reduce((features, encQ: EncodingQuery) => {
+      const type = getExtendedType(encQ);
+      const feature = featurize(type, encQ.channel);
+      const featureScore = getFeatureScore(PREFERRED_AXIS, feature);
+      if (featureScore) {
+        features.push(featureScore);
+      }
+      return features;
+    }, []);
+  }
+}
+
+export namespace PreferredFacetScore {
+  export const PREFERRED_FACET = 'preferredFacet';
+
+  // FIXME support doing this at runtime
+  export function init(opt?: QueryConfig) {
+    opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
+    let score: Dict<number> = {};
+
+    if (opt.preferredFacet === Channel.ROW) {
+      // penalize the other axis
+      score[Channel.COLUMN] = -0.01;
+    } else if (opt.preferredFacet === Channel.COLUMN) {
+      // penalize the other axis
+      score[Channel.ROW] = -0.01;
+    }
+
+    return score;
+  }
+
+  export function getScore(specM: SpecQueryModel, stats: Stats, opt: QueryConfig): FeatureScore[] {
+    return specM.getEncodings().reduce((features, encQ: EncodingQuery) => {
+      const featureScore = getFeatureScore(PREFERRED_FACET, encQ.channel as string);
+      if (featureScore) {
+        features.push(featureScore);
+      }
+      return features;
+    }, []);
   }
 }
 

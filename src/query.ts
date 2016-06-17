@@ -72,6 +72,7 @@ export interface QueryConfig {
   preferredTemporalAxis?: Channel;
   preferredOrdinalAxis?: Channel;
   preferredNominalAxis?: Channel;
+  preferredFacet?: Channel;
 
   // Encoding Constraints
 
@@ -113,13 +114,13 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   omitRepeatedField: true,
   omitNonPositionalOverPositionalChannels: true,
   omitTableWithOcclusion: true,
-  omitVerticalDotPlot: true,
+  omitVerticalDotPlot: false,
 
   preferredBinAxis: Channel.X,
   preferredTemporalAxis: Channel.X,
-  preferredOrdinalAxis: null, // Channel.Y, // ordinal on y makes it easier to read.
+  preferredOrdinalAxis: Channel.Y, // ordinal on y makes it easier to read.
   preferredNominalAxis: Channel.Y, // nominal on y makes it easier to read.
-
+  preferredFacet: Channel.ROW, // row make it easier to scroll than column
   // Encoding Constraints -- See description inside src/constraints/encoding.ts
 
 

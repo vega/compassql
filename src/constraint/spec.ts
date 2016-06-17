@@ -68,26 +68,6 @@ export interface SpecConstraint extends AbstractConstraint {
   satisfy: SpecConstraintChecker;
 }
 
-/**
- * Factory function for satisfy preferred type constraints.
- */
-function satisfyPreferredType(theType: Type, configName: string) {
-  return (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
-    const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
-    const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
-    const xIsTheType = xEncQ && xEncQ.type === theType;
-    const yIsTheType = yEncQ && yEncQ.type === theType;
-
-    return !yEncQ || !xEncQ ||      // have one axis
-      (xIsTheType && yIsTheType) || // Both X & Y are the type
-      (!xIsTheType && !yIsTheType) || // None of them are the type
-      // x is the only axis of the type and is the preferred one.
-      (xIsTheType && opt[configName] === Channel.X) ||
-      // y is the only axis of the type and is the preferred one.
-      (yIsTheType && opt[configName] === Channel.Y);
-  };
-}
-
 export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'noRepeatedChannel',
@@ -453,51 +433,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       }
       return true;
     }
-  },
-  {
-    name: 'preferredBinAxis',
-    description: 'Always use preferred axis for a binned field.',
-    properties: [Property.CHANNEL, Property.BIN],
-    requireAllProperties: true,
-    strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
-      const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
-      const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
-      const xBin = xEncQ && !!xEncQ.bin;
-      const yBin = yEncQ && !!yEncQ.bin;
-
-      return (xBin && yBin) || // Both X & Y are binned
-        (!xBin && !yBin) || // None of them are binned
-        // x is the only binned axis and is the preferred one.
-        (xBin && opt.preferredBinAxis === Channel.X) ||
-        // y is the only binned axis and is the preferred one.
-        (yBin && opt.preferredBinAxis === Channel.Y);
-    }
-  },
-  {
-    name: 'preferredTemporalAxis',
-    description: 'Always use preferred axis for a time field.',
-    properties: [Property.CHANNEL, Property.TYPE],
-    requireAllProperties: true,
-    strict: false,
-    satisfy: satisfyPreferredType(Type.TEMPORAL, 'preferredTemporalAxis')
-  },
-  {
-    name: 'preferredOrdinalAxis',
-    description: 'Always use preferred axis for an ordinal field.',
-    properties: [Property.CHANNEL, Property.TYPE],
-    requireAllProperties: true,
-    strict: false,
-    satisfy: satisfyPreferredType(Type.ORDINAL, 'preferredOrdinalAxis')
-  },
-  {
-    name: 'preferredNominalAxis',
-    description: 'Always use preferred axis for a nominal field.',
-    properties: [Property.CHANNEL, Property.TYPE],
-    requireAllProperties: true,
-    strict: false,
-    satisfy: satisfyPreferredType(Type.NOMINAL, 'preferredNominalAxis')
-  },
+  }
 ].map((sc) => new SpecConstraintModel(sc));
 
 // For testing

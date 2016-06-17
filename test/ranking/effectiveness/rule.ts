@@ -21,8 +21,8 @@ export function testRuleSet(ruleSet: RuleSet<any>, getScore: {(item: any): numbe
           const r = items[i];
           (isArray(l) ? l : [l]).forEach((left) => {
             (isArray(r) ? r : [r]).forEach((right) => {
-              const lScore = getScore(left);
-              const rScore = getScore(right);
+              const lScore = getScore(left) || 0;
+              const rScore = getScore(right) || 0;
               assert.isTrue(
                 lScore > rScore,
                 'Score for ' + stringify(left) + ' (' + lScore + ') ' +
