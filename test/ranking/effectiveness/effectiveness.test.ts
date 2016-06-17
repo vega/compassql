@@ -9,7 +9,7 @@ import {SpecQueryModel} from '../../../src/model';
 import {extend, nestedMap} from '../../../src/util';
 import effectiveness from '../../../src/ranking/effectiveness/effectiveness';
 import {schema, stats} from '../../fixture';
-import {RuleSet, testRuleSet} from './rule';
+import {RuleSet, Rule, testRuleSet} from './rule';
 
 function build(specQ) {
   return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
@@ -17,231 +17,239 @@ function build(specQ) {
 
 const POINTS = [POINT, SQUARE, CIRCLE];
 
-namespace rule1field {
-  function plot1d(mark: Mark, channel, type) {
-    return SpecQueryModel.build({
-      mark: mark,
-      encodings: [
-        {
-          channel: channel,
-          field: 'f',
-          type: type
-        }
-      ]
-    }, schema, DEFAULT_QUERY_CONFIG);
-  }
 
-  export const SET1D: RuleSet<SpecQueryModel> = {
-    name: '1D rules',
-    rules: []
-  };
+export const SET_1D: RuleSet<SpecQueryModel> = {
+  name: 'mark for plots with 1 field',
+  rules: function() {
+    const rules: Rule<SpecQueryModel>[] = [];
 
-  SET1D.rules.push({
-    name: 'N with varying mark',
-    items: nestedMap([[POINT /*, RECT */], TICK, [LINE, BAR, AREA], RULE], (mark) => {
-      return plot1d(mark, X, Type.NOMINAL);
-    })
-  });
+    function plot1d(mark: Mark, channel, type) {
+      return SpecQueryModel.build({
+        mark: mark,
+        encodings: [
+          {
+            channel: channel,
+            field: 'f',
+            type: type
+          }
+        ]
+      }, schema, DEFAULT_QUERY_CONFIG);
+    }
 
-  function countplot(mark: Mark, field, type: Type) {
-    return SpecQueryModel.build({
-      mark: mark,
-      encodings: [
-        {
-          channel: Y,
-          field: field,
-          type: type
-        },{
+    rules.push({
+      name: 'N with varying mark',
+      items: nestedMap([[POINT /*, RECT */], TICK, [LINE, BAR, AREA], RULE], (mark) => {
+        return plot1d(mark, X, Type.NOMINAL);
+      })
+    });
+
+    function countplot(mark: Mark, field, type: Type) {
+      return SpecQueryModel.build({
+        mark: mark,
+        encodings: [
+          {
+            channel: Y,
+            field: field,
+            type: type
+          },{
+            channel: X,
+            aggregate: AggregateOp.COUNT,
+            field: '*',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      }, schema, DEFAULT_QUERY_CONFIG);
+    }
+
+    rules.push({
+      name: 'N plot with varying marks',
+      items: nestedMap([BAR, POINT, TICK, [LINE, AREA], RULE], (mark) => {
+        return countplot(mark, 'N', Type.NOMINAL);
+      })
+    });
+
+    rules.push({
+      name: 'O plot with varying marks',
+      items: nestedMap([LINE, AREA, BAR, POINT, TICK, RULE], (mark) => {
+        return countplot(mark, 'O', Type.ORDINAL);
+      })
+    });
+
+    rules.push({
+      name: 'Q dot plot with varying mark',
+      items: nestedMap([TICK, POINT, [LINE, BAR, AREA], RULE], (mark) => {
+        return plot1d(mark, X, Type.QUANTITATIVE);
+      })
+    });
+
+    function histogram(mark: Mark, xEncQ) {
+      return SpecQueryModel.build({
+        mark: mark,
+        encodings: [
+          xEncQ,{
+            channel: Y,
+            aggregate: AggregateOp.COUNT,
+            field: '*',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      }, schema, DEFAULT_QUERY_CONFIG);
+    }
+
+    rules.push({
+      name: 'Q histogram with varying marks',
+      items: nestedMap([BAR, POINT, TICK, [LINE, AREA], RULE], (mark) => {
+        return histogram(mark, {
           channel: X,
-          aggregate: AggregateOp.COUNT,
-          field: '*',
+          bin: true,
+          field: 'Q',
           type: Type.QUANTITATIVE
-        }
-      ]
-    }, schema, DEFAULT_QUERY_CONFIG);
-  }
+        });
+      })
+    });
 
-  SET1D.rules.push({
-    name: 'N plot with varying marks',
-    items: nestedMap([BAR, POINT, TICK, [LINE, AREA], RULE], (mark) => {
-      return countplot(mark, 'N', Type.NOMINAL);
-    })
-  });
+    rules.push({
+      name: 'T dot plot with varying mark',
+      items: nestedMap([TICK, POINT, [LINE, BAR, AREA], RULE], (mark) => {
+        return plot1d(mark, X, Type.TEMPORAL);
+      })
+    });
 
-  SET1D.rules.push({
-    name: 'O plot with varying marks',
-    items: nestedMap([LINE, AREA, BAR, POINT, TICK, RULE], (mark) => {
-      return countplot(mark, 'O', Type.ORDINAL);
-    })
-  });
+    rules.push({
+      name: 'TimeUnit T count with varying marks',
+      items: nestedMap([LINE, AREA, BAR, POINT, TICK, RULE], (mark) => {
+        return histogram(mark, {
+          channel: X,
+          timeUnit: TimeUnit.MONTH,
+          field: 'T',
+          type: Type.TEMPORAL
+        });
+      })
+    });
+    return rules;
+  }()
+};
 
-  SET1D.rules.push({
-    name: 'Q dot plot with varying mark',
-    items: nestedMap([TICK, POINT, [LINE, BAR, AREA], RULE], (mark) => {
-      return plot1d(mark, X, Type.QUANTITATIVE);
-    })
-  });
 
-  function histogram(mark: Mark, xEncQ) {
-    return SpecQueryModel.build({
-      mark: mark,
-      encodings: [
-        xEncQ,{
-          channel: Y,
-          aggregate: AggregateOp.COUNT,
-          field: '*',
-          type: Type.QUANTITATIVE
-        }
-      ]
-    }, schema, DEFAULT_QUERY_CONFIG);
-  }
+export const SET_2D: RuleSet<SpecQueryModel> = {
+  name: 'mark for plots with 2 fields',
+  rules: function() {
+    const rules: Rule<SpecQueryModel>[] = [];
 
-  SET1D.rules.push({
-    name: 'Q histogram with varying marks',
-    items: nestedMap([BAR, POINT, TICK, [LINE, AREA], RULE], (mark) => {
-      return histogram(mark, {
-        channel: X,
-        bin: true,
-        field: 'Q',
-        type: Type.QUANTITATIVE
+    rules.push({
+      name: 'NxN',
+      items: nestedMap([{
+        mark: POINT,
+        encodings: [
+          {channel: X, field: 'N', type: Type.NOMINAL},
+          {channel: Y, field: 'N', type: Type.NOMINAL},
+          {channel: SIZE, aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE}
+        ]
+      },{
+        mark: BAR,
+        encodings: [
+          {channel: X, field: 'N', type: Type.NOMINAL},
+          {channel: COLOR, field: 'N1', type: Type.NOMINAL},
+          {channel: Y, aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE}
+        ]
+      }], (specQ) => SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG))
+    });
+
+    function stripplot(mark: Mark, qMixIns = {}) {
+      return build({
+        mark: mark,
+        encodings: [
+          extend({channel: X, field: 'Q', type: Type.QUANTITATIVE}, qMixIns),
+          {channel: Y, field: 'N', type: Type.NOMINAL}
+        ]
       });
-    })
-  });
+    }
 
-  SET1D.rules.push({
-    name: 'T dot plot with varying mark',
-    items: nestedMap([TICK, POINT, [LINE, BAR, AREA], RULE], (mark) => {
-      return plot1d(mark, X, Type.TEMPORAL);
-    })
-  });
+    rules.push({
+      name: 'NxQ Strip Plot',
+      items: nestedMap([TICK, POINTS], stripplot)
+    });
 
-  SET1D.rules.push({
-    name: 'TimeUnit T count with varying marks',
-    items: nestedMap([LINE, AREA, BAR, POINT, TICK, RULE], (mark) => {
-      return histogram(mark, {
-        channel: X,
-        timeUnit: TimeUnit.MONTH,
-        field: 'T',
-        type: Type.TEMPORAL
+    rules.push({
+      name: 'NxA(Q) Strip Plot',
+      items: nestedMap([BAR, POINTS, TICK, [LINE, AREA], RULE], (mark) => stripplot(mark, {aggregate: AggregateOp.MEAN}))
+    });
+
+    // TODO: O
+
+    // TODO: O x BIN(Q) x #
+    return rules;
+  }()
+};
+
+
+export const SET_AXIS_PREFERRENCE: RuleSet<SpecQueryModel> = {
+  name: 'Axis Preference',
+  rules: function() {
+    const rules: Rule<SpecQueryModel>[] = [];
+
+    function countplot(dimType: Type, dimChannel: Channel, countChannel: Channel, dimMixins?) {
+      return build({
+        mark: 'point',
+        encodings: [
+          {channel: countChannel, aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE},
+          extend({channel: dimChannel, field: 'N', type: dimType}, dimMixins)
+        ]
       });
-    })
-  });
-}
+    }
 
-export namespace rule2field {
-  export const SET2D: RuleSet<SpecQueryModel> = {
-    name: '2D rules',
-    rules: []
-  };
+    [BAR, POINTS, TICK, LINE, AREA].forEach((mark) => {
+      rules.push({
+        name: 'Nx# Count Plot (' + mark + ')',
+        items: [countplot(Type.NOMINAL, Y, X), countplot(Type.NOMINAL, X,Y)]
+      });
 
-  SET2D.rules.push({
-    name: 'NxN',
-    items: nestedMap([{
-      mark: POINT,
-      encodings: [
-        {channel: X, field: 'N', type: Type.NOMINAL},
-        {channel: Y, field: 'N', type: Type.NOMINAL},
-        {channel: SIZE, aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE}
-      ]
-    },{
-      mark: BAR,
-      encodings: [
-        {channel: X, field: 'N', type: Type.NOMINAL},
-        {channel: COLOR, field: 'N1', type: Type.NOMINAL},
-        {channel: Y, aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE}
-      ]
-    }], (specQ) => SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG))
-  });
+      rules.push({
+        name: 'Ox# Count Plot (' + mark + ')',
+        items: [countplot(Type.ORDINAL, Y, X), countplot(Type.ORDINAL, X,Y)]
+      });
 
-  function stripplot(mark: Mark, qMixIns = {}) {
-    return build({
-      mark: mark,
-      encodings: [
-        extend({channel: X, field: 'Q', type: Type.QUANTITATIVE}, qMixIns),
-        {channel: Y, field: 'N', type: Type.NOMINAL}
-      ]
-    });
-  }
+      rules.push({
+        name: 'Tx# Count Plot (' + mark + ')',
+        items: [countplot(Type.TEMPORAL, X, Y), countplot(Type.TEMPORAL, Y, X)]
+      });
 
-  SET2D.rules.push({
-    name: 'NxQ Strip Plot',
-    items: nestedMap([TICK, POINTS], stripplot)
-  });
-
-  SET2D.rules.push({
-    name: 'NxA(Q) Strip Plot',
-    items: nestedMap([BAR, POINTS, TICK, [LINE, AREA], RULE], (mark) => stripplot(mark, {aggregate: AggregateOp.MEAN}))
-  });
-
-  // TODO: O
-
-  // TODO: O x BIN(Q) x #
-}
-
-export namespace ruleAxisPreference {
-  export const SET_AXIS_PREFERRENCE: RuleSet<SpecQueryModel> = {
-    name: 'Axis Preference',
-    rules: []
-  };
-
-  function countplot(dimType: Type, dimChannel: Channel, countChannel: Channel, dimMixins?) {
-    return build({
-      mark: 'point',
-      encodings: [
-        {channel: countChannel, aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE},
-        extend({channel: dimChannel, field: 'N', type: dimType}, dimMixins)
-      ]
-    });
-  }
-
-  [BAR, POINTS, TICK, LINE, AREA].forEach((mark) => {
-    SET_AXIS_PREFERRENCE.rules.push({
-      name: 'Nx# Count Plot (' + mark + ')',
-      items: [countplot(Type.NOMINAL, Y, X), countplot(Type.NOMINAL, X,Y)]
+      rules.push({
+        name: 'BIN(Q)x# Count Plot (' + mark + ')',
+        items: [countplot(Type.QUANTITATIVE, X, Y, {bin: true}), countplot(Type.QUANTITATIVE, Y, X, {bin: true})]
+      });
     });
 
-    SET_AXIS_PREFERRENCE.rules.push({
-      name: 'Ox# Count Plot (' + mark + ')',
-      items: [countplot(Type.ORDINAL, Y, X), countplot(Type.ORDINAL, X,Y)]
+    return rules;
+  }()
+};
+
+
+export const SET_FACET_PREFERENCE: RuleSet<SpecQueryModel> = {
+  name: 'Facet Preference',
+  rules: function() {
+    const rules: Rule<SpecQueryModel>[] = [];
+    function facetedPlot(facet: Channel) {
+      return build({
+        mark: 'point',
+        encodings: [
+          {channel: X, field: 'Q', type: Type.QUANTITATIVE},
+          {channel: Y, field: 'Q1', type: Type.QUANTITATIVE},
+          {channel: facet, field: 'N', type: Type.NOMINAL}
+        ]
+      });
+    }
+
+    [BAR, POINTS, TICK, LINE, AREA].forEach((mark) => {
+      rules.push({
+        name: 'Row over column',
+        items: [facetedPlot(Channel.ROW), facetedPlot(Channel.COLUMN)]
+      });
     });
 
-    SET_AXIS_PREFERRENCE.rules.push({
-      name: 'Tx# Count Plot (' + mark + ')',
-      items: [countplot(Type.TEMPORAL, X, Y), countplot(Type.TEMPORAL, Y, X)]
-    });
-
-    SET_AXIS_PREFERRENCE.rules.push({
-      name: 'BIN(Q)x# Count Plot (' + mark + ')',
-      items: [countplot(Type.QUANTITATIVE, X, Y, {bin: true}), countplot(Type.QUANTITATIVE, Y, X, {bin: true})]
-    });
-  });
-}
-
-
-export namespace ruleFacetPreference {
-  export const SET_FACET_PREFERENCE: RuleSet<SpecQueryModel> = {
-    name: 'Facet Preference',
-    rules: []
-  };
-
-  function facetedPlot(facet: Channel) {
-    return build({
-      mark: 'point',
-      encodings: [
-        {channel: X, field: 'Q', type: Type.QUANTITATIVE},
-        {channel: Y, field: 'Q1', type: Type.QUANTITATIVE},
-        {channel: facet, field: 'N', type: Type.NOMINAL}
-      ]
-    });
-  }
-
-  [BAR, POINTS, TICK, LINE, AREA].forEach((mark) => {
-    SET_FACET_PREFERENCE.rules.push({
-      name: 'Row over column',
-      items: [facetedPlot(Channel.ROW), facetedPlot(Channel.COLUMN)]
-    });
-  });
-}
+    return rules;
+  }()
+};
 
 
 
@@ -253,19 +261,19 @@ function getScore(specM: SpecQueryModel) {
 }
 
 describe('effectiveness', () => {
-  describe('mark for plots with 1 field', () => {
-    testRuleSet(rule1field.SET1D, getScore, (specM) => specM.toShorthand()) ;
+  describe(SET_1D.name, () => {
+    testRuleSet(SET_1D, getScore, (specM) => specM.toShorthand()) ;
   });
 
-  describe('mark for plots with 2 fields', () => {
-    testRuleSet(rule2field.SET2D, getScore, (specM) => specM.toShorthand()) ;
+  describe(SET_2D.name, () => {
+    testRuleSet(SET_2D, getScore, (specM) => specM.toShorthand()) ;
   });
 
-  describe('axis preference', () => {
-    testRuleSet(ruleAxisPreference.SET_AXIS_PREFERRENCE, getScore, (specM) => specM.toShorthand()) ;
+  describe(SET_AXIS_PREFERRENCE.name, () => {
+    testRuleSet(SET_AXIS_PREFERRENCE, getScore, (specM) => specM.toShorthand()) ;
   });
 
-  describe('facet preference', () => {
-    testRuleSet(ruleFacetPreference.SET_FACET_PREFERENCE, getScore, (specM) => specM.toShorthand()) ;
+  describe(SET_FACET_PREFERENCE.name, () => {
+    testRuleSet(SET_FACET_PREFERENCE, getScore, (specM) => specM.toShorthand()) ;
   });
 });
