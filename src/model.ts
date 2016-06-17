@@ -10,7 +10,7 @@ import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
 import {SHORT_ENUM_SPEC, SpecQuery, EnumSpec, QueryConfig} from './query';
-import {initEnumSpec, isAggregate, isEnumSpec, isDimension, isMeasure, stringifySpecQuery} from './query';
+import {initEnumSpec, isAggregate, isEnumSpec, isDimension, isMeasure, stack, stringifySpecQuery} from './query';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
@@ -322,6 +322,10 @@ export class SpecQueryModel {
   public channelUsed(channel: Channel) {
     // do not include encoding that has autoCount = false because it is not a part of the output spec.
     return this._channelCount[channel] > 0;
+  }
+
+  public stack() {
+    return stack(this._spec);
   }
 
   public getEncodings() {

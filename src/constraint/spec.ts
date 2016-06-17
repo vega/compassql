@@ -1,3 +1,4 @@
+import {SUM_OPS} from 'vega-lite/src/aggregate';
 import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
@@ -420,6 +421,21 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           return true;
       }
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
+    }
+  },
+  {
+    name: 'omitNonSumStack',
+    description: 'Stacked plot should use summative aggregation such as sum, count, or distinct',
+    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      const stack = specM.stack();
+      if (stack) {
+        const measureEncQ = specM.getEncodingQueryByChannel(stack.fieldChannel);
+        return contains(SUM_OPS, measureEncQ.aggregate);
+      }
+      return true;
     }
   },
   {

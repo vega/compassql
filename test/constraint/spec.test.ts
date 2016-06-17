@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 
 import {Mark} from 'vega-lite/src/mark';
-import {AggregateOp} from 'vega-lite/src/aggregate';
+import {AggregateOp, SUM_OPS} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
@@ -552,6 +552,54 @@ describe('constraints/spec', () => {
       });
 
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, stats, defaultOpt));
+    });
+  });
+
+  describe('omitNonSumStack', () => {
+    it('should return true if summative-based aggregate is used.', () => {
+      SUM_OPS.forEach((aggregate) => {
+        [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
+          const specM = buildSpecQueryModel({
+            mark: Mark.BAR,
+            encodings: [
+              {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: aggregate},
+              {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+              {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
+            ]
+          });
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, stats, defaultOpt));
+        });
+      });
+    });
+
+    it('should return false if non-summative aggregate (e.g., mean, median) is used.', () => {
+      [AggregateOp.MAX, AggregateOp.MEAN, AggregateOp.MEDIAN].forEach((aggregate) => {
+        [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
+          const specM = buildSpecQueryModel({
+            mark: Mark.BAR,
+            encodings: [
+              {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: aggregate},
+              {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+              {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
+            ]
+          });
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, stats, defaultOpt));
+        });
+      });
+    });
+
+    it('should return true for non-stack.', () => {
+      [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+            {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+            {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
+          ]
+        });
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, stats, defaultOpt));
+      });
     });
   });
 
