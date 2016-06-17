@@ -33,7 +33,6 @@
         "src/ranking/effectiveness/effectiveness.ts",
         "src/ranking/effectiveness/channel.ts",
         "src/ranking/effectiveness/mark.ts",
-        "src/ranking/effectiveness.ts",
         "src/ranking/ranking.ts",
         "src/enumerator.ts",
         "src/generate.ts",

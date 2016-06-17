@@ -5,7 +5,6 @@ import {Stats} from '../stats';
 import {Dict} from '../util';
 
 export import effectiveness = require('./effectiveness/effectiveness');
-import{effectiveness as effectiveness2} from './effectiveness';
 
 export interface RankingScore {
   score: number;
@@ -79,5 +78,3 @@ export function groupComparator(name: string, stats: Stats, opt: QueryConfig) {
 
 export const EFFECTIVENESS = 'effectiveness';
 register(EFFECTIVENESS, effectiveness.default);
-
-register(EFFECTIVENESS +'2', effectiveness2);
