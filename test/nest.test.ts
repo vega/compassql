@@ -6,7 +6,8 @@ import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
 import {generate} from '../src/generate';
-import {extend} from '../src/util';
+import {contains, extend} from '../src/util';
+import {SpecQueryModel} from '../src/model';
 import {nest, FIELD, FIELD_TRANSFORM, ENCODING, TRANSPOSE, SpecQueryModelGroup} from '../src/nest';
 import {SHORT_ENUM_SPEC, DEFAULT_QUERY_CONFIG} from '../src/query';
 
@@ -158,7 +159,6 @@ describe('nest', () => {
       assert.equal(groups.length, 1);
     });
 
-
     it('should group visualizations with different retinal variables or transposed', () => {
       const query = {
         spec: {
@@ -184,6 +184,43 @@ describe('nest', () => {
       const answerSet = generate(query.spec, schema, stats);
       const groups = nest(answerSet, query, stats).items;
       assert.equal(groups.length, 1);
+    });
+
+    it('should separate different types of stacked and non-stacked visualizations', () => {
+      const query = {
+        spec: {
+          mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: Channel.X,
+            aggregate: AggregateOp.SUM,
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: Channel.Y,
+            field: 'N',
+            type: Type.NOMINAL
+          }, {
+            channel: Channel.COLOR,
+            field: 'N1',
+            type: Type.NOMINAL
+          }]
+        },
+        nest: [{groupBy: ENCODING}],
+        config: DEFAULT_QUERY_CONFIG
+      };
+
+      const answerSet = generate(query.spec, schema, stats);
+      const groups = nest(answerSet, query, stats).items;
+      assert.equal(groups.length, 2);
+      assert.equal((groups[0] as SpecQueryModelGroup).name, 'non-xy:N1,n|xy:N,n|xy:sum(Q,q)');
+      (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModel) => {
+        return !contains([Mark.BAR, Mark.AREA], item.getMark());
+      });
+
+      assert.equal((groups[1] as SpecQueryModelGroup).name, 'stack=zero|non-xy:N1,n|xy:N,n|xy:sum(Q,q)');
+      (groups[1] as SpecQueryModelGroup).items.forEach((item: SpecQueryModel) => {
+        return contains([Mark.BAR, Mark.AREA], item.getMark());
+      });
     });
   });
 

@@ -1,7 +1,8 @@
 import {Channel} from 'vega-lite/src/channel';
+import {StackOffset} from 'vega-lite/src/stack';
 
 import {SpecQueryModel} from './model';
-import {SHORT_ENUM_SPEC, EnumSpec, isEnumSpec, stringifyEncodingQueryFieldDef, Query} from './query';
+import {SHORT_ENUM_SPEC, EnumSpec, isEnumSpec, stack, stringifyEncodingQueryFieldDef, Query} from './query';
 import {Stats} from './stats';
 import {Dict} from './util';
 
@@ -128,7 +129,10 @@ function channelType(channel: Channel | EnumSpec<Channel>) {
 
 registerKeyFn(ENCODING, (specM: SpecQueryModel) => {
   // mark does not matter
-  return specM.getEncodings().map((encQ) => {
+  const _stack = stack(specM.specQuery);
+
+  return (_stack !== StackOffset.NONE ? 'stack=' + _stack + '|' : '') +
+    specM.getEncodings().map((encQ) => {
       const fieldDef = stringifyEncodingQueryFieldDef(encQ);
       return channelType(encQ.channel) + ':' + fieldDef;
     })
