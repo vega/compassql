@@ -51,7 +51,8 @@ export class SpecConstraintModel extends AbstractConstraintModel {
                 return isEnumSpec(encQ[prop]);
               });
             default:
-              throw new Error('Unimplemnted');
+              /* istanbul ignore next */
+              throw new Error('Unimplemented');
           }
         }
       );
@@ -117,6 +118,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
             case Type.NOMINAL:
               return true;
           }
+          /* istanbul ignore next */
           throw new Error('Unsupported Type');
         });
       } else {
@@ -192,6 +194,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         case Mark.RULE:
           return specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
       }
+      /* istanbul ignore next */
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
     }
   },
@@ -401,6 +404,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         case Mark.RULE:
           return true;
       }
+      /* istanbul ignore next */
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
     }
   },
