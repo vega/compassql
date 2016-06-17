@@ -2,7 +2,6 @@ import {Mark} from 'vega-lite/src/mark';
 
 import {checkEncoding} from './constraint/encoding';
 import {checkSpec} from './constraint/spec';
-
 import {EnumSpecIndex, EnumSpecIndexTuple, SpecQueryModel} from './model';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from './property';
 import {EnumSpec, QueryConfig} from './query';

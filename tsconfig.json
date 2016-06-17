@@ -47,6 +47,7 @@
         "test/ranking/effectiveness/effectiveness.test.ts",
         "test/ranking/effectiveness/channel.test.ts",
         "test/ranking/effectiveness/mark.test.ts",
+        "test/enumerator.test.ts",
         "test/generate.test.ts",
         "test/nest.test.ts",
         "test/model.test.ts",
