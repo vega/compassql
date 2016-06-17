@@ -1,5 +1,6 @@
 export const version = '__VERSION__';
 import * as cqlConstraint from './constraint/constraint';
+import * as cqlEnumerate from './enumerator';
 import * as cqlGenerate from './generate';
 import * as cqlModel from './model';
 import * as cqlNest from './nest';
@@ -13,6 +14,7 @@ import * as cqlUtil from './util';
 import {extend} from './util';
 
 export const constraint = cqlConstraint;
+export const enumerate = cqlEnumerate;
 export const generate = cqlGenerate.generate;
 export const model = cqlModel;
 export const nest = cqlNest;
