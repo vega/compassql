@@ -179,13 +179,19 @@ export namespace rule2field {
   // TODO: O x BIN(Q) x #
 }
 
+function getScore(specM: SpecQueryModel) {
+  const featureScores = effectiveness(specM, stats, DEFAULT_QUERY_CONFIG);
+  return featureScores.features.reduce((s, featureScore) => {
+    return s + featureScore.score;
+  }, 0);
+}
+
 describe('effectiveness', () => {
-  [rule1field.SET1D, rule2field.SET2D].forEach((ruleSet) => {
-    testRuleSet(ruleSet, (specM: SpecQueryModel) => {
-      const featureScores = effectiveness(specM, stats, DEFAULT_QUERY_CONFIG);
-      return featureScores.features.reduce((s, featureScore) => {
-        return s + featureScore.score;
-      }, 0);
-    }, (specM) => specM.toShorthand()) ;
+  describe('mark for plots with 1 field', () => {
+    testRuleSet(rule1field.SET1D, getScore, (specM) => specM.toShorthand()) ;
+  });
+
+  describe('mark for plots with 2 fields', () => {
+    testRuleSet(rule2field.SET2D, getScore, (specM) => specM.toShorthand()) ;
   });
 });
