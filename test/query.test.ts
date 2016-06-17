@@ -21,41 +21,11 @@ describe('query', () => {
     });
   });
 
-  describe('stackOffset', () => {
+  describe('stack', () => {
     const STACKABLE_MARKS = [BAR, AREA];
-    it('should return zero for stackable marks with at least of of the stack channel if stacked is unspecified', () => {
-      [BAR, AREA].forEach((stackableMark) => {
-        const specQ = {
-          mark: stackableMark,
-          encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
-            {channel: Channel.Y, field: 'N', type: Type.NOMINAL},
-            {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
-          ]
-        };
-        assert.equal(stack(specQ), StackOffset.ZERO);
-      });
-    });
-
-    it('should return the specified stack for stackable marks with at least one of the stack channel', () => {
-      [StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((_stack) => {
-        [BAR, AREA].forEach((stackableMark) => {
-          const specQ = {
-            mark: stackableMark,
-            encodings: [
-              {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
-              {channel: Channel.Y, field: 'N', type: Type.NOMINAL},
-              {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
-            ],
-            config: {mark: {stacked: _stack}}
-          };
-          assert.equal(stack(specQ), _stack);
-        });
-      });
-    });
-
     const NON_STACKABLE_MARKS = without(PRIMITIVE_MARKS, STACKABLE_MARKS);
-    it('should always return none for nonstackable marks with at least of of the stack channel', () => {
+
+    it('should always return null for nonstackable marks with at least of of the stack channel', () => {
       [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((_stack) => {
         NON_STACKABLE_MARKS.forEach((nonStackableMark) => {
           const specQ = {
@@ -67,12 +37,12 @@ describe('query', () => {
             ],
             config: {mark: {stacked: _stack}}
           };
-          assert.equal(stack(specQ), StackOffset.NONE);
+          assert.equal(stack(specQ), null);
         });
       });
     });
 
-    it('should always return none for raw plot', () => {
+    it('should always return null for raw plot', () => {
       [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((_stack) => {
         PRIMITIVE_MARKS.forEach((mark) => {
           const specQ = {
@@ -84,12 +54,12 @@ describe('query', () => {
             ],
             config: {mark: {stack: _stack}}
           };
-          assert.equal(stack(specQ), StackOffset.NONE);
+          assert.equal(stack(specQ), null);
         });
       });
     });
 
-    it('should always return none if there is no grouping channel', () => {
+    it('should always return null if there is no grouping channel', () => {
       [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((_stack) => {
         PRIMITIVE_MARKS.forEach((mark) => {
           const specQ = {
@@ -100,10 +70,139 @@ describe('query', () => {
             ],
             config: {mark: {stack: _stack}}
           };
-          assert.equal(stack(specQ), StackOffset.NONE);
+          assert.equal(stack(specQ), null);
         });
       });
     });
+    it('should always be disabled if both x and y are aggregate', () => {
+      [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((stacked) => {
+        PRIMITIVE_MARKS.forEach((mark) => {
+          const specQ = {
+              mark: mark,
+              encodings: [
+                {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.Y, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
+              ]
+            };
+          assert.isNull(stack(specQ));
+        });
+      });
+    });
+
+    it('should always be disabled if neither x nor y is aggregate', () => {
+      [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((stacked) => {
+        PRIMITIVE_MARKS.forEach((mark) => {
+          const specQ = {
+              mark: mark,
+              encodings: [
+                {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+                {channel: Channel.Y, field: 'N', type: Type.NOMINAL},
+                {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
+              ]
+            };
+          assert.isNull(stack(specQ));
+        });
+      });
+    });
+
+    describe('stack().groupbyChannel, .fieldChannel', () => {
+      it('should be correct for horizontal', () => {
+        [BAR, AREA].forEach((stackableMark) => {
+          const specQ = {
+              mark: stackableMark,
+              encodings: [
+                {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.Y, field: 'N', type: Type.NOMINAL},
+                {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
+              ]
+            };
+          const _stack = stack(specQ);
+          assert.equal(_stack.fieldChannel, Channel.X);
+          assert.equal(_stack.groupbyChannel, Channel.Y);
+        });
+      });
+
+      it('should be correct for horizontal (single)', () => {
+        [BAR, AREA].forEach((stackableMark) => {
+          const specQ = {
+              mark: stackableMark,
+              encodings: [
+                {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
+              ]
+            };
+          const _stack = stack(specQ);
+          assert.equal(_stack.fieldChannel, Channel.X);
+          assert.equal(_stack.groupbyChannel, null);
+        });
+      });
+
+      it('should be correct for vertical', () => {
+        [BAR, AREA].forEach((stackableMark) => {
+          const specQ = {
+              mark: stackableMark,
+              encodings: [
+                {channel: Channel.Y, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+                {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
+              ]
+            };
+          const _stack = stack(specQ);
+          assert.equal(_stack.fieldChannel, Channel.Y);
+          assert.equal(_stack.groupbyChannel, Channel.X);
+        });
+      });
+
+      it('should be correct for vertical (single)', () => {
+        [BAR, AREA].forEach((stackableMark) => {
+          const specQ = {
+              mark: stackableMark,
+              encodings: [
+                {channel: Channel.Y, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
+              ]
+            };
+          const _stack = stack(specQ);
+          assert.equal(_stack.fieldChannel, Channel.Y);
+          assert.equal(_stack.groupbyChannel, null);
+        });
+      });
+    });
+
+    describe('stack().offset', () => {
+      it('should return zero for stackable marks with at least of of the stack channel if stacked is unspecified', () => {
+        [BAR, AREA].forEach((stackableMark) => {
+          const specQ = {
+            mark: stackableMark,
+            encodings: [
+              {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+              {channel: Channel.Y, field: 'N', type: Type.NOMINAL},
+              {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
+            ]
+          };
+          assert.equal(stack(specQ).offset, StackOffset.ZERO);
+        });
+      });
+
+      it('should return the specified stack for stackable marks with at least one of the stack channel', () => {
+        [StackOffset.CENTER, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((_stack) => {
+          [BAR, AREA].forEach((stackableMark) => {
+            const specQ = {
+              mark: stackableMark,
+              encodings: [
+                {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.Y, field: 'N', type: Type.NOMINAL},
+                {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
+              ],
+              config: {mark: {stacked: _stack}}
+            };
+            assert.equal(stack(specQ).offset, _stack);
+          });
+        });
+      });
+    });
+
   });
 
   describe('stringifySpecQuery', () => {

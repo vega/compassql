@@ -3,7 +3,7 @@ import {Config} from 'vega-lite/src/config';
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Data} from 'vega-lite/src/data';
 import {Mark, BAR, AREA} from 'vega-lite/src/mark';
-import {StackOffset} from 'vega-lite/src/stack';
+import {StackOffset, StackProperties} from 'vega-lite/src/stack';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
@@ -197,30 +197,62 @@ export function stringifySpecQuery (specQ: SpecQuery): string {
 
   return mark + '|' +
       // TODO: transform
-      (_stack !== StackOffset.NONE ? 'stack=' + _stack + '|' : '') +
+      (_stack ? 'stack=' + _stack.offset + '|' : '') +
       encodings;
 }
 
 /**
  * @return the stack offset type for the specQuery
  */
-export function stack(specQ: SpecQuery): StackOffset {
-  const hasStackGroupChannel = some(specQ.encodings, (encQ: EncodingQuery) => {
-    return contains(STACK_GROUP_CHANNELS, encQ.channel);
-  });
-
+export function stack(specQ: SpecQuery): StackProperties {
   const config = specQ.config;
   const stacked = (config && config.mark) ? config.mark.stacked : undefined;
 
-  if (hasStackGroupChannel && // has grouping field
-      // TODO: allow stacking point, circle, square as cleveland dot plot
-      contains([BAR, AREA], specQ.mark) && // has stackable mark
-      isAggregate(specQ) && // is aggregate
-      !contains([StackOffset.NONE, null, false], stacked) // stacking is not explicitly disabled.
-    ) {
-    return stacked || StackOffset.ZERO;
+  // Should not have stack explicitly disabled
+  if (contains([StackOffset.NONE, null, false], stacked)) {
+    return null;
   }
-  return StackOffset.NONE;
+
+  // Should have stackable mark
+  if (!contains([BAR, AREA], specQ.mark)) {
+    return null;
+  }
+
+  // Should be aggregate plot
+  if (!isAggregate(specQ)) {
+    return null;
+  }
+
+  const stackByChannels = specQ.encodings.reduce((sc, encQ: EncodingQuery) => {
+    if (contains(STACK_GROUP_CHANNELS, encQ.channel) && !encQ.aggregate) {
+      sc.push(encQ.channel);
+    }
+    return sc;
+  }, []);
+
+  if (stackByChannels.length === 0) {
+    return null;
+  }
+
+  // Has only one aggregate axis
+  const xEncQ = specQ.encodings.reduce((f, encQ: EncodingQuery) => {
+    return f || (encQ.channel === Channel.X ? encQ : null);
+  }, null);
+  const yEncQ = specQ.encodings.reduce((f, encQ: EncodingQuery) => {
+    return f || (encQ.channel === Channel.Y ? encQ : null);
+  }, null);
+  const xIsAggregate = !!xEncQ && !!xEncQ.aggregate;
+  const yIsAggregate = !!yEncQ && !!yEncQ.aggregate;
+
+  if (xIsAggregate !== yIsAggregate) {
+    return {
+      groupbyChannel: xIsAggregate ? (!!yEncQ ? Y : null) : (!!xEncQ ? X : null),
+      fieldChannel: xIsAggregate ? X : Y,
+      stackByChannels: stackByChannels,
+      offset: stacked || StackOffset.ZERO
+    };
+  }
+  return null;
 }
 
 export interface TransformQuery {
