@@ -66,3 +66,10 @@ export function nestedMap(array: any[], f): any[] {
     return f(a);
   });
 }
+
+/** Returns the array without the elements in item */
+export function without<T>(array: Array<T>, excludedItems: Array<T>) {
+  return array.filter(function(item) {
+    return !contains(excludedItems, item);
+  });
+}

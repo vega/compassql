@@ -1,8 +1,9 @@
-import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR} from 'vega-lite/src/channel';
+import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR, STACK_GROUP_CHANNELS} from 'vega-lite/src/channel';
 import {Config} from 'vega-lite/src/config';
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Data} from 'vega-lite/src/data';
-import {Mark} from 'vega-lite/src/mark';
+import {Mark, BAR, AREA} from 'vega-lite/src/mark';
+import {StackOffset} from 'vega-lite/src/stack';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
@@ -198,6 +199,28 @@ export function stringifySpecQuery (specQ: SpecQuery): string {
       encodings;
 }
 
+/**
+ * @return the stack offset type for the specQuery
+ */
+export function stack(specQ: SpecQuery): StackOffset {
+  const hasStackGroupChannel = some(specQ.encodings, (encQ: EncodingQuery) => {
+    return contains(STACK_GROUP_CHANNELS, encQ.channel);
+  });
+
+  const config = specQ.config;
+  const stacked = (config && config.mark) ? config.mark.stacked : undefined;
+
+  if (hasStackGroupChannel && // has grouping field
+      // TODO: allow stacking point, circle, square as cleveland dot plot
+      contains([BAR, AREA], specQ.mark) && // has stackable mark
+      isAggregate(specQ) && // is aggregate
+      !contains([StackOffset.NONE, null, false], stacked) // stacking is not explicitly disabled.
+    ) {
+    return stacked || StackOffset.ZERO;
+  }
+  return StackOffset.NONE;
+}
+
 export interface TransformQuery {
   filter: FilterQuery[];
 }
@@ -231,6 +254,7 @@ export interface EncodingQuery {
 export interface BinQuery extends EnumSpec<boolean> {
   maxbins?: number | EnumSpec<number> | ShortEnumSpec;
 }
+
 
 export function isDimension(encQ: EncodingQuery) {
   return contains([Type.NOMINAL, Type.ORDINAL], encQ.type) ||
