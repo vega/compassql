@@ -3,6 +3,8 @@ import {Type} from 'vega-lite/src/type';
 import {Schema, FieldSchema, PrimitiveType} from '../src/schema';
 import {Stats, FieldStats} from '../src/stats';
 
+// Using Intersection Type  
+// https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#387-intersection-type-literals
 type Fixture = FieldSchema & FieldStats;
 
 const fixtures: Fixture[] = [{
