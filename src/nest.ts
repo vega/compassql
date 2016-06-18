@@ -123,14 +123,16 @@ function channelType(channel: Channel | EnumSpec<Channel>) {
       console.warn('channel type not implemented for ' + c);
       return c + '';
   }
+}
 
+function stringifyStack(specM: SpecQueryModel) {
+  const _stack = stack(specM.specQuery);
+  return (!!_stack ? 'stack=' + _stack.offset + '|' : '');
 }
 
 registerKeyFn(ENCODING, (specM: SpecQueryModel) => {
   // mark does not matter
-  const _stack = stack(specM.specQuery);
-
-  return (!!_stack ? 'stack=' + _stack.offset + '|' : '') +
+  return stringifyStack(specM)  +
     specM.getEncodings().map((encQ) => {
       const fieldDef = stringifyEncodingQueryFieldDef(encQ);
       return channelType(encQ.channel) + ':' + fieldDef;
@@ -140,7 +142,9 @@ registerKeyFn(ENCODING, (specM: SpecQueryModel) => {
 });
 
 registerKeyFn(TRANSPOSE, (specM: SpecQueryModel) => {
-  return specM.getMark() + '|' + specM.getEncodings().map((encQ) => {
+  return specM.getMark() + '|' +
+    stringifyStack(specM) +
+    specM.getEncodings().map((encQ) => {
       const fieldDef = stringifyEncodingQueryFieldDef(encQ);
       const channel = (encQ.channel === Channel.X || encQ.channel === Channel.Y) ? 'xy' :
         (encQ.channel === Channel.ROW || encQ.channel === Channel.COLUMN) ? 'facet' :

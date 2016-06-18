@@ -223,6 +223,43 @@ describe('nest', () => {
         return contains([Mark.BAR, Mark.AREA], item.getMark());
       });
     });
+
+    it('should separate different types of stacked and non-stacked visualizations even if it is nested ', () => {
+      const query = {
+        spec: {
+          mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: Channel.X,
+            aggregate: AggregateOp.SUM,
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: Channel.Y,
+            field: 'N',
+            type: Type.NOMINAL
+          }, {
+            channel: Channel.COLOR,
+            field: 'N1',
+            type: Type.NOMINAL
+          }]
+        },
+        nest: [{groupBy: ENCODING}, {groupBy: TRANSPOSE}],
+        config: DEFAULT_QUERY_CONFIG
+      };
+
+      const answerSet = generate(query.spec, schema, stats);
+      const groups = nest(answerSet, query, stats).items;
+      assert.equal(groups.length, 2);
+      assert.equal((groups[0] as SpecQueryModelGroup).name, 'non-xy:N1,n|xy:N,n|xy:sum(Q,q)');
+      (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModelGroup) => {
+        return !contains([Mark.BAR, Mark.AREA], (item.items[0] as SpecQueryModel).getMark());
+      });
+
+      assert.equal((groups[1] as SpecQueryModelGroup).name, 'stack=zero|non-xy:N1,n|xy:N,n|xy:sum(Q,q)');
+      (groups[1] as SpecQueryModelGroup).items.forEach((item: SpecQueryModelGroup) => {
+        return contains([Mark.BAR, Mark.AREA], (item.items[0] as SpecQueryModel).getMark());
+      });
+    });
   });
 
   describe('encoding/transpose', () => {
