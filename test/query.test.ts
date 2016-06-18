@@ -168,6 +168,21 @@ describe('query', () => {
           assert.equal(_stack.groupbyChannel, null);
         });
       });
+
+
+      it('should be correct for auto count', () => {
+        [BAR, AREA].forEach((stackableMark) => {
+          const specQ = {
+              mark: stackableMark,
+              encodings: [
+                {channel: Channel.Y, autoCount: true, type: Type.QUANTITATIVE},
+                {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
+              ]
+            };
+          const _stack = stack(specQ);
+          assert.isNotNull(_stack);
+        });
+      });
     });
 
     describe('stack().offset', () => {

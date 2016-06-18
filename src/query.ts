@@ -131,8 +131,8 @@ export function stack(specQ: SpecQuery): StackProperties {
   const yEncQ = specQ.encodings.reduce((f, encQ: EncodingQuery) => {
     return f || (encQ.channel === Channel.Y ? encQ : null);
   }, null);
-  const xIsAggregate = !!xEncQ && !!xEncQ.aggregate;
-  const yIsAggregate = !!yEncQ && !!yEncQ.aggregate;
+  const xIsAggregate = !!xEncQ && (!!xEncQ.aggregate || !!xEncQ.autoCount);
+  const yIsAggregate = !!yEncQ && (!!yEncQ.aggregate || !!yEncQ.autoCount);
 
   if (xIsAggregate !== yIsAggregate) {
     return {
