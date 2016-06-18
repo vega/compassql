@@ -418,7 +418,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       const stack = specM.stack();
       if (stack) {
         const measureEncQ = specM.getEncodingQueryByChannel(stack.fieldChannel);
-        return contains(SUM_OPS, measureEncQ.aggregate);
+        return contains(SUM_OPS, measureEncQ.aggregate) || !!measureEncQ.autoCount;
       }
       return true;
     }
