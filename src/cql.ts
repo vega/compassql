@@ -1,27 +1,18 @@
 export const version = '__VERSION__';
-import * as cqlConstraint from './constraint/constraint';
-import * as cqlEnumerate from './enumerator';
-import * as cqlGenerate from './generate';
-import * as cqlModel from './model';
-import * as cqlNest from './nest';
-import * as cqlProperty from './property';
+
 import * as cqlQuery from './query';
 import queryFn from './query';
-import * as cqlRanking from './ranking/ranking';
-import * as cqlSchema from './schema';
-import * as cqlStats from './stats';
-import * as cqlUtil from './util';
 import {extend} from './util';
 
-export const constraint = cqlConstraint;
-export const enumerate = cqlEnumerate;
-export const generate = cqlGenerate.generate;
-export const model = cqlModel;
-export const nest = cqlNest;
-export const property = cqlProperty;
-export const ranking = cqlRanking;
+export import constraint = require('./constraint/constraint');
+export import enumerate = require('./enumerator');
+export import generate = require('./generate');
+export import model = require('./model');
+export import nest = require('./nest');
+export import property = require('./property');
 // we can call cql.query() as method, or access other methods inside cql.query
 export const query = extend(queryFn, cqlQuery);
-export const schema = cqlSchema;
-export const stats = cqlStats;
-export const util = cqlUtil;
+export import ranking = require('./ranking/ranking');
+export import schema = require('./schema');
+export import stats = require('./stats');
+export import util = require('./util');
