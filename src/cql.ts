@@ -6,7 +6,7 @@ import {extend} from './util';
 
 export import constraint = require('./constraint/constraint');
 export import enumerate = require('./enumerator');
-export import generate = require('./generate');
+export {generate} from './generate';
 export import model = require('./model');
 export import nest = require('./nest');
 export import property = require('./property');
