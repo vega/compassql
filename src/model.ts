@@ -117,6 +117,7 @@ export class SpecQueryModel {
   private _enumSpecIndex: EnumSpecIndex;
   private _enumSpecAssignment: Dict<any>;
   private _schema: Schema;
+  private _opt: QueryConfig;
 
   private _rankingScore: Dict<RankingScore> = {};
 
@@ -218,10 +219,10 @@ export class SpecQueryModel {
       });
     }
 
-    return new SpecQueryModel(specQ, enumSpecIndex, schema);
+    return new SpecQueryModel(specQ, enumSpecIndex, schema, opt, {});
   }
 
-  constructor(spec: SpecQuery, enumSpecIndex: EnumSpecIndex, schema: Schema, enumSpecAssignment: Dict<any> = {}) {
+  constructor(spec: SpecQuery, enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig, enumSpecAssignment: Dict<any>) {
     this._spec = spec;
     this._channelCount = spec.encodings.reduce((m, encQ) => {
       if (!isEnumSpec(encQ.channel) && encQ.autoCount !== false) {
@@ -232,7 +233,7 @@ export class SpecQueryModel {
 
     this._enumSpecIndex = enumSpecIndex;
     this._enumSpecAssignment = enumSpecAssignment;
-
+    this._opt = opt;
     this._schema = schema;
   }
 
@@ -249,7 +250,7 @@ export class SpecQueryModel {
   }
 
   public duplicate(): SpecQueryModel {
-    return new SpecQueryModel(duplicate(this._spec), this._enumSpecIndex, this._schema, duplicate(this._enumSpecAssignment));
+    return new SpecQueryModel(duplicate(this._spec), this._enumSpecIndex, this._schema, this._opt, duplicate(this._enumSpecAssignment));
   }
 
   public setMark(mark: Mark) {
@@ -365,13 +366,7 @@ export class SpecQueryModel {
     return stringifySpecQuery(this._spec);
   }
 
-  /**
-   * Convert a query to a Vega-Lite spec if it is completed.
-   * @return a Vega-Lite spec if completed, null otherwise.
-   */
-  public toSpec(data?: Data): ExtendedUnitSpec {
-    if (isEnumSpec(this._spec.mark)) return null;
-
+  private _encoding(): Encoding {
     let encoding: Encoding = {};
 
     for (let i = 0; i < this._spec.encodings.length; i++) {
@@ -406,16 +401,30 @@ export class SpecQueryModel {
 
       encoding[encQ.channel as Channel] = fieldDef;
     }
+    return encoding;
+  }
+  /**
+   * Convert a query to a Vega-Lite spec if it is completed.
+   * @return a Vega-Lite spec if completed, null otherwise.
+   */
+  public toSpec(data?: Data): ExtendedUnitSpec {
+    if (isEnumSpec(this._spec.mark)) return null;
 
+    let spec: any = {};
     data = data || this._spec.data;
-    return extend(
-      data ? { data: data } : {},
-      {
-        // TODO: transform, config
-        mark: this._spec.mark as Mark,
-        encoding: encoding
-      }
-    );
+    if (data) {
+      spec.data = data;
+    }
+    // TODO: transform
+    spec.mark = this._spec.mark as Mark;
+    spec.encoding = this._encoding();
+    if (spec.encoding === null) {
+      return null;
+    }
+    if (this._spec.config || this._opt.defaultSpecConfig)
+    spec.config = extend({}, this._opt.defaultSpecConfig, this._spec.config);
+
+    return spec;
   }
 
   public getRankingScore(rankingName: string) {

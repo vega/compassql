@@ -1,5 +1,6 @@
 import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR} from 'vega-lite/src/channel';
 import {AggregateOp} from 'vega-lite/src/aggregate';
+import {Config} from 'vega-lite/src/config';
 import {Mark} from 'vega-lite/src/mark';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
@@ -8,6 +9,8 @@ import {Property, DEFAULT_PROPERTY_PRECENCE} from './property';
 
 export interface QueryConfig {
   verbose?: boolean;
+
+  defaultSpecConfig?: Config,
 
   propertyPrecedence?: Property[];
 
@@ -74,6 +77,10 @@ export interface QueryConfig {
 
 export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   verbose: false,
+  defaultSpecConfig: {
+    overlay: {line: true},
+    scale: {useRawDomain: true}
+  },
   propertyPrecedence: DEFAULT_PROPERTY_PRECENCE,
 
   marks: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK], // Mark.TEXT
