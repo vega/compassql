@@ -229,7 +229,7 @@ export const SET_FACET_PREFERENCE: RuleSet<SpecQueryModel> = {
   name: 'Facet Preference',
   rules: function() {
     const rules: Rule<SpecQueryModel>[] = [];
-    function facetedPlot(facet: Channel) {
+    function facetedPlot(mark: Mark, facet: Channel) {
       return build({
         mark: 'point',
         encodings: [
@@ -240,10 +240,10 @@ export const SET_FACET_PREFERENCE: RuleSet<SpecQueryModel> = {
       });
     }
 
-    [BAR, POINTS, TICK, LINE, AREA].forEach((mark) => {
+    POINTS.concat([BAR, TICK, LINE, AREA]).forEach((mark) => {
       rules.push({
         name: 'Row over column',
-        items: [facetedPlot(Channel.ROW), facetedPlot(Channel.COLUMN)]
+        items: [facetedPlot(mark, Channel.ROW), facetedPlot(mark, Channel.COLUMN)]
       });
     });
 

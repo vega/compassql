@@ -90,6 +90,7 @@ describe('enumerator', () => {
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
+        // Shape should be excluded since it does not work with bar.
       });
     });
 

@@ -80,7 +80,7 @@ describe('preferredAxisScore', () => {
 export const PREFERRED_FACET_RULESET: RuleSet<string> = {
   name: 'preferredFacetScore',
   rules: [{
-    name: 'preferredFacetScore' + '',
+    name: 'preferredFacetScore',
     items: [ROW, COLUMN] as any[]
   }]
 };
