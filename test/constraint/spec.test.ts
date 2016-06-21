@@ -391,6 +391,44 @@ describe('constraints/spec', () => {
       assert.isFalse(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specM, schema, stats, defaultOpt));
     });
   });
+  describe('omitAggregatePlotWithDimensionOnlyOnFacet', () => {
+    it('should return false if the only dimension is facet', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.ROW, field: 'N', type: Type.NOMINAL}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, stats, defaultOpt));
+    });
+
+    it('should return true if the only dimension is not facet', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.SHAPE, field: 'N', type: Type.NOMINAL}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, stats, defaultOpt));
+    });
+
+    it('should return true if there are both facet and non-facet dimension', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.ROW, field: 'N', type: Type.NOMINAL},
+          {channel: Channel.SHAPE, field: 'N', type: Type.NOMINAL}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, stats, defaultOpt));
+    });
+  });
 
   describe('omitBarLineAreaWithOcclusion', () => {
     [Mark.BAR, Mark.LINE, Mark.AREA].forEach((mark) => {

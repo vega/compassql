@@ -41,6 +41,7 @@ export interface QueryConfig {
   // Spec Constraints
 
   hasAppropriateGraphicTypeForMark?: boolean;
+  omitAggregatePlotWithDimensionOnlyOnFacet?: boolean;
   omitBarLineAreaWithOcclusion?: boolean;
   omitBarTickWithSize?: boolean;
   omitFacetOverPositionalChannels?: boolean;
@@ -90,6 +91,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   autoAddCount: false,
 
   hasAppropriateGraphicTypeForMark: true,
+  omitAggregatePlotWithDimensionOnlyOnFacet: true,
   omitBarLineAreaWithOcclusion: true,
   omitBarTickWithSize: true,
   omitFacetOverPositionalChannels: true,

@@ -199,6 +199,28 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
+    name: 'omitAggregatePlotWithDimensionOnlyOnFacet',
+    description: 'All required channels for the specified mark should be specified',
+    properties: [Property.CHANNEL, Property.AGGREGATE, Property.AUTOCOUNT],
+    requireAllProperties: true,
+    strict: false,
+    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      if (specM.isAggregate()) {
+        let hasNonFacetDim = false, hasDim = false;
+        specM.getEncodings().forEach((encQ) => {
+          if (!encQ.aggregate && !encQ.autoCount) { // isDimension
+            hasDim = true;
+            if (!contains([Channel.ROW, Channel.COLUMN], encQ.channel)) {
+              hasNonFacetDim = true;
+            }
+          }
+        });
+        return !hasDim || hasNonFacetDim;
+      }
+      return true;
+    }
+  },
+  {
     // TODO: we can be smarter and check if bar has occlusion based on profiling statistics
     name: 'omitBarLineAreaWithOcclusion',
     description: 'Don\'t use bar, line or area to visualize raw plot as they often lead to occlusion.',
