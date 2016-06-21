@@ -1,5 +1,5 @@
 import {AggregateOp} from 'vega-lite/src/aggregate';
-import {X, Y, SIZE, COLOR, Channel} from 'vega-lite/src/channel';
+import {Channel, X, Y, SIZE, COLOR, OPACITY, ROW, COLUMN, SHAPE} from 'vega-lite/src/channel';
 import {AREA, BAR, POINT, SQUARE, CIRCLE, TICK, LINE, RULE, Mark} from 'vega-lite/src/mark';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
@@ -252,6 +252,33 @@ export const SET_FACET_PREFERENCE: RuleSet<SpecQueryModel> = {
 };
 
 
+export const DIMENSION_PREFERENCE: RuleSet<SpecQueryModel> = {
+  name: 'Dimension Preference',
+  rules: function() {
+    const rules: Rule<SpecQueryModel>[] = [];
+    function facetedPlot(mark: Mark, dim: Channel) {
+      return build({
+        mark: mark,
+        encodings: [
+          {channel: X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: dim, field: 'N', type: Type.NOMINAL}
+        ]
+      });
+    }
+
+    POINTS.concat([BAR, TICK, LINE, AREA]).forEach((mark) => {
+      rules.push({
+        name: 'Row over column',
+        items: nestedMap([[COLOR, SIZE, OPACITY, SHAPE], [ROW, COLUMN]], (dim: Channel) => {
+          return facetedPlot(mark, dim);
+        })
+      });
+    });
+
+    return rules;
+  }()
+};
 
 function getScore(specM: SpecQueryModel) {
   const featureScores = effectiveness(specM, stats, DEFAULT_QUERY_CONFIG);

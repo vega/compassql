@@ -203,3 +203,36 @@ export namespace MarkChannelScore {
     }, []);
   }
 }
+
+/**
+ * Penalize if facet channels are the only dimensions
+ */
+export namespace DimensionScore {
+  export const DIMENSION = 'dimension';
+
+  export function init() {
+    return {
+      row: -2,
+      column: -2,
+      color: 0,
+      opacity: 0,
+      size: 0,
+      shape: 0
+    } as Dict<number>;
+  }
+
+  export function getScore(specM: SpecQueryModel, stats: Stats, opt: QueryConfig): FeatureScore[] {
+    if (specM.isAggregate()) {
+      specM.getEncodings().reduce((maxFScore, encQ: EncodingQuery) => {
+        if (!encQ.aggregate && !encQ.autoCount) { //isDimension
+          const featureScore = getFeatureScore(DIMENSION, encQ.channel + '');
+          if (featureScore.score > maxFScore.score) {
+            return featureScore;
+          }
+        }
+        return maxFScore;
+      }, {type: DIMENSION, feature: 'No Dimension', score: -5});
+    }
+    return [];
+  }
+}

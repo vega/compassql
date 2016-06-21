@@ -1,7 +1,7 @@
 import {X, Y, SIZE, COLOR, OPACITY, TEXT, ROW, COLUMN, SHAPE, DETAIL} from 'vega-lite/src/channel';
 
 import {BIN_Q, TIMEUNIT_T, Q, N, O, T} from '../../../src/ranking/effectiveness/type';
-import {TypeChannelScore, PreferredAxisScore, PreferredFacetScore} from '../../../src/ranking/effectiveness/channel';
+import {TypeChannelScore, PreferredAxisScore, PreferredFacetScore, DimensionScore} from '../../../src/ranking/effectiveness/channel';
 import {nestedMap} from '../../../src/util';
 import {RuleSet, testRuleSet} from './rule';
 
@@ -94,4 +94,22 @@ describe('preferredFacetScore', () => {
 
 
   testRuleSet(PREFERRED_FACET_RULESET, getPreferredFacetScore);
+});
+
+export const PREFERRED_DIMENSION_RULESET: RuleSet<string> = {
+  name: 'dimensionScore',
+  rules: [{
+    name: 'dimensionScore',
+    items: [[COLOR, SIZE, OPACITY, SHAPE], [ROW, COLUMN]] as any[]
+  }]
+};
+
+describe('dimensionScore', () => {
+  const DIMENSION_SCORE = DimensionScore.init();
+
+  function getDimensionScore(feature: string) {
+    return DIMENSION_SCORE[feature];
+  }
+
+  testRuleSet(PREFERRED_DIMENSION_RULESET, getDimensionScore);
 });
