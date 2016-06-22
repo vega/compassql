@@ -183,6 +183,56 @@ export const SET_2D: RuleSet<SpecQueryModel> = {
 };
 
 
+export const SET_3D: RuleSet<SpecQueryModel> = {
+  name: 'encoding for plots with 3 fields',
+  rules: function() {
+    const rules: Rule<SpecQueryModel>[] = [];
+
+    rules.push({
+      name: 'Nx?(Q)x?(Q)',
+      items: nestedMap([{
+        mark: POINT,
+        encodings: [
+          {channel: X, field: 'Q', type: Type.QUANTITATIVE},
+          {channel: Y, field: 'Q1', type: Type.QUANTITATIVE},
+          {channel: COLOR, field: 'N', type: Type.NOMINAL}
+        ]
+      },{
+        mark: POINT,
+        encodings: [
+          {channel: X, field: 'Q', type: Type.QUANTITATIVE},
+          {channel: SIZE, field: 'Q1', type: Type.QUANTITATIVE},
+          {channel: Y, field: 'N', type: Type.NOMINAL}
+        ]
+        // TODO: consider facet
+      }], (specQ) => SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG))
+    });
+
+    rules.push({
+      name: 'Ox?(Q)x?(Q)',
+      items: nestedMap([{
+        mark: POINT,
+        encodings: [
+          {channel: X, field: 'Q', type: Type.QUANTITATIVE},
+          {channel: Y, field: 'Q1', type: Type.QUANTITATIVE},
+          {channel: COLOR, field: 'O', type: Type.ORDINAL}
+        ]
+      },{
+        mark: POINT,
+        encodings: [
+          {channel: X, field: 'Q', type: Type.QUANTITATIVE},
+          {channel: SIZE, field: 'Q1', type: Type.QUANTITATIVE},
+          {channel: Y, field: 'O', type: Type.ORDINAL}
+        ]
+        // TODO: consider facet
+      }], (specQ) => SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG))
+    });
+
+    return rules;
+  }()
+};
+
+
 export const SET_AXIS_PREFERRENCE: RuleSet<SpecQueryModel> = {
   name: 'Axis Preference',
   rules: function() {
@@ -294,6 +344,10 @@ describe('effectiveness', () => {
 
   describe(SET_2D.name, () => {
     testRuleSet(SET_2D, getScore, (specM) => specM.toShorthand()) ;
+  });
+
+  describe(SET_3D.name, () => {
+    testRuleSet(SET_3D, getScore, (specM) => specM.toShorthand()) ;
   });
 
   describe(SET_AXIS_PREFERRENCE.name, () => {
