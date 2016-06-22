@@ -20,8 +20,9 @@ export class Stats {
     } else if (encQ.timeUnit) {
       return 1; // FIXME
     }
-
+    console.log('felix was here' + encQ.field as string);
     return this._fieldStatsIndex[encQ.field as string].distinct;
+    
   }
 }
 

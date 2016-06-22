@@ -10,11 +10,7 @@
       }
     ]
   },
-  "nest": [
-    {"groupBy": "fieldTransform"},
-    {"groupBy": "encoding", "orderGroupBy": "effectiveness"},
-    {"groupBy": "transpose", "orderGroupBy": "effectiveness"}
-  ],
+  "nest": "UNDO ME",
   "orderBy": "effectiveness",
   "config": {
     "autoAddCount": true

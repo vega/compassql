@@ -15,10 +15,10 @@ import {Schema} from './schema';
 import {Stats} from './stats';
 import {contains, extend, some} from './util';
 
-export default function(query: Query, schema: Schema, stats: Stats) {
-  const answerSet = generate(query.spec, schema, stats, query.config);
-  const nestedAnswerSet = nest(answerSet, query, stats);
-  return rank(nestedAnswerSet, query, stats, 0);
+export function query(q: Query, schema: Schema, stats: Stats) {
+  const answerSet = generate(q.spec, schema, stats, q.config);
+  const nestedAnswerSet = nest(answerSet, q, stats);
+  return rank(nestedAnswerSet, q, stats, 0);
 }
 
 export interface QueryConfig {

@@ -1,7 +1,7 @@
 export const version = '__VERSION__';
 
 import * as cqlQuery from './query';
-import queryFn from './query';
+import {query as queryFn} from './query';
 import {extend} from './util';
 
 export import constraint = require('./constraint/constraint');

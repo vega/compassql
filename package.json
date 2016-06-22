@@ -16,7 +16,7 @@
     "watch": "nodemon -x 'npm run build && npm run test:only && npm run lint'",
     "schema": "typescript-json-schema --required true src/query.ts Query > compassql-schema.json",
     "tsc": "tsc",
-    "test": "tsc && npm run test:only",
+    "test": "tsc && npm run test:only examples",
     "test:only": "mocha --recursive --require source-map-support/register",
     "test:debug": "mocha --recursive --require source-map-support/register --debug-brk"
   },
@@ -57,7 +57,8 @@
     "typescript": "^1.7.5",
     "uglify-js": "^2.6.1",
     "vega": "^2.5.2",
-    "vega-datasets": "latest"
+    "vega-datasets": "latest",
+    "z-schema": "^3.17.0" 
   },
   "dependencies": {
     "vega-lite": "^1.0.11",

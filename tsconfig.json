@@ -27,6 +27,7 @@
         "lib"
     ],
     "files": [
+        "examples/examples-test.ts",
         "src/cql.ts",
         "src/constraint/encoding.ts",
         "src/constraint/spec.ts",
@@ -54,7 +55,8 @@
         "test/query.test.ts",
         "typings/chai.d.ts",
         "typings/datalib.d.ts",
-        "typings/mocha.d.ts"
+        "typings/mocha.d.ts",
+        "typings/node.d.ts"
     ],
     "atom": {
         "rewriteTsconfig": true
