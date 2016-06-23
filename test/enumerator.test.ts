@@ -95,7 +95,26 @@ describe('enumerator', () => {
     });
 
     describe('aggregate', () => {
-      // TODO
+      it('should correctly enumerate aggregate', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              aggregate: {values: [AggregateOp.MEAN, AggregateOp.MEDIAN]},
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 2);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEAN);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEDIAN);
+      });
+      
     });
 
     describe('bin', () => {
