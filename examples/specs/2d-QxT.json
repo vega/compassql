@@ -7,7 +7,7 @@
         "channel": "?",
         "bin": "?",
         "aggregate": "?",
-        "field": "IMBD_Rating",
+        "field": "IMDB_Rating",
         "type": "quantitative"
       },{
         "channel": "?",
