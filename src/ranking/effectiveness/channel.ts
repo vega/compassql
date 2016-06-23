@@ -23,7 +23,7 @@ export namespace TypeChannelScore {
       x: 0,
       y: 0,
       size: -0.45,  // TODO: penalize ordinal
-      color: -0.7,
+      color: -0.6,
       opacity: -0.75,
       text: -0.775, // FIXME revise
       row: -0.8,
@@ -41,7 +41,7 @@ export namespace TypeChannelScore {
     // Penalize row/column for bin quantitative / timeUnit_temporal
     [BIN_Q ,TIMEUNIT_T, O].forEach((type) => {
       [Channel.ROW, Channel.COLUMN].forEach((channel) => {
-        SCORE[featurize(type, channel)] += 0.15;
+        SCORE[featurize(type, channel)] += 0.25;
       });
     });
 

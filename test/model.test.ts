@@ -12,6 +12,8 @@ import {SHORT_ENUM_SPEC, SpecQuery, isEnumSpec} from '../src/query';
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
 
+const DEFAULT_SPEC_CONFIG = DEFAULT_QUERY_CONFIG.defaultSpecConfig;
+
 describe('SpecQueryModel', () => {
   const schema = new Schema([]);
 
@@ -255,7 +257,8 @@ describe('SpecQueryModel', () => {
         mark: Mark.BAR,
         encoding: {
           x: {field: 'A', type: Type.QUANTITATIVE}
-        }
+        },
+        config: DEFAULT_SPEC_CONFIG
       });
     });
 
@@ -274,7 +277,8 @@ describe('SpecQueryModel', () => {
         encoding: {
           x: {field: 'A', type: Type.ORDINAL},
           y: {aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE}
-        }
+        },
+        config: DEFAULT_SPEC_CONFIG
       });
     });
 
@@ -292,7 +296,8 @@ describe('SpecQueryModel', () => {
         mark: Mark.BAR,
         encoding: {
           x: {field: 'A', type: Type.ORDINAL}
-        }
+        },
+        config: DEFAULT_SPEC_CONFIG
       });
     });
 
@@ -312,7 +317,8 @@ describe('SpecQueryModel', () => {
         mark: Mark.BAR,
         encoding: {
           x: {field: 'A', type: Type.ORDINAL}
-        }
+        },
+        config: DEFAULT_SPEC_CONFIG
       });
     });
 
@@ -321,7 +327,8 @@ describe('SpecQueryModel', () => {
         mark: {values: [Mark.BAR, Mark.POINT]},
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
-        ]
+        ],
+        config: DEFAULT_SPEC_CONFIG
       });
 
       assert.isNull(specM.toSpec());
