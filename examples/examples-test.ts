@@ -39,8 +39,9 @@ const cqlSchema = require('../compassql-schema.json');
 const vlSchema = require('../node_modules/vega-lite/vega-lite-schema.json');
 
 function generatedStats(url: String) {  
+function generatedStats(filepath: String) {  
 
-  var data = load({url});
+  var data = load({url: filepath});
  // console.log(data);
   var summ = summary(data);      
   return new Stats(summ);
