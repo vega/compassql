@@ -16,9 +16,41 @@ import {Stats} from './stats';
 import {contains, extend, some} from './util';
 
 export default function(query: Query, schema: Schema, stats: Stats) {
+  query = normalize(query);
   const answerSet = generate(query.spec, schema, stats, query.config);
   const nestedAnswerSet = nest(answerSet, query, stats);
   return rank(nestedAnswerSet, query, stats, 0);
+}
+
+/**
+ * Normalize the non-nested version of the query to a standardize nested
+ */
+export function normalize(q: Query): Query {
+  if (q.groupBy) {
+    let nest: Nest = {
+      groupBy: q.groupBy
+    };
+
+    if (q.orderBy) {
+      nest.orderGroupBy = q.orderBy;
+    }
+
+    let normalizedQ: Query = {
+      spec: q.spec,
+      nest: [nest],
+    };
+
+    if (q.chooseBy) {
+      normalizedQ.chooseBy = q.chooseBy;
+    }
+
+    if (q.config) {
+      normalizedQ.config = q.config;
+    }
+
+    return normalizedQ;
+  }
+  return q;
 }
 
 
@@ -52,6 +84,7 @@ function enumSpecShort(value: any): string {
 export interface Query {
   spec: SpecQuery;
   nest?: Nest[];
+  groupBy?: string;
   orderBy?: string;
   chooseBy?: string;
   config?: QueryConfig;

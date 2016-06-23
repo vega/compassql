@@ -5,10 +5,9 @@ import {StackOffset} from 'vega-lite/src/stack';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-
 import {assert} from 'chai';
 
-import {SHORT_ENUM_SPEC, initEnumSpec, stack, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery} from '../src/query';
+import {Query, SHORT_ENUM_SPEC, initEnumSpec, stack, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery, normalize} from '../src/query';
 import {without} from '../src/util';
 
 describe('query', () => {
@@ -18,6 +17,36 @@ describe('query', () => {
       assert.deepEqual(binQuery.values, [true, false]);
       assert.equal(binQuery.maxbins, 30);
       assert.equal(binQuery.name, 'b1');
+    });
+  });
+
+  describe('normalize', () => {
+    it('should correctly normalize query', () => {
+      const q: Query = {
+        spec: {
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
+          ]
+        },
+        groupBy: 'fieldTransform',
+        chooseBy: 'effectiveness',
+        orderBy: 'effectiveness'
+      };
+
+      assert.deepEqual(normalize(q), {
+        spec: {
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
+          ]
+        },
+        nest: [{
+          groupBy: 'fieldTransform',
+          orderGroupBy: 'effectiveness'
+        }],
+        chooseBy: 'effectiveness'
+      });
     });
   });
 
