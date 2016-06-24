@@ -237,7 +237,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              field: {values: ['N', 'N20']},
+              field: {values: ['N', 'N20', 'Q', 'O', 'T']},
               type: Type.NOMINAL
             }
           ]
