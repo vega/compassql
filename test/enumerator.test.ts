@@ -216,7 +216,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              field: {values: ['O', 'O_10', 'O_20', 'O_100']},
+              field: {values: ['O', 'O_10', 'O_20', 'O_100', 'Q', 'O', 'N']},
               type: Type.ORDINAL
             }
           ]
