@@ -172,7 +172,7 @@ describe('enumerator', () => {
     });
 
     describe('field', () => {
-      it('should correctly enumerate fields with quantiative type', () => {
+      it('should correctly enumerate fields with quantitative type', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
