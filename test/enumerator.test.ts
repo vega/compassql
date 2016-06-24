@@ -116,7 +116,25 @@ describe('enumerator', () => {
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEAN);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEDIAN);
       });
-      
+    
+      it('should not enumerate aggregate when type is nominal', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              aggregate: {values: [AggregateOp.MEAN, AggregateOp.MEDIAN]},
+              field: 'N',
+              type: Type.NOMINAL
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 0);
+      });
+    
     });
 
     describe('bin', () => {
