@@ -188,8 +188,8 @@ describe('enumerator', () => {
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).field, 'Q');
-        assert.equal(answerSet[1].getEncodingQueryByIndex(1).field, 'Q1');
-        assert.equal(answerSet[2].getEncodingQueryByIndex(2).field, 'Q2');
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).field, 'Q1');
+        assert.equal(answerSet[2].getEncodingQueryByIndex(0).field, 'Q2');
       });
 
       it('should correctly enumerate fields with temporal type', () => {
