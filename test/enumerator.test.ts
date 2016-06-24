@@ -178,7 +178,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              field: {values: ['Q', 'Q1', 'Q2']},
+              field: {values: ['Q', 'Q1', 'Q2', 'O', 'N', 'T']},
               type: Type.QUANTITATIVE
             }
           ]
