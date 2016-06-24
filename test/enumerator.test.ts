@@ -1,7 +1,9 @@
 import {assert} from 'chai';
 
+import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
+import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
