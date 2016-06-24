@@ -149,7 +149,6 @@ describe('enumerator', () => {
     });
 
     describe('timeUnit', () => {
-      // TODO
       it('should correctly enumerate timeUnits', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
