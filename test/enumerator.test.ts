@@ -198,7 +198,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              field: 'T',
+              field: {values: ['T', 'Q', 'O', 'N']},
               type: Type.TEMPORAL
             }
           ]
