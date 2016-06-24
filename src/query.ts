@@ -202,7 +202,7 @@ export interface EncodingQuery {
   bin?: boolean | BinQuery | ShortEnumSpec;
 
   field?: Field | EnumSpec<Field> | ShortEnumSpec;
-  type?: Type | EnumSpec<Field> | ShortEnumSpec;
+  type?: Type | EnumSpec<Type> | ShortEnumSpec;
   // TODO: value
 
   // TODO: scaleQuery, axisQuery, legendQuery
