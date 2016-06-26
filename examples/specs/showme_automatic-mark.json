@@ -1,0 +1,19 @@
+{
+  "spec": {
+    "data": {"url": "data/cars.json"},
+    "mark": "?",
+    "encodings": [
+      {
+        "channel": "x",
+        "aggregate": "mean",
+        "field": "Horsepower",
+        "type": "quantitative"
+      },{
+        "channel": "y",
+        "field": "Cylinders",
+        "type": "ordinal"
+      }
+    ]
+  },
+  "chooseBy": "effectiveness"
+}

@@ -1,0 +1,24 @@
+{
+  "spec": {
+    "data": {"url": "data/cars.json"},
+    "mark": "?",
+    "encodings": [
+      {
+        "channel": "?",
+        "field": "Cylinders",
+        "type": "ordinal"
+      },{
+        "channel": "?",
+        "bin": "?",
+        "aggregate": "?",
+        "field": "Horsepower",
+        "type": "quantitative"
+      }
+    ]
+  },
+  "groupBy": "fieldTransform" ,
+  "chooseBy": "effectiveness",
+  "config": {
+    "autoAddCount": true
+  }
+}
