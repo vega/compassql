@@ -79,6 +79,8 @@ export function nest(specModels: SpecQueryModel[], query: Query, stats: Stats): 
       }
       group.items.push(specM);
     });
+  } else {
+    rootGroup.items = specModels;
   }
   return rootGroup;
 }
