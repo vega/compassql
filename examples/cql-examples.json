@@ -66,5 +66,24 @@
       "name": "bin_maxbins",
       "title": "Histogram - maxbins?"
     }
+  ],
+  "Demo": [
+    {
+      "name": "rank-by-feature_histogram",
+      "title": "Univariate Summary"
+    },
+    {
+      "name": "showme_add-to-sheet",
+      "title": "Show Me: Add To Sheet"
+    },
+    {
+      "name": "showme_automatic-mark",
+      "title": "Show Me: Automatic Mark"
+    },
+    {
+      "name": "voyager_exact-match",
+      "title": "Voyager Exact Match"
+    }
+
   ]
 }
