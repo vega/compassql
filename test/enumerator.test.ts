@@ -270,7 +270,7 @@ describe('enumerator', () => {
     });
 
     describe('type', () => {
-      it('should correctly enumerate quantitative types with default config turned off', () => {
+      it('should correctly enumerate numeric field with typeMatchesSchemaType config turned off', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
@@ -287,7 +287,7 @@ describe('enumerator', () => {
         assert.equal(answerSet[2].getEncodingQueryByIndex(0).type, Type.ORDINAL);
       });
 
-      it('should correctly enumerate quantitative types with default config turned on', () => {
+      it('should correctly enumerate numeric field with typeMatchesSchemaType turned on', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
@@ -305,7 +305,7 @@ describe('enumerator', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, field: 'O', type: {values: [Type.ORDINAL, Type.TEMPORAL]}}
+            {channel: Channel.X, field: 'O', type: {values: [Type.ORDINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.NOMINAL]}}
           ]
         });
         const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
@@ -319,7 +319,7 @@ describe('enumerator', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, field: 'T', type: {values:[Type.TEMPORAL, Type.ORDINAL]}}
+            {channel: Channel.X, field: 'T', type: {values:[Type.TEMPORAL, Type.ORDINAL, Type.QUANTITATIVE, Type.NOMINAL]}}
           ]
         });
         const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
@@ -333,7 +333,7 @@ describe('enumerator', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, field: 'N', type: {values: [Type.NOMINAL, Type.TEMPORAL]}}
+            {channel: Channel.X, field: 'N', type: {values: [Type.NOMINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.ORDINAL]}}
           ]
         });
         const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
