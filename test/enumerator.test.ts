@@ -187,6 +187,24 @@ describe('enumerator', () => {
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).timeUnit, TimeUnit.DAY);
         assert.equal(answerSet[2].getEncodingQueryByIndex(0).timeUnit, TimeUnit.YEAR);
       });
+
+      it('should not enumerate timeUnit with non-temporal field', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              field: 'Q',
+              timeUnit: {values: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR]},
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.TIMEUNIT](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 0);
+      });
     });
 
     describe('field', () => {
