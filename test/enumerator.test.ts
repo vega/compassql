@@ -124,7 +124,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              aggregate: {values: [AggregateOp.MEAN, AggregateOp.MEDIAN]},
+              aggregate: {values: [AggregateOp.MEAN, AggregateOp.MEDIAN, undefined]},
               field: 'N',
               type: Type.NOMINAL
             }
@@ -133,7 +133,8 @@ describe('enumerator', () => {
         const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
-        assert.equal(answerSet.length, 0);
+        assert.equal(answerSet.length, 1);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, undefined);
       });
     
     });
@@ -175,7 +176,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               field: 'Q',
-              timeUnit: {values: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR]},
+              timeUnit: {values: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR, undefined]},
               type: Type.TEMPORAL
             }
           ]
@@ -183,10 +184,11 @@ describe('enumerator', () => {
         const enumerator = ENUMERATOR_INDEX[Property.TIMEUNIT](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
-        assert.equal(answerSet.length, 3);
+        assert.equal(answerSet.length, 4);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).timeUnit, TimeUnit.MONTH);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).timeUnit, TimeUnit.DAY);
         assert.equal(answerSet[2].getEncodingQueryByIndex(0).timeUnit, TimeUnit.YEAR);
+        assert.equal(answerSet[3].getEncodingQueryByIndex(0).timeUnit, undefined);
       });
 
       it('should not enumerate timeUnit with non-temporal field', () => {
@@ -196,7 +198,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               field: 'Q',
-              timeUnit: {values: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR]},
+              timeUnit: {values: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR, undefined]},
               type: Type.QUANTITATIVE
             }
           ]
@@ -204,7 +206,8 @@ describe('enumerator', () => {
         const enumerator = ENUMERATOR_INDEX[Property.TIMEUNIT](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
-        assert.equal(answerSet.length, 0);
+        assert.equal(answerSet.length, 1);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).timeUnit, undefined);
       });
     });
 
