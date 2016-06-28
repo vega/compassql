@@ -1,7 +1,9 @@
 import {assert} from 'chai';
 
+import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
+import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
@@ -95,7 +97,46 @@ describe('enumerator', () => {
     });
 
     describe('aggregate', () => {
-      // TODO
+      it('should correctly enumerate aggregate', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              aggregate: {values: [AggregateOp.MEAN, AggregateOp.MEDIAN, undefined]},
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 3);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEAN);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEDIAN);
+        assert.equal(answerSet[2].getEncodingQueryByIndex(0).aggregate, undefined);
+      });
+    
+      it('should not enumerate aggregate when type is nominal', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              aggregate: {values: [AggregateOp.MEAN, AggregateOp.MEDIAN, undefined]},
+              field: 'N',
+              type: Type.NOMINAL
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 1);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, undefined);
+      });
+    
     });
 
     describe('bin', () => {
@@ -128,15 +169,201 @@ describe('enumerator', () => {
     });
 
     describe('timeUnit', () => {
-      // TODO
+      it('should correctly enumerate timeUnits', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              field: 'Q',
+              timeUnit: {values: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR, undefined]},
+              type: Type.TEMPORAL
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.TIMEUNIT](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 4);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).timeUnit, TimeUnit.MONTH);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).timeUnit, TimeUnit.DAY);
+        assert.equal(answerSet[2].getEncodingQueryByIndex(0).timeUnit, TimeUnit.YEAR);
+        assert.equal(answerSet[3].getEncodingQueryByIndex(0).timeUnit, undefined);
+      });
+
+      it('should not enumerate timeUnit with non-temporal field', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              field: 'Q',
+              timeUnit: {values: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR, undefined]},
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.TIMEUNIT](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 1);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).timeUnit, undefined);
+      });
     });
 
     describe('field', () => {
-      // TODO
+      it('should correctly enumerate fields with quantitative type', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              field: {values: ['Q', 'Q1', 'Q2', 'O', 'N', 'T']},
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 3);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).field, 'Q');
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).field, 'Q1');
+        assert.equal(answerSet[2].getEncodingQueryByIndex(0).field, 'Q2');
+      });
+
+      it('should correctly enumerate fields with temporal type', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              field: {values: ['T', 'Q', 'O', 'N']},
+              type: Type.TEMPORAL
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 1);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).field, 'T');
+      });
+
+      it('should correctly enumerate fields with ordinal type', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              field: {values: ['O', 'O_10', 'O_20', 'O_100', 'Q', 'T', 'N']},
+              type: Type.ORDINAL
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 4);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).field, 'O');
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).field, 'O_10');
+        assert.equal(answerSet[2].getEncodingQueryByIndex(0).field, 'O_20');
+        assert.equal(answerSet[3].getEncodingQueryByIndex(0).field, 'O_100');
+      });
+
+      it('should correctly enumerate fields with nominal type', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              field: {values: ['N', 'N20', 'Q', 'O', 'T']},
+              type: Type.NOMINAL
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 2);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).field, 'N');
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).field, 'N20');
+      });
     });
 
     describe('type', () => {
-      // TODO
+      it('should correctly enumerate numeric field with typeMatchesSchemaType config turned off', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: 'Q', type:  {values: [Type.QUANTITATIVE, Type.NOMINAL, Type.ORDINAL, Type.TEMPORAL]}},
+          ]
+        });
+        const noTypeMatchesSchema = extend({}, DEFAULT_QUERY_CONFIG, {typeMatchesSchemaType: false});
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, stats, noTypeMatchesSchema);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 3);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).type, Type.QUANTITATIVE);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).type, Type.NOMINAL);
+        assert.equal(answerSet[2].getEncodingQueryByIndex(0).type, Type.ORDINAL);
+      });
+
+      it('should correctly enumerate numeric field with typeMatchesSchemaType turned on', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: 'Q', type:  {values: [Type.QUANTITATIVE, Type.NOMINAL, Type.ORDINAL, Type.TEMPORAL]}},
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 1);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).type, Type.QUANTITATIVE);
+      });
+
+      it('should correctly enumerate ordinal types', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: 'O', type: {values: [Type.ORDINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.NOMINAL]}}
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 1);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).type, Type.ORDINAL);
+      });
+
+      it('should correctly enumerate temporal types', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: 'T', type: {values:[Type.TEMPORAL, Type.ORDINAL, Type.QUANTITATIVE, Type.NOMINAL]}}
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 1);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).type, Type.TEMPORAL);
+      });
+
+      it('should correctly enumerate nominal types', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: 'N', type: {values: [Type.NOMINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.ORDINAL]}}
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 1);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).type, Type.NOMINAL);
+      });
     });
   });
 
