@@ -103,7 +103,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              aggregate: {values: [AggregateOp.MEAN, AggregateOp.MEDIAN]},
+              aggregate: {values: [AggregateOp.MEAN, AggregateOp.MEDIAN, undefined]},
               field: 'Q',
               type: Type.QUANTITATIVE
             }
@@ -112,9 +112,10 @@ describe('enumerator', () => {
         const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
-        assert.equal(answerSet.length, 2);
+        assert.equal(answerSet.length, 3);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEAN);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEDIAN);
+        assert.equal(answerSet[2].getEncodingQueryByIndex(0).aggregate, undefined);
       });
     
       it('should not enumerate aggregate when type is nominal', () => {
