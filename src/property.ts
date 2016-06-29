@@ -11,7 +11,7 @@ export enum Property {
   FIELD = 'field' as any,
   TYPE = 'type' as any,
   SCALE = 'scale' as any,
-  SCALE_SCALETYPE = 'scaleScaleType' as any
+  SCALE_TYPE = 'scaleType' as any
 
   // TODO: Filter (Field, Value?)
   // TODO: SORT, SCALE, SCALE_TYPE, AXIS, AXIS_*, LEGEND, LEGEND_*
@@ -47,7 +47,7 @@ export const ENCODING_PROPERTIES = [
   Property.FIELD,
   Property.TYPE,
   Property.SCALE,
-  Property.SCALE_SCALETYPE
+  Property.SCALE_TYPE
 ];
 
 export const DEFAULT_PROPERTY_PRECENCE: Property[] =  [
@@ -65,7 +65,7 @@ export const DEFAULT_PROPERTY_PRECENCE: Property[] =  [
 
   // Nested Property
   Property.BIN_MAXBINS,
-  Property.SCALE_SCALETYPE,
+  Property.SCALE_TYPE,
 
   // Encoding
   Property.CHANNEL,
@@ -86,7 +86,7 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
     child: 'maxbins'
   },
   {
-    property: Property.SCALE_SCALETYPE,
+    property: Property.SCALE_TYPE,
     parent: 'scale',
     child: 'scaletype'
   }

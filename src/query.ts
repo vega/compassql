@@ -216,7 +216,7 @@ export interface BinQuery extends EnumSpec<boolean> {
 
 export interface ScaleQuery extends EnumSpec<boolean> {
   // todo: enum  in vegalite/src/scale
-  scaletype?: ScaleType | EnumSpec<string> | ShortEnumSpec;
+  type?: ScaleType | EnumSpec<string> | ShortEnumSpec;
 }
 
 export function isDimension(encQ: EncodingQuery) {
