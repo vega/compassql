@@ -158,7 +158,7 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 10); // not just tru, something else...
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 10);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin, false);
       });
 
@@ -193,6 +193,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               bin: {
+                values: [true, false],
                 maxbins: {values: [5, 10, 20]}
               },
               field: 'Q',
