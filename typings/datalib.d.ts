@@ -22,7 +22,9 @@ declare module 'datalib/src/import/readers' {
 }
 
 interface Summary {
-  unique: any;
+  field: string;
+  type: string;
+  unique: { [value: string] : number };
   count: number;
   valid: number;
   missing: number;
