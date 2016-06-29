@@ -3,6 +3,7 @@ import {Config} from 'vega-lite/src/config';
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Data} from 'vega-lite/src/data';
 import {Mark, BAR, AREA} from 'vega-lite/src/mark';
+import {ScaleType} from 'vega-lite/src/scale';
 import {StackOffset, StackProperties} from 'vega-lite/src/stack';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
@@ -200,6 +201,7 @@ export interface EncodingQuery {
   timeUnit?: TimeUnit | EnumSpec<TimeUnit> | ShortEnumSpec;
 
   bin?: boolean | BinQuery | ShortEnumSpec;
+  scale?: boolean | ScaleQuery | ShortEnumSpec
 
   field?: Field | EnumSpec<Field> | ShortEnumSpec;
   type?: Type | EnumSpec<Type> | ShortEnumSpec;
@@ -212,6 +214,10 @@ export interface BinQuery extends EnumSpec<boolean> {
   maxbins?: number | EnumSpec<number> | ShortEnumSpec;
 }
 
+export interface ScaleQuery extends EnumSpec<boolean> {
+  //todo: enum  in vegalite/src/scale
+  scaletype?: ScaleType | EnumSpec<string> | ShortEnumSpec;
+}
 
 export function isDimension(encQ: EncodingQuery) {
   return contains([Type.NOMINAL, Type.ORDINAL], encQ.type) ||
