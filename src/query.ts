@@ -201,7 +201,7 @@ export interface EncodingQuery {
   timeUnit?: TimeUnit | EnumSpec<TimeUnit> | ShortEnumSpec;
 
   bin?: boolean | BinQuery | ShortEnumSpec;
-  scale?: boolean | ScaleQuery | ShortEnumSpec
+  scale?: boolean | ScaleQuery | ShortEnumSpec;
 
   field?: Field | EnumSpec<Field> | ShortEnumSpec;
   type?: Type | EnumSpec<Type> | ShortEnumSpec;
@@ -215,7 +215,7 @@ export interface BinQuery extends EnumSpec<boolean> {
 }
 
 export interface ScaleQuery extends EnumSpec<boolean> {
-  //todo: enum  in vegalite/src/scale
+  // todo: enum  in vegalite/src/scale
   scaletype?: ScaleType | EnumSpec<string> | ShortEnumSpec;
 }
 
