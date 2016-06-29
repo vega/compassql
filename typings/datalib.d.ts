@@ -21,8 +21,24 @@ declare module 'datalib/src/import/readers' {
   export function json(param:any): any;
 }
 
+interface Summary {
+  unique: any;
+  count: number;
+  valid: number;
+  missing: number;
+  distinct: number;
+  min: number;
+  max: number;
+  mean: number;
+  stdev: number;
+  median: number;
+  q1: number;
+  q3: number;
+  modeskew: number;
+}
+
 declare module 'datalib/src/stats' {
-  export function summary(data:any): any[];
+  export function summary(data:any): Summary[];
 }
 
 declare module 'datalib/src/import/type' {
