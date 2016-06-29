@@ -10,6 +10,8 @@ export enum Property {
   TIMEUNIT = 'timeUnit' as any,
   FIELD = 'field' as any,
   TYPE = 'type' as any,
+  SCALE = 'scale' as any,
+  SCALE_SCALETYPE = 'scaleScaleType' as any
 
   // TODO: Filter (Field, Value?)
   // TODO: SORT, SCALE, SCALE_TYPE, AXIS, AXIS_*, LEGEND, LEGEND_*
@@ -18,6 +20,7 @@ export enum Property {
 export function hasNestedProperty(prop: Property) {
   switch (prop) {
     case Property.BIN:
+    case Property.SCALE:
       // TODO: SCALE, AXIS, LEGEND
       return true;
     case Property.MARK:
@@ -42,7 +45,9 @@ export const ENCODING_PROPERTIES = [
   Property.AGGREGATE,
   Property.AUTOCOUNT,
   Property.FIELD,
-  Property.TYPE
+  Property.TYPE,
+  Property.SCALE,
+  Property.SCALE_SCALETYPE
 ];
 
 export const DEFAULT_PROPERTY_PRECENCE: Property[] =  [
@@ -60,10 +65,12 @@ export const DEFAULT_PROPERTY_PRECENCE: Property[] =  [
 
   // Nested Property
   Property.BIN_MAXBINS,
+  Property.SCALE_SCALETYPE,
 
   // Encoding
   Property.CHANNEL,
-  Property.MARK
+  Property.MARK,
+  Property.SCALE
 ];
 
 export interface NestedEncodingProperty {
@@ -77,6 +84,11 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
     property: Property.BIN_MAXBINS,
     parent: 'bin',
     child: 'maxbins'
+  },
+  {
+    property: Property.SCALE_SCALETYPE,
+    parent: 'scale',
+    child: 'scaletype'
   }
   // TODO: other bin parameters
   // TODO: scale, axis, legend
