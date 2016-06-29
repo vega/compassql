@@ -96,7 +96,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   },
   {
     name: 'autoAddCount',
-    description: 'Automatically adding count only for plots with only ordinal, binned quantitative, or temporal with timeunti fields.',
+    description: 'Automatically adding count only for plots with only ordinal, binned quantitative, or temporal with timeunit fields.',
     properties: [Property.BIN, Property.TIMEUNIT, Property.TYPE, Property.AUTOCOUNT],
     requireAllProperties: false,
     strict: false,
