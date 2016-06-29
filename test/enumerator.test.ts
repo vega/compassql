@@ -193,7 +193,6 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               bin: {
-                values: [true, false],
                 maxbins: {values: [5, 10, 20]}
               },
               field: 'Q',
