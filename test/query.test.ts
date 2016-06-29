@@ -11,6 +11,10 @@ import {Query, SHORT_ENUM_SPEC, initEnumSpec, stack, stringifyEncodingQuery, str
 import {without} from '../src/util';
 
 describe('query', () => {
+  describe('query', () => {
+    // TODO: Riley - please test this.
+  });
+
   describe('initEnumSpec', () => {
     it('should return full enumSpec with other properties preserved', () => {
       const binQuery = initEnumSpec({values: [true, false], maxbins: 30}, 'b1', [true, false]);

@@ -15,7 +15,7 @@ import {Schema} from './schema';
 import {Stats} from './stats';
 import {contains, extend, some} from './util';
 
-export default function(query: Query, schema: Schema, stats: Stats) {
+export function query(query: Query, schema: Schema, stats: Stats) {
   query = normalize(query);
   const answerSet = generate(query.spec, schema, stats, query.config);
   const nestedAnswerSet = nest(answerSet, query, stats);
