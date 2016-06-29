@@ -117,7 +117,7 @@ describe('enumerator', () => {
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEDIAN);
         assert.equal(answerSet[2].getEncodingQueryByIndex(0).aggregate, undefined);
       });
-    
+
       it('should not enumerate aggregate when type is nominal', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
@@ -136,11 +136,53 @@ describe('enumerator', () => {
         assert.equal(answerSet.length, 1);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, undefined);
       });
-    
     });
 
     describe('bin', () => {
-      // TODO
+      it('should correctly enumerate bin with nested property', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              bin: {
+                values: [true, false],
+                maxbins: 10
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.BIN](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 2);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 10);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin, false);
+      });
+
+      it('should correctly enumerate bin without nested property', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              bin: {
+                values: [true, false]
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.BIN](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 2);
+        assert.deepEqual(answerSet[0].getEncodingQueryByIndex(0).bin, {});
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin, false);
+      });
     });
 
     describe('maxbin', () => {
