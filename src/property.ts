@@ -88,7 +88,7 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
   {
     property: Property.SCALE_TYPE,
     parent: 'scale',
-    child: 'scaletype'
+    child: 'type'
   }
   // TODO: other bin parameters
   // TODO: scale, axis, legend
