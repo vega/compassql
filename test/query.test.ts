@@ -7,12 +7,45 @@ import {Type} from 'vega-lite/src/type';
 
 import {assert} from 'chai';
 
-import {Query, SHORT_ENUM_SPEC, initEnumSpec, stack, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery, normalize} from '../src/query';
+import {schema, stats} from './fixture';
+import {Schema} from '../src/Schema';
+import {Stats} from '../src/Stats';
+import {query, Query, SHORT_ENUM_SPEC, initEnumSpec, stack, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery, normalize} from '../src/query';
 import {without} from '../src/util';
+import {isSpecQueryModelGroup, SpecQueryModelGroup} from '../src/nest';
+import {SpecQueryModel} from '../src/model.ts';
 
 describe('query', () => {
   describe('query', () => {
-    // TODO: Riley - please test this.
+    it('enumerates a nested query correctly ', () => {
+      const q: Query = {
+        spec: {
+          mark: Mark.POINT,
+          encodings: []
+        },
+        nest: [
+          {groupBy: "fieldTransform"}
+        ],
+        orderBy: "effectiveness",
+      };
+      const result = query(q, schema, stats);
+      assert.isTrue(isSpecQueryModelGroup(result.items[0]));
+      if (isSpecQueryModelGroup(result.items[0])) {
+        const group1: SpecQueryModelGroup = <SpecQueryModelGroup> result.items[0];
+        assert.isFalse(isSpecQueryModelGroup(group1.items[0]));
+      }
+    });
+    it('enumerates a flat query correctly ', () => {
+      const q: Query = {
+        spec: {
+          mark: Mark.POINT,
+          encodings: []
+        },
+        orderBy: "effectiveness",
+      };
+      const result = query(q, schema, stats);
+      assert.isFalse(isSpecQueryModelGroup(result.items[0]));
+    });
   });
 
   describe('initEnumSpec', () => {

@@ -42,9 +42,7 @@ export enum PrimitiveType {
 export interface FieldSchema {
   field: string;
   type?: Type;
-  /** number, string, date  */
+  /** number, integer, string, date  */
   primitiveType: PrimitiveType;
   title?: string;
-
-  // TODO: cardinality
 }
