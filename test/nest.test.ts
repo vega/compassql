@@ -8,13 +8,47 @@ import {Type} from 'vega-lite/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
 import {SpecQueryModel} from '../src/model';
-import {nest, FIELD, FIELD_TRANSFORM, ENCODING, TRANSPOSE, SpecQueryModelGroup} from '../src/nest';
-import {SHORT_ENUM_SPEC} from '../src/query';
+import {nest, FIELD, FIELD_TRANSFORM, ENCODING, TRANSPOSE, SpecQueryModelGroup, isSpecQueryModelGroup} from '../src/nest';
+import {SHORT_ENUM_SPEC, Query} from '../src/query';
 import {contains, extend} from '../src/util';
 
 import {schema, stats} from './fixture';
 
 describe('nest', () => {
+  describe('isSpecQueryModelGroup', () => {
+    it('should return true for a SpecQueryModelGroup', () => {
+      const specQ = [
+        SpecQueryModel.build({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
+          ]
+        }, schema, DEFAULT_QUERY_CONFIG)
+      ];
+      const q: Query = {
+        spec: {
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
+          ]
+        },
+        orderBy: "effectiveness",
+      };
+      const group: SpecQueryModelGroup = nest(specQ, q, stats);
+
+      assert.isTrue(isSpecQueryModelGroup(group));
+    });
+    it('should return false for a SpecQueryModel', () => {
+      const specM = SpecQueryModel.build({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
+        ]
+      }, schema, DEFAULT_QUERY_CONFIG);
+
+      assert.isFalse(isSpecQueryModelGroup(specM));
+    });
+  });
   describe('field', () => {
     it('should group visualization with same fields', () => {
       const query = {
