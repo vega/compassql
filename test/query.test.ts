@@ -20,8 +20,10 @@ describe('query', () => {
     it('enumerates a nested query correctly ', () => {
       const q: Query = {
         spec: {
-          mark: Mark.POINT,
-          encodings: []
+          mark: "?",
+          encodings: [
+            {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
+          ]
         },
         nest: [
           {groupBy: "fieldTransform"}
@@ -33,18 +35,26 @@ describe('query', () => {
       if (isSpecQueryModelGroup(result.items[0])) {
         const group1: SpecQueryModelGroup = <SpecQueryModelGroup> result.items[0];
         assert.isFalse(isSpecQueryModelGroup(group1.items[0]));
+        assert.equal(group1.items.length, 2);
+        assert.equal((<SpecQueryModel>group1.items[0]).specQuery.mark, "tick");
+        assert.equal((<SpecQueryModel>group1.items[1]).specQuery.mark, "point");
       }
     });
     it('enumerates a flat query correctly ', () => {
       const q: Query = {
         spec: {
-          mark: Mark.POINT,
-          encodings: []
+          mark: "?",
+          encodings: [
+            {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
+          ]
         },
         orderBy: "effectiveness",
       };
       const result = query(q, schema, stats);
       assert.isFalse(isSpecQueryModelGroup(result.items[0]));
+      assert.equal(result.items.length, 2);
+      assert.equal((<SpecQueryModel>result.items[0]).specQuery.mark, "tick");
+      assert.equal((<SpecQueryModel>result.items[1]).specQuery.mark, "point");
     });
   });
 
