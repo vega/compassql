@@ -1,6 +1,7 @@
 import {SUM_OPS} from 'vega-lite/src/aggregate';
 import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
+import {ScaleType} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -10,7 +11,7 @@ import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {Property} from '../property';
 import {Schema} from '../schema';
 import {Stats} from '../stats';
-import {EncodingQuery, isEnumSpec, isMeasure} from '../query';
+import {ScaleQuery, EncodingQuery, isEnumSpec, isMeasure} from '../query';
 import {contains, every, some} from '../util';
 
 
@@ -42,6 +43,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
             case Property.AGGREGATE:
             case Property.AUTOCOUNT:
             case Property.BIN:
+            case Property.SCALE:
             case Property.TIMEUNIT:
             case Property.FIELD:
             case Property.TYPE:
@@ -261,7 +263,29 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         true;
     }
   },
-  // TODO: omitLengthForLogScale (Bar/Area)
+  // TODO: omitBarAreaForLogScale (Bar/Area) Write test for this spec.
+  {
+    name: 'omitBarAreaForLogScale',
+    description: 'Do not use bar and area mark for x and y\'s log scale',
+    properties: [Property.MARK, Property.CHANNEL, Property.SCALE],
+    requireAllProperties: true,
+    strict: true, // strict = not optional. if you can't have a constraint, it is not optional. this isnt optional so we use true.
+    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+      const mark = specM.getMark();
+      const encodings = specM.getEncodings();
+
+    if (mark === Mark.AREA || mark === Mark.BAR) {
+      for (let encQ of encodings) {
+        if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && (encQ.scale as ScaleQuery)) {
+          if (((encQ.scale as ScaleQuery).type as ScaleType) === ScaleType.LOG) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+    }
+  },
   {
     name: 'omitMultipleNonPositionalChannels',
     description: 'Do not use multiple non-positional encoding channel to avoid over-encoding.',
