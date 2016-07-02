@@ -67,7 +67,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
   // TODO: omitBinWithLogScale
   },{
     name: 'omitBinWithLogScale',
-    description: 'bin does not support log scale',
+    description: 'Bin does not support log scale',
     properties: [Property.BIN, Property.SCALE_TYPE],
     requireAllProperties: true,
     strict: true,
