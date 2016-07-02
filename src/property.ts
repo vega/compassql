@@ -31,6 +31,7 @@ export function hasNestedProperty(prop: Property) {
     case Property.FIELD:
     case Property.TYPE:
     case Property.BIN_MAXBINS:
+    case Property.SCALE_TYPE:
       return false;
   }
   /* istanbul ignore next */
