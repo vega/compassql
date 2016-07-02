@@ -4,9 +4,12 @@ import {Data} from 'vega-lite/src/data';
 import {Encoding} from 'vega-lite/src/encoding';
 import {FieldDef} from 'vega-lite/src/fielddef';
 import {Mark} from 'vega-lite/src/mark';
+import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
+
+
 
 import {QueryConfig} from './config';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
@@ -46,6 +49,12 @@ export interface EnumSpecIndex {
   /** List of indice tuple for encoding mappings that require enumerating bin.maxbins */
   maxbin?: EnumSpecIndexTuple<number>[];
 
+  /** List of indice tuples of encoding mappings that require scale enumeration. */
+  scale?: EnumSpecIndexTuple<boolean>[];
+
+  /** List of indice tuple for encoding mappings that require enumerating scale.scale_type */
+  scaleType?: EnumSpecIndexTuple<ScaleType>[];
+
   /** List of indice tuples of encoding mappings that require timeUnit enumeration. */
   timeUnit?: EnumSpecIndexTuple<TimeUnit>[];
 
@@ -70,6 +79,10 @@ function getDefaultName(prop: Property) {
       return 'b';
     case Property.BIN_MAXBINS:
       return 'b-mb';
+    case Property.SCALE:
+      return 's';
+    case Property.SCALE_TYPE:
+      return 's-t';
     case Property.TIMEUNIT:
       return 'tu';
     case Property.FIELD:
@@ -87,11 +100,15 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
       return schema.fields();
 
     case Property.BIN:         // True, False for boolean values
+    case Property.SCALE:
     case Property.AUTOCOUNT:
       return [false, true];
 
     case Property.BIN_MAXBINS:
       return opt.maxBinsList;
+
+    case Property.SCALE_TYPE:
+      return opt.scaleTypes;
 
     case Property.MARK:
     case Property.CHANNEL:
@@ -386,7 +403,7 @@ export class SpecQueryModel {
       if (isEnumSpec(encQ.channel)) return null;
 
       // assemble other property into a field def.
-      const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE];
+      const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.SCALE, Property.TIMEUNIT, Property.FIELD, Property.TYPE]; // scale??
       for (let j = 0; j < PROPERTIES.length; j++) {
         const prop = PROPERTIES[j];
 
