@@ -3,10 +3,11 @@ import {assert} from 'chai';
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
+import {ScaleType} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
 import {generate} from '../src/generate';
-import {SHORT_ENUM_SPEC} from '../src/query';
+import {SHORT_ENUM_SPEC, ScaleQuery} from '../src/query';
 import {some} from '../src/util';
 
 import {schema, stats} from './fixture';
@@ -145,6 +146,88 @@ describe('generate', function () {
             specM.getEncodingQueryByChannel(Channel.Y).type === Type.NOMINAL
           );
         });
+      });
+    });
+  });
+
+  describe('scaleType', () => {
+    describe(' pls figure out a good name for me !!!!!   ', () => { // todo describe this name propertly. 
+      it('should enumerate correct scaletype for quantitative field', () => {
+        const specQ = {
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {type: {values: [undefined, ScaleType.LOG]}},
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        };
+
+        const answerSet = generate(specQ, schema, stats);
+        assert.equal(answerSet.length, 2);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
+      });
+
+      it('should enumerate correct scaletype for temporal field without timeunit', () => {
+        const specQ = {
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {type: {values: [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined]}},
+              field: 'T',
+              type: Type.TEMPORAL
+            }
+          ]
+        };
+
+        const answerSet = generate(specQ, schema, stats);
+        assert.equal(answerSet.length, 4);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.TIME);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.UTC);
+        assert.equal((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
+        assert.equal((answerSet[3].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      });
+
+      it('should enumerate correct scaletype for ordinal field', () => {
+        const specQ = {
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {type: {values: [ScaleType.ORDINAL, undefined]}},
+              field: 'O',
+              type: Type.ORDINAL
+            }
+          ]
+        };
+
+        const answerSet = generate(specQ, schema, stats);
+        assert.equal(answerSet.length, 2);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      });
+
+      it('should enumerate correct scaletype for nominal field', () => {
+        const specQ = {
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {type: {values: [ScaleType.ORDINAL, undefined]}},
+              field: 'N',
+              type: Type.ORDINAL
+            }
+          ]
+        };
+
+        const answerSet = generate(specQ, schema, stats);
+        assert.equal(answerSet.length, 2);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
       });
     });
   });
