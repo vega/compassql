@@ -151,7 +151,7 @@ describe('generate', function () {
   });
 
   describe('scaleType', () => {
-    it('should enumerate correct scaletype for quantitative field', () => {
+    it('should enumerate correct scaleType for quantitative field', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -170,7 +170,7 @@ describe('generate', function () {
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
     });
 
-    it('should enumerate correct scaletype for temporal field without timeunit', () => {
+    it('should enumerate correct scaleType for temporal field without timeunit', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -191,7 +191,7 @@ describe('generate', function () {
       assert.equal((answerSet[3].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    it('should enumerate correct scaletype for ordinal field', () => {
+    it('should enumerate correct scaleType for ordinal field', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -210,7 +210,7 @@ describe('generate', function () {
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    it('should enumerate correct scaletype for nominal field', () => {
+    it('should enumerate correct scaleType for nominal field', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
