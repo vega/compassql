@@ -65,6 +65,10 @@
     {
       "name": "bin_maxbins",
       "title": "Histogram - maxbins?"
+    },
+    {
+      "name": "scaleType",
+      "title": "Strip Plot - scaleType?"
     }
   ],
   "Demo": [
