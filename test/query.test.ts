@@ -8,8 +8,6 @@ import {Type} from 'vega-lite/src/type';
 import {assert} from 'chai';
 
 import {schema, stats} from './fixture';
-import {Schema} from '../src/Schema';
-import {Stats} from '../src/Stats';
 import {query, Query, SHORT_ENUM_SPEC, initEnumSpec, stack, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery, normalize} from '../src/query';
 import {without} from '../src/util';
 import {isSpecQueryModelGroup, SpecQueryModelGroup} from '../src/nest';
@@ -20,15 +18,15 @@ describe('query', () => {
     it('enumerates a nested query correctly ', () => {
       const q: Query = {
         spec: {
-          mark: "?",
+          mark: '?',
           encodings: [
             {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
           ]
         },
         nest: [
-          {groupBy: "fieldTransform"}
+          {groupBy: 'fieldTransform'}
         ],
-        orderBy: "effectiveness",
+        orderBy: 'effectiveness',
       };
       const result = query(q, schema, stats);
       assert.isTrue(isSpecQueryModelGroup(result.items[0]));
@@ -36,25 +34,25 @@ describe('query', () => {
         const group1: SpecQueryModelGroup = <SpecQueryModelGroup> result.items[0];
         assert.isFalse(isSpecQueryModelGroup(group1.items[0]));
         assert.equal(group1.items.length, 2);
-        assert.equal((<SpecQueryModel>group1.items[0]).specQuery.mark, "tick");
-        assert.equal((<SpecQueryModel>group1.items[1]).specQuery.mark, "point");
+        assert.equal((<SpecQueryModel>group1.items[0]).specQuery.mark, 'tick');
+        assert.equal((<SpecQueryModel>group1.items[1]).specQuery.mark, 'point');
       }
     });
     it('enumerates a flat query correctly ', () => {
       const q: Query = {
         spec: {
-          mark: "?",
+          mark: '?',
           encodings: [
             {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
           ]
         },
-        orderBy: "effectiveness",
+        orderBy: 'effectiveness',
       };
       const result = query(q, schema, stats);
       assert.isFalse(isSpecQueryModelGroup(result.items[0]));
       assert.equal(result.items.length, 2);
-      assert.equal((<SpecQueryModel>result.items[0]).specQuery.mark, "tick");
-      assert.equal((<SpecQueryModel>result.items[1]).specQuery.mark, "point");
+      assert.equal((<SpecQueryModel>result.items[0]).specQuery.mark, 'tick');
+      assert.equal((<SpecQueryModel>result.items[1]).specQuery.mark, 'point');
     });
   });
 

@@ -32,7 +32,7 @@ describe('nest', () => {
             {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
           ]
         },
-        orderBy: "effectiveness",
+        orderBy: 'effectiveness',
       };
       const group: SpecQueryModelGroup = nest(specQ, q, stats);
 
