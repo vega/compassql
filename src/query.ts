@@ -253,7 +253,7 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     }
   } else if (encQ.scale && !isEnumSpec(encQ.scale)) {
     fn = 'scale';
-    if (encQ.bin['type']) {
+    if (encQ.scale['type']) {
       params.push({key: 'type', value: encQ.scale['type']});
     }
   } else if (encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
