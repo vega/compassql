@@ -10,7 +10,7 @@ import {assert} from 'chai';
 import {schema, stats} from './fixture';
 import {query, Query, SHORT_ENUM_SPEC, initEnumSpec, stack, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery, normalize} from '../src/query';
 import {without} from '../src/util';
-import {isSpecQueryModelGroup, SpecQueryModelGroup} from '../src/nest';
+import {isSpecQueryModelGroup, SpecQueryModelGroup} from '../src/modelgroup';
 import {SpecQueryModel} from '../src/model.ts';
 
 describe('query', () => {

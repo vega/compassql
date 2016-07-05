@@ -6,6 +6,7 @@ export import constraint = require('./constraint/constraint');
 export import enumerate = require('./enumerator');
 export {generate} from './generate';
 export import model = require('./model');
+export import modelgroup = require('./modelgroup');
 export import nest = require('./nest');
 export import property = require('./property');
 
