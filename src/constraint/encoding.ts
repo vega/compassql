@@ -217,9 +217,14 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       if (encQ.scale) {
         const scaleType = (encQ.scale as ScaleQuery).type;
         const type = encQ.type;
-        return (contains([ScaleType.ORDINAL, ScaleType.LINEAR, undefined], scaleType) && contains([Type.ORDINAL, Type.NOMINAL], type)) ||
-                (contains([ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, ScaleType.LINEAR, undefined], scaleType) && (type === Type.TEMPORAL)) ||
-                (contains([ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.LINEAR, undefined], scaleType) && (type === Type.QUANTITATIVE));
+
+        if (contains([Type.ORDINAL, Type.NOMINAL], type)) {
+          return contains([ScaleType.ORDINAL, undefined], scaleType);
+        } else if (type === Type.TEMPORAL) {
+          return contains([ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined], scaleType);
+        } else if (type === Type.QUANTITATIVE) {
+          return contains([ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.LINEAR, undefined], scaleType);
+        }
       }
       return true;
     }
