@@ -73,7 +73,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
       if (encQ.bin && encQ.scale) {
         const scaleType = (encQ.scale as ScaleQuery).type;
-        return !(scaleType === ScaleType.LOG);
+        return scaleType !== ScaleType.LOG;
       }
       return true;
     }

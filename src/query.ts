@@ -215,7 +215,7 @@ export interface BinQuery extends EnumSpec<boolean> {
 }
 
 export interface ScaleQuery extends EnumSpec<boolean> {
-  // todo: enum  in vegalite/src/scale
+  // TODO: add other properties from vegalite/src/scale 
   type?: ScaleType | EnumSpec<ScaleType> | ShortEnumSpec;
 }
 

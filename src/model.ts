@@ -403,7 +403,7 @@ export class SpecQueryModel {
       if (isEnumSpec(encQ.channel)) return null;
 
       // assemble other property into a field def.
-      const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.SCALE, Property.TIMEUNIT, Property.FIELD, Property.TYPE]; // scale??
+      const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.SCALE, Property.TIMEUNIT, Property.FIELD, Property.TYPE];
       for (let j = 0; j < PROPERTIES.length; j++) {
         const prop = PROPERTIES[j];
 
