@@ -41,6 +41,7 @@ export enum PrimitiveType {
 
 export interface FieldSchema {
   field: string;
+  stats: FieldStats;
   type?: Type;
   /** number, integer, string, date  */
   primitiveType: PrimitiveType;
