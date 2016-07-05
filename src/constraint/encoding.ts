@@ -218,7 +218,6 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       if (encQ.scale) {
         const scaleType = (encQ.scale as ScaleQuery).type;
         const type = encQ.type;
-        // todo: quantitative has way more scale types
         return (contains([ScaleType.ORDINAL, ScaleType.LINEAR, undefined], scaleType) && contains([Type.ORDINAL, Type.NOMINAL], type)) ||
                 (contains([ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, ScaleType.LINEAR, undefined], scaleType) && (type === Type.TEMPORAL)) ||
                 (contains([ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.LINEAR, undefined], scaleType) && (type === Type.QUANTITATIVE));

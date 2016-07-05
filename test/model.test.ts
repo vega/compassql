@@ -81,7 +81,6 @@ describe('SpecQueryModel', () => {
         assert.isOk(specM.enumSpecIndex.type);
       });
     });
-    // TODO: also test type
 
     const templateSpecQ: SpecQuery = {
       mark: Mark.POINT,

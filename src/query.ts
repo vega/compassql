@@ -253,8 +253,8 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     }
   } else if (encQ.scale && !isEnumSpec(encQ.scale)) {
     fn = 'scale';
-    if (encQ.bin['type']) { // all scale_type used to be type. what if i change this to scale_type?
-      params.push({key: 'type', value: encQ.scale['type']}); // WORKING ON ME RN
+    if (encQ.bin['type']) {
+      params.push({key: 'type', value: encQ.scale['type']});
     }
   } else if (encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
     fn = 'count';

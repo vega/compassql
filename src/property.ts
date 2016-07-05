@@ -14,14 +14,14 @@ export enum Property {
   SCALE_TYPE = 'scaleType' as any
 
   // TODO: Filter (Field, Value?)
-  // TODO: SORT, SCALE, SCALE_TYPE, AXIS, AXIS_*, LEGEND, LEGEND_*
+  // TODO: SORT, AXIS, AXIS_*, LEGEND, LEGEND_*
 }
 
 export function hasNestedProperty(prop: Property) {
   switch (prop) {
     case Property.BIN:
     case Property.SCALE:
-      // TODO: SCALE, AXIS, LEGEND
+      // TODO: AXIS, LEGEND
       return true;
     case Property.MARK:
     case Property.CHANNEL:
@@ -92,7 +92,7 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
     child: 'type'
   }
   // TODO: other bin parameters
-  // TODO: scale, axis, legend
+  // TODO: axis, legend
 ];
 
 const NESTED_ENCODING_INDEX: Dict<NestedEncodingProperty> =

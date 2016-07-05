@@ -263,13 +263,12 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         true;
     }
   },
-  // TODO: omitBarAreaForLogScale (Bar/Area) Write test for this spec.
   {
     name: 'omitBarAreaForLogScale',
     description: 'Do not use bar and area mark for x and y\'s log scale',
     properties: [Property.MARK, Property.CHANNEL, Property.SCALE],
     requireAllProperties: true,
-    strict: true, // strict = not optional. if you can't have a constraint, it is not optional. this isnt optional so we use true.
+    strict: true, 
     satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
       const mark = specM.getMark();
       const encodings = specM.getEncodings();

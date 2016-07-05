@@ -92,7 +92,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
   maxBinsList: [5, 10, 20],
-  scaleTypes: [ScaleType.LINEAR, ScaleType.LOG], // blasdfhasddfsadsaf  FINISH ME FINISH ME FINISH ME,
+  scaleTypes: [ScaleType.LINEAR, ScaleType.LOG],
 
   // CONSTRAINTS
   // Spec Constraints -- See description inside src/constraints/spec.ts
