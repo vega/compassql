@@ -297,28 +297,28 @@ describe('constraints/encoding', () => {
 
 
   describe('dataTypeMatchesScaleType', () => {
-   [ScaleType.ORDINAL, ScaleType.LINEAR].forEach((scaleType) => {
+   [ScaleType.ORDINAL].forEach((scaleType) => {
      it('scaleType of ' + scaleType + ' matches data type ordinal', () => {
        const encQ: EncodingQuery = {channel: Channel.X, field: 'O', scale: {type: scaleType}, type: Type.ORDINAL};
        assert.isTrue(ENCODING_CONSTRAINT_INDEX['dataTypeMatchesScaleType'].satisfy(encQ, schema, stats, defaultOpt));
      });
    });
 
-   [ScaleType.ORDINAL, ScaleType.LINEAR].forEach((scaleType) => {
+   [ScaleType.ORDINAL].forEach((scaleType) => {
      it('scaleType of ' + scaleType + ' matches data type nominal', () => {
        const encQ: EncodingQuery = {channel: Channel.X, field: 'N', scale: {type: scaleType}, type: Type.NOMINAL};
        assert.isTrue(ENCODING_CONSTRAINT_INDEX['dataTypeMatchesScaleType'].satisfy(encQ, schema, stats, defaultOpt));
      });
    });
 
-   [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, ScaleType.LINEAR].forEach((scaleType) => {
+   [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL].forEach((scaleType) => {
      it('scaleType of ' + scaleType + ' matches data type temporal', () => {
        const encQ: EncodingQuery = {channel: Channel.X, field: 'T', scale: {type: scaleType}, type: Type.TEMPORAL};
        assert.isTrue(ENCODING_CONSTRAINT_INDEX['dataTypeMatchesScaleType'].satisfy(encQ, schema, stats, defaultOpt));
      });
    });
 
-   [ScaleType.LOG, ScaleType.LINEAR].forEach((scaleType) => {
+   [ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.LINEAR].forEach((scaleType) => {
      it('scaleType of ' + scaleType + ' matches data type quantitative', () => {
        const encQ: EncodingQuery = {channel: Channel.X, field: 'Q', scale: {type: scaleType}, type: Type.QUANTITATIVE};
        assert.isTrue(ENCODING_CONSTRAINT_INDEX['dataTypeMatchesScaleType'].satisfy(encQ, schema, stats, defaultOpt));
