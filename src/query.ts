@@ -257,14 +257,14 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
 
     if (encQ.scale['type']) {
       scaleParams.push({key: 'type', value: encQ.scale['type']});
-    } 
+    }
     // TODO: push other scale properties to scaleParams.
 
     var blah = scaleParams.map(function(x) { return '{' + x.key + ':' + ' ' + x.value + '}'; })
                           .join();
 
     if (keys(scaleParams).length > 0) {
-      params.push({key: 'scale', value: blah})
+      params.push({key: 'scale', value: blah});
     }
 
   } else if (encQ.autoCount && !isEnumSpec(encQ.autoCount)) {

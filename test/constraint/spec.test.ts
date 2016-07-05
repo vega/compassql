@@ -556,24 +556,24 @@ describe('constraints/spec', () => {
   });
 
   describe('omitBarAreaForLogScale', () => {
-    it('should return false if there are bar or area mark for x and y channel\'s log scale', () => {
+    it('should return false if either x or y channel of bar or area mark is log scale', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.AREA,
         encodings: [
           {channel: Channel.X, field: 'A', scale: {type: ScaleType.LOG}, type: Type.QUANTITATIVE},
-          {channel: Channel.Y, field: 'B', scale: {type: ScaleType.LOG}, type: Type.QUANTITATIVE}
+          {channel: Channel.Y, field: 'B', type: Type.QUANTITATIVE}
         ]
       });
 
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitBarAreaForLogScale'].satisfy(specM, schema, stats, defaultOpt));
     });
 
-    it('should return true if there are bar or area mark for non x or y channel\'s log scale', () => {
+    it('should return true if either x or y channel of bar or area mark is not log scale', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.AREA,
         encodings: [
           {channel: Channel.COLOR, field: 'A', scale: {type: ScaleType.LOG}, type: Type.QUANTITATIVE},
-          {channel: Channel.SHAPE, field: 'B', scale: {type: ScaleType.LOG}, type: Type.QUANTITATIVE}
+          {channel: Channel.SHAPE, field: 'B', type: Type.QUANTITATIVE}
         ]
       });
 
