@@ -268,7 +268,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     description: 'Do not use bar and area mark for x and y\'s log scale',
     properties: [Property.MARK, Property.CHANNEL, Property.SCALE],
     requireAllProperties: true,
-    strict: true, 
+    strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
       const mark = specM.getMark();
       const encodings = specM.getEncodings();
