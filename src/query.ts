@@ -14,7 +14,7 @@ import {nest} from './nest';
 import {rank} from './ranking/ranking';
 import {Schema} from './schema';
 import {Stats} from './stats';
-import {contains, extend, keys, some} from './util';
+import {contains, extend, some} from './util';
 
 export function query(query: Query, schema: Schema, stats: Stats) {
   query = normalize(query);
@@ -253,20 +253,9 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     }
   } else if (encQ.scale && !isEnumSpec(encQ.scale)) {
     fn = 'scale';
-    var scaleParams = [];
-
     if (encQ.scale['type']) {
-      scaleParams.push({key: 'type', value: encQ.scale['type']});
-    } 
-    // TODO: push other scale properties to scaleParams.
-
-    var blah = scaleParams.map(function(x) { return '{' + x.key + ':' + ' ' + x.value + '}'; })
-                          .join();
-
-    if (keys(scaleParams).length > 0) {
-      params.push({key: 'scale', value: blah})
+      params.push({key: 'type', value: encQ.scale['type']});
     }
-
   } else if (encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
     fn = 'count';
   } else if (

@@ -1,7 +1,6 @@
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark, BAR, AREA, PRIMITIVE_MARKS} from 'vega-lite/src/mark';
-import {ScaleType} from 'vega-lite/src/scale';
 import {StackOffset} from 'vega-lite/src/stack';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
@@ -335,23 +334,6 @@ describe('query', () => {
        });
        assert.equal(str, 'bin(a,q)');
     });
-
-
-    it('should return correct fieldDef string for bin field with maxbins', () => {
-       const str = stringifyEncodingQueryFieldDef({
-         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}
-       });
-       assert.equal(str, 'bin(a,q,maxbins=20)');
-    });
-
-
-    it('should return correct fieldDef string for scale with scaleType log', () => {
-       const str = stringifyEncodingQueryFieldDef({
-         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}
-       });
-       assert.equal(str, 'scale(a,q,scale={type: log})');
-    });
-    // TODO: Update tests for other scale.*
 
     it('should return correct fieldDef string for ambiguous bin field', () => {
        const str = stringifyEncodingQueryFieldDef({
