@@ -266,7 +266,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                type: {values: [undefined, ScaleType.LOG, ScaleType.POW]}
+                type: {values: [undefined, ScaleType.LOG, ScaleType.POW, ScaleType.ORDINAL]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
