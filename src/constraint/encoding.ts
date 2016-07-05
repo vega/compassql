@@ -64,7 +64,6 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       return true; // no aggregate is okay with any type.
     }
   // TODO: minCardinalityForBin
-  // TODO: omitBinWithLogScale
   },{
     name: 'omitBinWithLogScale',
     description: 'Bin does not support log scale',
@@ -224,7 +223,8 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       }
       return true;
     }
-  } ].map((ec: EncodingConstraint) => new EncodingConstraintModel(ec));
+  }
+].map((ec: EncodingConstraint) => new EncodingConstraintModel(ec));
 
 export const ENCODING_CONSTRAINT_INDEX: {[name: string]: EncodingConstraintModel} =
   ENCODING_CONSTRAINTS.reduce((m, ec: EncodingConstraintModel) => {
