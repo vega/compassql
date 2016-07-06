@@ -191,7 +191,7 @@ describe('generate', function () {
       assert.equal((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    it('should enumerate correct scaleType for temporal field with timeunit', () => { // working on rn
+    it('should enumerate correct scaleType for temporal field with timeunit', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -269,26 +269,6 @@ describe('generate', function () {
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
   });
-
-  it('should enumerate correct scaleType for nominal field with timeunit', () => {
-      const specQ = {
-        mark: Mark.POINT,
-        encodings: [
-          {
-            channel: Channel.X,
-            scale: {type: {values: [ScaleType.ORDINAL, undefined]}},
-            field: 'N',
-            type: Type.NOMINAL,
-            timeUnit: TimeUnit.MINUTES
-          }
-        ]
-      };
-
-      const answerSet = generate(specQ, schema, stats);
-      assert.equal(answerSet.length, 2);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
-    });
   });
 
 
