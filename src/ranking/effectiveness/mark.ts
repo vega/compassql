@@ -4,7 +4,7 @@ import {Mark} from 'vega-lite/src/mark';
 import {QueryConfig} from '../../config';
 import {SpecQueryModel} from '../../model';
 import {Dict, forEach} from '../../util';
-import {Schema} from '../../Schema';
+import {Schema} from '../../schema';
 
 import {FeatureScore, getExtendedType, getFeatureScore} from './effectiveness';
 import {BIN_Q, TIMEUNIT_T, Q, N, O, T, NONE} from './type';

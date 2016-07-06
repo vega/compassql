@@ -3,7 +3,7 @@ import {SpecQueryModel} from '../model';
 import {SpecQueryModelGroup, getTopItem} from '../modelgroup';
 import {Query} from '../query';
 import {Dict} from '../util';
-import {Schema} from '../Schema';
+import {Schema} from '../schema';
 
 export import effectiveness = require('./effectiveness/effectiveness');
 
