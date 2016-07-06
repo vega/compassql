@@ -9,13 +9,12 @@ import {QueryConfig} from '../config';
 import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {Property} from '../property';
 import {Schema} from '../schema';
-import {Stats} from '../stats';
 import {EncodingQuery, isEnumSpec, isMeasure} from '../query';
 import {contains, every, some} from '../util';
 
 
 export interface SpecConstraintChecker {
-  (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig): boolean;
+  (specM: SpecQueryModel, schema: Schema, opt: QueryConfig): boolean;
 }
 
 export class SpecConstraintModel extends AbstractConstraintModel {
@@ -23,7 +22,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
     super(specConstraint);
   }
 
-  public satisfy(specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) {
+  public satisfy(specM: SpecQueryModel, schema: Schema, opt: QueryConfig) {
     // TODO: Re-order logic to optimize the "requireAllProperties" check
 
     if (this.constraint.requireAllProperties) {
@@ -61,7 +60,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
         return true; // Return true since the query still satisfy the constraint.
       }
     }
-    return (this.constraint as SpecConstraint).satisfy(specM, schema, stats, opt);
+    return (this.constraint as SpecConstraint).satisfy(specM, schema, opt);
   }
 }
 
@@ -77,7 +76,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     requireAllProperties: false,
     strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       let usedChannel = {};
 
       // channel for all encodings should be valid
@@ -100,7 +99,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.BIN, Property.TIMEUNIT, Property.TYPE, Property.AUTOCOUNT],
     requireAllProperties: false,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const hasAutoCount =  some(specM.getEncodings(), (encQ: EncodingQuery) => encQ.autoCount === true);
 
       if (hasAutoCount) {
@@ -156,7 +155,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.MARK],
     requireAllProperties: false, // only require mark
     strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();
 
       // if mark is unspecified, no need to check
@@ -177,7 +176,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.MARK],
     requireAllProperties: true,
     strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();
 
       switch (mark) {
@@ -204,7 +203,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.AGGREGATE, Property.AUTOCOUNT],
     requireAllProperties: true,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if (specM.isAggregate()) {
         let hasNonFacetDim = false, hasDim = false;
         specM.getEncodings().forEach((encQ) => {
@@ -227,7 +226,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
     requireAllProperties: true,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if (contains([Mark.BAR, Mark.LINE, Mark.AREA], specM.getMark())) {
         return specM.isAggregate();
       }
@@ -240,7 +239,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.MARK],
     requireAllProperties: false,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();
       if (contains([Mark.TICK, Mark.BAR], mark)) {
         return !specM.channelUsed(Channel.SIZE);
@@ -254,7 +253,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     requireAllProperties: true,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       return specM.channelUsed(Channel.ROW) || specM.channelUsed(Channel.COLUMN) ?
         // if non-positional channels are used, then both x and y must be used.
         specM.channelUsed(Channel.X) && specM.channelUsed(Channel.Y) :
@@ -268,7 +267,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     requireAllProperties: false,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const encodings = specM.getEncodings();
       let nonPositionChannelCount = 0;
       for (let i = 0; i < encodings.length; i++) {
@@ -291,7 +290,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     requireAllProperties: true,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       return some(NONSPATIAL_CHANNELS, (channel) => specM.channelUsed(channel)) ?
         // if non-positional channels are used, then both x and y must be used.
         specM.channelUsed(Channel.X) && specM.channelUsed(Channel.Y) :
@@ -305,7 +304,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN, Property.TYPE],
     requireAllProperties: false,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
        if (specM.isAggregate()) {
          return every(specM.getEncodings(), (encQ: EncodingQuery) => {
            if (encQ.type === Type.TEMPORAL) {
@@ -327,7 +326,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.AGGREGATE, Property.AUTOCOUNT],
     requireAllProperties: true,
     strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if (specM.isAggregate()) {
         return true;
       }
@@ -342,7 +341,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.FIELD],
     requireAllProperties: false,
     strict: false, // over-encoding is sometimes good, but let's turn it off by default
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       let usedField = {};
 
       // the same field should not be encoded twice
@@ -366,7 +365,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     requireAllProperties: false,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const encodings = specM.getEncodings();
       if (encodings.length === 1 && encodings[0].channel === Channel.Y) {
         return false;
@@ -381,7 +380,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.MARK, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
     requireAllProperties: true,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();
 
       switch (mark) {
@@ -436,7 +435,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
     requireAllProperties: true,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const stack = specM.stack();
       if (stack) {
         const measureEncQ = specM.getEncodingQueryByChannel(stack.fieldChannel);
@@ -451,7 +450,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
     requireAllProperties: true,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if (specM.isDimension(Channel.X) &&
           specM.isDimension(Channel.Y) &&
           !specM.isAggregate() // TODO: refactor based on statistics
@@ -485,7 +484,7 @@ export const SPEC_CONSTRAINTS_BY_PROPERTY: {[prop: string]: SpecConstraintModel[
  * Check all encoding constraints for a particular property and index tuple
  */
 export function checkSpec(prop: Property, indexTuple: EnumSpecIndexTuple<any>,
-  specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig): string {
+  specM: SpecQueryModel, schema: Schema, opt: QueryConfig): string {
 
   // Check encoding constraint
   const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[prop] || [];
@@ -496,7 +495,7 @@ export function checkSpec(prop: Property, indexTuple: EnumSpecIndexTuple<any>,
     if (c.strict() || !!opt[c.name()]) {
       // For strict constraint, or enabled non-strict, check the constraints
 
-      const satisfy = c.satisfy(specM, schema, stats, opt);
+      const satisfy = c.satisfy(specM, schema, opt);
       if (!satisfy) {
         let violatedConstraint = '(spec) ' + c.name();
         /* istanbul ignore if */

@@ -16,5 +16,4 @@ export const query = extend(queryFn, cqlQuery);
 
 export import ranking = require('./ranking/ranking');
 export import schema = require('./schema');
-export import stats = require('./stats');
 export import util = require('./util');

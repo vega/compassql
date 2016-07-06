@@ -3,7 +3,6 @@ import {Channel} from 'vega-lite/src/channel';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../../config';
 import {SpecQueryModel} from '../../model';
 import {EncodingQuery, stringifyEncodingQueryFieldDef} from '../../query';
-import {Stats} from '../../stats';
 import {Dict, extend, forEach, keys} from '../../util';
 
 
@@ -70,7 +69,7 @@ export namespace TypeChannelScore {
     return type + '_' + channel;
   }
 
-  export function getScore(specM: SpecQueryModel, stats: Stats, opt: QueryConfig) {
+  export function getScore(specM: SpecQueryModel, opt: QueryConfig) {
     const encodingQueryByField = specM.getEncodings().reduce((m, encQ) => {
       const fieldKey = stringifyEncodingQueryFieldDef(encQ);
       (m[fieldKey] = m[fieldKey] || []).push(encQ);
@@ -137,7 +136,7 @@ export namespace PreferredAxisScore {
     return type + '_' + channel;
   }
 
-  export function getScore(specM: SpecQueryModel, stats: Stats, opt: QueryConfig): FeatureScore[] {
+  export function getScore(specM: SpecQueryModel, opt: QueryConfig): FeatureScore[] {
     return specM.getEncodings().reduce((features, encQ: EncodingQuery) => {
       const type = getExtendedType(encQ);
       const feature = featurize(type, encQ.channel);
@@ -169,7 +168,7 @@ export namespace PreferredFacetScore {
     return score;
   }
 
-  export function getScore(specM: SpecQueryModel, stats: Stats, opt: QueryConfig): FeatureScore[] {
+  export function getScore(specM: SpecQueryModel, opt: QueryConfig): FeatureScore[] {
     return specM.getEncodings().reduce((features, encQ: EncodingQuery) => {
       const featureScore = getFeatureScore(PREFERRED_FACET, encQ.channel as string);
       if (featureScore) {
@@ -191,7 +190,7 @@ export namespace MarkChannelScore {
     } as Dict<number>;
   }
 
-  export function getScore(specM: SpecQueryModel, stats: Stats, opt: QueryConfig): FeatureScore[] {
+  export function getScore(specM: SpecQueryModel, opt: QueryConfig): FeatureScore[] {
     const mark = specM.getMark();
     return specM.getEncodings().reduce((featureScores, encQ) => {
       const feature = mark + '_' + encQ.channel;
@@ -221,7 +220,7 @@ export namespace DimensionScore {
     } as Dict<number>;
   }
 
-  export function getScore(specM: SpecQueryModel, stats: Stats, opt: QueryConfig): FeatureScore[] {
+  export function getScore(specM: SpecQueryModel, opt: QueryConfig): FeatureScore[] {
     if (specM.isAggregate()) {
       specM.getEncodings().reduce((maxFScore, encQ: EncodingQuery) => {
         if (!encQ.aggregate && !encQ.autoCount) { //isDimension

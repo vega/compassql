@@ -12,14 +12,13 @@ import {generate} from './generate';
 import {nest} from './nest';
 import {rank} from './ranking/ranking';
 import {Schema} from './schema';
-import {Stats} from './stats';
 import {contains, extend, some} from './util';
 
-export function query(query: Query, schema: Schema, stats: Stats) {
+export function query(query: Query, schema: Schema) {
   query = normalize(query);
-  const answerSet = generate(query.spec, schema, stats, query.config);
-  const nestedAnswerSet = nest(answerSet, query, stats);
-  return rank(nestedAnswerSet, query, stats, 0);
+  const answerSet = generate(query.spec, schema, query.config);
+  const nestedAnswerSet = nest(answerSet, query);
+  return rank(nestedAnswerSet, query, 0);
 }
 
 /**
