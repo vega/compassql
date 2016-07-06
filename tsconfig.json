@@ -54,6 +54,7 @@
         "test/model.test.ts",
         "test/modelgroup.test.ts",
         "test/query.test.ts",
+        "test/schema.test.ts",
         "typings/chai.d.ts",
         "typings/datalib.d.ts",
         "typings/mocha.d.ts"
