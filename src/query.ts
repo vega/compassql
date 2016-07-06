@@ -251,26 +251,27 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     if (encQ.bin['maxbins']) {
       params.push({key: 'maxbins', value: encQ.bin['maxbins']});
     }
-  } else if (encQ.scale && !isEnumSpec(encQ.scale)) {
-    fn = 'scale';
-    var scaleParams = [];
+  } //else if (encQ.scale && !isEnumSpec(encQ.scale)) {
+    
+  //   if (encQ.scale && !isEnumSpec(encQ.scale)) {
+  //   var scaleParams = [];
 
-    if (encQ.scale['type']) {
-      scaleParams.push({key: 'type', value: encQ.scale['type']});
-    }
-    // TODO: push other scale properties to scaleParams.
+  //   if (encQ.scale['type']) {
+  //     scaleParams.push({key: 'type', value: encQ.scale['type']});
+  //   }
+  //   // TODO: push other scale properties to scaleParams.
 
-    if (keys(scaleParams).length > 0) {
-      params.push({
-        key: 'scale', 
-        value: scaleParams.map(function(x) { 
-            return '{' + x.key + ':' + ' ' + x.value + '}'; 
-          })
-          .join()
-      });
-    }
-
-  } else if (encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
+  //   if (keys(scaleParams).length > 0) {
+  //     params.push({
+  //       key: 'scale',
+  //       value: scaleParams.map(function(x) {
+  //           return '{' + x.key + ':' + ' ' + x.value + '}';
+  //         })
+  //         .join()
+  //     });
+  //   }
+  // }
+    else if (encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
     fn = 'count';
   } else if (
       (encQ.aggregate && isEnumSpec(encQ.aggregate)) ||
