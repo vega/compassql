@@ -331,7 +331,7 @@ export const DIMENSION_PREFERENCE: RuleSet<SpecQueryModel> = {
 };
 
 function getScore(specM: SpecQueryModel) {
-  const featureScores = effectiveness(specM, DEFAULT_QUERY_CONFIG);
+  const featureScores = effectiveness(specM, schema, DEFAULT_QUERY_CONFIG);
   return featureScores.features.reduce((s, featureScore) => {
     return s + featureScore.score;
   }, 0);

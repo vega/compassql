@@ -3,6 +3,7 @@ import {SpecQueryModel} from '../../model';
 import {EncodingQuery} from '../../query';
 import {Dict} from '../../util';
 
+import {Schema} from '../../schema';
 import {TypeChannelScore, MarkChannelScore, PreferredAxisScore, PreferredFacetScore} from './channel';
 import {MarkScore} from './mark';
 
@@ -17,7 +18,7 @@ export interface FeatureInitializer {
 }
 
 export interface Featurizer {
-  (specM: SpecQueryModel, opt: QueryConfig): FeatureScore[];
+  (specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore[];
 }
 
 export interface FeatureFactory {
@@ -87,9 +88,9 @@ export function getExtendedType(encQ: EncodingQuery) {
 }
 
 
-export default function (specM: SpecQueryModel, opt: QueryConfig) {
+export default function (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) {
   const features = FEATURE_FACTORIES.reduce((f, factory) => {
-    const scores = factory.getScore(specM, opt);
+    const scores = factory.getScore(specM, schema, opt);
     return f.concat(scores);
   }, [] as FeatureScore[]);
 

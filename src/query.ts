@@ -18,7 +18,7 @@ export function query(query: Query, schema: Schema) {
   query = normalize(query);
   const answerSet = generate(query.spec, schema, query.config);
   const nestedAnswerSet = nest(answerSet, query);
-  return rank(nestedAnswerSet, query, 0);
+  return rank(nestedAnswerSet, query, schema, 0);
 }
 
 /**

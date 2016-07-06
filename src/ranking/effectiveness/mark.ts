@@ -4,6 +4,7 @@ import {Mark} from 'vega-lite/src/mark';
 import {QueryConfig} from '../../config';
 import {SpecQueryModel} from '../../model';
 import {Dict, forEach} from '../../util';
+import {Schema} from '../../Schema';
 
 import {FeatureScore, getExtendedType, getFeatureScore} from './effectiveness';
 import {BIN_Q, TIMEUNIT_T, Q, N, O, T, NONE} from './type';
@@ -174,7 +175,7 @@ export namespace MarkScore {
     return SCORE;
   }
 
-  export function getScore(specM: SpecQueryModel, opt: QueryConfig): FeatureScore[] {
+  export function getScore(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore[] {
     let mark = specM.getMark() as Mark;
     if (mark === Mark.CIRCLE || mark === Mark.SQUARE) {
       mark = Mark.POINT;
