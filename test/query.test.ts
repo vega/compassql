@@ -348,7 +348,7 @@ describe('query', () => {
       const str = stringifyEncodingQueryFieldDef({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}, scale: {type: ScaleType.LOG}
       });
-      assert.equal(str, 'bin(a,q,maxbins=20,scale={type: log})');
+      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"})');
     });
 
 
@@ -356,7 +356,7 @@ describe('query', () => {
        const str = stringifyEncodingQueryFieldDef({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}
        });
-       assert.equal(str, 'a,q,scale={type: log}');
+       assert.equal(str, 'a,q,scale={"type":"log"}');
     });
     // TODO: Update tests for other scale.*
 

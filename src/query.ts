@@ -265,28 +265,24 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
   if (encQ.scale && !isEnumSpec(encQ.scale)) {
 
       if (encQ.scale && !isEnumSpec(encQ.scale)) {
-      var scaleParams = [];
-
+      var scaleParams = {};
+      
       if (encQ.scale['type']) {
-        scaleParams.push({key: 'type', value: encQ.scale['type']});
+        scaleParams = {type: encQ.scale['type']};
       }
       // TODO: push other scale properties to scaleParams.
 
       if (keys(scaleParams).length > 0) {
         params.push({
           key: 'scale',
-          value: scaleParams.map(function(x) {
-              return '{' + x.key + ':' + ' ' + x.value + '}';
-            })
-            .join()
+          value: JSON.stringify(scaleParams)
         });
       }
     }
   }
 
-
-  const fieldType = enumSpecShort(encQ.field || '*') + ',' +
-    enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1) + ',' +
-    params.map((p) => p.key + '=' + p.value);
+  const fieldType = enumSpecShort(encQ.field || '*') + ',' + 
+    enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1) +
+    params.map((p) => ',' + p.key + '=' + p.value).join('');
   return (fn ? fn + '(' + fieldType + ')' : fieldType);
 }
