@@ -12,7 +12,7 @@ import {nest, FIELD, FIELD_TRANSFORM, ENCODING, TRANSPOSE, SpecQueryModelGroup, 
 import {SHORT_ENUM_SPEC, Query} from '../src/query';
 import {contains, extend} from '../src/util';
 
-import {schema, stats} from './fixture';
+import {schema} from './fixture';
 
 describe('nest', () => {
   describe('isSpecQueryModelGroup', () => {
@@ -34,7 +34,7 @@ describe('nest', () => {
         },
         orderBy: "effectiveness",
       };
-      const group: SpecQueryModelGroup = nest(specQ, q, stats);
+      const group: SpecQueryModelGroup = nest(specQ, q);
 
       assert.isTrue(isSpecQueryModelGroup(group));
     });
@@ -72,8 +72,8 @@ describe('nest', () => {
         config: DEFAULT_QUERY_CONFIG
       };
 
-      const answerSet = generate(query.spec, schema, stats);
-      const groups = nest(answerSet, query, stats).items as SpecQueryModelGroup[] ;
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
 
       // two because have two different aggregation
       assert.equal(groups.length, 1);
@@ -96,8 +96,8 @@ describe('nest', () => {
         config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG)
       };
 
-      const answerSet = generate(query.spec, schema, stats);
-      const groups = nest(answerSet, query, stats).items as SpecQueryModelGroup[] ;
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
 
       // two because have two different aggregation
       assert.equal(groups.length, 1);
@@ -129,8 +129,8 @@ describe('nest', () => {
         config: DEFAULT_QUERY_CONFIG
       };
 
-      const answerSet = generate(query.spec, schema, stats);
-      const groups = nest(answerSet, query, stats).items as SpecQueryModelGroup[] ;
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
 
       // two because have two different aggregation
       assert.equal(groups.length, 2);
@@ -162,8 +162,8 @@ describe('nest', () => {
         config: DEFAULT_QUERY_CONFIG
       };
 
-      const answerSet = generate(query.spec, schema, stats);
-      const groups = nest(answerSet, query, stats).items;
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items;
       assert.equal(groups.length, 1);
     });
 
@@ -189,8 +189,8 @@ describe('nest', () => {
         config: DEFAULT_QUERY_CONFIG
       };
 
-      const answerSet = generate(query.spec, schema, stats);
-      const groups = nest(answerSet, query, stats).items;
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items;
       assert.equal(groups.length, 1);
     });
 
@@ -216,8 +216,8 @@ describe('nest', () => {
         config: DEFAULT_QUERY_CONFIG
       };
 
-      const answerSet = generate(query.spec, schema, stats);
-      const groups = nest(answerSet, query, stats).items;
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items;
       assert.equal(groups.length, 1);
     });
 
@@ -244,8 +244,8 @@ describe('nest', () => {
         config: DEFAULT_QUERY_CONFIG
       };
 
-      const answerSet = generate(query.spec, schema, stats);
-      const groups = nest(answerSet, query, stats).items;
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items;
       assert.equal(groups.length, 2);
       assert.equal((groups[0] as SpecQueryModelGroup).name, 'non-xy:N1,n|xy:N,n|xy:sum(Q,q)');
       (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModel) => {
@@ -281,8 +281,8 @@ describe('nest', () => {
         config: DEFAULT_QUERY_CONFIG
       };
 
-      const answerSet = generate(query.spec, schema, stats);
-      const groups = nest(answerSet, query, stats).items;
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items;
       assert.equal(groups.length, 2);
       assert.equal((groups[0] as SpecQueryModelGroup).name, 'non-xy:N1,n|xy:N,n|xy:sum(Q,q)');
       (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModelGroup) => {
@@ -316,8 +316,8 @@ describe('nest', () => {
           config: DEFAULT_QUERY_CONFIG
         };
 
-        const answerSet = generate(query.spec, schema, stats);
-        const groups = nest(answerSet, query, stats).items;
+        const answerSet = generate(query.spec, schema);
+        const groups = nest(answerSet, query).items;
         assert.equal(groups.length, 1);
       });
 
@@ -347,8 +347,8 @@ describe('nest', () => {
           config: DEFAULT_QUERY_CONFIG
         };
 
-        const answerSet = generate(query.spec, schema, stats);
-        const groups = nest(answerSet, query, stats).items;
+        const answerSet = generate(query.spec, schema);
+        const groups = nest(answerSet, query).items;
         assert.equal(groups.length, 1);
       });
 
@@ -371,8 +371,8 @@ describe('nest', () => {
           config: DEFAULT_QUERY_CONFIG
         };
 
-        const answerSet = generate(query.spec, schema, stats, {omitNonPositionalOverPositionalChannels: false});
-        const groups = nest(answerSet, query, stats).items;
+        const answerSet = generate(query.spec, schema, {omitNonPositionalOverPositionalChannels: false});
+        const groups = nest(answerSet, query).items;
         assert.equal(groups.length, 2);
       });
     });
@@ -401,8 +401,8 @@ describe('nest', () => {
         config: DEFAULT_QUERY_CONFIG
       };
 
-      const answerSet = generate(query.spec, schema, stats);
-      const groups = nest(answerSet, query, stats).items as SpecQueryModelGroup[];
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items as SpecQueryModelGroup[];
 
       // two because have two different aggregation
       assert.equal(groups.length, 2);

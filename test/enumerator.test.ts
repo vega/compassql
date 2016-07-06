@@ -14,7 +14,7 @@ import {BinQuery, SpecQuery} from '../src/query';
 import {Property} from '../src/property';
 import {extend} from '../src/util';
 
-import {schema, stats} from './fixture';
+import {schema} from './fixture';
 
 function buildSpecQueryModel(specQ: SpecQuery) {
   return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
@@ -30,7 +30,7 @@ describe('enumerator', () => {
           {channel: Channel.Y, field: 'O', type: Type.ORDINAL}
         ]
       });
-      const enumerator = ENUMERATOR_INDEX[Property.MARK](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+      const enumerator = ENUMERATOR_INDEX[Property.MARK](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
       const answerSet = enumerator([], specM);
       assert.equal(answerSet.length, 2);
@@ -46,7 +46,7 @@ describe('enumerator', () => {
           {channel: Channel.SHAPE, field: 'O', type: Type.ORDINAL}
         ]
       });
-      const enumerator = ENUMERATOR_INDEX[Property.MARK](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+      const enumerator = ENUMERATOR_INDEX[Property.MARK](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
       const answerSet = enumerator([], specM);
       assert.equal(answerSet.length, 1);
@@ -68,7 +68,7 @@ describe('enumerator', () => {
           ]
         });
         const opt = extend({}, DEFAULT_QUERY_CONFIG, {omitVerticalDotPlot: false});
-        const enumerator = ENUMERATOR_INDEX[Property.CHANNEL](specM.enumSpecIndex, schema, stats, opt);
+        const enumerator = ENUMERATOR_INDEX[Property.CHANNEL](specM.enumSpecIndex, schema, opt);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
@@ -87,7 +87,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.CHANNEL](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.CHANNEL](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -109,7 +109,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -130,7 +130,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -154,7 +154,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.BIN](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.BIN](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
@@ -176,7 +176,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.BIN](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.BIN](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
@@ -200,7 +200,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.BIN_MAXBINS](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.BIN_MAXBINS](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -223,7 +223,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.TIMEUNIT](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.TIMEUNIT](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 4);
@@ -245,7 +245,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.TIMEUNIT](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.TIMEUNIT](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -265,7 +265,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -285,7 +285,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -303,7 +303,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 4);
@@ -324,7 +324,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
@@ -342,7 +342,7 @@ describe('enumerator', () => {
           ]
         });
         const noTypeMatchesSchema = extend({}, DEFAULT_QUERY_CONFIG, {typeMatchesSchemaType: false});
-        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, stats, noTypeMatchesSchema);
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, noTypeMatchesSchema);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -358,7 +358,7 @@ describe('enumerator', () => {
             {channel: Channel.X, field: 'Q', type:  {values: [Type.QUANTITATIVE, Type.NOMINAL, Type.ORDINAL, Type.TEMPORAL]}},
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -372,7 +372,7 @@ describe('enumerator', () => {
             {channel: Channel.X, field: 'O', type: {values: [Type.ORDINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.NOMINAL]}}
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -386,7 +386,7 @@ describe('enumerator', () => {
             {channel: Channel.X, field: 'T', type: {values:[Type.TEMPORAL, Type.ORDINAL, Type.QUANTITATIVE, Type.NOMINAL]}}
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -400,7 +400,7 @@ describe('enumerator', () => {
             {channel: Channel.X, field: 'N', type: {values: [Type.NOMINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.ORDINAL]}}
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, stats, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -418,7 +418,7 @@ describe('enumerator', () => {
               { channel: Channel.X, field: 'O', type: Type.ORDINAL},
           ]
         };
-        const answerSet = generate(query, schema, stats, {autoAddCount: true});
+        const answerSet = generate(query, schema, {autoAddCount: true});
         assert.equal(answerSet.length, 1);
         assert.isTrue(answerSet[0].getEncodings()[1].autoCount);
       });
@@ -431,7 +431,7 @@ describe('enumerator', () => {
           { channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
         ]
       };
-      const answerSet = generate(query, schema, stats, {autoAddCount: true});
+      const answerSet = generate(query, schema, {autoAddCount: true});
 
       it('should output autoCount=false', () => {
         assert.isFalse(answerSet[0].getEncodingQueryByIndex(1).autoCount);
@@ -453,7 +453,7 @@ describe('enumerator', () => {
           }
         ]
       };
-      const answerSet = generate(query, schema, stats, {autoAddCount: true});
+      const answerSet = generate(query, schema, {autoAddCount: true});
 
       it('should not output point with only size for color', () => {
         answerSet.forEach((model) => {

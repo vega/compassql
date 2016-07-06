@@ -8,7 +8,7 @@ import {DEFAULT_QUERY_CONFIG} from '../../../src/config';
 import {SpecQueryModel} from '../../../src/model';
 import {extend, nestedMap} from '../../../src/util';
 import effectiveness from '../../../src/ranking/effectiveness/effectiveness';
-import {schema, stats} from '../../fixture';
+import {schema} from '../../fixture';
 import {RuleSet, Rule, testRuleSet} from './rule';
 
 function build(specQ) {
@@ -331,7 +331,7 @@ export const DIMENSION_PREFERENCE: RuleSet<SpecQueryModel> = {
 };
 
 function getScore(specM: SpecQueryModel) {
-  const featureScores = effectiveness(specM, stats, DEFAULT_QUERY_CONFIG);
+  const featureScores = effectiveness(specM, DEFAULT_QUERY_CONFIG);
   return featureScores.features.reduce((s, featureScore) => {
     return s + featureScore.score;
   }, 0);
