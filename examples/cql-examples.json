@@ -63,11 +63,11 @@
   ],
   "Nested Property": [
     {
-      "name": "bin_maxbins",
+      "name": "bin-maxbins",
       "title": "Histogram - maxbins?"
     },
     {
-      "name": "scaleType",
+      "name": "scale-type",
       "title": "Strip Plot - scale.type?"
     }
   ],
