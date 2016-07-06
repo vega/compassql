@@ -263,7 +263,7 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
   }
 
   if (encQ.scale && !isEnumSpec(encQ.scale)) {
-      
+
       if (encQ.scale && !isEnumSpec(encQ.scale)) {
       var scaleParams = [];
 
