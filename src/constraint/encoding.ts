@@ -65,19 +65,6 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     }
   // TODO: minCardinalityForBin
   },{
-    name: 'omitBinWithLogScale',
-    description: 'Bin does not support log scale',
-    properties: [Property.BIN, Property.SCALE_TYPE],
-    requireAllProperties: true,
-    strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
-      if (encQ.bin && encQ.scale) {
-        const scaleType = (encQ.scale as ScaleQuery).type;
-        return scaleType !== ScaleType.LOG;
-      }
-      return true;
-    }
-  },{
     name: 'binAppliedForQuantitative',
     description: 'bin should be applied to quantitative field only.',
     properties: [Property.TYPE, Property.BIN],
@@ -208,9 +195,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       return true; // other channel is irrelevant to this constraint
     }
   }, {
-    name: 'dataTypeMatchesScaleType',
+    name: 'dataTypeAndFunctionMatchesScaleType',
     description: 'ScaleType must match data type',
-    properties: [Property.TYPE, Property.SCALE_TYPE],
+    properties: [Property.TYPE, Property.SCALE_TYPE, Property.TIMEUNIT, Property.BIN],
     requireAllProperties: true,
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
@@ -219,11 +206,23 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
         const type = encQ.type;
 
         if (contains([Type.ORDINAL, Type.NOMINAL], type)) {
-          return contains([ScaleType.ORDINAL, undefined], scaleType);
+          if (!encQ.timeUnit) {
+            return contains([undefined], scaleType);
+          } else {
+            return contains([ScaleType.ORDINAL, undefined], scaleType);
+          }
         } else if (type === Type.TEMPORAL) {
-          return contains([ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined], scaleType);
+          if(!encQ.timeUnit) {
+            return contains([ScaleType.TIME, ScaleType.UTC, undefined], scaleType);
+          } else {
+            return contains([ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined], scaleType);
+          }
         } else if (type === Type.QUANTITATIVE) {
-          return contains([ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.LINEAR, undefined], scaleType);
+          if (encQ.bin) {
+            return contains([ScaleType.LINEAR, undefined], scaleType);
+          } else {
+            return contains([ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.LINEAR, undefined], scaleType);
+          }
         }
       }
       return true;
