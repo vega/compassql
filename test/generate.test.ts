@@ -239,7 +239,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [ScaleType.ORDINAL, undefined]}},
+            scale: {type: {values: [undefined]}},
             field: 'O',
             type: Type.ORDINAL
           }
@@ -257,7 +257,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [ScaleType.ORDINAL, undefined]}},
+            scale: {type: {values: [undefined]}},
             field: 'N',
             type: Type.NOMINAL
           }

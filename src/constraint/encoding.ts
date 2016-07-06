@@ -206,11 +206,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
         const type = encQ.type;
 
         if (contains([Type.ORDINAL, Type.NOMINAL], type)) {
-          if (!encQ.timeUnit) {
-            return contains([undefined], scaleType);
-          } else {
             return contains([ScaleType.ORDINAL, undefined], scaleType);
-          }
         } else if (type === Type.TEMPORAL) {
           if(!encQ.timeUnit) {
             return contains([ScaleType.TIME, ScaleType.UTC, undefined], scaleType);

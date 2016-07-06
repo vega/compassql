@@ -215,7 +215,7 @@ export interface BinQuery extends EnumSpec<boolean> {
 }
 
 export interface ScaleQuery extends EnumSpec<boolean> {
-  // TODO: add other properties from vegalite/src/scale 
+  // TODO: add other properties from vegalite/src/scale
   type?: ScaleType | EnumSpec<ScaleType> | ShortEnumSpec;
 }
 
@@ -266,7 +266,7 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
 
       if (encQ.scale && !isEnumSpec(encQ.scale)) {
       var scaleParams = {};
-      
+
       if (encQ.scale['type']) {
         scaleParams = {type: encQ.scale['type']};
       }
@@ -281,7 +281,7 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     }
   }
 
-  const fieldType = enumSpecShort(encQ.field || '*') + ',' + 
+  const fieldType = enumSpecShort(encQ.field || '*') + ',' +
     enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1) +
     params.map((p) => ',' + p.key + '=' + p.value).join('');
   return (fn ? fn + '(' + fieldType + ')' : fieldType);
