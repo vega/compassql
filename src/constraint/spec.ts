@@ -275,7 +275,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
     if (mark === Mark.AREA || mark === Mark.BAR) {
       for (let encQ of encodings) {
-        if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && (encQ.scale)) {
+        if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale) {
           if (((encQ.scale as ScaleQuery).type as ScaleType) === ScaleType.LOG) {
             return false;
           }
