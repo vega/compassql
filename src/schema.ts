@@ -1,5 +1,6 @@
 import {Type} from 'vega-lite/src/type';
 import {summary} from 'datalib/src/stats';
+import {inferAll} from 'datalib/src/import/type';
 
 import {EncodingQuery} from './query';
 
@@ -16,10 +17,11 @@ export class Schema {
   public static build(data: any): Schema {
     // create profiles for each variable
     var summaries: Summary[] = summary(data);
+    var types = inferAll(data); // inferAll does stronger type inference than summary
 
     var fieldSchemas: FieldSchema[] = summaries.map(function(summary) {
       var field: string = summary.field;
-      var primitiveType: PrimitiveType = summary.type as any;
+      var primitiveType: PrimitiveType = types[field] as any;
       var type: Type = (primitiveType === PrimitiveType.NUMBER || primitiveType === PrimitiveType.INTEGER) ? Type.QUANTITATIVE:
         primitiveType === PrimitiveType.DATE ? Type.TEMPORAL : Type.NOMINAL;
       var distinct: number = summary.distinct;
