@@ -251,27 +251,7 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     if (encQ.bin['maxbins']) {
       params.push({key: 'maxbins', value: encQ.bin['maxbins']});
     }
-  } //else if (encQ.scale && !isEnumSpec(encQ.scale)) {
-    
-  //   if (encQ.scale && !isEnumSpec(encQ.scale)) {
-  //   var scaleParams = [];
-
-  //   if (encQ.scale['type']) {
-  //     scaleParams.push({key: 'type', value: encQ.scale['type']});
-  //   }
-  //   // TODO: push other scale properties to scaleParams.
-
-  //   if (keys(scaleParams).length > 0) {
-  //     params.push({
-  //       key: 'scale',
-  //       value: scaleParams.map(function(x) {
-  //           return '{' + x.key + ':' + ' ' + x.value + '}';
-  //         })
-  //         .join()
-  //     });
-  //   }
-  // }
-    else if (encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
+  } else if (encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
     fn = 'count';
   } else if (
       (encQ.aggregate && isEnumSpec(encQ.aggregate)) ||
@@ -282,8 +262,31 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     fn = SHORT_ENUM_SPEC + '';
   }
 
+  if (encQ.scale && !isEnumSpec(encQ.scale)) {
+      
+      if (encQ.scale && !isEnumSpec(encQ.scale)) {
+      var scaleParams = [];
+
+      if (encQ.scale['type']) {
+        scaleParams.push({key: 'type', value: encQ.scale['type']});
+      }
+      // TODO: push other scale properties to scaleParams.
+
+      if (keys(scaleParams).length > 0) {
+        params.push({
+          key: 'scale',
+          value: scaleParams.map(function(x) {
+              return '{' + x.key + ':' + ' ' + x.value + '}';
+            })
+            .join()
+        });
+      }
+    }
+  }
+
+
   const fieldType = enumSpecShort(encQ.field || '*') + ',' +
-    enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1) +
-    params.map((p) => ',' + p.key + '=' + p.value);
+    enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1) + ',' +
+    params.map((p) => p.key + '=' + p.value);
   return (fn ? fn + '(' + fieldType + ')' : fieldType);
 }
