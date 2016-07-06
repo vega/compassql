@@ -251,7 +251,7 @@ describe('generate', function () {
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    it('should enumerate correct scaleType for nominal field without timeunit', () => {
+    it('should enumerate correct scaleType for nominal field', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
