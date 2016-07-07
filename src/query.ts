@@ -3,6 +3,7 @@ import {Config} from 'vega-lite/src/config';
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Data} from 'vega-lite/src/data';
 import {Mark, BAR, AREA} from 'vega-lite/src/mark';
+import {ScaleType} from 'vega-lite/src/scale';
 import {StackOffset, StackProperties} from 'vega-lite/src/stack';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
@@ -13,7 +14,7 @@ import {nest} from './nest';
 import {rank} from './ranking/ranking';
 import {Schema} from './schema';
 import {Stats} from './stats';
-import {contains, extend, some} from './util';
+import {contains, extend, keys, some} from './util';
 
 export function query(query: Query, schema: Schema, stats: Stats) {
   query = normalize(query);
@@ -200,6 +201,7 @@ export interface EncodingQuery {
   timeUnit?: TimeUnit | EnumSpec<TimeUnit> | ShortEnumSpec;
 
   bin?: boolean | BinQuery | ShortEnumSpec;
+  scale?: boolean | ScaleQuery | ShortEnumSpec;
 
   field?: Field | EnumSpec<Field> | ShortEnumSpec;
   type?: Type | EnumSpec<Type> | ShortEnumSpec;
@@ -212,6 +214,10 @@ export interface BinQuery extends EnumSpec<boolean> {
   maxbins?: number | EnumSpec<number> | ShortEnumSpec;
 }
 
+export interface ScaleQuery extends EnumSpec<boolean> {
+  // TODO: add other properties from vegalite/src/scale
+  type?: ScaleType | EnumSpec<ScaleType> | ShortEnumSpec;
+}
 
 export function isDimension(encQ: EncodingQuery) {
   return contains([Type.NOMINAL, Type.ORDINAL], encQ.type) ||
@@ -256,8 +262,27 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     fn = SHORT_ENUM_SPEC + '';
   }
 
+  if (encQ.scale && !isEnumSpec(encQ.scale)) {
+
+      if (encQ.scale && !isEnumSpec(encQ.scale)) {
+      var scaleParams = {};
+
+      if (encQ.scale['type']) {
+        scaleParams = {type: encQ.scale['type']};
+      }
+      // TODO: push other scale properties to scaleParams.
+
+      if (keys(scaleParams).length > 0) {
+        params.push({
+          key: 'scale',
+          value: JSON.stringify(scaleParams)
+        });
+      }
+    }
+  }
+
   const fieldType = enumSpecShort(encQ.field || '*') + ',' +
     enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1) +
-    params.map((p) => ',' + p.key + '=' + p.value);
+    params.map((p) => ',' + p.key + '=' + p.value).join('');
   return (fn ? fn + '(' + fieldType + ')' : fieldType);
 }

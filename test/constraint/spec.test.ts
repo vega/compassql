@@ -3,6 +3,7 @@ import {assert} from 'chai';
 import {Mark} from 'vega-lite/src/mark';
 import {AggregateOp, SUM_OPS} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
+import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
@@ -554,7 +555,33 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('omitMultipleNonPositionalChannels', () => {
+  describe('omitBarAreaForLogScale', () => {
+    it('should return false if either x or y channel of bar or area mark is log scale', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.AREA,
+        encodings: [
+          {channel: Channel.X, field: 'A', scale: {type: ScaleType.LOG}, type: Type.QUANTITATIVE},
+          {channel: Channel.Y, field: 'B', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitBarAreaForLogScale'].satisfy(specM, schema, stats, defaultOpt));
+    });
+
+    it('should return true if either x or y channel of bar or area mark is not log scale', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.AREA,
+        encodings: [
+          {channel: Channel.COLOR, field: 'A', scale: {type: ScaleType.LOG}, type: Type.QUANTITATIVE},
+          {channel: Channel.SHAPE, field: 'B', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarAreaForLogScale'].satisfy(specM, schema, stats, defaultOpt));
+    });
+  });
+
+    describe('omitMultipleNonPositionalChannels', () => {
     it('should return true if there are zero non-positional channels', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
