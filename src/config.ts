@@ -2,6 +2,7 @@ import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR} from 'vega-lite/src/channel';
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Config} from 'vega-lite/src/config';
 import {Mark} from 'vega-lite/src/mark';
+import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
@@ -31,7 +32,8 @@ export interface QueryConfig {
 
   /** Default maxbins to enumerate */
   maxBinsList?: number[];
-  // TODO: scaleType, etc.
+
+  scaleTypes?: ScaleType[];
 
   // SPECIAL MODE
   /**
@@ -90,8 +92,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
   maxBinsList: [5, 10, 20],
-  // TODO: scaleType, etc.
-
+  scaleTypes: [ScaleType.LINEAR, ScaleType.LOG],
 
   // CONSTRAINTS
   // Spec Constraints -- See description inside src/constraints/spec.ts

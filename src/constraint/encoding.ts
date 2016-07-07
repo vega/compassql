@@ -4,12 +4,12 @@ import {Type} from 'vega-lite/src/type';
 import {QueryConfig} from '../config';
 import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
 import {Property} from '../property';
-import {EncodingQuery, isEnumSpec, isDimension, isMeasure} from '../query';
+import {EncodingQuery, isEnumSpec, isDimension, isMeasure, ScaleQuery} from '../query';
 import {PrimitiveType, Schema} from '../schema';
-import {some} from '../util';
+import {contains, some} from '../util';
+import {ScaleType} from 'vega-lite/src/scale';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
-
 
 /**
  * Collection of constraints for a single encoding mapping.
@@ -63,7 +63,6 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       return true; // no aggregate is okay with any type.
     }
   // TODO: minCardinalityForBin
-  // TODO: omitBinWithLogScale
   },{
     name: 'binAppliedForQuantitative',
     description: 'bin should be applied to quantitative field only.',
@@ -194,8 +193,36 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       }
       return true; // other channel is irrelevant to this constraint
     }
+  }, {
+    name: 'dataTypeAndFunctionMatchScaleType',
+    description: 'Scale type must match data type',
+    properties: [Property.TYPE, Property.SCALE_TYPE, Property.TIMEUNIT, Property.BIN],
+    requireAllProperties: true,
+    strict: true,
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      if (encQ.scale) {
+        const scaleType = (encQ.scale as ScaleQuery).type;
+        const type = encQ.type;
+
+        if (contains([Type.ORDINAL, Type.NOMINAL], type)) {
+            return contains([ScaleType.ORDINAL, undefined], scaleType);
+        } else if (type === Type.TEMPORAL) {
+          if(!encQ.timeUnit) {
+            return contains([ScaleType.TIME, ScaleType.UTC, undefined], scaleType);
+          } else {
+            return contains([ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined], scaleType);
+          }
+        } else if (type === Type.QUANTITATIVE) {
+          if (encQ.bin) {
+            return contains([ScaleType.LINEAR, undefined], scaleType);
+          } else {
+            return contains([ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.LINEAR, undefined], scaleType);
+          }
+        }
+      }
+      return true;
+    }
   }
-  // TODO: scaleType must match data type
 ].map((ec: EncodingConstraint) => new EncodingConstraintModel(ec));
 
 export const ENCODING_CONSTRAINT_INDEX: {[name: string]: EncodingConstraintModel} =

@@ -3,6 +3,7 @@ import {assert} from 'chai';
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
+import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
@@ -10,7 +11,7 @@ import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
 import {ENUMERATOR_INDEX} from '../src/enumerator';
 import {SpecQueryModel} from '../src/model';
-import {BinQuery, SpecQuery} from '../src/query';
+import {BinQuery, ScaleQuery, SpecQuery} from '../src/query';
 import {Property} from '../src/property';
 import {extend} from '../src/util';
 
@@ -207,6 +208,78 @@ describe('enumerator', () => {
         assert.equal((answerSet[0].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 5);
         assert.equal((answerSet[1].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 10);
         assert.equal((answerSet[2].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 20);
+      });
+    });
+
+    describe('scale', () => {
+      it('should correctly enumerate scale with nested property', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {
+                values: [true, false],
+                type: ScaleType.LOG
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 2);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).scale, false);
+      });
+
+      it('should correctly enumerate scale without nested property', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {
+                values: [true, false]
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 2);
+        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).scale, false);
+      });
+    });
+
+    describe('scaleType', () => {
+      it('should correctly enumerate scaleType', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {
+                type: {values: [undefined, ScaleType.LOG, ScaleType.POW, ScaleType.ORDINAL]}
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 3);
+        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
+        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POW);
       });
     });
 

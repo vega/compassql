@@ -1,6 +1,7 @@
 import {SUM_OPS} from 'vega-lite/src/aggregate';
 import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
+import {ScaleType} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -9,7 +10,7 @@ import {QueryConfig} from '../config';
 import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {Property} from '../property';
 import {Schema} from '../schema';
-import {EncodingQuery, isEnumSpec, isMeasure} from '../query';
+import {ScaleQuery, EncodingQuery, isEnumSpec, isMeasure} from '../query';
 import {contains, every, some} from '../util';
 
 
@@ -41,6 +42,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
             case Property.AGGREGATE:
             case Property.AUTOCOUNT:
             case Property.BIN:
+            case Property.SCALE:
             case Property.TIMEUNIT:
             case Property.FIELD:
             case Property.TYPE:
@@ -95,7 +97,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   },
   {
     name: 'autoAddCount',
-    description: 'Automatically adding count only for plots with only ordinal, binned quantitative, or temporal with timeunti fields.',
+    description: 'Automatically adding count only for plots with only ordinal, binned quantitative, or temporal with timeunit fields.',
     properties: [Property.BIN, Property.TIMEUNIT, Property.TYPE, Property.AUTOCOUNT],
     requireAllProperties: false,
     strict: false,
@@ -260,7 +262,28 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         true;
     }
   },
-  // TODO: omitLengthForLogScale (Bar/Area)
+  {
+    name: 'omitBarAreaForLogScale',
+    description: 'Do not use bar and area mark for x and y\'s log scale',
+    properties: [Property.MARK, Property.CHANNEL, Property.SCALE],
+    requireAllProperties: true,
+    strict: true,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const mark = specM.getMark();
+      const encodings = specM.getEncodings();
+
+    if (mark === Mark.AREA || mark === Mark.BAR) {
+      for (let encQ of encodings) {
+        if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale) {
+          if (((encQ.scale as ScaleQuery).type as ScaleType) === ScaleType.LOG) {
+            return false;
+          }
+        }
+      }
+    }
+    return true;
+    }
+  },
   {
     name: 'omitMultipleNonPositionalChannels',
     description: 'Do not use multiple non-positional encoding channel to avoid over-encoding.',
