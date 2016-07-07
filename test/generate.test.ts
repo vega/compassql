@@ -158,7 +158,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [undefined, ScaleType.LOG]}},
+            scale: {type: {values: [undefined, ScaleType.LOG, ScaleType.UTC]}},
             field: 'Q',
             type: Type.QUANTITATIVE
           }
@@ -177,7 +177,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined]}},
+            scale: {type: {values: [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined, ScaleType.LOG]}},
             field: 'T',
             type: Type.TEMPORAL
           }
@@ -197,7 +197,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined]}},
+            scale: {type: {values: [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined, ScaleType.LOG]}},
             field: 'T',
             type: Type.TEMPORAL,
             timeUnit: TimeUnit.MINUTES
@@ -219,7 +219,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [ScaleType.ORDINAL, undefined]}},
+            scale: {type: {values: [ScaleType.ORDINAL, undefined, ScaleType.LOG]}},
             field: 'O',
             type: Type.ORDINAL,
             timeUnit: TimeUnit.MINUTES
@@ -233,13 +233,13 @@ describe('generate', function () {
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    it('should enumerate correct scaleType for ordinal field without timeunit', () => {
+    it('should enumerate correct scaleType for ordinal field', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [undefined]}},
+            scale: {type: {values: [ScaleType.ORDINAL, ScaleType.QUANTILE, undefined, ScaleType.LOG]}},
             field: 'O',
             type: Type.ORDINAL
           }
@@ -247,8 +247,9 @@ describe('generate', function () {
       };
 
       const answerSet = generate(specQ, schema, stats);
-      assert.equal(answerSet.length, 1);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal(answerSet.length, 2);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
+      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
     it('should enumerate correct scaleType for nominal field', () => {
@@ -257,7 +258,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [undefined]}},
+            scale: {type: {values: [undefined, ScaleType.LOG]}},
             field: 'N',
             type: Type.NOMINAL
           }
