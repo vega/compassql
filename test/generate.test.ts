@@ -168,7 +168,7 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(specQ, schema, stats);
+      const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 3);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);

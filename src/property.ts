@@ -76,7 +76,8 @@ export const DEFAULT_PROPERTY_PRECENCE: Property[] =  [
   Property.SCALE,
 
   // Nested Encoding Property
-  Property.SCALE_TYPE
+  Property.SCALE_TYPE,
+  Property.SCALE_ZERO
 ];
 
 export interface NestedEncodingProperty {

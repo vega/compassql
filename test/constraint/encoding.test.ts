@@ -305,7 +305,7 @@ describe('constraints/encoding', () => {
         scale: {zero: false},
         type: Type.QUANTITATIVE
       };
-      assert.isFalse(ENCODING_CONSTRAINT_INDEX['barMarkWithScaleZero'].satisfy(encQ, schema, stats, defaultOpt));
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['barMarkWithScaleZero'].satisfy(encQ, schema, defaultOpt));
     });
   });
 

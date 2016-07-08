@@ -199,7 +199,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.MARK, Property.SCALE_ZERO, Property.CHANNEL, Property.TYPE],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (contains([Channel.X, Channel.Y], encQ.channel) && (encQ.type === Type.QUANTITATIVE) &&
           (encQ.type === Type.QUANTITATIVE) && encQ.scale && !encQ.bin) {
             if ((encQ.scale as ScaleQuery).zero === false) {
