@@ -64,14 +64,16 @@ export const DEFAULT_PROPERTY_PRECENCE: Property[] =  [
   Property.AGGREGATE,
   Property.AUTOCOUNT,
 
-  // Nested Property
+  // Nested Transform Property
   Property.BIN_MAXBINS,
-  Property.SCALE_TYPE,
 
   // Encoding
   Property.CHANNEL,
   Property.MARK,
-  Property.SCALE
+  Property.SCALE,
+
+  // Nested Encoding Property
+  Property.SCALE_TYPE
 ];
 
 export interface NestedEncodingProperty {

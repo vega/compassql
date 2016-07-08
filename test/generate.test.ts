@@ -151,8 +151,31 @@ describe('generate', function () {
     });
   });
 
-  describe('scaleType', () => {
-    it('should enumerate correct scaleType for quantitative field', () => {
+  describe('scale-type', () => {
+    it('should enumerate correct scale enabling and scale type for quantitative field', () => {
+      const specQ = {
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: Channel.X,
+            scale: {
+              values: [true, false],
+              type: {values: [undefined, ScaleType.LOG, ScaleType.UTC]}
+            },
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+
+      const answerSet = generate(specQ, schema, stats);
+      assert.equal(answerSet.length, 3);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
+      assert.equal(answerSet[2].getEncodingQueryByIndex(0).scale, false);
+    });
+
+    it('should enumerate correct scale type for quantitative field', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -171,7 +194,7 @@ describe('generate', function () {
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
     });
 
-    it('should enumerate correct scaleType for temporal field without timeunit', () => {
+    it('should enumerate correct scale type for temporal field without timeunit', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -191,7 +214,7 @@ describe('generate', function () {
       assert.equal((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    it('should enumerate correct scaleType for temporal field with timeunit', () => {
+    it('should enumerate correct scale type for temporal field with timeunit', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -213,7 +236,7 @@ describe('generate', function () {
       assert.equal((answerSet[3].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    it('should enumerate correct scaleType for ordinal field with timeunit', () => {
+    it('should enumerate correct scale type for ordinal field with timeunit', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -233,7 +256,7 @@ describe('generate', function () {
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    it('should enumerate correct scaleType for ordinal field', () => {
+    it('should enumerate correct scale type for ordinal field', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -252,7 +275,7 @@ describe('generate', function () {
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    it('should enumerate correct scaleType for nominal field', () => {
+    it('should enumerate correct scale type for nominal field', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -270,10 +293,8 @@ describe('generate', function () {
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
   });
-  });
 
-
-  describe('bin_maxbins', () => {
+  describe('bin-maxbins', () => {
     describe('Qx#', () => {
       it('should enumerate multiple maxbins parameter', () => {
         const specQ = {
@@ -320,3 +341,4 @@ describe('generate', function () {
       });
     });
   });
+});
