@@ -15,9 +15,15 @@ import {rank} from './ranking/ranking';
 import {Schema} from './schema';
 import {contains, extend, keys, some} from './util';
 
-export function query(query: Query, schema: Schema) {
+export function query(query: Query, schema: Schema, config?: Config) {
+  // Merge optional config with the config provided in the query.
+  // Config in the query has higher precedence.
+  // Note that we're not merging this with DEFAULT_QUERY_CONFIG as
+  // we will do it in generate anyway.
+  config = extend({}, config, query.config);
+
   query = normalize(query);
-  const answerSet = generate(query.spec, schema, query.config);
+  const answerSet = generate(query.spec, schema, config);
   const nestedAnswerSet = nest(answerSet, query);
   return rank(nestedAnswerSet, query, schema, 0);
 }
