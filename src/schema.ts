@@ -72,8 +72,8 @@ export class Schema {
     } else if (encQ.timeUnit) {
       return 1; // FIXME
     }
-
-    return this.fieldSchemaIndex[encQ.field as string].distinct;
+    const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
+    return fieldSchema ? fieldSchema.distinct : null;
   }
 
   /**
@@ -81,7 +81,8 @@ export class Schema {
    */
   public stats(encQ: EncodingQuery) {
     // TODO: differentiate for field with bin / timeUnit vs without
-    return this.fieldSchemaIndex[encQ.field as string].stats;
+    const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
+    return fieldSchema ? fieldSchema.stats : null;
   }
 }
 
