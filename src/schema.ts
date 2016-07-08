@@ -4,7 +4,7 @@ import {inferAll} from 'datalib/src/import/type';
 
 import {EncodingQuery} from './query';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
-import {extend} from './util';
+import {extend, keys} from './util';
 
 export class Schema {
   private fieldSchemas: FieldSchema[];
@@ -31,8 +31,19 @@ export class Schema {
       if (primitiveType === PrimitiveType.NUMBER) {
         type = Type.QUANTITATIVE;
       } else if (primitiveType === PrimitiveType.INTEGER) {
-        // use ordinal when cardinality of integer type is relatively low
-        type = (distinct / summary.count < opt.numberOrdinalProportion) ? Type.ORDINAL : Type.QUANTITATIVE; // use config, not hard coded number
+        // use ordinal or nominal when cardinality of integer type is relatively low
+        if (distinct / summary.count < opt.numberOrdinalProportion) {
+          // use nominal if the data is in order, ordinal otherwise
+          var dataPoints: number[] = keys(summary.unique) as any;
+          var min = dataPoints[0], max = dataPoints[0];
+          for (var i = 1; i < dataPoints.length; i++) {
+            min = Math.min(min, dataPoints[i]);
+            max = Math.max(max, dataPoints[i]);
+          }
+          type = max - min == dataPoints.length - 1 ? Type.NOMINAL : Type.ORDINAL;
+        } else {
+          type = Type.QUANTITATIVE;
+        }
       } else if (primitiveType === PrimitiveType.DATE) {
         type = Type.TEMPORAL;
       } else {
