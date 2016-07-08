@@ -30,7 +30,7 @@ export interface QueryConfig {
   /** Default types to enumerate */
   types?: Type[];
 
-  /** Default ratio for numbers to be considered ordinal */
+  /** Default ratio for number fields to be considered ordinal */
   numberOrdinalProportion?: number;
 
   /** Default maxbins to enumerate */
