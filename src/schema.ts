@@ -40,7 +40,7 @@ export class Schema {
             min = Math.min(min, dataPoints[i]);
             max = Math.max(max, dataPoints[i]);
           }
-          type = max - min == dataPoints.length - 1 ? Type.NOMINAL : Type.ORDINAL;
+          type = max - min === dataPoints.length - 1 ? Type.NOMINAL : Type.ORDINAL;
         } else {
           type = Type.QUANTITATIVE;
         }
