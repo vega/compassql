@@ -295,7 +295,7 @@ describe('generate', function () {
         assert.equal(answerSet[2].getEncodingQueryByIndex(0).bin['maxbins'], 30);
       });
 
-      it('should support enumerating both bin enablling and maxbins parameter', () => {
+      it('should support enumerating both bin enabling and maxbins parameter', () => {
         const specQ = {
           mark: Mark.POINT,
           encodings: [
