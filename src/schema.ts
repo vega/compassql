@@ -97,6 +97,6 @@ export interface FieldSchema {
   type?: Type;
   /** number, integer, string, date  */
   primitiveType: PrimitiveType;
-  stats?: Summary;
+  stats: Summary;
   title?: string;
 }
