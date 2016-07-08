@@ -11,6 +11,7 @@ import {Type} from 'vega-lite/src/type';
 import {QueryConfig} from './config';
 import {generate} from './generate';
 import {nest} from './nest';
+import {getNestedEncodingPropertyChild} from './property';
 import {rank} from './ranking/ranking';
 import {Schema} from './schema';
 import {contains, extend, keys, some} from './util';
@@ -265,21 +266,18 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
   }
 
   if (encQ.scale && !isEnumSpec(encQ.scale)) {
-
       if (encQ.scale && !isEnumSpec(encQ.scale)) {
 
-      // // TODO: push other scale properties to scaleParams (add it into the array).
-
-        var scaleParams = ['type', 'zero']
-          .reduce((scaleParamsObj, param) => {
-            if (encQ.scale[param]) {
-              scaleParamsObj[param] = encQ.scale[param];
+        const scaleParamsArr = getNestedEncodingPropertyChild('scale');
+        var scaleParams = scaleParamsArr.reduce((scaleParamsObj, param) => {
+            console.log(param);
+            if (encQ.scale[param as string]) {
+              scaleParamsObj[param as string] = encQ.scale[param as string];
             }
             return scaleParamsObj;
         }, {});
 
-
-        if (keys(scaleParams).length > 0) {
+         if(keys(scaleParams).length > 0) {
           params.push({
             key: 'scale',
             value: JSON.stringify(scaleParams)

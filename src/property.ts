@@ -112,6 +112,24 @@ const NESTED_ENCODING_INDEX: Dict<NestedEncodingProperty> =
     return m;
   }, {} as Dict<NestedEncodingProperty>);
 
+const NESTED_ENCODING_PROPERTY_INDEX =
+  NESTED_ENCODING_PROPERTIES.reduce((m, nestedProp) => {
+    let parent = nestedProp.parent;
+    let child = nestedProp.child;
+
+    // if the parent does not exist in m, add it as a key in m with empty [] as value
+    if (!(parent in m)) {
+      m[parent] = [];
+    }
+
+    m[parent].push(child);
+    return m;
+  }, {} as Dict<Array<String>>); // as Dict<Array<String>>);
+
 export function getNestedEncodingProperty(prop: Property) {
   return NESTED_ENCODING_INDEX[prop];
+}
+
+export function getNestedEncodingPropertyChild(parent: string) {
+  return NESTED_ENCODING_PROPERTY_INDEX[parent];
 }
