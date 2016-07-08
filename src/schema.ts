@@ -30,7 +30,8 @@ export class Schema {
         field: field,
         type: type,
         primitiveType: primitiveType,
-        distinct: distinct
+        distinct: distinct,
+        stats: summary
       };
     });
 
@@ -74,6 +75,14 @@ export class Schema {
 
     return this.fieldSchemaIndex[encQ.field as string].distinct;
   }
+
+  /**
+   * @return a Summary corresponding to the field of the given EncodingQuery
+   */
+  public stats(encQ: EncodingQuery) {
+    // TODO: differentiate for field with bin / timeUnit vs without
+    return this.fieldSchemaIndex[encQ.field as string].stats;
+  }
 }
 
 export enum PrimitiveType {
@@ -90,5 +99,6 @@ export interface FieldSchema {
   type?: Type;
   /** number, integer, string, date  */
   primitiveType: PrimitiveType;
+  stats?: Summary;
   title?: string;
 }
