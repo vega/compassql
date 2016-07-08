@@ -55,6 +55,9 @@ export interface EnumSpecIndex {
   /** List of indice tuple for encoding mappings that require enumerating scale.scale_type */
   scaleType?: EnumSpecIndexTuple<ScaleType>[];
 
+  /** List of indice tuple for encoding mappings that require enumerating scale.scale_zero */
+  scaleZero?: EnumSpecIndexTuple<boolean>[];
+
   /** List of indice tuples of encoding mappings that require timeUnit enumeration. */
   timeUnit?: EnumSpecIndexTuple<TimeUnit>[];
 
@@ -83,6 +86,8 @@ function getDefaultName(prop: Property) {
       return 's';
     case Property.SCALE_TYPE:
       return 's-t';
+    case Property.SCALE_ZERO:
+      return 's-z';
     case Property.TIMEUNIT:
       return 'tu';
     case Property.FIELD:
@@ -101,6 +106,7 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
 
     case Property.BIN:         // True, False for boolean values
     case Property.SCALE:
+    case Property.SCALE_ZERO:
     case Property.AUTOCOUNT:
       return [false, true];
 

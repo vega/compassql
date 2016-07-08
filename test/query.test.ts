@@ -399,6 +399,13 @@ describe('query', () => {
        });
        assert.equal(str, 'a,q,scale={"type":"log"}');
     });
+
+    it('should return correct fieldDef string for scale with scaleZero', () => {
+      const str = stringifyEncodingQueryFieldDef({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {zero: true}
+      });
+      assert.equal(str, 'a,q,scale={"zero":true}');
+    });
     // TODO: Update tests for other scale.*
 
     it('should return correct fieldDef string for ambiguous bin field', () => {

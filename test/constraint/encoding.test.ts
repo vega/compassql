@@ -1,6 +1,7 @@
 import {assert} from 'chai';
 
 import {Channel} from 'vega-lite/src/channel';
+import {Mark} from 'vega-lite/src/mark';
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
@@ -292,6 +293,19 @@ describe('constraints/encoding', () => {
         type: Type.QUANTITATIVE
       };
       assert.isFalse(ENCODING_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(encQ, schema, stats, defaultOpt));
+    });
+  });
+
+  describe('barMarkWithScaleZero', () => {
+    it('bar mark should not support scale that does not start at zero', () => {
+      const encQ: EncodingQuery = {
+        channel: Channel.X,
+        mark: Mark.BAR,
+        field: 'Q',
+        scale: {zero: false},
+        type: Type.QUANTITATIVE
+      };
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['barMarkWithScaleZero'].satisfy(encQ, schema, stats, defaultOpt));
     });
   });
 

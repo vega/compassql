@@ -193,6 +193,7 @@ type Field = string;
 
 export interface EncodingQuery {
   channel: Channel | EnumSpec<Channel> | ShortEnumSpec;
+  mark?: Mark | EnumSpec<Mark> | ShortEnumSpec;
 
   // FieldDef
   aggregate?: AggregateOp | EnumSpec<AggregateOp> | ShortEnumSpec;
@@ -217,6 +218,7 @@ export interface BinQuery extends EnumSpec<boolean> {
 export interface ScaleQuery extends EnumSpec<boolean> {
   // TODO: add other properties from vegalite/src/scale
   type?: ScaleType | EnumSpec<ScaleType> | ShortEnumSpec;
+  zero?: boolean | EnumSpec<boolean> | ShortEnumSpec;
 }
 
 export function isDimension(encQ: EncodingQuery) {
@@ -265,19 +267,24 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
   if (encQ.scale && !isEnumSpec(encQ.scale)) {
 
       if (encQ.scale && !isEnumSpec(encQ.scale)) {
-      var scaleParams = {};
 
-      if (encQ.scale['type']) {
-        scaleParams = {type: encQ.scale['type']};
-      }
-      // TODO: push other scale properties to scaleParams.
+      // // TODO: push other scale properties to scaleParams (add it into the array).
 
-      if (keys(scaleParams).length > 0) {
-        params.push({
-          key: 'scale',
-          value: JSON.stringify(scaleParams)
-        });
-      }
+        var scaleParams = ['type', 'zero']
+          .reduce((scaleParamsObj, param) => {
+            if (encQ.scale[param]) {
+              scaleParamsObj[param] = encQ.scale[param];
+            }
+            return scaleParamsObj;
+        }, {});
+
+
+        if (keys(scaleParams).length > 0) {
+          params.push({
+            key: 'scale',
+            value: JSON.stringify(scaleParams)
+          });
+        }
     }
   }
 

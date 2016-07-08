@@ -35,6 +35,8 @@ export interface QueryConfig {
 
   scaleTypes?: ScaleType[];
 
+  scaleZeros?: boolean[];
+
   // SPECIAL MODE
   /**
    * Allow automatically adding a special count (autoCount) field for
@@ -93,6 +95,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
   maxBinsList: [5, 10, 20],
   scaleTypes: [ScaleType.LINEAR, ScaleType.LOG],
+  scaleZeros: [true, false],
 
   // CONSTRAINTS
   // Spec Constraints -- See description inside src/constraints/spec.ts
