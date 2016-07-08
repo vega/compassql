@@ -3,6 +3,8 @@ import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 
 import {EncodingQuery} from './query';
+import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
+import {extend} from './util';
 
 export class Schema {
   private fieldSchemas: FieldSchema[];
@@ -14,7 +16,9 @@ export class Schema {
    * @param data - a set of raw data
    * @return a Schema object
    */
-  public static build(data: any): Schema {
+  public static build(data: any, opt: QueryConfig = {}): Schema {
+    opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
+
     // create profiles for each variable
     var summaries: Summary[] = summary(data);
     var types = inferAll(data); // inferAll does stronger type inference than summary
@@ -22,9 +26,18 @@ export class Schema {
     var fieldSchemas: FieldSchema[] = summaries.map(function(summary) {
       var field: string = summary.field;
       var primitiveType: PrimitiveType = types[field] as any;
-      var type: Type = (primitiveType === PrimitiveType.NUMBER || primitiveType === PrimitiveType.INTEGER) ? Type.QUANTITATIVE:
-        primitiveType === PrimitiveType.DATE ? Type.TEMPORAL : Type.NOMINAL;
-
+      var distinct: number = summary.distinct;
+      var type: Type;
+      if (primitiveType === PrimitiveType.NUMBER) {
+        type = Type.QUANTITATIVE;
+      } else if (primitiveType === PrimitiveType.INTEGER) {
+        // use ordinal when cardinality of integer type is relatively low
+        type = (distinct / summary.count < opt.numberOrdinalProportion) ? Type.ORDINAL : Type.QUANTITATIVE; // use config, not hard coded number
+      } else if (primitiveType === PrimitiveType.DATE) {
+        type = Type.TEMPORAL;
+      } else {
+        type = Type.NOMINAL;
+      }
       return {
         field: field,
         type: type,
