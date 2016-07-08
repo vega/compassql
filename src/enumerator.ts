@@ -7,7 +7,6 @@ import {EnumSpecIndex, EnumSpecIndexTuple, SpecQueryModel} from './model';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from './property';
 import {EnumSpec} from './query';
 import {Schema} from './schema';
-import {Stats} from './stats';
 
 export let ENUMERATOR_INDEX: {[prop: string]: EnumeratorFactory} = {};
 
@@ -16,10 +15,10 @@ export interface Enumerator {
 }
 
 export interface EnumeratorFactory {
-  (enumSpecIndex: EnumSpecIndex, schema: Schema, stats: Stats, opt: QueryConfig): Enumerator;
+  (enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig): Enumerator;
 }
 
-ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema, stats: Stats, opt: QueryConfig): Enumerator => {
+ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig): Enumerator => {
   return (answerSet, specM: SpecQueryModel) => {
     const markEnumSpec = specM.getMark() as EnumSpec<Mark>;
 
@@ -27,7 +26,7 @@ ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema,
     markEnumSpec.values.forEach((mark) => {
       specM.setMark(mark);
       // Check spec constraint
-      const violatedSpecConstraint = checkSpec(Property.MARK, enumSpecIndex.mark, specM, schema, stats, opt);
+      const violatedSpecConstraint = checkSpec(Property.MARK, enumSpecIndex.mark, specM, schema, opt);
       if (!violatedSpecConstraint) {
         // emit
         answerSet.push(specM.duplicate());
@@ -57,7 +56,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
   /**
    * @return as reducer that takes a specQueryModel as input and output an answer set array.
    */
-  return (enumSpecIndex: EnumSpecIndex, schema: Schema, stats: Stats, opt: QueryConfig): Enumerator => {
+  return (enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig): Enumerator => {
 
     return (answerSet: SpecQueryModel[], specM: SpecQueryModel) => {
       // index of encoding mappings that require enumeration
@@ -94,12 +93,12 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
             specM.setEncodingProperty(indexTuple.index, prop, propVal, indexTuple.enumSpec);
 
             // Check encoding constraint
-            const violatedEncodingConstraint = checkEncoding(prop, indexTuple, specM, schema, stats, opt);
+            const violatedEncodingConstraint = checkEncoding(prop, indexTuple, specM, schema, opt);
             if (violatedEncodingConstraint) {
               return; // do not keep searching
             }
             // Check spec constraint
-            const violatedSpecConstraint = checkSpec(prop, indexTuple, specM, schema, stats, opt);
+            const violatedSpecConstraint = checkSpec(prop, indexTuple, specM, schema, opt);
             if (violatedSpecConstraint) {
               return; // do not keep searching
             }

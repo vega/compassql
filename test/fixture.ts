@@ -1,13 +1,8 @@
 import {Type} from 'vega-lite/src/type';
 
 import {Schema, FieldSchema, PrimitiveType} from '../src/schema';
-import {Stats, FieldStats} from '../src/stats';
 
-// Using Intersection Type  
-// https://github.com/Microsoft/TypeScript/blob/master/doc/spec.md#387-intersection-type-literals
-type Fixture = FieldSchema & FieldStats;
-
-const fixtures: Fixture[] = [{
+const fixtures: FieldSchema[] = [{
   field: 'Q',
   type: Type.QUANTITATIVE,
   primitiveType: PrimitiveType.NUMBER,
@@ -60,5 +55,3 @@ const fixtures: Fixture[] = [{
 }];
 
 export const schema = new Schema(fixtures);
-
-export const stats = new Stats(fixtures);

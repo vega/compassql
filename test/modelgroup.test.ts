@@ -4,7 +4,7 @@ import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
-import {schema, stats} from './fixture';
+import {schema} from './fixture';
 import {nest} from '../src/nest';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
@@ -32,7 +32,7 @@ describe('modelgroup', () => {
         },
         orderBy: 'effectiveness',
       };
-      const group: SpecQueryModelGroup = nest(specQ, q, stats);
+      const group: SpecQueryModelGroup = nest(specQ, q);
 
       assert.isTrue(isSpecQueryModelGroup(group));
     });

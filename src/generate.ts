@@ -4,10 +4,9 @@ import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {SpecQueryModel} from './model';
 import {SpecQuery} from './query';
 import {Schema} from './schema';
-import {Stats} from './stats';
 import {extend} from './util';
 
-export function generate(specQ: SpecQuery, schema: Schema, stats: Stats, opt: QueryConfig = {}) {
+export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = {}) {
   opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
 
   // 1. Build a SpecQueryModel, which also contains enumSpecIndex
@@ -21,7 +20,7 @@ export function generate(specQ: SpecQuery, schema: Schema, stats: Stats, opt: Qu
     // If the original specQuery contains enumSpec for this prop type
     if (enumSpecIndex[prop]) {
       // update answerset
-      const reducer = ENUMERATOR_INDEX[prop](enumSpecIndex, schema, stats, opt);
+      const reducer = ENUMERATOR_INDEX[prop](enumSpecIndex, schema, opt);
       answerSet = answerSet.reduce(reducer, []);
     }
   });

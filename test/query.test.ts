@@ -8,7 +8,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {assert} from 'chai';
 
-import {schema, stats} from './fixture';
+import {schema} from './fixture';
 import {query, Query, SHORT_ENUM_SPEC, initEnumSpec, stack, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery, normalize} from '../src/query';
 import {without} from '../src/util';
 import {isSpecQueryModelGroup, SpecQueryModelGroup} from '../src/modelgroup';
@@ -29,7 +29,7 @@ describe('query', () => {
         ],
         orderBy: 'effectiveness',
       };
-      const result = query(q, schema, stats);
+      const result = query(q, schema);
       assert.isTrue(isSpecQueryModelGroup(result.items[0]));
       if (isSpecQueryModelGroup(result.items[0])) {
         const group1: SpecQueryModelGroup = <SpecQueryModelGroup> result.items[0];
@@ -49,7 +49,7 @@ describe('query', () => {
         },
         orderBy: 'effectiveness',
       };
-      const result = query(q, schema, stats);
+      const result = query(q, schema);
       assert.isFalse(isSpecQueryModelGroup(result.items[0]));
       assert.equal(result.items.length, 2);
       assert.equal((<SpecQueryModel>result.items[0]).specQuery.mark, 'tick');

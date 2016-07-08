@@ -11,7 +11,7 @@ import {generate} from '../src/generate';
 import {SHORT_ENUM_SPEC, ScaleQuery} from '../src/query';
 import {some} from '../src/util';
 
-import {schema, stats} from './fixture';
+import {schema} from './fixture';
 
 describe('generate', function () {
   describe('1D', () => {
@@ -27,7 +27,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, stats, {autoAddCount: true});
+        const answerSet = generate(query, schema, {autoAddCount: true});
         assert.equal(answerSet.length, 3);
       });
     });
@@ -49,7 +49,7 @@ describe('generate', function () {
         config: {autoAddCount: true}
       };
 
-      const answerSet = generate(query, schema, stats, {autoAddCount: true});
+      const answerSet = generate(query, schema, {autoAddCount: true});
 
       it('should return counted heatmaps', () => {
         assert.isTrue(answerSet.length > 0);
@@ -84,7 +84,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, stats, {autoAddCount: true});
+        const answerSet = generate(query, schema, {autoAddCount: true});
         answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), Mark.AREA);
           assert.notEqual(specM.getMark(), Mark.LINE);
@@ -110,7 +110,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, stats, {autoAddCount: true});
+        const answerSet = generate(query, schema, {autoAddCount: true});
         answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), Mark.AREA);
           assert.notEqual(specM.getMark(), Mark.LINE);
@@ -138,7 +138,7 @@ describe('generate', function () {
         }]
       };
 
-      const answerSet = generate(query, schema, stats);
+      const answerSet = generate(query, schema);
 
       it('should return not generate a plot with both x and y as dimensions.', () => {
         answerSet.forEach((specM) => {
@@ -165,7 +165,7 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(specQ, schema, stats);
+      const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
@@ -184,7 +184,7 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(specQ, schema, stats);
+      const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 3);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.TIME);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.UTC);
@@ -205,7 +205,7 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(specQ, schema, stats);
+      const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 4);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.TIME);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.UTC);
@@ -227,7 +227,7 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(specQ, schema, stats);
+      const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
@@ -246,7 +246,7 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(specQ, schema, stats);
+      const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
@@ -265,7 +265,7 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(specQ, schema, stats);
+      const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 1);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
@@ -288,7 +288,7 @@ describe('generate', function () {
           ]
         };
 
-        const answerSet = generate(specQ, schema, stats);
+        const answerSet = generate(specQ, schema);
         assert.equal(answerSet.length, 3);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).bin['maxbins'], 10);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin['maxbins'], 20);
@@ -311,7 +311,7 @@ describe('generate', function () {
           ]
         };
 
-        const answerSet = generate(specQ, schema, stats);
+        const answerSet = generate(specQ, schema);
         assert.equal(answerSet.length, 4);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).bin['maxbins'], 10);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin['maxbins'], 20);
