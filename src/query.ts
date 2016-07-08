@@ -194,6 +194,7 @@ type Field = string;
 export interface EncodingQuery {
   channel: Channel | EnumSpec<Channel> | ShortEnumSpec;
   mark?: Mark | EnumSpec<Mark> | ShortEnumSpec;
+  // TODO : REMOVE ME. MARK IS NOT AN ENCODING CONSTRAINT.
 
   // FieldDef
   aggregate?: AggregateOp | EnumSpec<AggregateOp> | ShortEnumSpec;
