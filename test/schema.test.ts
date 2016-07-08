@@ -4,6 +4,7 @@ import {Type} from 'vega-lite/src/type';
 import {Channel} from 'vega-lite/src/channel';
 
 import {Schema, PrimitiveType} from '../src/schema';
+import {DEFAULT_QUERY_CONFIG} from '../src/config';
 
 describe('schema', () => {
 
@@ -50,6 +51,16 @@ describe('schema', () => {
       assert.equal(schema.type('b'), Type.NOMINAL);
       assert.equal(schema.type('c'), Type.QUANTITATIVE);
       assert.equal(schema.type('d'), Type.TEMPORAL);
+    });
+    it('should infer ordinal type for integers when cardinality is much less than the total', () => {
+      const numberData = [];
+      // add enough non-distinct data to make the field ordinal
+      var total = 1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1;
+      for (var i = 0; i < total; i++) {
+        numberData.push({a: 1});
+      }
+      const numberSchema = Schema.build(numberData);
+      assert.equal(numberSchema.type('a'), Type.ORDINAL);
     });
   });
 
