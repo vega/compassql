@@ -24,13 +24,11 @@ export class Schema {
       var primitiveType: PrimitiveType = types[field] as any;
       var type: Type = (primitiveType === PrimitiveType.NUMBER || primitiveType === PrimitiveType.INTEGER) ? Type.QUANTITATIVE:
         primitiveType === PrimitiveType.DATE ? Type.TEMPORAL : Type.NOMINAL;
-      var distinct: number = summary.distinct;
 
       return {
         field: field,
         type: type,
         primitiveType: primitiveType,
-        distinct: distinct,
         stats: summary
       };
     });
@@ -73,7 +71,7 @@ export class Schema {
       return 1; // FIXME
     }
     const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
-    return fieldSchema ? fieldSchema.distinct : null;
+    return fieldSchema ? fieldSchema.stats.distinct : null;
   }
 
   /**
@@ -96,10 +94,9 @@ export enum PrimitiveType {
 
 export interface FieldSchema {
   field: string;
-  distinct: number;
   type?: Type;
   /** number, integer, string, date  */
   primitiveType: PrimitiveType;
-  stats?: Summary;
+  stats: Summary;
   title?: string;
 }
