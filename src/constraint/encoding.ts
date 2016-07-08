@@ -6,7 +6,6 @@ import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
 import {Property} from '../property';
 import {EncodingQuery, isEnumSpec, isDimension, isMeasure, ScaleQuery} from '../query';
 import {PrimitiveType, Schema} from '../schema';
-import {Stats} from '../stats';
 import {contains, some} from '../util';
 import {ScaleType} from 'vega-lite/src/scale';
 
@@ -18,7 +17,7 @@ import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 /** A method for satisfying whether the provided encoding query satisfy the constraint. */
 export interface EncodingConstraintChecker {
-  (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig): boolean;
+  (encQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean;
 }
 
 export class EncodingConstraintModel extends AbstractConstraintModel {
@@ -26,7 +25,7 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
     super(constraint);
   }
 
-  public satisfy(encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig): boolean {
+  public satisfy(encQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean {
     // TODO: Re-order logic to optimize the "requireAllProperties" check
     if (this.constraint.requireAllProperties) {
       // TODO: extract as a method and do unit test
@@ -39,7 +38,7 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
         return true; // Return true since the query still satisfy the constraint.
       }
     }
-    return (this.constraint as EncodingConstraint).satisfy(encQ, schema, stats, opt);
+    return (this.constraint as EncodingConstraint).satisfy(encQ, schema, opt);
   }
 }
 
@@ -56,7 +55,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.AGGREGATE],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.aggregate) {
         return encQ.type !== Type.ORDINAL && encQ.type !== Type.NOMINAL;
       }
@@ -70,7 +69,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.BIN],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.bin) {
         // If binned, the type must be quantitative
         return encQ.type === Type.QUANTITATIVE;
@@ -100,7 +99,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN],
     requireAllProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       const numFn = (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate ? 1 : 0) +
         (!isEnumSpec(encQ.autoCount) && !!encQ.autoCount ? 1 : 0) +
         (!isEnumSpec(encQ.bin) && !!encQ.bin ? 1 : 0) +
@@ -113,7 +112,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.TIMEUNIT],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.timeUnit && encQ.type !== Type.TEMPORAL) {
         return false;
       }
@@ -126,7 +125,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.FIELD, Property.TYPE],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       const primitiveType = schema.primitiveType(encQ.field as string);
       const type = encQ.type;
 
@@ -153,7 +152,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.FIELD, Property.TYPE],
     requireAllProperties: true,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       return schema.type(encQ.field as string) === encQ.type;
     }
   },{
@@ -162,11 +161,11 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.CHANNEL, Property.FIELD],
     requireAllProperties: true,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       // TODO: missing case where ordinal / temporal use categorical color
       // (once we do so, need to add Property.BIN, Property.TIMEUNIT)
       if (encQ.channel === Channel.COLOR && encQ.type === Type.NOMINAL) {
-        return stats.cardinality(encQ) <= opt.maxCardinalityForCategoricalColor;
+        return schema.cardinality(encQ) <= opt.maxCardinalityForCategoricalColor;
       }
       return true; // other channel is irrelevant to this constraint
     }
@@ -176,9 +175,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
     requireAllProperties: true,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.channel === Channel.ROW || encQ.channel === Channel.COLUMN) {
-        return stats.cardinality(encQ) <= opt.maxCardinalityForFacet;
+        return schema.cardinality(encQ) <= opt.maxCardinalityForFacet;
       }
       return true; // other channel is irrelevant to this constraint
     }
@@ -188,9 +187,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
     requireAllProperties: true,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.channel === Channel.SHAPE) {
-        return stats.cardinality(encQ) <= opt.maxCardinalityForShape;
+        return schema.cardinality(encQ) <= opt.maxCardinalityForShape;
       }
       return true; // other channel is irrelevant to this constraint
     }
@@ -215,7 +214,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.SCALE_TYPE, Property.TIMEUNIT, Property.BIN],
     requireAllProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, stats: Stats, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.scale) {
         const scaleType = (encQ.scale as ScaleQuery).type;
         const type = encQ.type;
@@ -260,7 +259,7 @@ export const ENCODING_CONSTRAINTS_BY_PROPERTY: {[prop: string]: EncodingConstrai
  * Check all encoding constraints for a particular property and index tuple
  */
 export function checkEncoding(prop: Property, indexTuple: EnumSpecIndexTuple<any>,
-  specM: SpecQueryModel, schema: Schema, stats: Stats, opt: QueryConfig): string {
+  specM: SpecQueryModel, schema: Schema, opt: QueryConfig): string {
 
   // Check encoding constraint
   const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[prop] || [];
@@ -272,7 +271,7 @@ export function checkEncoding(prop: Property, indexTuple: EnumSpecIndexTuple<any
     if (c.strict() || !!opt[c.name()]) {
       // For strict constraint, or enabled non-strict, check the constraints
 
-      const satisfy = c.satisfy(encQ, schema, stats, opt);
+      const satisfy = c.satisfy(encQ, schema, opt);
       if (!satisfy) {
         let violatedConstraint = '(enc) ' + c.name();
         /* istanbul ignore if */

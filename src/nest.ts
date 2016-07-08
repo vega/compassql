@@ -3,7 +3,6 @@ import {Channel} from 'vega-lite/src/channel';
 import {SpecQueryModel} from './model';
 import {SpecQueryModelGroup} from './modelgroup';
 import {SHORT_ENUM_SPEC, EnumSpec, isEnumSpec, stack, stringifyEncodingQueryFieldDef, Query} from './query';
-import {Stats} from './stats';
 import {Dict} from './util';
 
 
@@ -30,7 +29,7 @@ export const SPEC = 'spec';
  * Group the input spec query model by a key function registered in the group registry
  * @return
  */
-export function nest(specModels: SpecQueryModel[], query: Query, stats: Stats): SpecQueryModelGroup {
+export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModelGroup {
 
   const rootGroup: SpecQueryModelGroup = { name: '', path: '', items: []};
   let groupIndex: Dict<SpecQueryModelGroup> = {};

@@ -11,7 +11,7 @@ import {generate} from '../src/generate';
 import {SHORT_ENUM_SPEC, ScaleQuery} from '../src/query';
 import {some} from '../src/util';
 
-import {schema, stats} from './fixture';
+import {schema} from './fixture';
 
 describe('generate', function () {
   describe('1D', () => {
@@ -27,7 +27,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, stats, {autoAddCount: true});
+        const answerSet = generate(query, schema, {autoAddCount: true});
         assert.equal(answerSet.length, 3);
       });
     });
@@ -49,7 +49,7 @@ describe('generate', function () {
         config: {autoAddCount: true}
       };
 
-      const answerSet = generate(query, schema, stats, {autoAddCount: true});
+      const answerSet = generate(query, schema, {autoAddCount: true});
 
       it('should return counted heatmaps', () => {
         assert.isTrue(answerSet.length > 0);
@@ -84,7 +84,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, stats, {autoAddCount: true});
+        const answerSet = generate(query, schema, {autoAddCount: true});
         answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), Mark.AREA);
           assert.notEqual(specM.getMark(), Mark.LINE);
@@ -110,7 +110,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, stats, {autoAddCount: true});
+        const answerSet = generate(query, schema, {autoAddCount: true});
         answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), Mark.AREA);
           assert.notEqual(specM.getMark(), Mark.LINE);
@@ -138,7 +138,7 @@ describe('generate', function () {
         }]
       };
 
-      const answerSet = generate(query, schema, stats);
+      const answerSet = generate(query, schema);
 
       it('should return not generate a plot with both x and y as dimensions.', () => {
         answerSet.forEach((specM) => {
@@ -151,8 +151,31 @@ describe('generate', function () {
     });
   });
 
-  describe('scaleType', () => {
-    it('should enumerate correct scaleType for quantitative field', () => {
+  describe('scale-type', () => {
+    it('should enumerate correct scale enabling and scale type for quantitative field', () => {
+      const specQ = {
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: Channel.X,
+            scale: {
+              values: [true, false],
+              type: {values: [undefined, ScaleType.LOG, ScaleType.UTC]}
+            },
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+
+      const answerSet = generate(specQ, schema, stats);
+      assert.equal(answerSet.length, 3);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
+      assert.equal(answerSet[2].getEncodingQueryByIndex(0).scale, false);
+    });
+
+    it('should enumerate correct scale type for quantitative field', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -165,13 +188,13 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(specQ, schema, stats);
+      const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
     });
 
-    it('should enumerate correct scaleType for temporal field without timeunit', () => {
+    it('should enumerate correct scale type for temporal field without timeunit', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -184,14 +207,14 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(specQ, schema, stats);
+      const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 3);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.TIME);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.UTC);
       assert.equal((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    it('should enumerate correct scaleType for temporal field with timeunit', () => {
+    it('should enumerate correct scale type for temporal field with timeunit', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -205,7 +228,7 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(specQ, schema, stats);
+      const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 4);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.TIME);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.UTC);
@@ -213,7 +236,7 @@ describe('generate', function () {
       assert.equal((answerSet[3].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    it('should enumerate correct scaleType for ordinal field with timeunit', () => {
+    it('should enumerate correct scale type for ordinal field with timeunit', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -227,13 +250,13 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(specQ, schema, stats);
+      const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    it('should enumerate correct scaleType for ordinal field', () => {
+    it('should enumerate correct scale type for ordinal field', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -246,13 +269,13 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(specQ, schema, stats);
+      const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    it('should enumerate correct scaleType for nominal field', () => {
+    it('should enumerate correct scale type for nominal field', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -265,15 +288,13 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(specQ, schema, stats);
+      const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 1);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
   });
-  });
 
-
-  describe('bin_maxbins', () => {
+  describe('bin-maxbins', () => {
     describe('Qx#', () => {
       it('should enumerate multiple maxbins parameter', () => {
         const specQ = {
@@ -288,14 +309,14 @@ describe('generate', function () {
           ]
         };
 
-        const answerSet = generate(specQ, schema, stats);
+        const answerSet = generate(specQ, schema);
         assert.equal(answerSet.length, 3);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).bin['maxbins'], 10);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin['maxbins'], 20);
         assert.equal(answerSet[2].getEncodingQueryByIndex(0).bin['maxbins'], 30);
       });
 
-      it('should support enumerating both bin enablling and maxbins parameter', () => {
+      it('should support enumerating both bin enabling and maxbins parameter', () => {
         const specQ = {
           mark: Mark.POINT,
           encodings: [
@@ -311,7 +332,7 @@ describe('generate', function () {
           ]
         };
 
-        const answerSet = generate(specQ, schema, stats);
+        const answerSet = generate(specQ, schema);
         assert.equal(answerSet.length, 4);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).bin['maxbins'], 10);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin['maxbins'], 20);
@@ -320,3 +341,4 @@ describe('generate', function () {
       });
     });
   });
+});
