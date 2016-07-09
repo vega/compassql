@@ -32,6 +32,19 @@ describe('constraints/spec', () => {
     }
   });
 
+  describe('alwaysIncludeZeroInScaleWithBarMark', () => { // CURRENTLY WORKING ON ME CURRENTLY WORKING HERE !!!!!!!!`~~`DGO;IEHRQGOEJGOA;IWJEEEAG
+    it('should return false if scale does not start at zero when bar mark is used', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', scale: {zero: false}, type: Type.QUANTITATIVE},
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['alwaysIncludeZeroInScaleWithBarMark'].satisfy(specM, schema, defaultOpt));
+    });
+  });
+
   describe('autoAddCount', () => {
     function autoCountShouldBe(autoCount: boolean, when: string, baseSpecQ: SpecQuery) {
       [true, false].forEach((satisfy) => {
