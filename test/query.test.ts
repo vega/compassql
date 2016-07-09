@@ -9,14 +9,14 @@ import {Type} from 'vega-lite/src/type';
 import {assert} from 'chai';
 
 import {schema} from './fixture';
-import {query, Query, SHORT_ENUM_SPEC, initEnumSpec, stack, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery, normalize} from '../src/query';
-import {without} from '../src/util';
+import {EnumSpec, query, Query, SHORT_ENUM_SPEC, initEnumSpec, stack, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery, normalize} from '../src/query';
+import {SpecQueryModel} from '../src/model';
 import {isSpecQueryModelGroup, SpecQueryModelGroup} from '../src/modelgroup';
-import {SpecQueryModel} from '../src/model.ts';
+import {duplicate, without} from '../src/util';
 
 describe('query', () => {
-  describe('query', () => {
-    it('enumerates a nested query correctly ', () => {
+  describe('query()', () => {
+    describe('nested query', () => {
       const q: Query = {
         spec: {
           mark: '?',
@@ -29,15 +29,28 @@ describe('query', () => {
         ],
         orderBy: 'effectiveness',
       };
-      const result = query(q, schema);
-      assert.isTrue(isSpecQueryModelGroup(result.items[0]));
-      if (isSpecQueryModelGroup(result.items[0])) {
-        const group1: SpecQueryModelGroup = <SpecQueryModelGroup> result.items[0];
-        assert.isFalse(isSpecQueryModelGroup(group1.items[0]));
-        assert.equal(group1.items.length, 2);
-        assert.equal((<SpecQueryModel>group1.items[0]).specQuery.mark, 'tick');
-        assert.equal((<SpecQueryModel>group1.items[1]).specQuery.mark, 'point');
-      }
+      const qCopy = duplicate(q);
+      const output = query(q, schema);
+      const result = output.result;
+
+      it('enumerates a nested query correctly ', () => {
+        assert.isTrue(isSpecQueryModelGroup(result.items[0]));
+        if (isSpecQueryModelGroup(result.items[0])) {
+          const group1: SpecQueryModelGroup = <SpecQueryModelGroup> result.items[0];
+          assert.isFalse(isSpecQueryModelGroup(group1.items[0]));
+          assert.equal(group1.items.length, 2);
+          assert.equal((<SpecQueryModel>group1.items[0]).specQuery.mark, 'tick');
+          assert.equal((<SpecQueryModel>group1.items[1]).specQuery.mark, 'point');
+        }
+      });
+
+      it('should augment enumSpec name for enum specs', () => {
+        assert.isDefined((output.query.spec.mark as EnumSpec<Mark>).name);
+      });
+
+      it('should not cause side effect to the original query object.', () => {
+        assert.deepEqual(q, qCopy);
+      });
     });
     it('enumerates a flat query correctly ', () => {
       const q: Query = {
@@ -49,7 +62,7 @@ describe('query', () => {
         },
         orderBy: 'effectiveness',
       };
-      const result = query(q, schema);
+      const result = query(q, schema).result;
       assert.isFalse(isSpecQueryModelGroup(result.items[0]));
       assert.equal(result.items.length, 2);
       assert.equal((<SpecQueryModel>result.items[0]).specQuery.mark, 'tick');
