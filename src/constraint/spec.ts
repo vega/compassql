@@ -8,7 +8,7 @@ import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 import {QueryConfig} from '../config';
 import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
-import {Property} from '../property';
+import {getNestedEncodingProperty, Property} from '../property';
 import {Schema} from '../schema';
 import {ScaleQuery, EncodingQuery, isEnumSpec, isMeasure} from '../query';
 import {contains, every, some} from '../util';
@@ -51,6 +51,18 @@ export class SpecConstraintModel extends AbstractConstraintModel {
               return some(specM.getEncodings(), (encQ) => {
                 return isEnumSpec(encQ[prop]);
               });
+
+            case Property.SCALE_TYPE:
+            // case Property.SCALE_ZERO:
+              return some(specM.getEncodings(),
+                function(encQ) {
+                  let nestedEncProp = getNestedEncodingProperty(encQ);
+                  let parent = nestedEncProp.parent;
+                  let child = nestedEncProp.child;
+                  return isEnumSpec(encQ[parent][child]);
+                }
+              );
+
             default:
               /* istanbul ignore next */
               throw new Error('Unimplemented');

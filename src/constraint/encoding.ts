@@ -3,7 +3,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {QueryConfig} from '../config';
 import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
-import {Property} from '../property';
+import {getNestedEncodingProperty, hasNestedProperty, Property} from '../property';
 import {EncodingQuery, isEnumSpec, isDimension, isMeasure, ScaleQuery} from '../query';
 import {PrimitiveType, Schema} from '../schema';
 import {contains, some} from '../util';
@@ -31,7 +31,16 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
       // TODO: extract as a method and do unit test
       const hasRequiredPropertyAsEnumSpec = some(
         this.constraint.properties,
-        (prop) => isEnumSpec(encQ[prop])
+        function(prop) {
+          if (hasNestedProperty(prop)) {
+            let nestedEncProp = getNestedEncodingProperty(prop);
+            let parent = nestedEncProp.parent;
+            let child = nestedEncProp.child;
+            return isEnumSpec(encQ[parent][child]);
+          } else {
+            return isEnumSpec(encQ[prop]);
+          }
+        }
       );
       // If one of the required property is still an enum spec, do not check the constraint yet.
       if (hasRequiredPropertyAsEnumSpec) {
