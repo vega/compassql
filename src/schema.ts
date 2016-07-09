@@ -33,7 +33,7 @@ export class Schema {
       } else if (primitiveType === PrimitiveType.INTEGER) {
         // use ordinal or nominal when cardinality of integer type is relatively low
         if (distinct / summary.count < opt.numberOrdinalProportion) {
-          // use nominal if the data is in order, ordinal otherwise
+          // use nominal if the integers are 1,2,3,...,N where N = cardinality
           var dataPoints: number[] = keys(summary.unique) as any;
           var min = dataPoints[0], max = dataPoints[0];
           for (var i = 1; i < dataPoints.length; i++) {
