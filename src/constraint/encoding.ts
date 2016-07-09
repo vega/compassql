@@ -196,7 +196,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
   }, {
     name: 'dataTypeAndFunctionMatchScaleType',
     description: 'Scale type must match data type',
-    properties: [Property.TYPE, Property.SCALE, Property.SCALE_TYPE, Property.TIMEUNIT, Property.BIN],
+    properties: [Property.TYPE, Property.SCALE_TYPE, Property.TIMEUNIT, Property.BIN],
     requireAllProperties: true,
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
