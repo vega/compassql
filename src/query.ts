@@ -8,24 +8,30 @@ import {StackOffset, StackProperties} from 'vega-lite/src/stack';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-import {QueryConfig} from './config';
+import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {generate} from './generate';
 import {nest} from './nest';
 import {rank} from './ranking/ranking';
 import {Schema} from './schema';
-import {contains, extend, keys, some} from './util';
+import {contains, duplicate, extend, keys, some} from './util';
 
-export function query(query: Query, schema: Schema, config?: Config) {
-  // Merge optional config with the config provided in the query.
-  // Config in the query has higher precedence.
-  // Note that we're not merging this with DEFAULT_QUERY_CONFIG as
-  // we will do it in generate anyway.
-  config = extend({}, config, query.config);
+export function query(q: Query, schema: Schema, config?: Config) {
+  // 1. Normalize non-nested `groupBy` to always have `groupBy` inside `nest`
+  //    and merge config with the following precedence
+  //    query.config > config > DEFAULT_QUERY_CONFIG
+  q = extend({}, normalize(q), {
+    config: extend({}, DEFAULT_QUERY_CONFIG, config, q.config)
+  });
 
-  query = normalize(query);
-  const answerSet = generate(query.spec, schema, config);
-  const nestedAnswerSet = nest(answerSet, query);
-  return rank(nestedAnswerSet, query, schema, 0);
+  // 2. Generate
+  const answerSet = generate(q.spec, schema, q.config);
+  const nestedAnswerSet = nest(answerSet, q);
+  const result = rank(nestedAnswerSet, q, schema, 0);
+
+  return {
+    query: q,
+    result: result
+  };
 }
 
 /**
@@ -42,7 +48,7 @@ export function normalize(q: Query): Query {
     }
 
     let normalizedQ: Query = {
-      spec: q.spec,
+      spec: duplicate(q.spec), // We will cause side effect to q.spec in SpecQueryModel.build
       nest: [nest],
     };
 
@@ -56,7 +62,7 @@ export function normalize(q: Query): Query {
 
     return normalizedQ;
   }
-  return q;
+  return duplicate(q); // We will cause side effect to q.spec in SpecQueryModel.build
 }
 
 
