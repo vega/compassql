@@ -66,7 +66,7 @@ describe('schema', () => {
     
     it('should infer nominal type for integers when cardinality is much less than the total and numbers are in order', () => {
       const numberData = [];
-      // add enough non-distinct data to make the field ordinal and have multiple in-order keys
+      // add enough non-distinct data to make the field nominal and have multiple in-order keys
       var total = 3 * (1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1);
       for (var i = 0; i < total; i++) {
         numberData.push({a: 1});
