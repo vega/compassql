@@ -4,7 +4,7 @@ import {inferAll} from 'datalib/src/import/type';
 
 import {EncodingQuery} from './query';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
-import {extend} from './util';
+import {contains, extend} from './util';
 
 export class Schema {
   private fieldSchemas: FieldSchema[];
@@ -33,8 +33,8 @@ export class Schema {
       } else if (primitiveType === PrimitiveType.INTEGER) {
         // use ordinal or nominal when cardinality of integer type is relatively low
         if (distinct / summary.count < opt.numberOrdinalProportion) {
-          // use nominal if the integers are 1,2,3,...,N where N = cardinality
-          type = summary.max - summary.min === distinct - 1 ? Type.NOMINAL : Type.ORDINAL;
+          // use nominal if the integers are 1,2,3,...,N or 0,1,2,3,...,N-1 where N = cardinality
+          type = (summary.max - summary.min === distinct - 1 && contains([0,1], summary.min)) ? Type.NOMINAL : Type.ORDINAL;
         } else {
           type = Type.QUANTITATIVE;
         }
