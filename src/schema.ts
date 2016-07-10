@@ -34,13 +34,7 @@ export class Schema {
         // use ordinal or nominal when cardinality of integer type is relatively low
         if (distinct / summary.count < opt.numberOrdinalProportion) {
           // use nominal if the integers are 1,2,3,...,N where N = cardinality
-          var dataPoints: number[] = keys(summary.unique) as any;
-          var min = dataPoints[0], max = dataPoints[0];
-          for (var i = 1; i < dataPoints.length; i++) {
-            min = Math.min(min, dataPoints[i]);
-            max = Math.max(max, dataPoints[i]);
-          }
-          type = max - min === dataPoints.length - 1 ? Type.NOMINAL : Type.ORDINAL;
+          type = summary.max - summary.min === distinct - 1 ? Type.NOMINAL : Type.ORDINAL;
         } else {
           type = Type.QUANTITATIVE;
         }
