@@ -52,6 +52,7 @@ describe('schema', () => {
       assert.equal(schema.type('c'), Type.QUANTITATIVE);
       assert.equal(schema.type('d'), Type.TEMPORAL);
     });
+    
     it('should infer nominal type for integers when cardinality is much less than the total', () => {
       const numberData = [];
       // add enough non-distinct data to make the field ordinal
@@ -62,6 +63,7 @@ describe('schema', () => {
       const numberSchema = Schema.build(numberData);
       assert.equal(numberSchema.type('a'), Type.NOMINAL);
     });
+    
     it('should infer nominal type for integers when cardinality is much less than the total and numbers are in order', () => {
       const numberData = [];
       // add enough non-distinct data to make the field ordinal and have multiple in-order keys
@@ -74,6 +76,7 @@ describe('schema', () => {
       const numberSchema = Schema.build(numberData);
       assert.equal(numberSchema.type('a'), Type.NOMINAL);
     });
+    
     it('should infer ordinal type for integers when cardinality is much less than the total and numbers are not in order', () => {
       const numberData = [];
       // add enough non-distinct data to make the field ordinal and have multiple in-order keys
