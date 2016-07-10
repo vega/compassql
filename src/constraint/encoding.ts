@@ -32,11 +32,12 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
       const hasRequiredPropertyAsEnumSpec = some(
         this.constraint.properties,
         function(prop) {
-          if (hasNestedProperty(prop)) {
-            let nestedEncProp = getNestedEncodingProperty(prop);
-            let parent = nestedEncProp.parent;
-            let child = nestedEncProp.child;
-            return isEnumSpec(encQ[parent][child]);
+          const nestedEncProp = getNestedEncodingProperty(prop);
+          if (nestedEncProp) {
+            if (nestedEncProp.parent === prop) {
+              let child = nestedEncProp.child;
+              return isEnumSpec(encQ[prop][child]);
+            }
           } else {
             return isEnumSpec(encQ[prop]);
           }
