@@ -7,11 +7,14 @@ import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
+import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
 import {SHORT_ENUM_SPEC, ScaleQuery} from '../src/query';
-import {some} from '../src/util';
+import {extend, some} from '../src/util';
 
 import {schema} from './fixture';
+
+const CONFIG_WITH_AUTO_ADD_COUNT = extend({}, DEFAULT_QUERY_CONFIG, {autoAddCount: true});
 
 describe('generate', function () {
   describe('1D', () => {
@@ -27,7 +30,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, {autoAddCount: true});
+        const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
         assert.equal(answerSet.length, 3);
       });
     });
@@ -46,10 +49,10 @@ describe('generate', function () {
           field: 'N20',
           type: Type.NOMINAL
         }],
-        config: {autoAddCount: true}
+        config: CONFIG_WITH_AUTO_ADD_COUNT
       };
 
-      const answerSet = generate(query, schema, {autoAddCount: true});
+      const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
 
       it('should return counted heatmaps', () => {
         assert.isTrue(answerSet.length > 0);
@@ -84,7 +87,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, {autoAddCount: true});
+        const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
         answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), Mark.AREA);
           assert.notEqual(specM.getMark(), Mark.LINE);
@@ -110,7 +113,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, {autoAddCount: true});
+        const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
         answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), Mark.AREA);
           assert.notEqual(specM.getMark(), Mark.LINE);
@@ -338,6 +341,63 @@ describe('generate', function () {
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin['maxbins'], 20);
         assert.equal(answerSet[2].getEncodingQueryByIndex(0).bin['maxbins'], 30);
         assert.equal(answerSet[3].getEncodingQueryByIndex(0).bin, false);
+      });
+    });
+  });
+
+  describe('autoAddCount', () => {
+    describe('ordinal only', () => {
+      it('should output autoCount in the answer set', () => {
+        const query = {
+          mark: Mark.POINT,
+          encodings: [
+              { channel: Channel.X, field: 'O', type: Type.ORDINAL},
+          ]
+        };
+        const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
+        assert.equal(answerSet.length, 1);
+        assert.isTrue(answerSet[0].getEncodings()[1].autoCount);
+      });
+    });
+
+    describe('non-binned quantitative only', () => {
+      const query = {
+        mark: Mark.POINT,
+        encodings: [
+          { channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
+        ]
+      };
+      const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
+
+      it('should output autoCount=false', () => {
+        assert.isFalse(answerSet[0].getEncodingQueryByIndex(1).autoCount);
+      });
+
+      it('should not output duplicate results in the answer set', () => {
+        assert.equal(answerSet.length, 1);
+      });
+    });
+
+    describe('enumerate channel for a non-binned quantitative field', () => {
+      const query = {
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: {values: [Channel.X, Channel.SIZE, Channel.COLOR]},
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+      const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
+
+      it('should not output point with only size for color', () => {
+        answerSet.forEach((model) => {
+          model.getEncodings().forEach((encQ) => {
+            assert.notEqual(encQ.channel, Channel.COLOR);
+            assert.notEqual(encQ.channel, Channel.SIZE);
+          });
+        });
       });
     });
   });

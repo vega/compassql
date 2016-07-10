@@ -146,8 +146,6 @@ export class SpecQueryModel {
    * @return a SpecQueryModel that wraps the specQuery and the enumSpecIndex.
    */
   public static build(specQ: SpecQuery, schema: Schema, opt: QueryConfig): SpecQueryModel {
-    specQ = duplicate(specQ); // preventing side-effect
-
     let enumSpecIndex: EnumSpecIndex = {};
 
     // mark
