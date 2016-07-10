@@ -4,7 +4,7 @@ import {inferAll} from 'datalib/src/import/type';
 
 import {EncodingQuery} from './query';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
-import {extend, keys} from './util';
+import {extend} from './util';
 
 export class Schema {
   private fieldSchemas: FieldSchema[];
