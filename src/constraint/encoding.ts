@@ -3,10 +3,10 @@ import {Type} from 'vega-lite/src/type';
 
 import {QueryConfig} from '../config';
 import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
-import {getNestedEncodingProperty, hasNestedProperty, Property} from '../property';
+import {getNestedEncodingProperty, Property} from '../property';
 import {EncodingQuery, isEnumSpec, isDimension, isMeasure, ScaleQuery} from '../query';
 import {PrimitiveType, Schema} from '../schema';
-import {contains, some, every} from '../util';
+import {contains, every} from '../util';
 import {ScaleType} from 'vega-lite/src/scale';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
