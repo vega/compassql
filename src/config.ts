@@ -30,6 +30,9 @@ export interface QueryConfig {
   /** Default types to enumerate */
   types?: Type[];
 
+  /** Default ratio for number fields to be considered ordinal */
+  numberOrdinalProportion?: number;
+
   /** Default maxbins to enumerate */
   maxBinsList?: number[];
 
@@ -90,6 +93,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   aggregates: [undefined, AggregateOp.MEAN],
   timeUnits: [undefined, TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.DATE], // TODO: include hours and minutes
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
+  numberOrdinalProportion: .05,
 
   maxBinsList: [5, 10, 20],
   scaleTypes: [ScaleType.LINEAR, ScaleType.LOG],
