@@ -36,7 +36,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
           let child = nestedEncProp.child;
 
           return every(specM.getEncodings(), (encQ) => {
-            if (!encQ[parent]) { // this might be return true....
+            if (!encQ[parent]) {
               return true;
             }
 
