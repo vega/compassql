@@ -6,7 +6,7 @@ import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
 import {getNestedEncodingProperty, hasNestedProperty, Property} from '../property';
 import {EncodingQuery, isEnumSpec, isDimension, isMeasure, ScaleQuery} from '../query';
 import {PrimitiveType, Schema} from '../schema';
-import {contains, some} from '../util';
+import {contains, some, every} from '../util';
 import {ScaleType} from 'vega-lite/src/scale';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -25,27 +25,32 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
     super(constraint);
   }
 
+  public hasAllRequiredProperties(encQ: EncodingQuery): boolean {
+    return every(this.constraint.properties, (prop) => {
+      const nestedEncProp = getNestedEncodingProperty(prop);
+
+      if (nestedEncProp) {
+        let parent = nestedEncProp.parent;
+        let child = nestedEncProp.child;
+
+        if (!encQ[parent]) {
+          return true;
+        }
+
+        return !isEnumSpec(encQ[parent][child]);
+      }
+
+      return !isEnumSpec(encQ[prop]);
+    });
+  }
+
   public satisfy(encQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean {
     // TODO: Re-order logic to optimize the "requireAllProperties" check
     if (this.constraint.requireAllProperties) {
       // TODO: extract as a method and do unit test
-      const hasRequiredPropertyAsEnumSpec = some(
-        this.constraint.properties,
-        function(prop) {
-          const nestedEncProp = getNestedEncodingProperty(prop);
-          if (nestedEncProp) {
-            if (nestedEncProp.parent === prop) {
-              let child = nestedEncProp.child;
-              return isEnumSpec(encQ[prop][child]);
-            }
-          } else {
-            return isEnumSpec(encQ[prop]);
-          }
-        }
-      );
-      // If one of the required property is still an enum spec, do not check the constraint yet.
-      if (hasRequiredPropertyAsEnumSpec) {
-        return true; // Return true since the query still satisfy the constraint.
+
+      if (!this.hasAllRequiredProperties(encQ)) {
+        return true;
       }
     }
     return (this.constraint as EncodingConstraint).satisfy(encQ, schema, opt);
@@ -206,7 +211,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
   }, {
     name: 'dataTypeAndFunctionMatchScaleType',
     description: 'Scale type must match data type',
-    properties: [Property.TYPE, Property.SCALE_TYPE, Property.TIMEUNIT, Property.BIN],
+    properties: [Property.TYPE, Property.SCALE, Property.SCALE_TYPE, Property.TIMEUNIT, Property.BIN],
     requireAllProperties: true,
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {

@@ -23,57 +23,42 @@ export class SpecConstraintModel extends AbstractConstraintModel {
     super(specConstraint);
   }
 
+    public hasAllRequiredProperties(specM: SpecQueryModel): boolean {
+      return every(this.constraint.properties, (prop) => {
+        if (prop === Property.MARK) {
+          return !isEnumSpec(specM.getMark());
+        }
+
+        const nestedEncProp = getNestedEncodingProperty(prop);
+
+        if (nestedEncProp) {
+          let parent = nestedEncProp.parent;
+          let child = nestedEncProp.child;
+
+          return every(specM.getEncodings(), (encQ) => {
+            if (!encQ[parent]) { // this might be return true....
+              return true;
+            }
+
+            return !isEnumSpec(encQ[parent][child]);
+          });
+        }
+
+        // non-nested EncProp
+        return every(specM.getEncodings(), (encQ) => {
+          return !isEnumSpec(encQ[prop]);
+        });
+      });
+    }
+
   public satisfy(specM: SpecQueryModel, schema: Schema, opt: QueryConfig) {
     // TODO: Re-order logic to optimize the "requireAllProperties" check
-
     if (this.constraint.requireAllProperties) {
-      // TODO: extract as a method and do unit test
-      const hasRequiredPropertyAsEnumSpec = some(this.constraint.properties,
-        (prop) => {
-          switch(prop) {
-            // Mark
-            case Property.MARK:
-              return isEnumSpec(specM.getMark());
-
-            // TODO: transform
-
-            // Encoding properties
-            case Property.CHANNEL:
-            case Property.AGGREGATE:
-            case Property.AUTOCOUNT:
-            case Property.BIN:
-            case Property.SCALE:
-            case Property.TIMEUNIT:
-            case Property.FIELD:
-            case Property.TYPE:
-              // If there is property that is enumSpec, we return true as
-              // we cannot check the constraint yet!
-              return some(specM.getEncodings(), (encQ) => {
-                return isEnumSpec(encQ[prop]);
-              });
-
-            case Property.SCALE_TYPE:
-            // case Property.SCALE_ZERO:
-              return some(specM.getEncodings(),
-                function(encQ) {
-                  let nestedEncProp = getNestedEncodingProperty(encQ);
-                  let parent = nestedEncProp.parent;
-                  let child = nestedEncProp.child;
-                  return isEnumSpec(encQ[parent][child]);
-                }
-              );
-
-            default:
-              /* istanbul ignore next */
-              throw new Error('Unimplemented');
-          }
-        }
-      );
-      // If one of the required property is still an enum spec, do not check the constraint yet.
-      if (hasRequiredPropertyAsEnumSpec) {
-        return true; // Return true since the query still satisfy the constraint.
+      if (!this.hasAllRequiredProperties(specM)) {
+        return true;
       }
     }
+
     return (this.constraint as SpecConstraint).satisfy(specM, schema, opt);
   }
 }
@@ -277,7 +262,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'omitBarAreaForLogScale',
     description: 'Do not use bar and area mark for x and y\'s log scale',
-    properties: [Property.MARK, Property.CHANNEL, Property.SCALE],
+    properties: [Property.MARK, Property.CHANNEL, Property.SCALE, Property.SCALE_TYPE], // Prpoerty.ScaleType and scale
     requireAllProperties: true,
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
