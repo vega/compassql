@@ -55,7 +55,7 @@ describe('schema', () => {
 
     it('should infer nominal type for integers when cardinality is much less than the total', () => {
       const numberData = [];
-      // add enough non-distinct data to make the field ordinal
+      // add enough non-distinct data to make the field nominal
       var total = 1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1;
       for (var i = 0; i < total; i++) {
         numberData.push({a: 1});
@@ -64,9 +64,24 @@ describe('schema', () => {
       assert.equal(numberSchema.type('a'), Type.NOMINAL);
     });
 
-    it('should infer nominal type for integers when cardinality is much less than the total and numbers are in order', () => {
+    it('should infer nominal type for integers when cardinality is much less than the total and numbers are in order, starts at 0, and have no skipping', () => {
       const numberData = [];
-      // add enough non-distinct data to make the field nominal and have multiple in-order keys
+      // add enough non-distinct data to make the field nominal/ordinal and have multiple in-order, non-skipping values that starts at 0
+      // (and by default, we set them to nominal)
+      var total = 3 * (1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1);
+      for (var i = 0; i < total; i++) {
+        numberData.push({a: 0});
+        numberData.push({a: 1});
+        numberData.push({a: 2});
+      }
+      const numberSchema = Schema.build(numberData);
+      assert.equal(numberSchema.type('a'), Type.NOMINAL);
+    });
+
+    it('should infer nominal type for integers when cardinality is much less than the total and numbers are in order, starts at 1, and have no skipping', () => {
+      const numberData = [];
+      // add enough non-distinct data to make the field nominal/ordinal and have multiple in-order, non-skipping values that starts at 1
+      // (and by default, we set them to nominal)
       var total = 3 * (1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1);
       for (var i = 0; i < total; i++) {
         numberData.push({a: 1});
@@ -79,7 +94,7 @@ describe('schema', () => {
 
     it('should infer ordinal type for integers when cardinality is much less than the total and numbers are not in order', () => {
       const numberData = [];
-      // add enough non-distinct data to make the field ordinal and have multiple in-order keys
+      // add enough non-distinct data to make the field ordinal and have multiple in-order, with skipping values
       var total = 3 * (1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1);
       for (var i = 0; i < total; i++) {
         numberData.push({a: 1});
@@ -92,7 +107,7 @@ describe('schema', () => {
 
     it('should not infer nominal type if the number set does not contain 0 or 1', () => {
       const numberData = [];
-      // add enough non-distinct data to make the field nominal and have multiple in-order keys, but not contain 0 or 1
+      // add enough non-distinct data to make the field ordinal and have multiple in-order, non-skipping values that do not start with 0 or 1
       var total = 3 * (1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1);
       for (var i = 0; i < total; i++) {
         numberData.push({a: 2});
