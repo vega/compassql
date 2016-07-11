@@ -4,6 +4,7 @@ import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Data} from 'vega-lite/src/data';
 import {Mark, BAR, AREA} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
+import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {StackOffset, StackProperties} from 'vega-lite/src/stack';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
@@ -11,6 +12,7 @@ import {Type} from 'vega-lite/src/type';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {generate} from './generate';
 import {nest} from './nest';
+import {Property, ENCODING_PROPERTIES, isNestedEncodingProperty} from './property';
 import {rank} from './ranking/ranking';
 import {Schema} from './schema';
 import {contains, duplicate, extend, keys, some} from './util';
@@ -115,6 +117,34 @@ export interface SpecQuery {
 
   // TODO: make config query (not important at all, only for the sake of completeness.)
   config?: Config;
+}
+
+export function fromSpec(spec: ExtendedUnitSpec) {
+  return extend(
+    spec.data ? { data: spec.data} : {},
+    spec.transform ? { transform: spec.transform } : {},
+    {
+      mark: spec.mark,
+      encodings: keys(spec.encoding).map((channel) => {
+          let encQ: EncodingQuery = { channel: channel };
+          let channelDef = spec.encoding[channel];
+
+          for (const prop of ENCODING_PROPERTIES) {
+            if (!isNestedEncodingProperty(prop) && channelDef[prop] !== undefined) {
+              encQ[prop] = channelDef[prop];
+            }
+            // Currently scale, axis, legend only support boolean, but not null.
+            // Therefore convert null to false.
+            if (contains([Property.SCALE, Property.AXIS, Property.LEGEND], prop) && encQ[prop] === null) {
+              encQ[prop] = false;
+            }
+          }
+          return encQ;
+        }
+      )
+    },
+    spec.config ? { config: spec.config } : {}
+  );
 }
 
 export function isAggregate(specQ: SpecQuery) {

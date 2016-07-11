@@ -9,7 +9,7 @@ import {Type} from 'vega-lite/src/type';
 import {assert} from 'chai';
 
 import {schema} from './fixture';
-import {EnumSpec, query, Query, SHORT_ENUM_SPEC, initEnumSpec, stack, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery, normalize} from '../src/query';
+import {EnumSpec, query, Query, SHORT_ENUM_SPEC, fromSpec, initEnumSpec, stack, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery, normalize} from '../src/query';
 import {SpecQueryModel} from '../src/model';
 import {isSpecQueryModelGroup, SpecQueryModelGroup} from '../src/modelgroup';
 import {duplicate, without} from '../src/util';
@@ -305,7 +305,49 @@ describe('query', () => {
         });
       });
     });
+  });
 
+  describe('fromSpec', () => {
+    // TODO: @felixcodes should make test coverage for fromSpec
+    it('should produce correct SpecQuery', () => {
+      const specQ = fromSpec({
+        data: {values: [{x: 1}, {x: 2}]},
+        transform: {filter: 'datum.x ===2'},
+        mark: Mark.POINT,
+        encoding: {
+          x: {field: 'x', type: Type.QUANTITATIVE},
+          y: {field: 'x', type: Type.QUANTITATIVE, scale: null}
+        },
+        config: {}
+      });
+      assert.deepEqual(specQ, {
+        data: {values: [{x: 1}, {x: 2}]},
+        transform: {filter: 'datum.x ===2'},
+        mark: Mark.POINT,
+        encodings: [
+          {channel: 'x', field: 'x', type: Type.QUANTITATIVE},
+          {channel: 'y', field: 'x', type: Type.QUANTITATIVE, scale: false}
+        ],
+        config: {}
+      });
+    });
+
+    it('should produce correct SpecQuery without data, transform, config', () => {
+      const specQ = fromSpec({
+        mark: Mark.POINT,
+        encoding: {
+          x: {field: 'x', type: Type.QUANTITATIVE},
+          y: {field: 'x', type: Type.QUANTITATIVE, scale: null}
+        },
+      });
+      assert.deepEqual(specQ, {
+        mark: Mark.POINT,
+        encodings: [
+          {channel: 'x', field: 'x', type: Type.QUANTITATIVE},
+          {channel: 'y', field: 'x', type: Type.QUANTITATIVE, scale: false}
+        ]
+      });
+    });
   });
 
   describe('stringifySpecQuery', () => {

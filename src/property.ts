@@ -1,7 +1,12 @@
 import {Dict} from './util';
 
 export enum Property {
+  // TODO: Filter (Field, Value?)
+
+
   MARK = 'mark' as any,
+
+  // Encoding Properties
   CHANNEL = 'channel' as any,
   AGGREGATE = 'aggregate' as any,
   AUTOCOUNT = 'autoCount' as any,
@@ -10,11 +15,20 @@ export enum Property {
   TIMEUNIT = 'timeUnit' as any,
   FIELD = 'field' as any,
   TYPE = 'type' as any,
-  SCALE = 'scale' as any,
-  SCALE_TYPE = 'scaleType' as any
 
-  // TODO: Filter (Field, Value?)
-  // TODO: SORT, AXIS, AXIS_*, LEGEND, LEGEND_*
+  // TODO: Sort
+
+  // - Scale
+  SCALE = 'scale' as any,
+  SCALE_TYPE = 'scaleType' as any,
+
+  // - Axis
+  AXIS = 'axis' as any,
+  // TODO: AXIS_*
+
+  // - Legend
+  LEGEND = 'legend' as any
+  // TODO: LEGEND_*
 }
 
 export function hasNestedProperty(prop: Property) {
@@ -105,4 +119,8 @@ const NESTED_ENCODING_INDEX: Dict<NestedEncodingProperty> =
 
 export function getNestedEncodingProperty(prop: Property) {
   return NESTED_ENCODING_INDEX[prop];
+}
+
+export function isNestedEncodingProperty(prop: Property) {
+  return prop in NESTED_ENCODING_INDEX;
 }
