@@ -89,6 +89,19 @@ describe('schema', () => {
       const numberSchema = Schema.build(numberData);
       assert.equal(numberSchema.type('a'), Type.ORDINAL);
     });
+
+    it('should not infer nominal type if the number set does not contain 0 or 1', () => {
+      const numberData = [];
+      // add enough non-distinct data to make the field nominal and have multiple in-order keys, but not contain 0 or 1
+      var total = 3 * (1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1);
+      for (var i = 0; i < total; i++) {
+        numberData.push({a: 2});
+        numberData.push({a: 3});
+        numberData.push({a: 4});
+      }
+      const numberSchema = Schema.build(numberData);
+      assert.equal(numberSchema.type('a'), Type.ORDINAL);
+    });
   });
 
   describe('cardinality', () => {
