@@ -119,6 +119,11 @@ export interface SpecQuery {
   config?: Config;
 }
 
+/**
+ * Convert a Vega-Lite's ExtendedUnitSpec into a CompassQL's SpecQuery
+ * @param {ExtendedUnitSpec} spec
+ * @returns
+ */
 export function fromSpec(spec: ExtendedUnitSpec) {
   return extend(
     spec.data ? { data: spec.data} : {},
