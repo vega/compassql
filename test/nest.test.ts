@@ -336,10 +336,10 @@ describe('nest', () => {
             }]
           },
           nest: [{groupBy: groupBy}],
-          config: DEFAULT_QUERY_CONFIG
+          config: extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOverPositionalChannels: false})
         };
 
-        const answerSet = generate(query.spec, schema, {omitNonPositionalOverPositionalChannels: false});
+        const answerSet = generate(query.spec, schema, query.config);
         const groups = nest(answerSet, query).items;
         assert.equal(groups.length, 2);
       });

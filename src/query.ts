@@ -4,23 +4,38 @@ import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Data} from 'vega-lite/src/data';
 import {Mark, BAR, AREA} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
+import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {StackOffset, StackProperties} from 'vega-lite/src/stack';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-import {QueryConfig} from './config';
+import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {generate} from './generate';
 import {nest} from './nest';
-import {getNestedEncodingPropertyChild} from './property';
+
+import {Property, ENCODING_PROPERTIES, getNestedEncodingPropertyChild, isNestedEncodingProperty} from './property';
+
 import {rank} from './ranking/ranking';
 import {Schema} from './schema';
-import {contains, extend, keys, some} from './util';
+import {contains, duplicate, extend, keys, some} from './util';
 
-export function query(query: Query, schema: Schema) {
-  query = normalize(query);
-  const answerSet = generate(query.spec, schema, query.config);
-  const nestedAnswerSet = nest(answerSet, query);
-  return rank(nestedAnswerSet, query, schema, 0);
+export function query(q: Query, schema: Schema, config?: Config) {
+  // 1. Normalize non-nested `groupBy` to always have `groupBy` inside `nest`
+  //    and merge config with the following precedence
+  //    query.config > config > DEFAULT_QUERY_CONFIG
+  q = extend({}, normalize(q), {
+    config: extend({}, DEFAULT_QUERY_CONFIG, config, q.config)
+  });
+
+  // 2. Generate
+  const answerSet = generate(q.spec, schema, q.config);
+  const nestedAnswerSet = nest(answerSet, q);
+  const result = rank(nestedAnswerSet, q, schema, 0);
+
+  return {
+    query: q,
+    result: result
+  };
 }
 
 /**
@@ -37,7 +52,7 @@ export function normalize(q: Query): Query {
     }
 
     let normalizedQ: Query = {
-      spec: q.spec,
+      spec: duplicate(q.spec), // We will cause side effect to q.spec in SpecQueryModel.build
       nest: [nest],
     };
 
@@ -51,7 +66,7 @@ export function normalize(q: Query): Query {
 
     return normalizedQ;
   }
-  return q;
+  return duplicate(q); // We will cause side effect to q.spec in SpecQueryModel.build
 }
 
 
@@ -104,6 +119,39 @@ export interface SpecQuery {
 
   // TODO: make config query (not important at all, only for the sake of completeness.)
   config?: Config;
+}
+
+/**
+ * Convert a Vega-Lite's ExtendedUnitSpec into a CompassQL's SpecQuery
+ * @param {ExtendedUnitSpec} spec
+ * @returns
+ */
+export function fromSpec(spec: ExtendedUnitSpec) {
+  return extend(
+    spec.data ? { data: spec.data} : {},
+    spec.transform ? { transform: spec.transform } : {},
+    {
+      mark: spec.mark,
+      encodings: keys(spec.encoding).map((channel) => {
+          let encQ: EncodingQuery = { channel: channel };
+          let channelDef = spec.encoding[channel];
+
+          for (const prop of ENCODING_PROPERTIES) {
+            if (!isNestedEncodingProperty(prop) && channelDef[prop] !== undefined) {
+              encQ[prop] = channelDef[prop];
+            }
+            // Currently scale, axis, legend only support boolean, but not null.
+            // Therefore convert null to false.
+            if (contains([Property.SCALE, Property.AXIS, Property.LEGEND], prop) && encQ[prop] === null) {
+              encQ[prop] = false;
+            }
+          }
+          return encQ;
+        }
+      )
+    },
+    spec.config ? { config: spec.config } : {}
+  );
 }
 
 export function isAggregate(specQ: SpecQuery) {
@@ -263,6 +311,8 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     fn = SHORT_ENUM_SPEC + '';
   }
 
+  // Scale
+  // TODO: convert this chunk into a loop of scale, axis, legend
   if (encQ.scale && !isEnumSpec(encQ.scale)) {
       if (encQ.scale && !isEnumSpec(encQ.scale)) {
 
@@ -282,7 +332,14 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
           });
         }
     }
+  } else if (encQ.scale === false || encQ.scale === null) {
+    params.push({
+      key: 'scale',
+      value: false
+    });
   }
+
+
 
   const fieldType = enumSpecShort(encQ.field || '*') + ',' +
     enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1) +

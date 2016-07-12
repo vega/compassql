@@ -6,9 +6,10 @@ import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
+import {Property} from '../../src/property';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
-import {ENCODING_CONSTRAINTS, ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
-import {EncodingQuery} from '../../src/query';
+import {EncodingConstraintModel, ENCODING_CONSTRAINTS, ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
+import {SHORT_ENUM_SPEC, EncodingQuery} from '../../src/query';
 import {duplicate} from '../../src/util';
 
 import {schema} from '../fixture';
@@ -24,6 +25,61 @@ describe('constraints/encoding', () => {
         assert.isDefined(DEFAULT_QUERY_CONFIG[constraint.name()]);
       });
     }
+  });
+
+  describe('hasAllRequiredPropertiesSpecific', () => {
+    let encModel = new EncodingConstraintModel(
+      {
+        name: 'TestEncoding for hasAllRequiredProperties class method',
+        description: 'TestEncoding for hasAllRequirdProperties class method',
+        properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, Property.SCALE_TYPE],
+        requireAllPropertiesSpecific: true,
+        strict: true,
+        satisfy: undefined
+      }
+    );
+
+    it('should return true if all properties is defined', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        aggregate: AggregateOp.MEAN,
+        field: 'A',
+        scale: {type: ScaleType.LOG},
+        type: Type.QUANTITATIVE
+      };
+      assert.isTrue(encModel.hasAllRequiredPropertiesSpecific(encQ));
+    });
+
+    it('should return true if a required property is undefined', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        field: 'A',
+        scale: {type: ScaleType.LOG},
+        type: Type.QUANTITATIVE
+      };
+      assert.isTrue(encModel.hasAllRequiredPropertiesSpecific(encQ));
+    });
+
+    it('should return false if a required property is an enum spec', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        aggregate: SHORT_ENUM_SPEC,
+        scale: {type: ScaleType.LOG},
+        type: Type.QUANTITATIVE
+      };
+      assert.isFalse(encModel.hasAllRequiredPropertiesSpecific(encQ));
+    });
+
+    it('should return false if a nested required property is an enum spec', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        aggregate: AggregateOp.MEAN,
+        field: 'A',
+        scale: {type: SHORT_ENUM_SPEC},
+        type: Type.QUANTITATIVE
+      };
+      assert.isFalse(encModel.hasAllRequiredPropertiesSpecific(encQ));
+    });
   });
 
   describe('aggregateOpSupportedByType', () => {

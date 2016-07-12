@@ -8,7 +8,7 @@ import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 import {QueryConfig} from '../config';
 import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
-import {Property} from '../property';
+import {getNestedEncodingProperty, Property, isEncodingProperty} from '../property';
 import {Schema} from '../schema';
 import {ScaleQuery, EncodingQuery, isEnumSpec, isMeasure} from '../query';
 import {contains, every, some} from '../util';
@@ -23,45 +23,50 @@ export class SpecConstraintModel extends AbstractConstraintModel {
     super(specConstraint);
   }
 
-  public satisfy(specM: SpecQueryModel, schema: Schema, opt: QueryConfig) {
-    // TODO: Re-order logic to optimize the "requireAllProperties" check
-
-    if (this.constraint.requireAllProperties) {
-      // TODO: extract as a method and do unit test
-      const hasRequiredPropertyAsEnumSpec = some(this.constraint.properties,
-        (prop) => {
-          switch(prop) {
-            // Mark
-            case Property.MARK:
-              return isEnumSpec(specM.getMark());
-
-            // TODO: transform
-
-            // Encoding properties
-            case Property.CHANNEL:
-            case Property.AGGREGATE:
-            case Property.AUTOCOUNT:
-            case Property.BIN:
-            case Property.SCALE:
-            case Property.TIMEUNIT:
-            case Property.FIELD:
-            case Property.TYPE:
-              // If there is property that is enumSpec, we return true as
-              // we cannot check the constraint yet!
-              return some(specM.getEncodings(), (encQ) => {
-                return isEnumSpec(encQ[prop]);
-              });
-            default:
-              /* istanbul ignore next */
-              throw new Error('Unimplemented');
-          }
+    public hasAllRequiredPropertiesSpecific(specM: SpecQueryModel): boolean {
+      return every(this.constraint.properties, (prop) => {
+        if (prop === Property.MARK) {
+          return !isEnumSpec(specM.getMark());
         }
-      );
-      // If one of the required property is still an enum spec, do not check the constraint yet.
-      if (hasRequiredPropertyAsEnumSpec) {
-        return true; // Return true since the query still satisfy the constraint.
+
+        // TODO: transform
+
+        const nestedEncProp = getNestedEncodingProperty(prop);
+
+        if (nestedEncProp) {
+          let parent = nestedEncProp.parent;
+          let child = nestedEncProp.child;
+
+          return every(specM.getEncodings(), (encQ) => {
+            if (!encQ[parent]) {
+              return true;
+            }
+
+            return !isEnumSpec(encQ[parent][child]);
+          });
+        }
+
+        if (!isEncodingProperty(prop)) {
+          throw new Error('UNIMPLEMENTED');
+        }
+
+        return every(specM.getEncodings(), (encQ) => {
+          if (!encQ[prop]) {
+            return true;
+          }
+          return !isEnumSpec(encQ[prop]);
+        });
+      });
+    }
+
+  public satisfy(specM: SpecQueryModel, schema: Schema, opt: QueryConfig) {
+    // TODO: Re-order logic to optimize the "requireAllPropertiesSpecific" check
+    if (this.constraint.requireAllPropertiesSpecific) {
+      if (!this.hasAllRequiredPropertiesSpecific(specM)) {
+        return true;
       }
     }
+
     return (this.constraint as SpecConstraint).satisfy(specM, schema, opt);
   }
 }
@@ -76,7 +81,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'noRepeatedChannel',
     description: 'Each encoding channel should only be used once.',
     properties: [Property.CHANNEL],
-    requireAllProperties: false,
+    requireAllPropertiesSpecific: false,
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       let usedChannel = {};
@@ -130,7 +135,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'autoAddCount',
     description: 'Automatically adding count only for plots with only ordinal, binned quantitative, or temporal with timeunit fields.',
     properties: [Property.BIN, Property.TIMEUNIT, Property.TYPE, Property.AUTOCOUNT],
-    requireAllProperties: false,
+    requireAllPropertiesSpecific: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const hasAutoCount =  some(specM.getEncodings(), (encQ: EncodingQuery) => encQ.autoCount === true);
@@ -186,7 +191,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'channelPermittedByMarkType',
     description: 'Each encoding channel should be supported by the mark type',
     properties: [Property.CHANNEL, Property.MARK],
-    requireAllProperties: false, // only require mark
+    requireAllPropertiesSpecific: false, // only require mark
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();
@@ -207,7 +212,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'hasAllRequiredChannelsForMark',
     description: 'All required channels for the specified mark should be specified',
     properties: [Property.CHANNEL, Property.MARK],
-    requireAllProperties: true,
+    requireAllPropertiesSpecific: true,
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();
@@ -234,7 +239,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitAggregatePlotWithDimensionOnlyOnFacet',
     description: 'All required channels for the specified mark should be specified',
     properties: [Property.CHANNEL, Property.AGGREGATE, Property.AUTOCOUNT],
-    requireAllProperties: true,
+    requireAllPropertiesSpecific: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if (specM.isAggregate()) {
@@ -257,7 +262,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitBarLineAreaWithOcclusion',
     description: 'Don\'t use bar, line or area to visualize raw plot as they often lead to occlusion.',
     properties: [Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
-    requireAllProperties: true,
+    requireAllPropertiesSpecific: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if (contains([Mark.BAR, Mark.LINE, Mark.AREA], specM.getMark())) {
@@ -270,7 +275,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitBarTickWithSize',
     description: 'Do not map field to size channel with bar and tick mark',
     properties: [Property.CHANNEL, Property.MARK],
-    requireAllProperties: false,
+    requireAllPropertiesSpecific: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();
@@ -284,7 +289,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitFacetOverPositionalChannels',
     description: 'Do not use non-positional channels unless all positional channels are used',
     properties: [Property.CHANNEL],
-    requireAllProperties: true,
+    requireAllPropertiesSpecific: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       return specM.channelUsed(Channel.ROW) || specM.channelUsed(Channel.COLUMN) ?
@@ -296,8 +301,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'omitBarAreaForLogScale',
     description: 'Do not use bar and area mark for x and y\'s log scale',
-    properties: [Property.MARK, Property.CHANNEL, Property.SCALE],
-    requireAllProperties: true,
+    properties: [Property.MARK, Property.CHANNEL, Property.SCALE, Property.SCALE_TYPE], // Prpoerty.ScaleType and scale
+    requireAllPropertiesSpecific: true,
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();
@@ -319,7 +324,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitMultipleNonPositionalChannels',
     description: 'Do not use multiple non-positional encoding channel to avoid over-encoding.',
     properties: [Property.CHANNEL],
-    requireAllProperties: false,
+    requireAllPropertiesSpecific: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const encodings = specM.getEncodings();
@@ -342,7 +347,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitNonPositionalOverPositionalChannels',
     description: 'Do not use non-positional channels unless all positional channels are used',
     properties: [Property.CHANNEL],
-    requireAllProperties: true,
+    requireAllPropertiesSpecific: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       return some(NONSPATIAL_CHANNELS, (channel) => specM.channelUsed(channel)) ?
@@ -356,7 +361,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     description: 'Aggregate plot should not use raw continuous field as group by values. ' +
       '(Quantitative should be binned. Temporal should have time unit.)',
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN, Property.TYPE],
-    requireAllProperties: false,
+    requireAllPropertiesSpecific: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
        if (specM.isAggregate()) {
@@ -378,7 +383,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitRawDetail',
     description: 'Do not use detail channel with raw plot.',
     properties: [Property.CHANNEL, Property.AGGREGATE, Property.AUTOCOUNT],
-    requireAllProperties: true,
+    requireAllPropertiesSpecific: true,
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if (specM.isAggregate()) {
@@ -393,7 +398,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitRepeatedField',
     description: 'Each field should be mapped to only one channel',
     properties: [Property.FIELD],
-    requireAllProperties: false,
+    requireAllPropertiesSpecific: false,
     strict: false, // over-encoding is sometimes good, but let's turn it off by default
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       let usedField = {};
@@ -417,7 +422,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitVerticalDotPlot',
     description: 'Do not output vertical dot plot.',
     properties: [Property.CHANNEL],
-    requireAllProperties: false,
+    requireAllPropertiesSpecific: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const encodings = specM.getEncodings();
@@ -432,7 +437,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'hasAppropriateGraphicTypeForMark',
     description: 'Has appropriate graphic type for mark',
     properties: [Property.CHANNEL, Property.MARK, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
-    requireAllProperties: true,
+    requireAllPropertiesSpecific: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();
@@ -487,7 +492,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitNonSumStack',
     description: 'Stacked plot should use summative aggregation such as sum, count, or distinct',
     properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
-    requireAllProperties: true,
+    requireAllPropertiesSpecific: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const stack = specM.stack();
@@ -502,7 +507,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitTableWithOcclusion',
     description: 'Raw Plots with x and y are both dimensions should be omitted as they often lead to occlusion.',
     properties: [Property.CHANNEL, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
-    requireAllProperties: true,
+    requireAllPropertiesSpecific: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if (specM.isDimension(Channel.X) &&

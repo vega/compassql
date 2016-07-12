@@ -4,11 +4,8 @@ import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {SpecQueryModel} from './model';
 import {SpecQuery} from './query';
 import {Schema} from './schema';
-import {extend} from './util';
 
-export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = {}) {
-  opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
-
+export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DEFAULT_QUERY_CONFIG) {
   // 1. Build a SpecQueryModel, which also contains enumSpecIndex
   const specM = SpecQueryModel.build(specQ, schema, opt);
   const enumSpecIndex = specM.enumSpecIndex;

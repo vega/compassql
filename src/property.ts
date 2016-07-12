@@ -1,7 +1,12 @@
 import {Dict} from './util';
 
 export enum Property {
+  // TODO: Filter (Field, Value?)
+
+
   MARK = 'mark' as any,
+
+  // Encoding Properties
   CHANNEL = 'channel' as any,
   AGGREGATE = 'aggregate' as any,
   AUTOCOUNT = 'autoCount' as any,
@@ -10,12 +15,22 @@ export enum Property {
   TIMEUNIT = 'timeUnit' as any,
   FIELD = 'field' as any,
   TYPE = 'type' as any,
+
+  // TODO: Sort
+
+  // - Scale
   SCALE = 'scale' as any,
   SCALE_TYPE = 'scaleType' as any,
-  SCALE_ZERO = 'scaleZero' as any
+  SCALE_ZERO = 'scaleZero' as any,
 
-  // TODO: Filter (Field, Value?)
-  // TODO: SORT, AXIS, AXIS_*, LEGEND, LEGEND_*
+
+  // - Axis
+  AXIS = 'axis' as any,
+  // TODO: AXIS_*
+
+  // - Legend
+  LEGEND = 'legend' as any
+  // TODO: LEGEND_*
 }
 
 export function hasNestedProperty(prop: Property) {
@@ -58,8 +73,6 @@ export const DEFAULT_PROPERTY_PRECENCE: Property[] =  [
   // Projection
   Property.TYPE, // type is a constraint for field
   Property.FIELD,
-
-  // TODO: transform
 
   // Field Transform
   Property.BIN,
@@ -126,10 +139,24 @@ const NESTED_ENCODING_PROPERTY_INDEX =
     return m;
   }, {} as Dict<Array<String>>); // as Dict<Array<String>>);
 
+const ENCODING_INDEX: Dict<Property> =
+  ENCODING_PROPERTIES.reduce((m, prop) => {
+    m[prop] = prop;
+    return m;
+  }, {} as Dict<Property>);
+
+export function isEncodingProperty(prop: Property): boolean {
+  return ENCODING_INDEX[prop] !== undefined;
+}
+
 export function getNestedEncodingProperty(prop: Property) {
   return NESTED_ENCODING_INDEX[prop];
 }
 
 export function getNestedEncodingPropertyChild(parent: string) {
   return NESTED_ENCODING_PROPERTY_INDEX[parent];
+
+export function isNestedEncodingProperty(prop: Property) {
+  return prop in NESTED_ENCODING_INDEX;
 }
+
