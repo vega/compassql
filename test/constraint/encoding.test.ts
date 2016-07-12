@@ -30,8 +30,8 @@ describe('constraints/encoding', () => {
   describe('hasAllRequiredPropertiesSpecific', () => {
     let encModel = new EncodingConstraintModel(
       {
-        name: 'Test EncodingModel for hasAllRequiredProperties class method',
-        description: 'Test EncodingModel for hasAllRequirdProperties class method',
+        name: 'TestEncoding for hasAllRequiredProperties class method',
+        description: 'TestEncoding for hasAllRequirdProperties class method',
         properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, Property.SCALE_TYPE],
         requireAllPropertiesSpecific: true,
         strict: true,
@@ -39,50 +39,46 @@ describe('constraints/encoding', () => {
       }
     );
 
-    let encQ1: EncodingQuery = {
-      channel: Channel.X,
-      aggregate: AggregateOp.MEAN,
-      field: 'A',
-      scale: {type: ScaleType.LOG},
-      type: Type.QUANTITATIVE
-    };
-
-    it('should return true if all properties are present', () => {
-      assert.isTrue(encModel.hasAllRequiredPropertiesSpecific(encQ1));
+    it('should return true if all properties is defined', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        aggregate: AggregateOp.MEAN,
+        field: 'A',
+        scale: {type: ScaleType.LOG},
+        type: Type.QUANTITATIVE
+      };
+      assert.isTrue(encModel.hasAllRequiredPropertiesSpecific(encQ));
     });
 
-    let encQ2: EncodingQuery = {
-      channel: Channel.X,
-      field: 'A',
-      scale: {type: ScaleType.LOG},
-      type: Type.QUANTITATIVE
-    };
-
-    it('should return true if a required property is not present', () => {
-      assert.isTrue(encModel.hasAllRequiredPropertiesSpecific(encQ2));
+    it('should return true if a required property is undefined', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        field: 'A',
+        scale: {type: ScaleType.LOG},
+        type: Type.QUANTITATIVE
+      };
+      assert.isTrue(encModel.hasAllRequiredPropertiesSpecific(encQ));
     });
 
-    let encQ3: EncodingQuery = {
-      channel: Channel.X,
-      aggregate: SHORT_ENUM_SPEC,
-      scale: {type: ScaleType.LOG},
-      type: Type.QUANTITATIVE
-    };
-
-    it('should return false if a required property is enum spec', () => {
-      assert.isFalse(encModel.hasAllRequiredPropertiesSpecific(encQ3));
+    it('should return false if a required property is an enum spec', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        aggregate: SHORT_ENUM_SPEC,
+        scale: {type: ScaleType.LOG},
+        type: Type.QUANTITATIVE
+      };
+      assert.isFalse(encModel.hasAllRequiredPropertiesSpecific(encQ));
     });
 
-    let encQ4: EncodingQuery = {
-      channel: Channel.X,
-      aggregate: AggregateOp.MEAN,
-      field: 'A',
-      scale: {type: SHORT_ENUM_SPEC},
-      type: Type.QUANTITATIVE
-    };
-
-    it('should return false if a nested required property is enum spec', () => {
-      assert.isFalse(encModel.hasAllRequiredPropertiesSpecific(encQ4));
+    it('should return false if a nested required property is an enum spec', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        aggregate: AggregateOp.MEAN,
+        field: 'A',
+        scale: {type: SHORT_ENUM_SPEC},
+        type: Type.QUANTITATIVE
+      };
+      assert.isFalse(encModel.hasAllRequiredPropertiesSpecific(encQ));
     });
   });
 

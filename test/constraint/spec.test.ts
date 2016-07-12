@@ -44,48 +44,44 @@ describe('constraints/spec', () => {
       }
     );
 
-    const specQM1 = buildSpecQueryModel({
-      mark: Mark.POINT,
-      encodings: [
-        {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: {type: ScaleType.LOG}, type: Type.QUANTITATIVE}
-      ]
+    it('should return true if all properties is defined', () => {
+      const specQM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: {type: ScaleType.LOG}, type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isTrue(specCModel.hasAllRequiredPropertiesSpecific(specQM));
     });
 
-    it('should return true if all properties are present', () => {
-      assert.isTrue(specCModel.hasAllRequiredPropertiesSpecific(specQM1));
+    it('should return true if a required property is undefined', () => {
+      const specQM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A',  type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isTrue(specCModel.hasAllRequiredPropertiesSpecific(specQM));
     });
 
-    const specQM2 = buildSpecQueryModel({
-      mark: Mark.POINT,
-      encodings: [
-        {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A',  type: Type.QUANTITATIVE}
-      ]
+    it('should return false if a required property is an enum spec', () => {
+      const specQM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: SHORT_ENUM_SPEC, type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isFalse(specCModel.hasAllRequiredPropertiesSpecific(specQM));
     });
 
-    it('should return true if a required property is not present', () => {
-      assert.isTrue(specCModel.hasAllRequiredPropertiesSpecific(specQM2));
-    });
-
-    const specQM3 = buildSpecQueryModel({
-      mark: Mark.POINT,
-      encodings: [
-        {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: SHORT_ENUM_SPEC, type: Type.QUANTITATIVE}
-      ]
-    });
-
-    it('should return false if a required property is EnumSpec', () => {
-      assert.isFalse(specCModel.hasAllRequiredPropertiesSpecific(specQM3));
-    });
-
-    const specQM4 = buildSpecQueryModel({
-      mark: Mark.POINT,
-      encodings: [
-        {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: {type: SHORT_ENUM_SPEC}, type: Type.QUANTITATIVE}
-      ]
-    });
-
-    it('should return false if a nested required property is EnumSpec', () => {
-      assert.isFalse(specCModel.hasAllRequiredPropertiesSpecific(specQM4));
+    it('should return false if a nested required property is an enum spec', () => {
+      const specQM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: {type: SHORT_ENUM_SPEC}, type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isFalse(specCModel.hasAllRequiredPropertiesSpecific(specQM));
     });
   });
 
