@@ -22,15 +22,16 @@ declare module 'datalib/src/import/readers' {
 }
 
 interface Summary {
-  field: string;
-  type: string;
-  unique: { [value: string] : number };
-  count: number;
-  valid: number;
-  missing: number;
-  distinct: number;
-  min: number;
-  max: number;
+  field: string; //
+  type: string;  //
+  unique: { [value: string] : number }; // need
+  count: number; // doesn't matter -- free
+  valid: number; // doesn't matter -- free
+  missing: number; // doesn't matter -- free
+  distinct: number; // doesn't matter -- free
+  min: number; // get this
+  max: number; // get this
+
   mean: number;
   stdev: number;
   median: number;

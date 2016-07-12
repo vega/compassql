@@ -98,5 +98,7 @@ export interface FieldSchema {
   /** number, integer, string, date  */
   primitiveType: PrimitiveType;
   stats: Summary;
+  binStats?: {[key: string]: Summary};
+  timeStats?: {[timeUnit: string]: Summary};
   title?: string;
 }
