@@ -308,8 +308,9 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     fn = SHORT_ENUM_SPEC + '';
   }
 
+  // Scale
+  // TODO: convert this chunk into a loop of scale, axis, legend
   if (encQ.scale && !isEnumSpec(encQ.scale)) {
-
       if (encQ.scale && !isEnumSpec(encQ.scale)) {
       var scaleParams = {};
 
@@ -325,7 +326,14 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
         });
       }
     }
+  } else if (encQ.scale === false || encQ.scale === null) {
+    params.push({
+      key: 'scale',
+      value: false
+    });
   }
+
+
 
   const fieldType = enumSpecShort(encQ.field || '*') + ',' +
     enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1) +

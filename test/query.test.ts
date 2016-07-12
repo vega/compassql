@@ -446,6 +446,19 @@ describe('query', () => {
       assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"})');
     });
 
+    it('should return correct fieldDef string for disabled scale', () => {
+      const str = stringifyEncodingQueryFieldDef({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: null
+      });
+      assert.equal(str, 'a,q,scale=false');
+    });
+
+    it('should return correct fieldDef string for disabled scale', () => {
+      const str = stringifyEncodingQueryFieldDef({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: false
+      });
+      assert.equal(str, 'a,q,scale=false');
+    });
 
     it('should return correct fieldDef string for scale with scaleType log', () => {
        const str = stringifyEncodingQueryFieldDef({
@@ -453,6 +466,7 @@ describe('query', () => {
        });
        assert.equal(str, 'a,q,scale={"type":"log"}');
     });
+
     // TODO: Update tests for other scale.*
 
     it('should return correct fieldDef string for ambiguous bin field', () => {
