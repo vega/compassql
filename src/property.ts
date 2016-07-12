@@ -70,8 +70,6 @@ export const DEFAULT_PROPERTY_PRECENCE: Property[] =  [
   Property.TYPE, // type is a constraint for field
   Property.FIELD,
 
-  // TODO: transform
-
   // Field Transform
   Property.BIN,
   Property.TIMEUNIT,
@@ -116,6 +114,16 @@ const NESTED_ENCODING_INDEX: Dict<NestedEncodingProperty> =
     m[nestedProp.property] = nestedProp;
     return m;
   }, {} as Dict<NestedEncodingProperty>);
+
+const ENCODING_INDEX: Dict<Property> =
+  ENCODING_PROPERTIES.reduce((m, prop) => {
+    m[prop] = prop;
+    return m;
+  }, {} as Dict<Property>);
+
+export function isEncodingProperty(prop: Property): boolean {
+  return ENCODING_INDEX[prop] !== undefined;
+}
 
 export function getNestedEncodingProperty(prop: Property) {
   return NESTED_ENCODING_INDEX[prop];
