@@ -8,9 +8,6 @@ export enum Property {
   BIN = 'bin' as any,
   BIN_MAXBINS = 'binMaxBins' as any,
   TIMEUNIT = 'timeUnit' as any,
-  TRANSFORM = 'transform' as any,
-  TRANSFORM_CALCULATE = 'transformCalculate' as any,
-  TRANSFORM_FILTER = 'transformFilter' as any,
   FIELD = 'field' as any,
   TYPE = 'type' as any,
   SCALE = 'scale' as any,
@@ -24,7 +21,6 @@ export function hasNestedProperty(prop: Property) {
   switch (prop) {
     case Property.BIN:
     case Property.SCALE:
-    case Property.TRANSFORM:
       // TODO: AXIS, LEGEND
       return true;
     case Property.MARK:
@@ -36,8 +32,6 @@ export function hasNestedProperty(prop: Property) {
     case Property.TYPE:
     case Property.BIN_MAXBINS:
     case Property.SCALE_TYPE:
-    case Property.TRANSFORM_CALCULATE:
-    case Property.TRANSFORM_FILTER:
       return false;
   }
   /* istanbul ignore next */
@@ -61,10 +55,6 @@ export const DEFAULT_PROPERTY_PRECENCE: Property[] =  [
   // Projection
   Property.TYPE, // type is a constraint for field
   Property.FIELD,
-
-  Property.TRANSFORM,
-  Property.TRANSFORM_CALCULATE,
-  Property.TRANSFORM_FILTER,
 
   // Field Transform
   Property.BIN,
