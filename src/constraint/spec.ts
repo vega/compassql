@@ -104,7 +104,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'alwaysIncludeZeroInScaleWithBarMark',
     description: 'Do not reccommend bar mark if scale does not start at zero',
     properties: [Property.MARK, Property.SCALE, Property.CHANNEL, Property.TYPE], //Property.Type
-    requireAllProperties: true,
+    requireAllPropertiesSpecific: true,
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();

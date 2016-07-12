@@ -155,8 +155,8 @@ export function getNestedEncodingProperty(prop: Property) {
 
 export function getNestedEncodingPropertyChild(parent: string) {
   return NESTED_ENCODING_PROPERTY_INDEX[parent];
+}
 
 export function isNestedEncodingProperty(prop: Property) {
   return prop in NESTED_ENCODING_INDEX;
 }
-
