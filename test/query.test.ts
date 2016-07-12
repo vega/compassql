@@ -308,7 +308,6 @@ describe('query', () => {
   });
 
   describe('fromSpec', () => {
-    // TODO: @felixcodes should make test coverage for fromSpec
     it('should produce correct SpecQuery', () => {
       const specQ = fromSpec({
         data: {values: [{x: 1}, {x: 2}]},
