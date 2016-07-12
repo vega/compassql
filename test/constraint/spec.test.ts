@@ -7,12 +7,12 @@ import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX} from '../../src/constraint/spec';
-
+import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX, SpecConstraintModel} from '../../src/constraint/spec';
+import {Property} from '../../src/property';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
-import {SpecQuery} from '../../src/query';
+import {SHORT_ENUM_SPEC, SpecQuery} from '../../src/query';
 import {duplicate} from '../../src/util';
 
 describe('constraints/spec', () => {
@@ -30,6 +30,63 @@ describe('constraints/spec', () => {
         assert.isDefined(DEFAULT_QUERY_CONFIG[constraint.name()]);
       });
     }
+  });
+
+  describe('hasAllRequiredPropertiesSpecific', () => {
+    const specCModel = new SpecConstraintModel(
+      {
+        name: 'Test SpecModel for hasAllRequiredPropertiesSpecific class method',
+        description: 'Test SpecModel for hasAllRequiredPropertiesSpecific class method',
+        properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, Property.SCALE_TYPE, Property.MARK],
+        requireAllPropertiesSpecific: true,
+        strict: true,
+        satisfy: undefined
+      }
+    );
+
+    const specQM1 = buildSpecQueryModel({
+      mark: Mark.POINT,
+      encodings: [
+        {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: {type: ScaleType.LOG}, type: Type.QUANTITATIVE}
+      ]
+    });
+
+    it('should return true if all properties are present', () => {
+      assert.isTrue(specCModel.hasAllRequiredPropertiesSpecific(specQM1));
+    });
+
+    const specQM2 = buildSpecQueryModel({
+      mark: Mark.POINT,
+      encodings: [
+        {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A',  type: Type.QUANTITATIVE}
+      ]
+    });
+
+    it('should return true if a required property is not present', () => {
+      assert.isTrue(specCModel.hasAllRequiredPropertiesSpecific(specQM2));
+    });
+
+    const specQM3 = buildSpecQueryModel({
+      mark: Mark.POINT,
+      encodings: [
+        {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: SHORT_ENUM_SPEC, type: Type.QUANTITATIVE}
+      ]
+    });
+
+    it('should return false if a required property is EnumSpec', () => {
+      assert.isFalse(specCModel.hasAllRequiredPropertiesSpecific(specQM3));
+    });
+
+    const specQM4 = buildSpecQueryModel({
+      mark: Mark.POINT,
+      encodings: [
+        {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: {type: SHORT_ENUM_SPEC}, type: Type.QUANTITATIVE}
+      ]
+    });
+
+    it('should return false if a nested required property is EnumSpec', () => {
+      assert.isFalse(specCModel.hasAllRequiredPropertiesSpecific(specQM4));
+    });
   });
 
   describe('autoAddCount', () => {

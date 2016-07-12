@@ -27,13 +27,13 @@ describe('constraints/encoding', () => {
     }
   });
 
-  describe('hasAllRequiredProperties', () => {
+  describe('hasAllRequiredPropertiesSpecific', () => {
     let encModel = new EncodingConstraintModel(
       {
-        name: 'Test EncodingModel for hasAllRequirdProperties class method',
+        name: 'Test EncodingModel for hasAllRequiredProperties class method',
         description: 'Test EncodingModel for hasAllRequirdProperties class method',
         properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, Property.SCALE_TYPE],
-        requireAllProperties: true,
+        requireAllPropertiesSpecific: true,
         strict: true,
         satisfy: undefined
       }
@@ -83,7 +83,7 @@ describe('constraints/encoding', () => {
 
     it('should return false if a nested required property is enum spec', () => {
       assert.isFalse(encModel.hasAllRequiredPropertiesSpecific(encQ4));
-    })
+    });
   });
 
   describe('aggregateOpSupportedByType', () => {
