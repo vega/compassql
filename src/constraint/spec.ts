@@ -29,6 +29,8 @@ export class SpecConstraintModel extends AbstractConstraintModel {
           return !isEnumSpec(specM.getMark());
         }
 
+        // TODO: transform
+
         const nestedEncProp = getNestedEncodingProperty(prop);
 
         if (nestedEncProp) {
@@ -44,8 +46,12 @@ export class SpecConstraintModel extends AbstractConstraintModel {
           });
         }
 
-        // non-nested EncProp
         return every(specM.getEncodings(), (encQ) => {
+          if (!encQ[prop]) {
+          //  return true; // <----- this doesn't cause errors, but isn't helpful
+            console.log('prop is ' + prop + ' and specM is ' + JSON.stringify(specM, null, 2));
+            throw new Error('UNIMPLEMENTED'); // <---- what is unimplemented in here???
+          }
           return !isEnumSpec(encQ[prop]);
         });
       });

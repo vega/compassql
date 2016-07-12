@@ -25,8 +25,9 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
     super(constraint);
   }
 
-  public hasAllRequiredProperties(encQ: EncodingQuery): boolean {
+  public hasAllRequiredPropertiesSpecific(encQ: EncodingQuery): boolean {
     return every(this.constraint.properties, (prop) => {
+
       const nestedEncProp = getNestedEncodingProperty(prop);
 
       if (nestedEncProp) {
@@ -40,6 +41,10 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
         return !isEnumSpec(encQ[parent][child]);
       }
 
+      if (!encQ[prop]) {
+        return true;
+      }
+
       return !isEnumSpec(encQ[prop]);
     });
   }
@@ -49,7 +54,7 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
     if (this.constraint.requireAllProperties) {
       // TODO: extract as a method and do unit test
 
-      if (!this.hasAllRequiredProperties(encQ)) {
+      if (!this.hasAllRequiredPropertiesSpecific(encQ)) {
         return true;
       }
     }
