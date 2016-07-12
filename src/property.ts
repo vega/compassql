@@ -125,7 +125,7 @@ const NESTED_ENCODING_INDEX: Dict<NestedEncodingProperty> =
     return m;
   }, {} as Dict<NestedEncodingProperty>);
 
-const NESTED_ENCODING_PROPERTY_INDEX =
+const NESTED_ENCODING_PROPERTY_PARENT_INDEX =
   NESTED_ENCODING_PROPERTIES.reduce((m, nestedProp) => {
     let parent = nestedProp.parent;
     let child = nestedProp.child;
@@ -154,7 +154,7 @@ export function getNestedEncodingProperty(prop: Property) {
 }
 
 export function getNestedEncodingPropertyChild(parent: string) {
-  return NESTED_ENCODING_PROPERTY_INDEX[parent];
+  return NESTED_ENCODING_PROPERTY_PARENT_INDEX[parent];
 }
 
 export function isNestedEncodingProperty(prop: Property) {

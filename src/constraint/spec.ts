@@ -103,7 +103,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   { // CURRENTLY WORKING ON ME CURRENTLY WORKING HERE !!!!!!!!`~~`DGO;IEHRQGOEJGOA;IWJEEEAG
     name: 'alwaysIncludeZeroInScaleWithBarMark',
     description: 'Do not reccommend bar mark if scale does not start at zero',
-    properties: [Property.MARK, Property.SCALE, Property.CHANNEL, Property.TYPE], //Property.Type
+    properties: [Property.MARK, Property.SCALE, Property.SCALE_ZERO, Property.CHANNEL, Property.TYPE],
     requireAllPropertiesSpecific: true,
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
@@ -112,7 +112,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
       if (mark === Mark.BAR) {
         for (let encQ of encodings) {
-          if ((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale  && encQ.type === Type.QUANTITATIVE) {
+          if ((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale && encQ.type === Type.QUANTITATIVE) {
             if ((encQ.scale as ScaleQuery).zero === false) {
               return false;
             }
@@ -122,14 +122,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
       return true;
     }
-    //   if (contains([Channel.X, Channel.Y], encQ.channel) && (encQ.type === Type.QUANTITATIVE) &&
-    //       (encQ.m === Type.QUANTITATIVE) && encQ.scale && !encQ.bin) {
-    //         if ((encQ.scale as ScaleQuery).zero === false) {
-    //           return false;
-    //         }
-    //       }
-    //   return true;
-    // }
   },
   {
     name: 'autoAddCount',
