@@ -8,7 +8,7 @@ import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 import {QueryConfig} from '../config';
 import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
-import {ENCODING_PROPERTIES, getNestedEncodingProperty, Property} from '../property';
+import {getNestedEncodingProperty, Property, isEncodingProperty} from '../property';
 import {Schema} from '../schema';
 import {ScaleQuery, EncodingQuery, isEnumSpec, isMeasure} from '../query';
 import {contains, every, some} from '../util';
@@ -46,7 +46,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
           });
         }
 
-        if (!contains(ENCODING_PROPERTIES, prop)) {
+        if (!isEncodingProperty(prop)) {
           throw new Error('UNIMPLEMENTED');
         }
 
