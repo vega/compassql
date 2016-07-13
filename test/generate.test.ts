@@ -216,9 +216,9 @@ describe('generate', function () {
       const answerSet = generate(specQ, schema);
 
       /* note for future developer:
-        You might expect this answerset to be completely empty since there is a constraint that prevents bin and zero from working together, however
-        if you look inside generate() you'll see that the checks for bin/zero only occur if they're enumerated. Since they're true/false values they don't run through
-        that check and undefined is able to pass through.
+        You might expect this answerset to be completely empty since there is a constraint that prevents bin and zero from working together,
+        however if you look inside generate() you'll see that we only call, which requires Property.BIN and Property.SCALE_ZERO,
+        if at least one of the properties is enumerated. Since they're true values they don't run through.
       */
       assert.equal(answerSet.length, 1);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);

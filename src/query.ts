@@ -316,11 +316,10 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
   if (encQ.scale && !isEnumSpec(encQ.scale)) {
       if (encQ.scale && !isEnumSpec(encQ.scale)) {
 
-        const scaleParamsArr = getNestedEncodingPropertyChild('scale');
-        var scaleParams = scaleParamsArr.reduce((scaleParamsObj, param) => {
-            console.log(param);
-            if (encQ.scale[param as string]) {
-              scaleParamsObj[param as string] = encQ.scale[param as string];
+        const scaleParamsArr = getNestedEncodingPropertyChild(Property.SCALE);
+        var scaleParams = scaleParamsArr.reduce((scaleParamsObj, param: any) => {
+            if (encQ.scale[param]) {
+              scaleParamsObj[param] = encQ.scale[param];
             }
             return scaleParamsObj;
         }, {});

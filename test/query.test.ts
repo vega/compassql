@@ -467,7 +467,7 @@ describe('query', () => {
        assert.equal(str, 'a,q,scale={"type":"log"}');
     });
 
-    it('should return correct fieldDef string for scale with scaleZero', () => {
+    it('should return correct fieldDef string for scale with zero=true', () => {
       const str = stringifyEncodingQueryFieldDef({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {zero: true}
       });
