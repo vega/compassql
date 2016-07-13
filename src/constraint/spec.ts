@@ -113,10 +113,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       if (mark === Mark.BAR) {
         for (let encQ of encodings) {
           if ( (encQ.channel === Channel.X || encQ.channel === Channel.Y) &&
-                (encQ.scale && encQ.type === Type.QUANTITATIVE)) {
-            if ((encQ.scale as ScaleQuery).zero === false) {
-              return false;
-            }
+               (encQ.type === Type.QUANTITATIVE) &&
+               (encQ.scale && (encQ.scale as ScaleQuery).zero === false)) {
+            return false;
           }
         }
       }
