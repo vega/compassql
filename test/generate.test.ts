@@ -154,6 +154,73 @@ describe('generate', function () {
     });
   });
 
+  describe('scale-zero', () => {
+    it('should enumerate correct scale type when scale zero is used without bar mark or binning', () => {
+      const specQ = {
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: Channel.X,
+            scale: {
+              zero: true,
+              type: {values: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
+            },
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+      const answerSet = generate(specQ, schema);
+      assert.equal(answerSet.length, 2);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.SQRT);
+    });
+
+    it('should enumerate correct scale properties with mark bar', () => {
+      const specQ = {
+        mark: Mark.BAR,
+        encodings: [
+          {
+            channel: Channel.X,
+            scale: {
+              zero: true,
+              type: {values: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
+            },
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+      const answerSet = generate(specQ, schema);
+      assert.equal(answerSet.length, 2);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.SQRT);
+    });
+
+    it('should enumerate correct scale properties with binned field and scale zero', () => {
+      const specQ = {
+        mark: Mark.POINT,
+        encodings: [
+          {
+            bin: true,
+            channel: Channel.X,
+            scale: {
+              zero: true,
+              // type: {values: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
+            },
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+      const answerSet = generate(specQ, schema);
+      assert.equal(answerSet.length, 1); // shouldn't this be 0? why is undefined passing?
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+    });
+
+    // TODO: Enumerate Mark.Bar, bin:true, zero: true, same ScaleType as above, and cases where zero:false
+  });
+
   describe('scale-type', () => {
     it('should enumerate correct scale enabling and scale type for quantitative field', () => {
       const specQ = {
