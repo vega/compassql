@@ -144,4 +144,20 @@ describe('schema', () => {
     });
   });
 
+  describe('domain', () => {
+    it('should return an array containing one of each datapoint corresponding to the given EncodingQuery', () => {
+      const domain: string[] = schema.domain({field: 'a', channel: Channel.X});
+      assert.isNotNull(domain);
+      assert.equal(domain.length, 2);
+      assert.notEqual(domain.indexOf('1'), -1);
+      assert.notEqual(domain.indexOf('2'), -1);
+    });
+
+    it('should only return one copy of datapoints that occur multiple times', () => {
+      const domain: string[] = schema.domain({field: 'c', channel: Channel.X});
+      assert.equal(domain.length, 1);
+      assert.notEqual(domain.indexOf('1.1'), -1);
+    });
+  });
+
 });
