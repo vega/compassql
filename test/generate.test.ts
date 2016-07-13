@@ -217,7 +217,7 @@ describe('generate', function () {
 
       /* note for future developer:
         You might expect this answerset to be completely empty since there is a constraint that prevents bin and zero from working together,
-        however if you look inside generate() you'll see that we only call, which requires Property.BIN and Property.SCALE_ZERO,
+        however if you look inside generate() you'll see that we only call omitScaleZeroWithBinnedField, which requires Property.BIN and Property.SCALE_ZERO,
         if at least one of the properties is enumerated. Since they're true values they don't run through.
       */
       assert.equal(answerSet.length, 1);
