@@ -12,7 +12,7 @@ export interface AbstractConstraint {
    * Whether this constraint requires all specified properties types to be specific
    * in order to call satisfy function.
    */
-  requireAllProperties: boolean;
+  requireAllPropertiesSpecific: boolean;
 
   /**
    * Whether this constraint is strict (not optional).
