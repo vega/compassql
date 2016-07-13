@@ -100,7 +100,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       });
     }
   },
-  { // CURRENTLY WORKING ON ME CURRENTLY WORKING HERE !!!!!!!!`~~`DGO;IEHRQGOEJGOA;IWJEEEAG
+  {
     name: 'alwaysIncludeZeroInScaleWithBarMark',
     description: 'Do not reccommend bar mark if scale does not start at zero',
     properties: [Property.MARK, Property.SCALE, Property.SCALE_ZERO, Property.CHANNEL, Property.TYPE],
@@ -116,6 +116,26 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
             if ((encQ.scale as ScaleQuery).zero === false) {
               return false;
             }
+          }
+        }
+      }
+
+      return true;
+    }
+  },
+  {
+    name: 'omitScaleZeroWithBinnedField',
+    description: 'Do not use scale zero with binned field',
+    properties: [Property.SCALE, Property.SCALE_ZERO, Property.BIN],
+    requireAllPropertiesSpecific: true,
+    strict: true,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const encodings = specM.getEncodings();
+
+      for (let encQ of encodings) {
+        if (encQ.bin && encQ.scale) {
+          if ((encQ.bin === true) && (encQ.scale as ScaleQuery).zero === true) {
+            return false;
           }
         }
       }

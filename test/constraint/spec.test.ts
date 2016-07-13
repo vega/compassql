@@ -32,16 +32,51 @@ describe('constraints/spec', () => {
     }
   });
 
-  describe('alwaysIncludeZeroInScaleWithBarMark', () => { // CURRENTLY WORKING ON ME CURRENTLY WORKING HERE !!!!!!!!`~~`DGO;IEHRQGOEJGOA;IWJEEEAG
+  describe('alwaysIncludeZeroInScaleWithBarMark', () => {
     it('should return false if scale does not start at zero when bar mark is used', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
-          {channel: Channel.X, field: 'A', scale: {zero: false}, type: Type.QUANTITATIVE},
+          {channel: Channel.X, field: 'A', scale: {zero: false}, type: Type.QUANTITATIVE}
         ]
       });
 
       assert.isFalse(SPEC_CONSTRAINT_INDEX['alwaysIncludeZeroInScaleWithBarMark'].satisfy(specM, schema, defaultOpt));
+    });
+
+    it('should return true if scale starts at zero when bar mark is used', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', scale: {zero: true}, type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['alwaysIncludeZeroInScaleWithBarMark'].satisfy(specM, schema, defaultOpt));
+    });
+  });
+
+  describe('omitScaleZeroWithBinnedField', () => {
+    it('should return false if scale zero is used with binned field', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, bin: true, field: 'A', scale: {zero: true}, type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(specM, schema, defaultOpt));
+    });
+
+    it('should return true if scale zero is not used with binned field', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, bin: true, field: 'A', scale: {zero: false}, type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(specM, schema, defaultOpt));
     });
   });
 
