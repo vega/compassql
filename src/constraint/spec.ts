@@ -112,7 +112,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
       if (mark === Mark.BAR) {
         for (let encQ of encodings) {
-          if ((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale && encQ.type === Type.QUANTITATIVE) {
+          if ( (encQ.channel === Channel.X || encQ.channel === Channel.Y) &&
+                (encQ.scale && encQ.type === Type.QUANTITATIVE)) {
             if ((encQ.scale as ScaleQuery).zero === false) {
               return false;
             }
@@ -534,7 +535,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'scaleZeroMustMatchScaleType',
     description: 'ScaleZero should not be used with LOG, ORDINAL, TIME and UTC',
-    properties: [Property.SCALE, Property.SCALE_TYPE],
+    properties: [Property.SCALE, Property.SCALE_TYPE, Property.SCALE_ZERO],
     requireAllPropertiesSpecific: true,
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
@@ -542,8 +543,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
       for (let encQ of encodings) {
         if (encQ.scale) {
-          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], (encQ.scale as ScaleQuery).type) &&
-             (encQ.scale as ScaleQuery).zero === true) {
+          const scale: ScaleQuery = encQ.scale as ScaleQuery;
+          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], scale.type) &&
+             (scale.zero === true)) {
                return false;
           }
         }
