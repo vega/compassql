@@ -99,7 +99,6 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
   maxBinsList: [5, 10, 20],
   scaleTypes: [ScaleType.LINEAR, ScaleType.LOG],
-  scaleZeros: [false, true], // remove me...
 
   // CONSTRAINTS
   // Spec Constraints -- See description inside src/constraints/spec.ts

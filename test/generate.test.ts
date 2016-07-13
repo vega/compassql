@@ -206,7 +206,7 @@ describe('generate', function () {
             channel: Channel.X,
             scale: {
               zero: true,
-              // type: {values: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
+              type: {values: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -214,11 +214,36 @@ describe('generate', function () {
         ]
       };
       const answerSet = generate(specQ, schema);
-      assert.equal(answerSet.length, 1); // shouldn't this be 0? why is undefined passing?
+
+      /* note for future developer:
+        You might expect this answerset to be completely empty since there is a constraint that prevents bin and zero from working together, however
+        if you look inside generate() you'll see that the checks for bin/zero only occur if they're enumerated. Since they're true/false values they don't run through
+        that check and undefined is able to pass through.
+      */
+      assert.equal(answerSet.length, 1);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
-    // TODO: Enumerate Mark.Bar, bin:true, zero: true, same ScaleType as above, and cases where zero:false
+    it('should enumerate correct scale properties with binned field, scale zero, and bar mark', () => {
+      const specQ = {
+        mark: Mark.BAR,
+        encodings: [
+          {
+            bin: true,
+            channel: Channel.X,
+            scale: {
+              zero: true,
+              type: {values: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
+            },
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+      const answerSet = generate(specQ, schema);
+      assert.equal(answerSet.length, 1);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+    });
   });
 
   describe('scale-type', () => {
