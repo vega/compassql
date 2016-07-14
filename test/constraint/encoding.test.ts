@@ -33,7 +33,7 @@ describe('constraints/encoding', () => {
         name: 'TestEncoding for hasAllRequiredProperties class method',
         description: 'TestEncoding for hasAllRequirdProperties class method',
         properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, Property.SCALE_TYPE],
-        requireAllPropertiesSpecific: true,
+        allowEnumSpecForProperties: false,
         strict: true,
         satisfy: undefined
       }
