@@ -144,8 +144,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'bandWidthOrdinal',
-    description: 'bandwidth only applies for ordinal type',
+    name: 'bandWidthOrdinal', // what about type nominal?
+    description: 'bandWidth only applies for ordinal type',
     properties: [Property.SCALE, Property.SCALE_BANDWIDTH, Property.TYPE],
     requireAllPropertiesSpecific: true,
     strict: true,
@@ -155,7 +155,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       for (let encQ of encodings) {
         if (encQ.scale && encQ.type) {
           const scale: ScaleQuery = encQ.scale as ScaleQuery;
-          if (scale.bandwidth && encQ.type !== Type.ORDINAL) {
+          if (scale.bandWidth && encQ.type !== Type.ORDINAL) {
             return false;
           }
         }

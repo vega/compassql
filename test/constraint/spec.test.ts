@@ -133,6 +133,28 @@ describe('constraints/spec', () => {
     });
   });
 
+  describe('bandWidthOrdinal', () => { // what about type nominal?
+    it('should return false if bandWidth is used with non-ordinal type', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', scale: {bandWidth: 10}, type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['bandWidthOrdinal'].satisfy(specM, schema, defaultOpt));
+    });
+
+    it('should return true if bandWidth is used with ordinal type', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', scale: {bandWidth: 10}, type: Type.ORDINAL}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['bandWidthOrdinal'].satisfy(specM, schema, defaultOpt));
+    })
+  });
+
   describe('autoAddCount', () => {
     function autoCountShouldBe(autoCount: boolean, when: string, baseSpecQ: SpecQuery) {
       [true, false].forEach((satisfy) => {
