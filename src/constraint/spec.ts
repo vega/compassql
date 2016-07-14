@@ -144,6 +144,27 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
+    name: 'bandWidthOrdinal',
+    description: 'bandwidth only applies for ordinal type',
+    properties: [Property.SCALE, Property.SCALE_BANDWIDTH, Property.TYPE],
+    requireAllPropertiesSpecific: true,
+    strict: true,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const encodings = specM.getEncodings();
+
+      for (let encQ of encodings) {
+        if (encQ.scale && encQ.type) {
+          const scale: ScaleQuery = encQ.scale as ScaleQuery;
+          if (scale.bandwidth && encQ.type !== Type.ORDINAL) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+  },
+  {
     name: 'autoAddCount',
     description: 'Automatically adding count only for plots with only ordinal, binned quantitative, or temporal with timeunit fields.',
     properties: [Property.BIN, Property.TIMEUNIT, Property.TYPE, Property.AUTOCOUNT],
