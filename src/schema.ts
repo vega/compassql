@@ -92,10 +92,29 @@ export class Schema {
     return fieldSchema ? fieldSchema.stats.distinct : null;
   }
 
-  public domain(encQ: EncodingQuery) {
+  public domain(encQ: EncodingQuery): any[] {
     // TODO: differentiate for field with bin / timeUnit
     const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
-    return keys(fieldSchema.stats.unique);
+    var domain: any[] = keys(fieldSchema.stats.unique);
+    if (fieldSchema.type === Type.QUANTITATIVE) {
+      // return [min, max] for quantitative data
+      domain = [fieldSchema.stats.min, fieldSchema.stats.max];
+    } else if (fieldSchema.primitiveType === PrimitiveType.INTEGER ||
+        fieldSchema.primitiveType === PrimitiveType.NUMBER) {
+      // coerce non-quantitative numerical data into number type
+      domain = domain.map(x => +x);
+    } else if (fieldSchema.primitiveType === PrimitiveType.DATE) {
+      // coerce dates into date type
+      domain = domain.reduce(function(result: Date[], curr) {
+        var date: Date = new Date(curr);
+        // don't push duplicates
+        if (!containsDate(result, date)) {
+          result.push(date);
+        }
+        return result;
+      }, []);
+    }
+    return domain.sort();
   }
 
   /**
@@ -123,4 +142,14 @@ export interface FieldSchema {
   primitiveType: PrimitiveType;
   stats: Summary;
   title?: string;
+}
+
+function containsDate(arr: Date[], date: Date) {
+  const millis = date.getTime();
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i].getTime() === millis) {
+      return true;
+    }
+  }
+  return false;
 }

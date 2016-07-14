@@ -145,18 +145,45 @@ describe('schema', () => {
   });
 
   describe('domain', () => {
-    it('should return an array containing one of each datapoint corresponding to the given EncodingQuery', () => {
-      const domain: string[] = schema.domain({field: 'a', channel: Channel.X});
+    const domainData = [
+      {a: 1, b: 1.1, c: 'a', d: 'a', e: 'July 14 2016'},
+      {a: 2, b: 1.2, c: 'b', d: 'a', e: '7/14/2016'},
+      {a: 3, b: 1.3, c: 'c', d: 'b', e: 'Thursday July 14 2016'},
+      {a: 4, b: 1.4, c: 'd', d: 'b', e: '7-14-2016'}
+    ];
+    const domainSchema: Schema = Schema.build(domainData);
+    it('should return an array containing one of each datapoint corresponding to the given EncodingQuery for non-Q data', () => {
+      const domain: string[] = domainSchema.domain({field: 'c', channel: Channel.X});
       assert.isNotNull(domain);
-      assert.equal(domain.length, 2);
-      assert.notEqual(domain.indexOf('1'), -1);
-      assert.notEqual(domain.indexOf('2'), -1);
+      assert.equal(domain.length, 4);
+      assert.notEqual(domain.indexOf('a'), -1);
+      assert.notEqual(domain.indexOf('b'), -1);
+      assert.notEqual(domain.indexOf('c'), -1);
+      assert.notEqual(domain.indexOf('d'), -1);
     });
 
     it('should only return one copy of datapoints that occur multiple times', () => {
-      const domain: string[] = schema.domain({field: 'c', channel: Channel.X});
+      const domain: string[] = domainSchema.domain({field: 'd', channel: Channel.X});
+      assert.equal(domain.length, 2);
+      assert.notEqual(domain.indexOf('a'), -1);
+      assert.notEqual(domain.indexOf('b'), -1);
+    });
+
+    it('should return an array of length 2 containing min and max for quantitative data', () => {
+      var domain: number[] = domainSchema.domain({field: 'a', channel: Channel.X});
+      assert.equal(domain.length, 2);
+      assert.equal(domain.indexOf(1), 0);
+      assert.equal(domain.indexOf(4), 1);
+      domain = domainSchema.domain({field: 'b', channel: Channel.X});
+      assert.equal(domain.length, 2);
+      assert.equal(domain.indexOf(1.1), 0);
+      assert.equal(domain.indexOf(1.4), 1);
+    });
+
+    it('should return a date array containing correctly translated date types', () => {
+      var domain: Date[] = domainSchema.domain({field: 'e', channel: Channel.X});
       assert.equal(domain.length, 1);
-      assert.notEqual(domain.indexOf('1.1'), -1);
+      assert.equal(domain[0].getTime(), new Date('7/14/2016').getTime());
     });
   });
 
