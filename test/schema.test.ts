@@ -126,6 +126,54 @@ describe('schema', () => {
       assert.equal(schema.cardinality({field: 'c', channel: Channel.X}), 1);
       assert.equal(schema.cardinality({field: 'd', channel: Channel.X}), 1);
     });
+
+    it('should return the correct cardinality for a binned field when default bin parameters are specified', () => {
+      const cardinalityData = [{a: 0}, {a: 10}]; // min/max
+      const cardinalitySchema = Schema.build(cardinalityData);
+      const cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        bin: true  // should cause maxbins to be 10
+      });
+      assert.equal(cardinality, 10);
+    });
+
+    it('should return the correct cardinality that is less than the maximum amount of bins', () => {
+      const cardinalityData = [{a: 0}, {a: 4}]; // min/max
+      const cardinalitySchema = Schema.build(cardinalityData);
+      const cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        bin: true  // should cause maxbins to be 10
+      });
+      assert.isTrue(cardinality < 10);
+    });
+
+    it ('should correctly return binned cardinality when specific bin parameters are specified', () => {
+      const cardinalityData = [{a: 0}, {a: 5}]; // min/max
+      const cardinalitySchema = Schema.build(cardinalityData);
+      const cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        bin: {
+          maxbins: 5
+        }
+      });
+      assert.equal(cardinality, 5);
+    });
+
+    it ('should correctly compute new binned cardinality when bin params are not already cached', () => {
+      const cardinalityData = [{a: 0}, {a: 7}]; // min/max
+      const cardinalitySchema = Schema.build(cardinalityData);
+      const cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        bin: {
+          maxbins: 7
+        }
+      });
+      assert.equal(cardinality, 7);
+    });
   });
 
   describe('stats', () => {
