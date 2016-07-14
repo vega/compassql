@@ -152,7 +152,7 @@ describe('constraints/spec', () => {
         ]
       });
       assert.isTrue(SPEC_CONSTRAINT_INDEX['bandWidthOrdinal'].satisfy(specM, schema, defaultOpt));
-    })
+    });
   });
 
   describe('autoAddCount', () => {
