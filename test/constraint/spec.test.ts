@@ -86,7 +86,7 @@ describe('constraints/spec', () => {
         name: 'Test SpecModel for hasAllRequiredPropertiesSpecific class method',
         description: 'Test SpecModel for hasAllRequiredPropertiesSpecific class method',
         properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, Property.SCALE_TYPE, Property.MARK],
-        requireAllPropertiesSpecific: true,
+        allowEnumSpecForProperties: false,
         strict: true,
         satisfy: undefined
       }
