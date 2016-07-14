@@ -122,6 +122,9 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     case Property.BIN_MAXBINS:
       return opt.maxBinsList;
 
+    case Property.SCALE_BANDWIDTH:
+      return opt.scaleBandwidths;
+
     case Property.SCALE_TYPE:
       return opt.scaleTypes;
 

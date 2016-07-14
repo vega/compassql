@@ -24,9 +24,6 @@ export interface QueryConfig {
   /** Default aggregate ops to enumerate. */
   aggregates?: AggregateOp[];
 
-  /** Default bandwith ops to enumerate. */
-  bandwidths?: number[];
-
   /** Default time units to enumerate */
   timeUnits?: TimeUnit[];
 
@@ -38,6 +35,8 @@ export interface QueryConfig {
 
   /** Default maxbins to enumerate */
   maxBinsList?: number[];
+
+  scaleBandwidths?: number[];
 
   scaleTypes?: ScaleType[];
 
@@ -101,6 +100,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   numberOrdinalProportion: .05,
 
   maxBinsList: [5, 10, 20],
+  scaleBandwidths: [0, 21, 90],
   scaleTypes: [ScaleType.LINEAR, ScaleType.LOG],
 
   // CONSTRAINTS
