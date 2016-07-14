@@ -6,7 +6,7 @@ import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-import {Property, DEFAULT_PROPERTY_PRECENCE} from './property';
+import {Property, DEFAULT_PROPERTY_PRECEDENCE} from './property';
 
 export interface QueryConfig {
   verbose?: boolean;
@@ -23,6 +23,9 @@ export interface QueryConfig {
 
   /** Default aggregate ops to enumerate. */
   aggregates?: AggregateOp[];
+
+  /** Default bandwith ops to enumerate. */
+  bandwidths?: number[];
 
   /** Default time units to enumerate */
   timeUnits?: TimeUnit[];
@@ -88,7 +91,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
     overlay: {line: true},
     scale: {useRawDomain: true}
   },
-  propertyPrecedence: DEFAULT_PROPERTY_PRECENCE,
+  propertyPrecedence: DEFAULT_PROPERTY_PRECEDENCE,
 
   marks: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK], // Mark.TEXT
   channels: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT

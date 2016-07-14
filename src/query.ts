@@ -264,6 +264,7 @@ export interface BinQuery extends EnumSpec<boolean> {
 
 export interface ScaleQuery extends EnumSpec<boolean> {
   // TODO: add other properties from vegalite/src/scale
+  bandwidth?: number | EnumSpec<number> | ShortEnumSpec;
   type?: ScaleType | EnumSpec<ScaleType> | ShortEnumSpec;
   zero?: boolean | EnumSpec<boolean> | ShortEnumSpec;
 }
