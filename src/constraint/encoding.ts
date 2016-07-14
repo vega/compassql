@@ -213,7 +213,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       }
       return true; // other channel is irrelevant to this constraint
     }
-  }, {
+  },{
     name: 'dataTypeAndFunctionMatchScaleType',
     description: 'Scale type must match data type',
     properties: [Property.TYPE, Property.SCALE, Property.SCALE_TYPE, Property.TIMEUNIT, Property.BIN],

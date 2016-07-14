@@ -1,0 +1,24 @@
+{
+  "spec": {
+    "data": {"url": "data/driving.json"},
+    "mark": "bar",
+    "encodings": [
+      {
+        "channel": "x",
+        "scale": {"zero": "?"},
+        "field": "miles",
+        "type": "quantitative"
+      }
+    ]
+  },
+  "nest": [
+    {"groupBy": "fieldTransform"},
+    {"groupBy": "encoding", "orderGroupBy": "effectiveness"},
+    {"groupBy": "transpose", "orderGroupBy": "effectiveness"}
+  ],
+  "orderBy": "effectiveness",
+  "config": {
+    "autoAddCount": true
+  }
+
+}

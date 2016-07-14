@@ -101,6 +101,49 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
+    name: 'alwaysIncludeZeroInScaleWithBarMark',
+    description: 'Do not reccommend bar mark if scale does not start at zero',
+    properties: [Property.MARK, Property.SCALE, Property.SCALE_ZERO, Property.CHANNEL, Property.TYPE],
+    requireAllPropertiesSpecific: true,
+    strict: true,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const mark = specM.getMark();
+      const encodings = specM.getEncodings();
+
+      if (mark === Mark.BAR) {
+        for (let encQ of encodings) {
+          if ( (encQ.channel === Channel.X || encQ.channel === Channel.Y) &&
+               (encQ.type === Type.QUANTITATIVE) &&
+               (encQ.scale && (encQ.scale as ScaleQuery).zero === false)) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+  },
+  {
+    name: 'omitScaleZeroWithBinnedField',
+    description: 'Do not use scale zero with binned field',
+    properties: [Property.SCALE, Property.SCALE_ZERO, Property.BIN],
+    requireAllPropertiesSpecific: true,
+    strict: true,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const encodings = specM.getEncodings();
+
+      for (let encQ of encodings) {
+        if (encQ.bin && encQ.scale) {
+          if ((encQ.bin === true) && (encQ.scale as ScaleQuery).zero === true) {
+            return false;
+          }
+        }
+      }
+
+      return true;
+    }
+  },
+  {
     name: 'autoAddCount',
     description: 'Automatically adding count only for plots with only ordinal, binned quantitative, or temporal with timeunit fields.',
     properties: [Property.BIN, Property.TIMEUNIT, Property.TYPE, Property.AUTOCOUNT],
@@ -485,6 +528,28 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         ) {
         return false;
       }
+      return true;
+    }
+  },
+  {
+    name: 'scaleZeroMustMatchScaleType',
+    description: 'ScaleZero should not be used with LOG, ORDINAL, TIME and UTC',
+    properties: [Property.SCALE, Property.SCALE_TYPE, Property.SCALE_ZERO],
+    requireAllPropertiesSpecific: true,
+    strict: true,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const encodings = specM.getEncodings();
+
+      for (let encQ of encodings) {
+        if (encQ.scale) {
+          const scale: ScaleQuery = encQ.scale as ScaleQuery;
+          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], scale.type) &&
+             (scale.zero === true)) {
+               return false;
+          }
+        }
+      }
+
       return true;
     }
   }

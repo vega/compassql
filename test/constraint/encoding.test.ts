@@ -351,7 +351,6 @@ describe('constraints/encoding', () => {
     });
   });
 
-
   describe('dataTypeAndFunctionMatchScaleType', () => {
    [ScaleType.ORDINAL].forEach((scaleType) => {
      it('scaleType of ' + scaleType + ' matches data type ordinal with timeUnit', () => {

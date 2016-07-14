@@ -12,7 +12,9 @@ import {Type} from 'vega-lite/src/type';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {generate} from './generate';
 import {nest} from './nest';
-import {Property, ENCODING_PROPERTIES, isNestedEncodingProperty} from './property';
+
+import {Property, ENCODING_PROPERTIES, getNestedEncodingPropertyChild, isNestedEncodingProperty} from './property';
+
 import {rank} from './ranking/ranking';
 import {Schema} from './schema';
 import {contains, duplicate, extend, keys, some} from './util';
@@ -263,6 +265,7 @@ export interface BinQuery extends EnumSpec<boolean> {
 export interface ScaleQuery extends EnumSpec<boolean> {
   // TODO: add other properties from vegalite/src/scale
   type?: ScaleType | EnumSpec<ScaleType> | ShortEnumSpec;
+  zero?: boolean | EnumSpec<boolean> | ShortEnumSpec;
 }
 
 export function isDimension(encQ: EncodingQuery) {
@@ -312,19 +315,21 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
   // TODO: convert this chunk into a loop of scale, axis, legend
   if (encQ.scale && !isEnumSpec(encQ.scale)) {
       if (encQ.scale && !isEnumSpec(encQ.scale)) {
-      var scaleParams = {};
 
-      if (encQ.scale['type']) {
-        scaleParams = {type: encQ.scale['type']};
-      }
-      // TODO: push other scale properties to scaleParams.
+        const scaleParamsArr = getNestedEncodingPropertyChild(Property.SCALE);
+        var scaleParams = scaleParamsArr.reduce((scaleParamsObj, param: any) => {
+            if (encQ.scale[param]) {
+              scaleParamsObj[param] = encQ.scale[param];
+            }
+            return scaleParamsObj;
+        }, {});
 
-      if (keys(scaleParams).length > 0) {
-        params.push({
-          key: 'scale',
-          value: JSON.stringify(scaleParams)
-        });
-      }
+         if(keys(scaleParams).length > 0) {
+          params.push({
+            key: 'scale',
+            value: JSON.stringify(scaleParams)
+          });
+        }
     }
   } else if (encQ.scale === false || encQ.scale === null) {
     params.push({

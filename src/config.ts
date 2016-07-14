@@ -38,6 +38,8 @@ export interface QueryConfig {
 
   scaleTypes?: ScaleType[];
 
+  scaleZeros?: boolean[];
+
   // SPECIAL MODE
   /**
    * Allow automatically adding a special count (autoCount) field for
