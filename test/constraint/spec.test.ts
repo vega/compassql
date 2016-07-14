@@ -32,13 +32,61 @@ describe('constraints/spec', () => {
     }
   });
 
+  describe('alwaysIncludeZeroInScaleWithBarMark', () => {
+    it('should return false if scale does not start at zero when bar mark is used', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', scale: {zero: false}, type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['alwaysIncludeZeroInScaleWithBarMark'].satisfy(specM, schema, defaultOpt));
+    });
+
+    it('should return true if scale starts at zero when bar mark is used', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', scale: {zero: true}, type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['alwaysIncludeZeroInScaleWithBarMark'].satisfy(specM, schema, defaultOpt));
+    });
+  });
+
+  describe('omitScaleZeroWithBinnedField', () => {
+    it('should return false if scale zero is used with binned field', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, bin: true, field: 'A', scale: {zero: true}, type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(specM, schema, defaultOpt));
+    });
+
+    it('should return true if scale zero is not used with binned field', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, bin: true, field: 'A', scale: {zero: false}, type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(specM, schema, defaultOpt));
+    });
+  });
+
   describe('hasAllRequiredPropertiesSpecific', () => {
     const specCModel = new SpecConstraintModel(
       {
         name: 'Test SpecModel for hasAllRequiredPropertiesSpecific class method',
         description: 'Test SpecModel for hasAllRequiredPropertiesSpecific class method',
         properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, Property.SCALE_TYPE, Property.MARK],
-        requireAllPropertiesSpecific: true,
+        allowEnumSpecForProperties: false,
         strict: true,
         satisfy: undefined
       }
@@ -632,7 +680,7 @@ describe('constraints/spec', () => {
     });
   });
 
-    describe('omitMultipleNonPositionalChannels', () => {
+  describe('omitMultipleNonPositionalChannels', () => {
     it('should return true if there are zero non-positional channels', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
@@ -965,5 +1013,68 @@ describe('constraints/spec', () => {
 
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitVerticalDotPlot'].satisfy(specM, schema, defaultOpt));
     });
+  });
+
+  describe('scaleZeroMustMatchScaleType', () => { // log, ordinal, time, and UTC
+    it('scaleZero should not work with ScaleType.LOG', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings:[
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG, zero: true}}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['scaleZeroMustMatchScaleType'].satisfy(specM, schema, defaultOpt));
+    });
+
+    it('scaleZero should not work with ScaleType.ORDINAL', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings:[
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: ScaleType.ORDINAL, zero: true}}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['scaleZeroMustMatchScaleType'].satisfy(specM, schema, defaultOpt));
+    });
+
+    it('scaleZero should not work with ScaleType.TIME', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings:[
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: ScaleType.TIME, zero: true}}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['scaleZeroMustMatchScaleType'].satisfy(specM, schema, defaultOpt));
+    });
+
+    it('scaleZero should not work with ScaleType.UTC', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings:[
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: ScaleType.UTC, zero: true}}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['scaleZeroMustMatchScaleType'].satisfy(specM, schema, defaultOpt));
+    });
+
+    it('scaleZero should with ScaleType.LINEAR', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings:[
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: ScaleType.LINEAR, zero: true}}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['scaleZeroMustMatchScaleType'].satisfy(specM, schema, defaultOpt));
+    });
+
+    it('scaleZero === false should work with ScaleType.LOG', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings:[
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG, zero: false}}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['scaleZeroMustMatchScaleType'].satisfy(specM, schema, defaultOpt));
+    });
+
   });
 });

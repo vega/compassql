@@ -7,7 +7,7 @@ import * as dlBin from 'datalib/src/bins/bins';
 
 import {EncodingQuery, BinQuery} from './query';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
-import {contains, extend} from './util';
+import {contains, extend, keys} from './util';
 
 export class Schema {
   private fieldSchemas: FieldSchema[];
@@ -125,6 +125,12 @@ export class Schema {
     }
     const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
     return fieldSchema ? fieldSchema.stats.distinct : null;
+  }
+
+  public domain(encQ: EncodingQuery) {
+    // TODO: differentiate for field with bin / timeUnit
+    const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
+    return keys(fieldSchema.stats.unique);
   }
 
   /**

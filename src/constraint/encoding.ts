@@ -50,8 +50,8 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
   }
 
   public satisfy(encQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean {
-    // TODO: Re-order logic to optimize the "requireAllPropertiesSpecific" check
-    if (this.constraint.requireAllPropertiesSpecific) {
+    // TODO: Re-order logic to optimize the "allowEnumSpecForProperties" check
+    if (!this.constraint.allowEnumSpecForProperties) {
       // TODO: extract as a method and do unit test
 
       if (!this.hasAllRequiredPropertiesSpecific(encQ)) {
@@ -73,7 +73,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'aggregateOpSupportedByType',
     description: 'Aggregate function should be supported by data type.',
     properties: [Property.TYPE, Property.AGGREGATE],
-    requireAllPropertiesSpecific: true,
+    allowEnumSpecForProperties: false,
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.aggregate) {
@@ -87,7 +87,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'binAppliedForQuantitative',
     description: 'bin should be applied to quantitative field only.',
     properties: [Property.TYPE, Property.BIN],
-    requireAllPropertiesSpecific: true,
+    allowEnumSpecForProperties: false,
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.bin) {
@@ -100,7 +100,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'channelSupportsRole',
     description: 'encoding channel should support the role of the field',
     properties: [Property.CHANNEL, Property.TYPE, Property.BIN, Property.TIMEUNIT],
-    requireAllPropertiesSpecific: false,
+    allowEnumSpecForProperties: true,
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (isEnumSpec(encQ.channel)) return true; // not ready for checking yet!
@@ -117,7 +117,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'onlyOneTypeOfFunction',
     description: 'Only of of aggregate, autoCount, timeUnit, or bin should be applied at the same time.',
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN],
-    requireAllPropertiesSpecific: false,
+    allowEnumSpecForProperties: true,
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       const numFn = (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate ? 1 : 0) +
@@ -130,7 +130,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'timeUnitAppliedForTemporal',
     description: 'Time unit should be applied to temporal field only.',
     properties: [Property.TYPE, Property.TIMEUNIT],
-    requireAllPropertiesSpecific: true,
+    allowEnumSpecForProperties: false,
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.timeUnit && encQ.type !== Type.TEMPORAL) {
@@ -143,7 +143,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'typeMatchesPrimitiveType',
     description: 'Data type should be supported by field\'s primitive type.',
     properties: [Property.FIELD, Property.TYPE],
-    requireAllPropertiesSpecific: true,
+    allowEnumSpecForProperties: false,
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       const primitiveType = schema.primitiveType(encQ.field as string);
@@ -170,7 +170,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'typeMatchesSchemaType',
     description: 'Enumerated data type of a field should match the field\'s type in the schema.',
     properties: [Property.FIELD, Property.TYPE],
-    requireAllPropertiesSpecific: true,
+    allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       return schema.type(encQ.field as string) === encQ.type;
@@ -179,7 +179,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
    name: 'maxCardinalityForCategoricalColor',
     description: 'Categorical channel should not have too high cardinality',
     properties: [Property.CHANNEL, Property.FIELD],
-    requireAllPropertiesSpecific: true,
+    allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       // TODO: missing case where ordinal / temporal use categorical color
@@ -193,7 +193,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'maxCardinalityForFacet',
     description: 'Row/column channel should not have too high cardinality',
     properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
-    requireAllPropertiesSpecific: true,
+    allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.channel === Channel.ROW || encQ.channel === Channel.COLUMN) {
@@ -205,7 +205,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'maxCardinalityForShape',
     description: 'Shape channel should not have too high cardinality',
     properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
-    requireAllPropertiesSpecific: true,
+    allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.channel === Channel.SHAPE) {
@@ -213,11 +213,11 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       }
       return true; // other channel is irrelevant to this constraint
     }
-  }, {
+  },{
     name: 'dataTypeAndFunctionMatchScaleType',
     description: 'Scale type must match data type',
     properties: [Property.TYPE, Property.SCALE, Property.SCALE_TYPE, Property.TIMEUNIT, Property.BIN],
-    requireAllPropertiesSpecific: true,
+    allowEnumSpecForProperties: false,
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.scale) {

@@ -21,6 +21,8 @@ export enum Property {
   // - Scale
   SCALE = 'scale' as any,
   SCALE_TYPE = 'scaleType' as any,
+  SCALE_ZERO = 'scaleZero' as any,
+
 
   // - Axis
   AXIS = 'axis' as any,
@@ -46,6 +48,7 @@ export function hasNestedProperty(prop: Property) {
     case Property.TYPE:
     case Property.BIN_MAXBINS:
     case Property.SCALE_TYPE:
+    case Property.SCALE_ZERO:
       return false;
   }
   /* istanbul ignore next */
@@ -62,7 +65,8 @@ export const ENCODING_PROPERTIES = [
   Property.FIELD,
   Property.TYPE,
   Property.SCALE,
-  Property.SCALE_TYPE
+  Property.SCALE_TYPE,
+  Property.SCALE_ZERO
 ];
 
 export const DEFAULT_PROPERTY_PRECENCE: Property[] =  [
@@ -85,7 +89,8 @@ export const DEFAULT_PROPERTY_PRECENCE: Property[] =  [
   Property.SCALE,
 
   // Nested Encoding Property
-  Property.SCALE_TYPE
+  Property.SCALE_TYPE,
+  Property.SCALE_ZERO
 ];
 
 export interface NestedEncodingProperty {
@@ -104,6 +109,11 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
     property: Property.SCALE_TYPE,
     parent: 'scale',
     child: 'type'
+  },
+  {
+    property: Property.SCALE_ZERO,
+    parent: 'scale',
+    child: 'zero'
   }
   // TODO: other bin parameters
   // TODO: axis, legend
@@ -114,6 +124,20 @@ const NESTED_ENCODING_INDEX: Dict<NestedEncodingProperty> =
     m[nestedProp.property] = nestedProp;
     return m;
   }, {} as Dict<NestedEncodingProperty>);
+
+const NESTED_ENCODING_PROPERTY_PARENT_INDEX =
+  NESTED_ENCODING_PROPERTIES.reduce((m, nestedProp) => {
+    let parent = nestedProp.parent;
+    let child = nestedProp.child;
+
+    // if the parent does not exist in m, add it as a key in m with empty [] as value
+    if (!(parent in m)) {
+      m[parent] = [];
+    }
+
+    m[parent].push(child);
+    return m;
+  }, {} as Dict<Array<String>>); // as Dict<Array<String>>);
 
 const ENCODING_INDEX: Dict<Property> =
   ENCODING_PROPERTIES.reduce((m, prop) => {
@@ -127,6 +151,10 @@ export function isEncodingProperty(prop: Property): boolean {
 
 export function getNestedEncodingProperty(prop: Property) {
   return NESTED_ENCODING_INDEX[prop];
+}
+
+export function getNestedEncodingPropertyChild(parent: Property) {
+  return NESTED_ENCODING_PROPERTY_PARENT_INDEX[parent];
 }
 
 export function isNestedEncodingProperty(prop: Property) {

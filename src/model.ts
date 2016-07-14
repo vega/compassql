@@ -55,6 +55,9 @@ export interface EnumSpecIndex {
   /** List of indice tuple for encoding mappings that require enumerating scale.scale_type */
   scaleType?: EnumSpecIndexTuple<ScaleType>[];
 
+  /** List of indice tuple for encoding mappings that require enumerating scale.scale_zero */
+  scaleZero?: EnumSpecIndexTuple<boolean>[];
+
   /** List of indice tuples of encoding mappings that require timeUnit enumeration. */
   timeUnit?: EnumSpecIndexTuple<TimeUnit>[];
 
@@ -83,6 +86,8 @@ function getDefaultName(prop: Property) {
       return 's';
     case Property.SCALE_TYPE:
       return 's-t';
+    case Property.SCALE_ZERO:
+      return 's-z';
     case Property.TIMEUNIT:
       return 'tu';
     case Property.FIELD:
@@ -94,16 +99,21 @@ function getDefaultName(prop: Property) {
   throw new Error('Default name undefined');
 }
 
-export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryConfig) {
+export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryConfig): any[] {
   switch (prop) {
     case Property.FIELD:       // For field, by default enumerate all fields
       return schema.fields();
 
-    case Property.BIN:         // True, False for boolean values
+    // True, False for boolean values
+    case Property.BIN:
     case Property.SCALE:
+    case Property.SCALE_ZERO:
     case Property.AUTOCOUNT:
       return [false, true];
 
+
+    // For other properties, take default enumValues from config.
+    // The config name for each prop is a plural form of the prop.
     case Property.BIN_MAXBINS:
       return opt.maxBinsList;
 
@@ -111,13 +121,19 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
       return opt.scaleTypes;
 
     case Property.MARK:
+      return opt.marks;
+
     case Property.CHANNEL:
+      return opt.channels;
+
     case Property.AGGREGATE:
+      return opt.aggregates;
+
     case Property.TIMEUNIT:
+      return opt.timeUnits;
+
     case Property.TYPE:
-      // For other properties, take default enumValues from config.
-      // The config name for each prop is a plural form of the prop.
-      return opt[prop+'s'] || [];
+      return opt.types;
   }
   /* istanbul ignore next */
   throw new Error('No default enumValues for ' + prop);
