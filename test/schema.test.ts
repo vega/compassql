@@ -149,7 +149,7 @@ describe('schema', () => {
       assert.isTrue(cardinality < 10);
     });
 
-    it ('should correctly return binned cardinality when specific bin parameters are specified', () => {
+    it('should correctly return binned cardinality when specific bin parameters are specified', () => {
       const cardinalityData = [{a: 0}, {a: 5}]; // min/max
       const cardinalitySchema = Schema.build(cardinalityData);
       const cardinality: number = cardinalitySchema.cardinality({
@@ -162,7 +162,7 @@ describe('schema', () => {
       assert.equal(cardinality, 5);
     });
 
-    it ('should correctly compute new binned cardinality when bin params are not already cached', () => {
+    it('should correctly compute new binned cardinality when bin params are not already cached', () => {
       const cardinalityData = [{a: 0}, {a: 7}]; // min/max
       const cardinalitySchema = Schema.build(cardinalityData);
       const cardinality: number = cardinalitySchema.cardinality({
