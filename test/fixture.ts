@@ -54,4 +54,9 @@ const fixtures: FieldSchema[] = [{
   stats: {distinct: 20} as any // HACK so that we don't have to define all summary properties
 }];
 
+// make sure binStats isn't undefined
+for (let fieldSchema of fixtures) {
+  fieldSchema.binStats = {};
+}
+
 export const schema = new Schema(fixtures);
