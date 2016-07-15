@@ -112,14 +112,11 @@ export class Schema {
         bin = encQ.bin;
       }
       const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
-      if (fieldSchema.binStats[bin.maxbins as string]) {
-        // already cached
-        return fieldSchema.binStats[bin.maxbins as string].distinct;
-      } else {
+      if (!fieldSchema.binStats[bin.maxbins as string]) {
         // need to calculate
         fieldSchema.binStats[bin.maxbins as string] = binSummary(bin.maxbins as number, fieldSchema.stats);
-        return fieldSchema.binStats[bin.maxbins as string].distinct;
       }
+      return fieldSchema.binStats[bin.maxbins as string].distinct;
     } else if (encQ.timeUnit) {
       return 1; // FIXME
     }
