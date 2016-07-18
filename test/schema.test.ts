@@ -196,8 +196,8 @@ describe('schema', () => {
     const domainData = [
       {a: 1, b: 1.1, c: 'a', d: 'a', e: 'July 14 2016'},
       {a: 2, b: 1.2, c: 'b', d: 'a', e: '7/14/2016'},
-      {a: 3, b: 1.3, c: 'c', d: 'b', e: 'Thursday July 14 2016'},
-      {a: 4, b: 1.4, c: 'd', d: 'b', e: '7-14-2016'}
+      {a: 3, b: 1.3, c: 'c', d: 'b', e: '6/14/2016'},
+      {a: 4, b: 1.4, c: 'd', d: 'b', e: '6-14-2016'}
     ];
     const domainSchema: Schema = Schema.build(domainData);
     it('should return an array containing one of each datapoint corresponding to the given EncodingQuery for non-Q data', () => {
@@ -230,8 +230,9 @@ describe('schema', () => {
 
     it('should return a date array containing correctly translated date types', () => {
       var domain: Date[] = domainSchema.domain({field: 'e', channel: Channel.X});
-      assert.equal(domain.length, 1);
+      assert.equal(domain.length, 2);
       assert.equal(domain[0].getTime(), new Date('7/14/2016').getTime());
+      assert.equal(domain[1].getTime(), new Date('6/14/2016').getTime());
     });
   });
 
