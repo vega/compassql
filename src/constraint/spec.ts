@@ -2,13 +2,15 @@ import {SUM_OPS} from 'vega-lite/src/aggregate';
 import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
+import {defaultScaleType, TimeUnit} from 'vega-lite/src/timeunit';
+
 import {Type} from 'vega-lite/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 import {QueryConfig} from '../config';
 import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
-import {getNestedEncodingProperty, Property, isEncodingProperty} from '../property';
+import {getNestedEncodingProperty, Property, isEncodingProperty, SUPPORTED_SCALE_PROPERTY_INDEX} from '../property';
 import {Schema} from '../schema';
 import {ScaleQuery, EncodingQuery, isEnumSpec, isMeasure} from '../query';
 import {contains, every, some} from '../util';
@@ -76,6 +78,26 @@ export interface SpecConstraint extends AbstractConstraint {
   satisfy: SpecConstraintChecker;
 }
 
+export function getTrueScaleType(encQ: EncodingQuery): ScaleType {
+  let scaleType = (encQ.scale as ScaleQuery).type as ScaleType;
+  if (scaleType !== undefined) {
+    return scaleType;
+  } else {
+    const type = encQ.type;
+    if (type === Type.QUANTITATIVE) {
+      return ScaleType.LINEAR;
+    } else if (type === Type.ORDINAL || type === Type.NOMINAL) {
+      return ScaleType.ORDINAL;
+    } else if (type === Type.TEMPORAL) {
+      if (encQ.timeUnit) {
+        return defaultScaleType(encQ.timeUnit as TimeUnit);
+      } else {
+        return ScaleType.TIME;
+      }
+    }
+  }
+}
+
 export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'noRepeatedChannel',
@@ -135,27 +157,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       for (let encQ of encodings) {
         if (encQ.bin && encQ.scale) {
           if ((encQ.bin === true) && (encQ.scale as ScaleQuery).zero === true) {
-            return false;
-          }
-        }
-      }
-
-      return true;
-    }
-  },
-  {
-    name: 'bandWidthOrdinal', // what about type nominal?
-    description: 'bandWidth only applies for ordinal type',
-    properties: [Property.SCALE, Property.SCALE_BANDWIDTH, Property.TYPE],
-    requireAllPropertiesSpecific: true,
-    strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      const encodings = specM.getEncodings();
-
-      for (let encQ of encodings) {
-        if (encQ.scale && encQ.type) {
-          const scale: ScaleQuery = encQ.scale as ScaleQuery;
-          if (scale.bandWidth && encQ.type !== Type.ORDINAL) {
             return false;
           }
         }
@@ -334,7 +335,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'omitBarAreaForLogScale',
     description: 'Do not use bar and area mark for x and y\'s log scale',
-    properties: [Property.MARK, Property.CHANNEL, Property.SCALE, Property.SCALE_TYPE], // Prpoerty.ScaleType and scale
+    properties: [Property.MARK, Property.CHANNEL, Property.SCALE, Property.SCALE_TYPE, Property.TYPE],
     requireAllPropertiesSpecific: true,
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
@@ -344,7 +345,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     if (mark === Mark.AREA || mark === Mark.BAR) {
       for (let encQ of encodings) {
         if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale) {
-          if (((encQ.scale as ScaleQuery).type as ScaleType) === ScaleType.LOG) {
+          if (getTrueScaleType(encQ) === ScaleType.LOG) {
             return false;
           }
         }
@@ -553,9 +554,30 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
+     name: 'scaleBandSizeMustMatchScaleType',
+     description: 'ScaleBandSize should only be used with ORDINAL ScaleType',
+     properties: [Property.SCALE, Property.TYPE, Property.SCALE_TYPE, Property.SCALE_ZERO],
+     requireAllPropertiesSpecific: true,
+     strict: true,
+     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+       const encodings = specM.getEncodings();
+       for (let encQ of encodings) {
+         if (encQ.scale) {
+           const scale: ScaleQuery = encQ.scale as ScaleQuery;
+           if(!contains(SUPPORTED_SCALE_PROPERTY_INDEX[Property.SCALE_BANDSIZE], getTrueScaleType(encQ)) &&
+             (scale.bandSize)) {
+               return false;
+           }
+         }
+       }
+
+       return true;
+     }
+  },
+  {
     name: 'scaleZeroMustMatchScaleType',
     description: 'ScaleZero should not be used with LOG, ORDINAL, TIME and UTC',
-    properties: [Property.SCALE, Property.SCALE_TYPE, Property.SCALE_ZERO],
+    properties: [Property.SCALE, Property.TYPE, Property.SCALE_TYPE, Property.SCALE_ZERO],
     requireAllPropertiesSpecific: true,
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
@@ -564,10 +586,11 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       for (let encQ of encodings) {
         if (encQ.scale) {
           const scale: ScaleQuery = encQ.scale as ScaleQuery;
-          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], scale.type) &&
+          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], getTrueScaleType(encQ)) &&
              (scale.zero === true)) {
                return false;
           }
+
         }
       }
 

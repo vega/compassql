@@ -52,8 +52,8 @@ export interface EnumSpecIndex {
   /** List of indice tuples of encoding mappings that require scale enumeration. */
   scale?: EnumSpecIndexTuple<boolean>[];
 
-  /** List of indice tuple for encoding mappings that require enumerating scale.scale_bandwidth */
-  scaleBandwidth?: EnumSpecIndexTuple<number>[];
+  /** List of indice tuple for encoding mappings that require enumerating scale.scale_bandsize */
+  scaleBandSize?: EnumSpecIndexTuple<number>[];
 
   /** List of indice tuple for encoding mappings that require enumerating scale.scale_type */
   scaleType?: EnumSpecIndexTuple<ScaleType>[];
@@ -87,8 +87,8 @@ function getDefaultName(prop: Property) {
       return 'b-mb';
     case Property.SCALE:
       return 's';
-    case Property.SCALE_BANDWIDTH:
-      return 'b-bw';
+    case Property.SCALE_BANDSIZE:
+      return 'b-bs';
     case Property.SCALE_TYPE:
       return 's-t';
     case Property.SCALE_ZERO:
@@ -122,8 +122,8 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     case Property.BIN_MAXBINS:
       return opt.maxBinsList;
 
-    case Property.SCALE_BANDWIDTH:
-      return opt.scaleBandwidths;
+    case Property.SCALE_BANDSIZE:
+      return opt.scaleBandSizes;
 
     case Property.SCALE_TYPE:
       return opt.scaleTypes;

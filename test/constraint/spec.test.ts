@@ -133,28 +133,6 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('bandWidthOrdinal', () => { // what about type nominal?
-    it('should return false if bandWidth is used with non-ordinal type', () => {
-      const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, field: 'A', scale: {bandWidth: 10}, type: Type.QUANTITATIVE}
-        ]
-      });
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['bandWidthOrdinal'].satisfy(specM, schema, defaultOpt));
-    });
-
-    it('should return true if bandWidth is used with ordinal type', () => {
-      const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, field: 'A', scale: {bandWidth: 10}, type: Type.ORDINAL}
-        ]
-      });
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['bandWidthOrdinal'].satisfy(specM, schema, defaultOpt));
-    });
-  });
-
   describe('autoAddCount', () => {
     function autoCountShouldBe(autoCount: boolean, when: string, baseSpecQ: SpecQuery) {
       [true, false].forEach((satisfy) => {
@@ -1034,6 +1012,48 @@ describe('constraints/spec', () => {
       });
 
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitVerticalDotPlot'].satisfy(specM, schema, defaultOpt));
+    });
+  });
+
+  describe('scaleBandSizeMustMatchScaleType', () => {
+    it('scaleBandSize should work with ScaleType.ORDINAL', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: ScaleType.ORDINAL, bandSize: 10}}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['scaleBandSizeMustMatchScaleType'].satisfy(specM, schema, defaultOpt));
+    });
+
+    it('scaleBandSize should work with Type.NOMINAL when ScaleType is not specified', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL, scale: {bandSize: 10}}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['scaleBandSizeMustMatchScaleType'].satisfy(specM, schema, defaultOpt));
+    });
+
+    it('scaleBandSize should not work with Type.Quantitative when ScaleType is not specified', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {bandSize: 10}}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['scaleBandSizeMustMatchScaleType'].satisfy(specM, schema, defaultOpt));
+    });
+
+    it('scaleBandSize should not work with ScaleType.LINEAR', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL, scale: {bandSize: 10, type: ScaleType.LINEAR}}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['scaleBandSizeMustMatchScaleType'].satisfy(specM, schema, defaultOpt));
     });
   });
 

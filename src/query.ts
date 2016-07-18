@@ -255,7 +255,7 @@ export interface EncodingQuery {
   type?: Type | EnumSpec<Type> | ShortEnumSpec;
   // TODO: value
 
-  // TODO: scaleQuery, axisQuery, legendQuery
+  // TODO: axisQuery, legendQuery
 }
 
 export interface BinQuery extends EnumSpec<boolean> {
@@ -264,7 +264,7 @@ export interface BinQuery extends EnumSpec<boolean> {
 
 export interface ScaleQuery extends EnumSpec<boolean> {
   // TODO: add other properties from vegalite/src/scale
-  bandWidth?: number | EnumSpec<number> | ShortEnumSpec;
+  bandSize?: number | EnumSpec<number> | ShortEnumSpec;
   type?: ScaleType | EnumSpec<ScaleType> | ShortEnumSpec;
   zero?: boolean | EnumSpec<boolean> | ShortEnumSpec;
 }
