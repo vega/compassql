@@ -3,11 +3,9 @@ import {Config} from 'vega-lite/src/config';
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Data} from 'vega-lite/src/data';
 import {Mark, BAR, AREA} from 'vega-lite/src/mark';
-import {Filter} from 'vega-lite/src/filter';
 import {ScaleType} from 'vega-lite/src/scale';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {StackOffset, StackProperties} from 'vega-lite/src/stack';
-import {Formula} from 'vega-lite/src/transform';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
@@ -230,8 +228,13 @@ export function stack(specQ: SpecQuery): StackProperties {
 }
 
 export interface TransformQuery {
-  calculate?: Formula[];
-  filter?: Filter | string | (Filter|string)[];
+  filter: FilterQuery[];
+}
+
+export interface FilterQuery {
+  field: Field | EnumSpec<Field> | ShortEnumSpec;
+  operator: string;
+  operand: any | EnumSpec<any> | ShortEnumSpec;
 }
 
 type Field = string;
