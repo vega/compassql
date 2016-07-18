@@ -154,6 +154,29 @@ describe('generate', function () {
     });
   });
 
+  describe('scale-bandSize', () => {
+    it('should enumerate correct scaleType with bandSize', () => {
+      const specQ = {
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: Channel.X,
+            scale: {
+              bandSize: 10,
+              type: {values: [undefined, ScaleType.LOG, ScaleType.TIME, ScaleType.ORDINAL]}
+            },
+            field: 'Q',
+            type: Type.NOMINAL
+          }
+        ]
+      };
+      const answerSet = generate(specQ, schema);
+      assert.equal(answerSet.length, 2);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
+    });
+  });
+
   describe('scale-zero', () => {
     it('should enumerate correct scale type when scale zero is used without bar mark or binning', () => {
       const specQ = {
