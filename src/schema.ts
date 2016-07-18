@@ -1,8 +1,11 @@
 import {Type} from 'vega-lite/src/type';
+import {Channel} from 'vega-lite/src/channel';
+import {autoMaxBins} from 'vega-lite/src/bin';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
+import * as dlBin from 'datalib/src/bins/bins';
 
-import {EncodingQuery} from './query';
+import {EncodingQuery, BinQuery} from './query';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {contains, extend, keys} from './util';
 
@@ -51,7 +54,21 @@ export class Schema {
       };
     });
 
-    return new Schema(fieldSchemas);
+    let schema = new Schema(fieldSchemas);
+
+    // calculate preset bins
+    for (let fieldSchema of fieldSchemas) {
+      if (fieldSchema.type === Type.QUANTITATIVE) {
+        fieldSchema.binStats = {};
+        for (let maxbins of opt.maxBinsList) {
+          fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
+        }
+      } else if (fieldSchema.type === Type.TEMPORAL) {
+        // TODO
+      }
+    }
+
+    return schema;
   }
 
   constructor(fieldSchemas: FieldSchema[]) {
@@ -84,7 +101,22 @@ export class Schema {
     if (encQ.aggregate || encQ.autoCount) {
       return 1;
     } else if (encQ.bin) {
-      return 1; // FIXME
+      // encQ.bin will either be a boolean or a BinQuery
+      var bin: BinQuery;
+      if (typeof encQ.bin === 'boolean') {
+        // autoMaxBins defaults to 10 if channel is EnumSpec
+        bin = {
+          maxbins: autoMaxBins(encQ.channel as Channel)
+        };
+      } else {
+        bin = encQ.bin;
+      }
+      const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
+      if (!fieldSchema.binStats[bin.maxbins as string]) {
+        // need to calculate
+        fieldSchema.binStats[bin.maxbins as string] = binSummary(bin.maxbins as number, fieldSchema.stats);
+      }
+      return fieldSchema.binStats[bin.maxbins as string].distinct;
     } else if (encQ.timeUnit) {
       return 1; // FIXME
     }
@@ -127,6 +159,20 @@ export class Schema {
   }
 }
 
+/**
+ * @return a summary with the correct distinct property given a max number of bins
+ */
+function binSummary(maxbins: number, summary: Summary) {
+  const bin = dlBin({
+    min: summary.min,
+    max: summary.max,
+    maxbins: maxbins
+  });
+  const binSum = extend({}, summary);
+  binSum.distinct = (bin.stop - bin.start) / bin.step;
+  return binSum;
+}
+
 export enum PrimitiveType {
   STRING = 'string' as any,
   NUMBER = 'number' as any,
@@ -141,6 +187,8 @@ export interface FieldSchema {
   /** number, integer, string, date  */
   primitiveType: PrimitiveType;
   stats: Summary;
+  binStats?: {[key: string]: Summary};
+  timeStats?: {[timeUnit: string]: Summary};
   title?: string;
 }
 

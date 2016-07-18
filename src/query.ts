@@ -259,6 +259,8 @@ export interface EncodingQuery {
 }
 
 export interface BinQuery extends EnumSpec<boolean> {
+  // TODO: add other missing properties like in VL's Bin interface
+
   maxbins?: number | EnumSpec<number> | ShortEnumSpec;
 }
 
