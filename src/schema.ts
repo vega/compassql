@@ -64,7 +64,15 @@ export class Schema {
           fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
         }
       } else if (fieldSchema.type === Type.TEMPORAL) {
-        // TODO
+        // need to get min/max of date data
+        const millis = [];
+        for (var i = 0; i < data.length; i++) {
+          millis.push(new Date(data[i][fieldSchema.field]).getTime());
+        }
+        millis.sort();
+        fieldSchema.stats.min = new Date(millis[0]);
+        fieldSchema.stats.max = new Date(millis[millis.length - 1]);
+        // TODO: enumerate default timeUnit bins
       }
     }
 
@@ -124,10 +132,19 @@ export class Schema {
     return fieldSchema ? fieldSchema.stats.distinct : null;
   }
 
-  public domain(encQ: EncodingQuery) {
+  public domain(encQ: EncodingQuery): any[] {
     // TODO: differentiate for field with bin / timeUnit
     const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
-    return keys(fieldSchema.stats.unique);
+    var domain: any[] = keys(fieldSchema.stats.unique);
+    if (fieldSchema.type === Type.QUANTITATIVE || fieldSchema.primitiveType === PrimitiveType.DATE) {
+      // return [min, max] for quantitative and date data
+      domain = [fieldSchema.stats.min, fieldSchema.stats.max];
+    } else if (fieldSchema.primitiveType === PrimitiveType.INTEGER ||
+        fieldSchema.primitiveType === PrimitiveType.NUMBER) {
+      // coerce non-quantitative numerical data into number type
+      domain = domain.map(x => +x);
+    }
+    return domain.sort();
   }
 
   /**

@@ -29,8 +29,8 @@ interface Summary {
   valid: number;
   missing: number;
   distinct: number;
-  min: number;
-  max: number;
+  min: any;
+  max: any;
   mean: number;
   stdev: number;
   median: number;
