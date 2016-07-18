@@ -1,4 +1,5 @@
 import {Dict} from './util';
+import {ScaleType} from 'vega-lite/src/scale';
 
 export enum Property {
   // TODO: Filter (Field, Value?)
@@ -158,7 +159,7 @@ export function isEncodingProperty(prop: Property): boolean {
   return ENCODING_INDEX[prop] !== undefined;
 }
 
-export function getNestedEncodingProperty(prop: Property) {
+export function getNestedEncodingProperty(prop: Property | string) {
   return NESTED_ENCODING_INDEX[prop];
 }
 
@@ -169,3 +170,110 @@ export function getNestedEncodingPropertyChildren(parent: Property) {
 export function isNestedEncodingProperty(prop: Property) {
   return prop in NESTED_ENCODING_INDEX;
 }
+
+const SUPPORTED_SCALE_PROPERTY =
+[
+  // {
+  //   property: 'bandSize', // TODO: Uncomment & Replace with Property.SCALE_bandSize as other Scale Properties are added
+  //   supportedScaleType: [
+  //     ScaleType.ORDINAL
+  //   ]
+  // },
+  // {
+  //   property: 'clamp',
+  //   supportedScaleType: [
+  //     ScaleType.LINEAR,
+  //     ScaleType.LOG,
+  //     ScaleType.POW,
+  //     ScaleType.TIME,
+  //     ScaleType.UTC
+  //   ]
+  // },
+  // {
+  //   property: 'domain',
+  //   supportedScaleType: [
+  //     ScaleType.LINEAR,
+  //     ScaleType.LOG,
+  //     ScaleType.POW,
+  //     ScaleType.QUANTILE,
+  //     ScaleType.QUANTIZE,
+  //     ScaleType.ORDINAL,
+  //     ScaleType.SQRT,
+  //     ScaleType.TIME,
+  //     ScaleType.UTC
+  //   ]
+  // },
+  // {
+  //   property: 'exponent',
+  //   supportedScaleType: [
+  //     ScaleType.LOG,
+  //     ScaleType.POW,
+  //     ScaleType.SQRT
+  //   ]
+  // },
+  // {
+  //   property: 'nice',
+  //   supportedScaleType: [
+  //     ScaleType.LINEAR,
+  //     ScaleType.LOG,
+  //     ScaleType.POW,
+  //     ScaleType.TIME,
+  //     ScaleType.UTC
+  //   ]
+  // },
+  // {
+  //   property: 'range',
+  //   supportedScaleType: [
+  //     ScaleType.LINEAR,
+  //     ScaleType.LOG,
+  //     ScaleType.POW,
+  //     ScaleType.QUANTILE,
+  //     ScaleType.QUANTIZE,
+  //     ScaleType.ORDINAL,
+  //     ScaleType.SQRT,
+  //     ScaleType.TIME,
+  //     ScaleType.UTC
+  //   ]
+  // },
+  // {
+  //   property: 'round',
+  //   supportedScaleType: [
+  //     ScaleType.LINEAR,
+  //     ScaleType.LOG,
+  //     ScaleType.POW,
+  //     ScaleType.SQRT,
+  //     ScaleType.TIME,
+  //     ScaleType.UTC
+  //   ]
+  // },
+  // {
+  //   property: 'useRawDomain',
+  //   supportedScaleType: [
+  //     ScaleType.LINEAR,
+  //     ScaleType.LOG,
+  //     ScaleType.POW,
+  //     ScaleType.QUANTILE,
+  //     ScaleType.QUANTIZE,
+  //     ScaleType.ORDINAL,
+  //     ScaleType.SQRT,
+  //     ScaleType.TIME,
+  //     ScaleType.UTC
+  //   ]
+  // },
+  {
+    property: Property.SCALE_ZERO,
+    supportedScaleType: [
+      ScaleType.LINEAR,
+      ScaleType.POW,
+      ScaleType.SQRT
+    ]
+  }
+];
+
+export const SUPPORTED_SCALE_PROPERTY_INDEX: Dict<ScaleType[]> =
+  SUPPORTED_SCALE_PROPERTY.reduce((m, scaleProp) => {
+    let prop = scaleProp.property;
+
+    m[prop] = scaleProp.supportedScaleType;
+    return m;
+  }, {} as Dict<ScaleType[]>);

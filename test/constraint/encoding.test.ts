@@ -9,7 +9,7 @@ import {Type} from 'vega-lite/src/type';
 import {Property} from '../../src/property';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {EncodingConstraintModel, ENCODING_CONSTRAINTS, ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
-import {EncodingQuery} from '../../src/query/encoding';
+import {EncodingQuery, ScaleQuery} from '../../src/query/encoding';
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {duplicate} from '../../src/util';
 
@@ -442,6 +442,31 @@ describe('constraints/encoding', () => {
       encQ.type = Type.TEMPORAL;
       assert.isTrue(ENCODING_CONSTRAINT_INDEX['timeUnitAppliedForTemporal'].satisfy(encQ, schema, defaultOpt));
     });
+  });
+
+  describe('scalePropertiesSupportedByScaleType', () => {
+    let encQ: EncodingQuery = {
+      channel: Channel.X,
+      field: 'A',
+      type: Type.QUANTITATIVE,
+      scale: {type: undefined, zero: true}
+    };
+
+    it('should return false if scaleType does not support scaleZero', () => {
+      [ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
+        (encQ.scale as ScaleQuery).type = scaleType;
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+      });
+    });
+
+    it('should return true if scaleType supports scaleZero', () => {
+      [ScaleType.LINEAR, ScaleType.POW, ScaleType.SQRT].forEach((scaleType) => {
+        (encQ.scale as ScaleQuery).type = scaleType;
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+      });
+    });
+
+    // TODO: test for other scale properties
   });
 
   describe('typeMatchesSchemaType', () => {

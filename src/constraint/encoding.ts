@@ -3,11 +3,11 @@ import {Type} from 'vega-lite/src/type';
 
 import {QueryConfig} from '../config';
 import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
-import {getNestedEncodingProperty, Property} from '../property';
+import {getNestedEncodingProperty, Property, SUPPORTED_SCALE_PROPERTY_INDEX} from '../property';
 import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery} from '../query/encoding';
 import {isEnumSpec} from '../enumspec';
 import {PrimitiveType, Schema} from '../schema';
-import {contains, every} from '../util';
+import {contains, every, keys} from '../util';
 import {ScaleType} from 'vega-lite/src/scale';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -136,6 +136,34 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.timeUnit && encQ.type !== Type.TEMPORAL) {
         return false;
+      }
+      return true;
+    }
+  },{
+    name: 'scalePropertiesSupportedByScaleType',
+    description: 'Scale properties must be supported by correct scale type',
+    properties: [Property.SCALE, Property.SCALE_TYPE, Property.TYPE],
+    allowEnumSpecForProperties: true,
+    strict: true,
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      if (encQ.scale) {
+        const scale: ScaleQuery = encQ.scale as ScaleQuery;
+        const hasScaleType: boolean = contains(keys(scale), Property.SCALE_TYPE);
+
+        for (let scaleProp in scale) {
+          if (SUPPORTED_SCALE_PROPERTY_INDEX[scaleProp]) {
+
+            if (!hasScaleType && isEnumSpec(encQ.type)) {
+              return true;
+            }
+
+            const sType = scaleType(scale.type, encQ.timeUnit, encQ.type);
+
+            if (!contains(SUPPORTED_SCALE_PROPERTY_INDEX[scaleProp], sType)) {
+              return false;
+            }
+          }
+        }
       }
       return true;
     }

@@ -538,7 +538,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'scaleZeroMustMatchScaleType',
     description: 'ScaleZero should not be used with LOG, ORDINAL, TIME and UTC',
-    properties: [Property.SCALE, Property.TYPE, Property.SCALE_TYPE, Property.SCALE_ZERO],
+    properties: [Property.SCALE, Property.SCALE_TYPE, Property.SCALE_ZERO, Property.TYPE],
     allowEnumSpecForProperties: false,
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
