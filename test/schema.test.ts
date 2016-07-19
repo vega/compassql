@@ -174,6 +174,31 @@ describe('schema', () => {
       });
       assert.equal(cardinality, 7);
     });
+
+    it('should correctly compute cardinality for single timeUnits', () => {
+      const cardinalityData = [{a: '1/1/2016'}];
+      const cardinalitySchema = Schema.build(cardinalityData);
+      const cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'month'
+      });
+      assert.equal(cardinality, 12);
+    });
+
+    it('should correctly compute cardinality for timeUnits not supported by datalib', () => {
+      const cardinalityData = [
+        {a: '1/1/2016'},
+        {a: '1/1/2026'}
+      ];
+      const cardinalitySchema = Schema.build(cardinalityData);
+      const cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'yearmonthday'
+      });
+      assert.equal(cardinality, 10);
+    });
   });
 
   describe('stats', () => {
