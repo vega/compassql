@@ -1,6 +1,7 @@
 import {Type} from 'vega-lite/src/type';
 import {Channel} from 'vega-lite/src/channel';
 import {autoMaxBins} from 'vega-lite/src/bin';
+import {TimeUnit, TIMEUNITS} from 'vega-lite/src/timeunit';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 import * as dlBin from 'datalib/src/bins/bins';
@@ -72,7 +73,12 @@ export class Schema {
         millis.sort();
         fieldSchema.stats.min = new Date(millis[0]);
         fieldSchema.stats.max = new Date(millis[millis.length - 1]);
-        // TODO: enumerate default timeUnit bins
+
+        // enumerate a binning scheme for every timeUnit
+        fieldSchema.timeStats = {};
+        for (let unit of TIMEUNITS) {
+          fieldSchema.timeStats[unit] = timeUnitSummary(unit, fieldSchema.stats);
+        }
       }
     }
 
@@ -106,6 +112,7 @@ export class Schema {
   }
 
   public cardinality(encQ: EncodingQuery) {
+    const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
     if (encQ.aggregate || encQ.autoCount) {
       return 1;
     } else if (encQ.bin) {
@@ -119,16 +126,24 @@ export class Schema {
       } else {
         bin = encQ.bin;
       }
-      const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
       if (!fieldSchema.binStats[bin.maxbins as string]) {
         // need to calculate
         fieldSchema.binStats[bin.maxbins as string] = binSummary(bin.maxbins as number, fieldSchema.stats);
       }
       return fieldSchema.binStats[bin.maxbins as string].distinct;
     } else if (encQ.timeUnit) {
-      return 1; // FIXME
+      switch (encQ.timeUnit) {
+        case TimeUnit.SECONDS: return 60;
+        case TimeUnit.MINUTES: return 60;
+        case TimeUnit.HOURS: return 24;
+        case TimeUnit.DAY: return 7;
+        case TimeUnit.DATE: return 31;
+        case TimeUnit.MONTH: return 12;
+        case TimeUnit.QUARTER: return 4;
+      }
+      // TODO: handle other cases
+      return fieldSchema.timeStats[encQ.timeUnit as string].distinct;
     }
-    const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
     return fieldSchema ? fieldSchema.stats.distinct : null;
   }
 
@@ -166,9 +181,39 @@ function binSummary(maxbins: number, summary: Summary) {
     max: summary.max,
     maxbins: maxbins
   });
-  const binSum = extend({}, summary);
-  binSum.distinct = (bin.stop - bin.start) / bin.step;
-  return binSum;
+  return binToSum(bin, summary);
+}
+
+function timeUnitSummary(unit: TimeUnit, summary: Summary) {
+  var bin;
+  switch (unit) {
+    // these are the units that dl.bins.date supports
+    case TimeUnit.YEAR:
+    case TimeUnit.MONTH:
+    case TimeUnit.DAY:
+    case TimeUnit.HOURS:
+    case TimeUnit.MINUTES:
+    case TimeUnit.SECONDS:
+      // FIXME: call date function correctly? This syntax is odd.
+      bin = dlBin['date']({
+        min: summary.min,
+        max: summary.max,
+        unit: unit
+      });
+    // let dl.bins.date infer a unit
+    default:
+      bin = dlBin['date']({
+        min: summary.min,
+        max: summary.max
+      });
+  }
+  return binToSum(bin, summary);
+}
+
+function binToSum(bin, summary) {
+  const result = extend({}, summary);
+  result.distinct = (bin.stop - bin.start) / bin.step;
+  return result;
 }
 
 export enum PrimitiveType {
