@@ -37,7 +37,7 @@ export class Schema {
         // use ordinal or nominal when cardinality of integer type is relatively low
         if (distinct / summary.count < opt.numberOrdinalProportion) {
           // use nominal if the integers are 1,2,3,...,N or 0,1,2,3,...,N-1 where N = cardinality
-          type = (summary.max - summary.min === distinct - 1 && contains([0,1], summary.min)) ? Type.NOMINAL : Type.ORDINAL;
+          type = ((summary.max as number) - (summary.min as number) === distinct - 1 && contains([0,1], summary.min)) ? Type.NOMINAL : Type.ORDINAL;
         } else {
           type = Type.QUANTITATIVE;
         }
