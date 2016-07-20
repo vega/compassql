@@ -174,7 +174,7 @@ export function isNestedEncodingProperty(prop: Property) {
 const SUPPORTED_SCALE_PROPERTY =
 [
   // {
-  //   property: 'bandSize', // TODO: Uncomment & Replace with Property.SCALE_bandSize as other Scale Properties are added
+  //   property: 'bandSize', // TODO: Uncomment as other Scale Properties are added
   //   supportedScaleType: [
   //     ScaleType.ORDINAL
   //   ]
@@ -261,7 +261,7 @@ const SUPPORTED_SCALE_PROPERTY =
   //   ]
   // },
   {
-    property: Property.SCALE_ZERO,
+    property: 'zero',
     supportedScaleType: [
       ScaleType.LINEAR,
       ScaleType.POW,
