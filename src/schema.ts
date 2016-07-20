@@ -1,8 +1,11 @@
 import {Type} from 'vega-lite/src/type';
+import {Channel} from 'vega-lite/src/channel';
+import {autoMaxBins} from 'vega-lite/src/bin';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
+import * as dlBin from 'datalib/src/bins/bins';
 
-import {EncodingQuery} from './query';
+import {EncodingQuery, BinQuery} from './query';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {contains, extend, keys} from './util';
 
@@ -34,7 +37,7 @@ export class Schema {
         // use ordinal or nominal when cardinality of integer type is relatively low
         if (distinct / summary.count < opt.numberOrdinalProportion) {
           // use nominal if the integers are 1,2,3,...,N or 0,1,2,3,...,N-1 where N = cardinality
-          type = (summary.max - summary.min === distinct - 1 && contains([0,1], summary.min)) ? Type.NOMINAL : Type.ORDINAL;
+          type = ((summary.max as number) - (summary.min as number) === distinct - 1 && contains([0,1], summary.min)) ? Type.NOMINAL : Type.ORDINAL;
         } else {
           type = Type.QUANTITATIVE;
         }
@@ -51,7 +54,33 @@ export class Schema {
       };
     });
 
-    return new Schema(fieldSchemas);
+    let schema = new Schema(fieldSchemas);
+
+    // calculate preset bins
+    for (let fieldSchema of fieldSchemas) {
+      if (fieldSchema.type === Type.QUANTITATIVE) {
+        fieldSchema.binStats = {};
+        for (let maxbins of opt.maxBinsList) {
+          fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
+        }
+      } else if (fieldSchema.type === Type.TEMPORAL) {
+        // need to get min/max of date data
+        fieldSchema.stats.min = new Date(data[0][fieldSchema.field]);
+        fieldSchema.stats.max = new Date(data[0][fieldSchema.field]);
+        for (var i = 0; i < data.length; i++) {
+          const time = new Date(data[i][fieldSchema.field]).getTime();
+          if (time < (fieldSchema.stats.min as Date).getTime()) {
+            fieldSchema.stats.min = new Date(time);
+          }
+          if (time > (fieldSchema.stats.max as Date).getTime()) {
+            fieldSchema.stats.max = new Date(time);
+          }
+        }
+        // TODO: enumerate default timeUnit bins
+      }
+    }
+
+    return schema;
   }
 
   constructor(fieldSchemas: FieldSchema[]) {
@@ -84,7 +113,23 @@ export class Schema {
     if (encQ.aggregate || encQ.autoCount) {
       return 1;
     } else if (encQ.bin) {
-      return 1; // FIXME
+      // encQ.bin will either be a boolean or a BinQuery
+      var bin: BinQuery;
+      if (typeof encQ.bin === 'boolean') {
+        // autoMaxBins defaults to 10 if channel is EnumSpec
+        bin = {
+          maxbins: autoMaxBins(encQ.channel as Channel)
+        };
+      } else {
+        bin = encQ.bin;
+      }
+      const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
+      const maxbins: any = bin.maxbins;
+      if (!fieldSchema.binStats[maxbins]) {
+        // need to calculate
+        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
+      }
+      return fieldSchema.binStats[maxbins].distinct;
     } else if (encQ.timeUnit) {
       return 1; // FIXME
     }
@@ -92,10 +137,19 @@ export class Schema {
     return fieldSchema ? fieldSchema.stats.distinct : null;
   }
 
-  public domain(encQ: EncodingQuery) {
+  public domain(encQ: EncodingQuery): any[] {
     // TODO: differentiate for field with bin / timeUnit
     const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
-    return keys(fieldSchema.stats.unique);
+    var domain: any[] = keys(fieldSchema.stats.unique);
+    if (fieldSchema.type === Type.QUANTITATIVE || fieldSchema.primitiveType === PrimitiveType.DATE) {
+      // return [min, max] for quantitative and date data
+      domain = [fieldSchema.stats.min, fieldSchema.stats.max];
+    } else if (fieldSchema.primitiveType === PrimitiveType.INTEGER ||
+        fieldSchema.primitiveType === PrimitiveType.NUMBER) {
+      // coerce non-quantitative numerical data into number type
+      domain = domain.map(x => +x);
+    }
+    return domain.sort();
   }
 
   /**
@@ -106,6 +160,20 @@ export class Schema {
     const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
     return fieldSchema ? fieldSchema.stats : null;
   }
+}
+
+/**
+ * @return a summary with the correct distinct property given a max number of bins
+ */
+function binSummary(maxbins: number, summary: Summary) {
+  const bin = dlBin({
+    min: summary.min,
+    max: summary.max,
+    maxbins: maxbins
+  });
+  const binSum = extend({}, summary);
+  binSum.distinct = (bin.stop - bin.start) / bin.step;
+  return binSum;
 }
 
 export enum PrimitiveType {
@@ -122,5 +190,7 @@ export interface FieldSchema {
   /** number, integer, string, date  */
   primitiveType: PrimitiveType;
   stats: Summary;
+  binStats?: {[key: string]: Summary};
+  timeStats?: {[timeUnit: string]: Summary};
   title?: string;
 }
