@@ -65,13 +65,17 @@ export class Schema {
         }
       } else if (fieldSchema.type === Type.TEMPORAL) {
         // need to get min/max of date data
-        const millis = [];
+        fieldSchema.stats.min = new Date(data[0][fieldSchema.field]);
+        fieldSchema.stats.max = new Date(data[0][fieldSchema.field]);
         for (var i = 0; i < data.length; i++) {
-          millis.push(new Date(data[i][fieldSchema.field]).getTime());
+          const time = new Date(data[i][fieldSchema.field]).getTime();
+          if (time < (fieldSchema.stats.min as Date).getTime()) {
+            fieldSchema.stats.min = new Date(time);
+          }
+          if (time > (fieldSchema.stats.max as Date).getTime()) {
+            fieldSchema.stats.max = new Date(time);
+          }
         }
-        millis.sort();
-        fieldSchema.stats.min = new Date(millis[0]);
-        fieldSchema.stats.max = new Date(millis[millis.length - 1]);
         // TODO: enumerate default timeUnit bins
       }
     }
@@ -120,11 +124,12 @@ export class Schema {
         bin = encQ.bin;
       }
       const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
-      if (!fieldSchema.binStats[bin.maxbins as string]) {
+      const maxbins: any = bin.maxbins;
+      if (!fieldSchema.binStats[maxbins]) {
         // need to calculate
-        fieldSchema.binStats[bin.maxbins as string] = binSummary(bin.maxbins as number, fieldSchema.stats);
+        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
       }
-      return fieldSchema.binStats[bin.maxbins as string].distinct;
+      return fieldSchema.binStats[maxbins].distinct;
     } else if (encQ.timeUnit) {
       return 1; // FIXME
     }
