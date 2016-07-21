@@ -195,7 +195,7 @@ describe('schema', () => {
       const cardinality: number = cardinalitySchema.cardinality({
         field: 'a',
         channel: Channel.X,
-        timeUnit: 'yearmonthday'
+        timeUnit: 'yearmonthdate'
       });
       assert.equal(cardinality, 10);
     });
