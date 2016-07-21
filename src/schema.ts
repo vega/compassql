@@ -38,7 +38,7 @@ export class Schema {
         // use ordinal or nominal when cardinality of integer type is relatively low
         if (distinct / summary.count < opt.numberOrdinalProportion) {
           // use nominal if the integers are 1,2,3,...,N or 0,1,2,3,...,N-1 where N = cardinality
-          type = (summary.max - summary.min === distinct - 1 && contains([0,1], summary.min)) ? Type.NOMINAL : Type.ORDINAL;
+          type = ((summary.max as number) - (summary.min as number) === distinct - 1 && contains([0,1], summary.min)) ? Type.NOMINAL : Type.ORDINAL;
         } else {
           type = Type.QUANTITATIVE;
         }
@@ -66,13 +66,17 @@ export class Schema {
         }
       } else if (fieldSchema.type === Type.TEMPORAL) {
         // need to get min/max of date data
-        const millis = [];
+        fieldSchema.stats.min = new Date(data[0][fieldSchema.field]);
+        fieldSchema.stats.max = new Date(data[0][fieldSchema.field]);
         for (var i = 0; i < data.length; i++) {
-          millis.push(new Date(data[i][fieldSchema.field]).getTime());
+          const time = new Date(data[i][fieldSchema.field]).getTime();
+          if (time < (fieldSchema.stats.min as Date).getTime()) {
+            fieldSchema.stats.min = new Date(time);
+          }
+          if (time > (fieldSchema.stats.max as Date).getTime()) {
+            fieldSchema.stats.max = new Date(time);
+          }
         }
-        millis.sort();
-        fieldSchema.stats.min = new Date(millis[0]);
-        fieldSchema.stats.max = new Date(millis[millis.length - 1]);
 
         // enumerate a binning scheme for every timeUnit
         fieldSchema.timeStats = {};
@@ -126,11 +130,12 @@ export class Schema {
       } else {
         bin = encQ.bin;
       }
-      if (!fieldSchema.binStats[bin.maxbins as string]) {
+      const maxbins: any = bin.maxbins;
+      if (!fieldSchema.binStats[maxbins]) {
         // need to calculate
-        fieldSchema.binStats[bin.maxbins as string] = binSummary(bin.maxbins as number, fieldSchema.stats);
+        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
       }
-      return fieldSchema.binStats[bin.maxbins as string].distinct;
+      return fieldSchema.binStats[maxbins].distinct;
     } else if (encQ.timeUnit) {
       switch (encQ.timeUnit) {
         case TimeUnit.SECONDS: return 60;

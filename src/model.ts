@@ -68,7 +68,7 @@ export interface EnumSpecIndex {
   type?: EnumSpecIndexTuple<Type>[];
 }
 
-function getDefaultName(prop: Property) {
+export function getDefaultName(prop: Property) {
   switch (prop) {
     case Property.MARK:
       return 'm';
