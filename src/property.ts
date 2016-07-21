@@ -69,7 +69,7 @@ export const ENCODING_PROPERTIES = [
   Property.SCALE_ZERO
 ];
 
-export const DEFAULT_PROPERTY_PRECENCE: Property[] =  [
+export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   // Projection
   Property.TYPE, // type is a constraint for field
   Property.FIELD,
