@@ -6,8 +6,8 @@ import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
-import {SpecQueryModel, getDefaultEnumValues} from '../src/model';
-import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
+import {SpecQueryModel, getDefaultName, getDefaultEnumValues} from '../src/model';
+import {DEFAULT_PROPERTY_PRECENCE, Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
 import {SHORT_ENUM_SPEC, SpecQuery, isEnumSpec} from '../src/query';
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
@@ -20,6 +20,23 @@ describe('SpecQueryModel', () => {
   function buildSpecQueryModel(specQ: SpecQuery) {
     return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
   }
+
+  describe('getDefaultName', () => {
+    it('should have no duplicate default names.', () => {
+      let props: Property[] = DEFAULT_PROPERTY_PRECENCE;
+
+      let unique = props.map((prop) => {
+        return {count: 1, defaultName: getDefaultName(prop)};
+      })
+      .reduce((a, prop) => {
+        a[prop.defaultName] = (a[prop.defaultName] || 0) + prop.count;
+        return a;
+      }, {});
+
+      let duplicates = Object.keys(unique).filter((name) => unique[name] > 1);
+      assert.equal(duplicates.length, 0);
+    });
+  });
 
   describe('build', () => {
     // Mark
