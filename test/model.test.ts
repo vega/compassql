@@ -23,18 +23,12 @@ describe('SpecQueryModel', () => {
 
   describe('getDefaultName', () => {
     it('should have no duplicate default names.', () => {
-      let props: Property[] = DEFAULT_PROPERTY_PRECENCE;
+      let defaultNameIndex = {};
 
-      let unique = props.map((prop) => {
-        return {count: 1, defaultName: getDefaultName(prop)};
-      })
-      .reduce((a, prop) => {
-        a[prop.defaultName] = (a[prop.defaultName] || 0) + prop.count;
-        return a;
-      }, {});
-
-      let duplicates = Object.keys(unique).filter((name) => unique[name] > 1);
-      assert.equal(duplicates.length, 0);
+      for (let prop of DEFAULT_PROPERTY_PRECENCE) {
+        assert.equal((getDefaultName(prop) in defaultNameIndex), false);
+        defaultNameIndex[getDefaultName(prop)] = prop;
+      }
     });
   });
 
