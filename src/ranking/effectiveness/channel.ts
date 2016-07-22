@@ -2,7 +2,8 @@ import {Channel} from 'vega-lite/src/channel';
 
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../../config';
 import {SpecQueryModel} from '../../model';
-import {EncodingQuery, stringifyEncodingQueryFieldDef} from '../../query';
+import {fieldDefShorthand} from '../../query/shorthand';
+import {EncodingQuery} from '../../query/encoding';
 import {Dict, extend, forEach, keys} from '../../util';
 
 import {Schema} from '../../schema';
@@ -71,7 +72,7 @@ export namespace TypeChannelScore {
 
   export function getScore(specM: SpecQueryModel, schema: Schema, opt: QueryConfig) {
     const encodingQueryByField = specM.getEncodings().reduce((m, encQ) => {
-      const fieldKey = stringifyEncodingQueryFieldDef(encQ);
+      const fieldKey = fieldDefShorthand(encQ);
       (m[fieldKey] = m[fieldKey] || []).push(encQ);
       return m;
     }, {});

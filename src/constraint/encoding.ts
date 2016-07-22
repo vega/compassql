@@ -4,7 +4,8 @@ import {Type} from 'vega-lite/src/type';
 import {QueryConfig} from '../config';
 import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
 import {getNestedEncodingProperty, Property} from '../property';
-import {EncodingQuery, isEnumSpec, isDimension, isMeasure, ScaleQuery} from '../query';
+import {EncodingQuery, isDimension, isMeasure, ScaleQuery} from '../query/encoding';
+import {isEnumSpec} from '../enumspec';
 import {PrimitiveType, Schema} from '../schema';
 import {contains, every} from '../util';
 import {ScaleType} from 'vega-lite/src/scale';
@@ -138,8 +139,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       }
       return true;
     }
-  },
-  {
+  },{
     name: 'typeMatchesPrimitiveType',
     description: 'Data type should be supported by field\'s primitive type.',
     properties: [Property.FIELD, Property.TYPE],

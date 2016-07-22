@@ -10,7 +10,7 @@ import {nest} from '../src/nest';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel} from '../src/model';
 import {SpecQueryModelGroup, isSpecQueryModelGroup} from '../src/modelgroup';
-import {Query} from '../src/query';
+import {Query} from '../src/query/query';
 
 describe('modelgroup', () => {
   describe('isSpecQueryModelGroup', () => {

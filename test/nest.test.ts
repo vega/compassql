@@ -11,7 +11,7 @@ import {SpecQueryModel} from '../src/model';
 import {SpecQueryModelGroup} from '../src/modelgroup';
 import {nest, FIELD, FIELD_TRANSFORM, ENCODING, TRANSPOSE} from '../src/nest';
 
-import {SHORT_ENUM_SPEC} from '../src/query';
+import {SHORT_ENUM_SPEC} from '../src/enumspec';
 import {contains, extend} from '../src/util';
 
 import {schema} from './fixture';

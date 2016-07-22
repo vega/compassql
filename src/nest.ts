@@ -2,7 +2,10 @@ import {Channel} from 'vega-lite/src/channel';
 
 import {SpecQueryModel} from './model';
 import {SpecQueryModelGroup} from './modelgroup';
-import {SHORT_ENUM_SPEC, EnumSpec, isEnumSpec, stack, stringifyEncodingQueryFieldDef, Query} from './query';
+import {EnumSpec, isEnumSpec, SHORT_ENUM_SPEC} from './enumspec';
+import {Query} from './query/query';
+import {fieldDefShorthand} from './query/shorthand';
+import {stack} from './query/spec';
 import {Dict} from './util';
 
 
@@ -72,7 +75,7 @@ registerKeyFn(FIELD, (specM: SpecQueryModel) => {
 });
 
 registerKeyFn(FIELD_TRANSFORM, (specM: SpecQueryModel) => {
-  return specM.getEncodings().map(stringifyEncodingQueryFieldDef)
+  return specM.getEncodings().map(fieldDefShorthand)
               .sort()
               .join('|');
 });
@@ -115,7 +118,7 @@ registerKeyFn(ENCODING, (specM: SpecQueryModel) => {
   // mark does not matter
   return stringifyStack(specM)  +
     specM.getEncodings().map((encQ) => {
-      const fieldDef = stringifyEncodingQueryFieldDef(encQ);
+      const fieldDef = fieldDefShorthand(encQ);
       return channelType(encQ.channel) + ':' + fieldDef;
     })
     .sort()
@@ -126,7 +129,7 @@ registerKeyFn(TRANSPOSE, (specM: SpecQueryModel) => {
   return specM.getMark() + '|' +
     stringifyStack(specM) +
     specM.getEncodings().map((encQ) => {
-      const fieldDef = stringifyEncodingQueryFieldDef(encQ);
+      const fieldDef = fieldDefShorthand(encQ);
       const channel = (encQ.channel === Channel.X || encQ.channel === Channel.Y) ? 'xy' :
         (encQ.channel === Channel.ROW || encQ.channel === Channel.COLUMN) ? 'facet' :
         encQ.channel;

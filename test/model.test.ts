@@ -7,8 +7,9 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel, getDefaultName, getDefaultEnumValues} from '../src/model';
-import {DEFAULT_PROPERTY_PRECENCE, Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
-import {SHORT_ENUM_SPEC, SpecQuery, isEnumSpec} from '../src/query';
+import {Property, DEFAULT_PROPERTY_PRECEDENCE, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
+import {SHORT_ENUM_SPEC, isEnumSpec} from '../src/enumspec';
+import {SpecQuery} from '../src/query/spec';
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
 
@@ -25,7 +26,7 @@ describe('SpecQueryModel', () => {
     it('should have no duplicate default names.', () => {
       let defaultNameIndex = {};
 
-      for (let prop of DEFAULT_PROPERTY_PRECENCE) {
+      for (let prop of DEFAULT_PROPERTY_PRECEDENCE) {
         assert.equal((getDefaultName(prop) in defaultNameIndex), false);
         defaultNameIndex[getDefaultName(prop)] = prop;
       }
