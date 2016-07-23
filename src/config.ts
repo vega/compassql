@@ -100,7 +100,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   numberOrdinalProportion: .05,
 
   maxBinsList: [5, 10, 20],
-  scaleBandSizes: [0, 21, 90],
+  scaleBandSizes: [17, 21],
   scaleTypes: [ScaleType.LINEAR, ScaleType.LOG],
 
   // CONSTRAINTS
