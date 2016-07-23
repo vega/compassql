@@ -10,7 +10,7 @@ import {spec, encoding, fieldDef as fieldDefShorthand} from '../../src/query/sho
 
 import {assert} from 'chai';
 
-describe('shorthand', () => {
+describe('query/shorthand', () => {
   describe('spec', () => {
     it('should return correct spec string for specific specQuery', () => {
       const str = spec({

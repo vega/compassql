@@ -9,7 +9,7 @@ import {assert} from 'chai';
 import {fromSpec, stack} from '../../src/query/spec';
 import {without} from '../../src/util';
 
-describe('spec', () => {
+describe('query/spec', () => {
   describe('stack', () => {
     const STACKABLE_MARKS = [BAR, AREA];
     const NON_STACKABLE_MARKS = without(PRIMITIVE_MARKS, STACKABLE_MARKS);

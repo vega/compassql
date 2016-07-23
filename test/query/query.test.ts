@@ -11,7 +11,7 @@ import {normalize, query, Query} from '../../src/query/query';
 import {EnumSpec} from '../../src/enumspec';
 import {duplicate} from '../../src/util';
 
-describe('query', () => {
+describe('query/query', () => {
   describe('query()', () => {
     describe('nested query', () => {
       const q: Query = {
