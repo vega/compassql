@@ -54,123 +54,123 @@ describe('shorthand', () => {
 
   describe('fieldDefShorthand', () => {
     it('should return correct fieldDefShorthand string for raw field', () => {
-       const fieldDef = fieldDefShorthand({channel: Channel.X, field: 'a', type: Type.QUANTITATIVE});
-       assert.equal(fieldDef, 'a,q');
+       const str = fieldDefShorthand({channel: Channel.X, field: 'a', type: Type.QUANTITATIVE});
+       assert.equal(str, 'a,q');
     });
 
     it('should return correct fieldDefShorthand string for aggregate field', () => {
-       const fieldDef = fieldDefShorthand({
+       const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN
        });
-       assert.equal(fieldDef, 'mean(a,q)');
+       assert.equal(str, 'mean(a,q)');
     });
 
     it('should return correct fieldDefShorthand string for ambiguous aggregate field', () => {
-       const fieldDef = fieldDefShorthand({
+       const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, aggregate: SHORT_ENUM_SPEC
        });
-       assert.equal(fieldDef, '?(a,q)');
+       assert.equal(str, '?(a,q)');
     });
 
     it('should return correct fieldDefShorthand string for timeunit field', () => {
-      const fieldDef = fieldDefShorthand({
+      const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, timeUnit: TimeUnit.HOURS
         });
-      assert.equal(fieldDef, 'hours(a,q)');
+      assert.equal(str, 'hours(a,q)');
     });
 
     it('should return correct fieldDefShorthand string for ambiguous timeunit field', () => {
-      const fieldDef = fieldDefShorthand({
+      const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, timeUnit: SHORT_ENUM_SPEC
         });
-      assert.equal(fieldDef, '?(a,q)');
+      assert.equal(str, '?(a,q)');
     });
 
     it('should return correct fieldDefShorthand string for bin field', () => {
-       const fieldDef = fieldDefShorthand({
+       const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: true
        });
-       assert.equal(fieldDef, 'bin(a,q)');
+       assert.equal(str, 'bin(a,q)');
     });
 
 
     it('should return correct fieldDefShorthand string for bin field with maxbins', () => {
-       const fieldDef = fieldDefShorthand({
+       const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}
        });
-       assert.equal(fieldDef, 'bin(a,q,maxbins=20)');
+       assert.equal(str, 'bin(a,q,maxbins=20)');
     });
 
     it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType log', () => {
-      const fieldDef = fieldDefShorthand({
+      const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}, scale: {type: ScaleType.LOG}
       });
-      assert.equal(fieldDef, 'bin(a,q,maxbins=20,scale={"type":"log"})');
+      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"})');
     });
 
     it('should return correct fieldDefShorthand string for disabled scale', () => {
-      const fieldDef = fieldDefShorthand({
+      const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: null
       });
-      assert.equal(fieldDef, 'a,q,scale=false');
+      assert.equal(str, 'a,q,scale=false');
     });
 
     it('should return correct fieldDefShorthand string for disabled scale', () => {
-      const fieldDef = fieldDefShorthand({
+      const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: false
       });
-      assert.equal(fieldDef, 'a,q,scale=false');
+      assert.equal(str, 'a,q,scale=false');
     });
 
     it('should return correct fieldDefShorthand string for scale with scaleType log', () => {
-       const fieldDef = fieldDefShorthand({
+       const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}
        });
-       assert.equal(fieldDef, 'a,q,scale={"type":"log"}');
+       assert.equal(str, 'a,q,scale={"type":"log"}');
     });
 
     it('should return correct fieldDefShorthand string for scale with zero=true', () => {
-      const fieldDef = fieldDefShorthand({
+      const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {zero: true}
       });
-      assert.equal(fieldDef, 'a,q,scale={"zero":true}');
+      assert.equal(str, 'a,q,scale={"zero":true}');
     });
 
     // TODO: Update tests for other scale.*
 
     it('should return correct fieldDefShorthand string for ambiguous bin field', () => {
-       const fieldDef = fieldDefShorthand({
+       const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: SHORT_ENUM_SPEC
        });
-       assert.equal(fieldDef, '?(a,q)');
+       assert.equal(str, '?(a,q)');
     });
 
     it('should return correct fieldDefShorthand string for ambiguous field', () => {
-       const fieldDef = fieldDefShorthand({
+       const str = fieldDefShorthand({
          channel: Channel.X, field: SHORT_ENUM_SPEC, type: Type.QUANTITATIVE
        });
-       assert.equal(fieldDef, '?,q');
+       assert.equal(str, '?,q');
     });
 
     it('should return correct fieldDefShorthand string for autocount field', () => {
-       const fieldDef = fieldDefShorthand({
+       const str = fieldDefShorthand({
          channel: Channel.X, autoCount: true
        });
-       assert.equal(fieldDef, 'count(*,q)');
+       assert.equal(str, 'count(*,q)');
     });
 
     it('should return correct fieldDefShorthand string for ambiguous autocount field', () => {
-       const fieldDef = fieldDefShorthand({
+       const str = fieldDefShorthand({
          channel: Channel.X, autoCount: SHORT_ENUM_SPEC
        });
-       assert.equal(fieldDef, '?(*,q)');
+       assert.equal(str, '?(*,q)');
     });
 
     it('should return correct fieldDefShorthand string for ambiguous type', () => {
-       const fieldDef = fieldDefShorthand({
+       const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: SHORT_ENUM_SPEC
        });
-       assert.equal(fieldDef, 'a,?');
+       assert.equal(str, 'a,?');
     });
   });
 });
