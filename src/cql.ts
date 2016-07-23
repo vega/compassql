@@ -17,11 +17,7 @@ import {query as queryFn} from './query/query';
 
 export const query = extend(queryFn, cqlQuery);
 
-import * as enumspec from './enumspec';
-export const enumSpec = {
-  isEnumSpec: enumspec.isEnumSpec
-};
-
+export import enumspec = require('./enumspec');
 export import ranking = require('./ranking/ranking');
 export import schema = require('./schema');
 export import util = require('./util');
