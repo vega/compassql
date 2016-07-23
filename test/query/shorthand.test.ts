@@ -6,7 +6,7 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
-import {spec, encoding, fieldDefShorthand} from '../../src/query/shorthand';
+import {spec, encoding, fieldDef as fieldDefShorthand} from '../../src/query/shorthand';
 
 import {assert} from 'chai';
 

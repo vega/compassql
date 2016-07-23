@@ -4,7 +4,7 @@ import {SpecQueryModel} from './model';
 import {SpecQueryModelGroup} from './modelgroup';
 import {EnumSpec, isEnumSpec, SHORT_ENUM_SPEC} from './enumspec';
 import {Query} from './query/query';
-import {fieldDefShorthand} from './query/shorthand';
+import {fieldDef as fieldDefShorthand} from './query/shorthand';
 import {stack} from './query/spec';
 import {Dict} from './util';
 

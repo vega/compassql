@@ -2,7 +2,7 @@ import {Channel} from 'vega-lite/src/channel';
 
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../../config';
 import {SpecQueryModel} from '../../model';
-import {fieldDefShorthand} from '../../query/shorthand';
+import {fieldDef as fieldDefShorthand} from '../../query/shorthand';
 import {EncodingQuery} from '../../query/encoding';
 import {Dict, extend, forEach, keys} from '../../util';
 

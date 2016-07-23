@@ -21,10 +21,10 @@ export function spec(specQ: SpecQuery): string {
 }
 
 export function encoding(encQ: EncodingQuery): string {
-  return enumSpecShort(encQ.channel) + ':' + fieldDefShorthand(encQ);
+  return enumSpecShort(encQ.channel) + ':' + fieldDef(encQ);
 }
 
-export function fieldDefShorthand(encQ: EncodingQuery): string {
+export function fieldDef(encQ: EncodingQuery): string {
   let fn = null;
   const params: {key: string, value: any}[]=  [];
 
