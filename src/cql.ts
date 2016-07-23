@@ -15,12 +15,7 @@ export import property = require('./property');
 import * as cqlQuery from './query/query';
 import {query as queryFn} from './query/query';
 
-import * as cqlEncodingQuery from './query/encoding';
-import * as cqlStringifyQuery from './query/shorthand';
-import * as cqlSpecQuery from './query/spec';
-import * as cqlTransformQuery from './query/transform';
-
-export const query = extend(queryFn, cqlQuery, cqlEncodingQuery, cqlStringifyQuery, cqlSpecQuery, cqlTransformQuery);
+export const query = extend(queryFn, cqlQuery);
 
 import * as enumspec from './enumspec';
 export const enumSpec = {

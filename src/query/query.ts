@@ -10,6 +10,11 @@ import {rank} from '../ranking/ranking';
 import {Schema} from '../schema';
 import {duplicate, extend} from '../util';
 
+export import encoding = require('./encoding');
+export import shorthand = require('./shorthand');
+export import spec = require('./spec');
+export import transform = require('./transform');
+
 export function query(q: Query, schema: Schema, config?: Config) {
   // 1. Normalize non-nested `groupBy` to always have `groupBy` inside `nest`
   //    and merge config with the following precedence
