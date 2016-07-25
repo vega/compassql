@@ -84,6 +84,8 @@ export function getDefaultName(prop: Property) {
       return 'b-mb';
     case Property.SCALE:
       return 's';
+    case Property.SCALE_EXPONENT:
+      return 's-e';
     case Property.SCALE_TYPE:
       return 's-t';
     case Property.SCALE_ZERO:
@@ -116,6 +118,9 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     // The config name for each prop is a plural form of the prop.
     case Property.BIN_MAXBINS:
       return opt.maxBinsList;
+
+    case Property.SCALE_EXPONENT:
+      return opt.scaleExponents;
 
     case Property.SCALE_TYPE:
       return opt.scaleTypes;
