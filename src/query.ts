@@ -6,7 +6,7 @@ import {Mark, BAR, AREA} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {StackOffset, StackProperties} from 'vega-lite/src/stack';
-import {TimeUnit} from 'vega-lite/src/timeunit';
+import {defaultScaleType, TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
@@ -345,4 +345,24 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
     enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1) +
     params.map((p) => ',' + p.key + '=' + p.value).join('');
   return (fn ? fn + '(' + fieldType + ')' : fieldType);
+}
+
+export function scaleType(encQ: EncodingQuery): ScaleType {
+  let scaleType = (encQ.scale as ScaleQuery).type as ScaleType;
+  if (scaleType !== undefined) {
+    return scaleType;
+  } else {
+    const type = encQ.type;
+    if (type === Type.QUANTITATIVE) {
+      return ScaleType.LINEAR;
+    } else if (type === Type.ORDINAL || type === Type.NOMINAL) {
+      return ScaleType.ORDINAL;
+    } else if (type === Type.TEMPORAL) {
+      if (encQ.timeUnit) {
+        return defaultScaleType(encQ.timeUnit as TimeUnit);
+      } else {
+        return ScaleType.TIME;
+      }
+    }
+  }
 }

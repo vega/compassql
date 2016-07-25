@@ -2,7 +2,6 @@ import {SUM_OPS} from 'vega-lite/src/aggregate';
 import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
-import {defaultScaleType, TimeUnit} from 'vega-lite/src/timeunit';
 
 import {Type} from 'vega-lite/src/type';
 
@@ -10,9 +9,9 @@ import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 import {QueryConfig} from '../config';
 import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
-import {getNestedEncodingProperty, Property, isEncodingProperty, SUPPORTED_SCALE_PROPERTY_INDEX} from '../property';
+import {getNestedEncodingProperty, Property, isEncodingProperty} from '../property';
 import {Schema} from '../schema';
-import {ScaleQuery, EncodingQuery, isEnumSpec, isMeasure} from '../query';
+import {scaleType, ScaleQuery, EncodingQuery, isEnumSpec, isMeasure} from '../query';
 import {contains, every, some} from '../util';
 
 
@@ -76,26 +75,6 @@ export class SpecConstraintModel extends AbstractConstraintModel {
 export interface SpecConstraint extends AbstractConstraint {
   /** Method for checking if the spec query satisfies this constraint. */
   satisfy: SpecConstraintChecker;
-}
-
-export function getTrueScaleType(encQ: EncodingQuery): ScaleType {
-  let scaleType = (encQ.scale as ScaleQuery).type as ScaleType;
-  if (scaleType !== undefined) {
-    return scaleType;
-  } else {
-    const type = encQ.type;
-    if (type === Type.QUANTITATIVE) {
-      return ScaleType.LINEAR;
-    } else if (type === Type.ORDINAL || type === Type.NOMINAL) {
-      return ScaleType.ORDINAL;
-    } else if (type === Type.TEMPORAL) {
-      if (encQ.timeUnit) {
-        return defaultScaleType(encQ.timeUnit as TimeUnit);
-      } else {
-        return ScaleType.TIME;
-      }
-    }
-  }
 }
 
 export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
@@ -345,7 +324,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     if (mark === Mark.AREA || mark === Mark.BAR) {
       for (let encQ of encodings) {
         if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale) {
-          if (getTrueScaleType(encQ) === ScaleType.LOG) {
+          if (scaleType(encQ) === ScaleType.LOG) {
             return false;
           }
         }
@@ -565,7 +544,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       for (let encQ of encodings) {
         if (encQ.scale) {
           const scale: ScaleQuery = encQ.scale as ScaleQuery;
-          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], getTrueScaleType(encQ)) &&
+          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], scaleType(encQ)) &&
              (scale.zero === true)) {
                return false;
           }
