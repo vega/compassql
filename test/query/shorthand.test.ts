@@ -136,6 +136,14 @@ describe('query/shorthand', () => {
       assert.equal(str, 'a,q,scale={"zero":true}');
     });
 
+    // FELIX -- REBASE COMMENT
+    it('should return correct fieldDef string for scale with round=true', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {round: true}
+      });
+      assert.equal(str, 'a,q,scale={"round":true}');
+    });
+
     // TODO: Update tests for other scale.*
 
     it('should return correct fieldDefShorthand string for ambiguous bin field', () => {

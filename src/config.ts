@@ -38,6 +38,8 @@ export interface QueryConfig {
 
   scaleBandSizes?: number[];
 
+  scaleRounds?: boolean[];
+
   scaleTypes?: ScaleType[];
 
   scaleZeros?: boolean[];

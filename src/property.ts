@@ -21,6 +21,7 @@ export enum Property {
   // - Scale
   SCALE = 'scale' as any,
   SCALE_BANDSIZE = 'scaleBandSize' as any,
+  SCALE_ROUND = 'scaleRound' as any,
   SCALE_TYPE = 'scaleType' as any,
   SCALE_ZERO = 'scaleZero' as any,
 
@@ -49,6 +50,7 @@ export function hasNestedProperty(prop: Property) {
     case Property.TYPE:
     case Property.BIN_MAXBINS:
     case Property.SCALE_BANDSIZE:
+    case Property.SCALE_ROUND:
     case Property.SCALE_TYPE:
     case Property.SCALE_ZERO:
       return false;
@@ -68,6 +70,7 @@ export const ENCODING_PROPERTIES = [
   Property.TYPE,
   Property.SCALE,
   Property.SCALE_BANDSIZE,
+  Property.SCALE_ROUND,
   Property.SCALE_TYPE,
   Property.SCALE_ZERO
 ];
@@ -94,7 +97,8 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   // Nested Encoding Property
   Property.SCALE_BANDSIZE,
   Property.SCALE_TYPE,
-  Property.SCALE_ZERO
+  Property.SCALE_ZERO,
+  Property.SCALE_ROUND,
 ];
 
 export interface NestedEncodingProperty {
@@ -123,6 +127,11 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
     property: Property.SCALE_ZERO,
     parent: 'scale',
     child: 'zero'
+  },
+  {
+    property: Property.SCALE_ROUND,
+    parent: 'scale',
+    child: 'round'
   }
   // TODO: other bin parameters
   // TODO: axis, legend

@@ -91,6 +91,8 @@ export function getDefaultName(prop: Property) {
       return 's';
     case Property.SCALE_BANDSIZE:
       return 'b-bs';
+    case Property.SCALE_ROUND:
+      return 's-r';
     case Property.SCALE_TYPE:
       return 's-t';
     case Property.SCALE_ZERO:
@@ -114,6 +116,7 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     // True, False for boolean values
     case Property.BIN:
     case Property.SCALE:
+    case Property.SCALE_ROUND:
     case Property.SCALE_ZERO:
     case Property.AUTOCOUNT:
       return [false, true];

@@ -7,9 +7,14 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel, getDefaultName, getDefaultEnumValues} from '../src/model';
+<<<<<<< HEAD
 import {Property, DEFAULT_PROPERTY_PRECEDENCE, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
 import {SHORT_ENUM_SPEC, isEnumSpec} from '../src/enumspec';
 import {SpecQuery} from '../src/query/spec';
+=======
+import {DEFAULT_PROPERTY_PRECEDENCE, Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
+import {SHORT_ENUM_SPEC, SpecQuery, isEnumSpec} from '../src/query';
+>>>>>>> basic support for scale.round
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
 
