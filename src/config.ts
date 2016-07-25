@@ -36,6 +36,8 @@ export interface QueryConfig {
   /** Default maxbins to enumerate */
   maxBinsList?: number[];
 
+  scaleClamps?: boolean[];
+
   scaleTypes?: ScaleType[];
 
   scaleZeros?: boolean[];
