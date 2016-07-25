@@ -554,27 +554,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-     name: 'scaleBandSizeMustMatchScaleType',
-     description: 'ScaleBandSize should only be used with ORDINAL ScaleType',
-     properties: [Property.SCALE, Property.TYPE, Property.SCALE_TYPE, Property.SCALE_ZERO],
-     allowEnumSpecForProperties: false,
-     strict: true,
-     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-       const encodings = specM.getEncodings();
-       for (let encQ of encodings) {
-         if (encQ.scale) {
-           const scale: ScaleQuery = encQ.scale as ScaleQuery;
-           if(!contains(SUPPORTED_SCALE_PROPERTY_INDEX[Property.SCALE_BANDSIZE], getTrueScaleType(encQ)) &&
-             (scale.bandSize)) {
-               return false;
-           }
-         }
-       }
-
-       return true;
-     }
-  },
-  {
     name: 'scaleZeroMustMatchScaleType',
     description: 'ScaleZero should not be used with LOG, ORDINAL, TIME and UTC',
     properties: [Property.SCALE, Property.TYPE, Property.SCALE_TYPE, Property.SCALE_ZERO],
