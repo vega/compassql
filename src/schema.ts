@@ -4,6 +4,7 @@ import {autoMaxBins} from 'vega-lite/src/bin';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 import * as dlBin from 'datalib/src/bins/bins';
+import {duplicate} from 'datalib/src/util';
 
 import {EncodingQuery, BinQuery} from './query';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
@@ -159,6 +160,22 @@ export class Schema {
     // TODO: differentiate for field with bin / timeUnit vs without
     const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
     return fieldSchema ? fieldSchema.stats : null;
+  }
+
+  /**
+   * Overrides a field schema.
+   */
+  public setSchema(field: string, schema: FieldSchema) {
+    // FIXME: need to update this.fieldSchemas ?
+    this.fieldSchemaIndex[field] = schema;
+  }
+
+  /**
+   * Get a field schema.
+   * @return a copy of the FieldSchema associated with the given field
+   */
+  public getSchema(field: string) {
+    return duplicate(this.fieldSchemaIndex[field]);
   }
 }
 

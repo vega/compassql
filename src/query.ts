@@ -16,10 +16,21 @@ import {nest} from './nest';
 import {Property, ENCODING_PROPERTIES, getNestedEncodingPropertyChild, isNestedEncodingProperty} from './property';
 
 import {rank} from './ranking/ranking';
-import {Schema} from './schema';
+import {Schema, FieldSchema} from './schema';
 import {contains, duplicate, extend, keys, some} from './util';
 
 export function query(q: Query, schema: Schema, config?: Config) {
+  // 0. Override schema object with the properties specified by the query
+  if (q.schema) {
+    keys(q.schema).forEach(field => {
+      const fieldSchema: FieldSchema = schema.getSchema(field);
+      keys(q.schema[field]).forEach(prop => {
+        fieldSchema[prop] = q.schema[field][prop];
+      });
+      schema.setSchema(field, fieldSchema);
+    });
+  }
+
   // 1. Normalize non-nested `groupBy` to always have `groupBy` inside `nest`
   //    and merge config with the following precedence
   //    query.config > config > DEFAULT_QUERY_CONFIG
@@ -104,6 +115,7 @@ export interface Query {
   orderBy?: string;
   chooseBy?: string;
   config?: QueryConfig;
+  schema?: {[field: string]: Object};
 }
 
 export interface Nest {

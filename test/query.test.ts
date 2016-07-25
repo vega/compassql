@@ -9,6 +9,7 @@ import {Type} from 'vega-lite/src/type';
 import {assert} from 'chai';
 
 import {schema} from './fixture';
+import {Schema} from '../src/schema';
 import {EnumSpec, query, Query, SHORT_ENUM_SPEC, fromSpec, initEnumSpec, stack, stringifyEncodingQuery, stringifyEncodingQueryFieldDef, stringifySpecQuery, normalize} from '../src/query';
 import {SpecQueryModel} from '../src/model';
 import {isSpecQueryModelGroup, SpecQueryModelGroup} from '../src/modelgroup';
@@ -67,6 +68,49 @@ describe('query', () => {
       assert.equal(result.items.length, 2);
       assert.equal((<SpecQueryModel>result.items[0]).specQuery.mark, 'tick');
       assert.equal((<SpecQueryModel>result.items[1]).specQuery.mark, 'point');
+    });
+  });
+
+  describe('schemaOverride', () => {
+    it('should correctly override the default inferred schema types', () => {
+      const q: Query = {
+        spec: {
+          data: [
+            {a: 1},
+            {a: 2},
+            {a: 3}
+          ],
+          mark: 'point',
+          encodings: [
+            {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
+          ]
+        },
+        orderBy: 'effectiveness',
+        schema: {a: {type: 'temporal'}}
+      };
+      let result = query(q, Schema.build(q.spec.data)).result;
+      // resulting schema should have 'a' as a temporal field as opposed to the normally inferred quantitative type
+      assert.equal(result.items[0]['_schema'].fieldSchemaIndex.a.type, 'temporal');
+    });
+
+    it('should not override the default type when the schema option is not specified', () => {
+      const q: Query = {
+        spec: {
+          data: [
+            {a: 1},
+            {a: 2},
+            {a: 3}
+          ],
+          mark: 'point',
+          encodings: [
+            {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
+          ]
+        },
+        orderBy: 'effectiveness',
+      };
+      let result = query(q, Schema.build(q.spec.data)).result;
+
+      assert.equal(result.items[0]['_schema'].fieldSchemaIndex.a.type, 'quantitative');
     });
   });
 
