@@ -4,7 +4,9 @@ import {autoMaxBins} from 'vega-lite/src/bin';
 import {TimeUnit, TIMEUNITS} from 'vega-lite/src/timeunit';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
-import * as dlBin from 'datalib/src/bins/bins';
+
+declare function require(name: string);
+var dl = require('datalib');
 
 import {EncodingQuery, BinQuery} from './query';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
@@ -181,7 +183,7 @@ export class Schema {
  * @return a summary with the correct distinct property given a max number of bins
  */
 function binSummary(maxbins: number, summary: Summary) {
-  const bin = dlBin({
+  const bin = dl.bins({
     min: summary.min,
     max: summary.max,
     maxbins: maxbins
@@ -200,14 +202,14 @@ function timeUnitSummary(unit: TimeUnit, summary: Summary) {
     case TimeUnit.MINUTES:
     case TimeUnit.SECONDS:
       // FIXME: call date function correctly? This syntax is odd.
-      bin = dlBin['date']({
+      bin = dl.bins.date({
         min: summary.min,
         max: summary.max,
         unit: unit
       });
     // let dl.bins.date infer a unit
     default:
-      bin = dlBin['date']({
+      bin = dl.bins.date({
         min: summary.min,
         max: summary.max
       });
