@@ -129,19 +129,32 @@ describe('query/shorthand', () => {
        assert.equal(str, 'a,q,scale={"type":"log"}');
     });
 
-    it('should return correct fieldDefShorthand string for scale with zero=true', () => {
+    it('should return correct fieldDef string for scale with clamp=true', () => {
       const str = fieldDefShorthand({
-        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {zero: true}
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {clamp: true}
       });
-      assert.equal(str, 'a,q,scale={"zero":true}');
+      assert.equal(str, 'a,q,scale={"clamp":true}');
     });
 
-    // FELIX -- REBASE COMMENT
+    it('should return correct fieldDef string for scale with exponent of 3 and supported scaleType', () => {
+       const str = fieldDefShorthand({
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.POW, exponent: 3}
+       });
+       assert.equal(str, 'a,q,scale={"exponent":3,"type":"pow"}');
+    });
+
     it('should return correct fieldDef string for scale with round=true', () => {
       const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {round: true}
       });
       assert.equal(str, 'a,q,scale={"round":true}');
+    });
+
+    it('should return correct fieldDef string for scale with zero=true', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {zero: true}
+      });
+      assert.equal(str, 'a,q,scale={"zero":true}');
     });
 
     // TODO: Update tests for other scale.*

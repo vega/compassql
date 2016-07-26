@@ -21,6 +21,8 @@ export enum Property {
   // - Scale
   SCALE = 'scale' as any,
   SCALE_BANDSIZE = 'scaleBandSize' as any,
+  SCALE_CLAMP = 'scaleClamp' as any,
+  SCALE_EXPONENT = 'scaleExponent' as any,
   SCALE_ROUND = 'scaleRound' as any,
   SCALE_TYPE = 'scaleType' as any,
   SCALE_ZERO = 'scaleZero' as any,
@@ -50,6 +52,8 @@ export function hasNestedProperty(prop: Property) {
     case Property.TYPE:
     case Property.BIN_MAXBINS:
     case Property.SCALE_BANDSIZE:
+    case Property.SCALE_CLAMP:
+    case Property.SCALE_EXPONENT:
     case Property.SCALE_ROUND:
     case Property.SCALE_TYPE:
     case Property.SCALE_ZERO:
@@ -70,6 +74,8 @@ export const ENCODING_PROPERTIES = [
   Property.TYPE,
   Property.SCALE,
   Property.SCALE_BANDSIZE,
+  Property.SCALE_CLAMP,
+  Property.SCALE_EXPONENT,
   Property.SCALE_ROUND,
   Property.SCALE_TYPE,
   Property.SCALE_ZERO
@@ -96,9 +102,11 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
 
   // Nested Encoding Property
   Property.SCALE_BANDSIZE,
-  Property.SCALE_TYPE,
-  Property.SCALE_ZERO,
+  Property.SCALE_CLAMP,
+  Property.SCALE_EXPONENT,
   Property.SCALE_ROUND,
+  Property.SCALE_TYPE,
+  Property.SCALE_ZERO
 ];
 
 export interface NestedEncodingProperty {
@@ -119,6 +127,21 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
     child: 'bandSize'
   },
   {
+    property: Property.SCALE_CLAMP,
+    parent: 'scale',
+    child: 'clamp'
+  },
+  {
+    property: Property.SCALE_EXPONENT,
+    parent: 'scale',
+    child: 'exponent'
+  },
+  {
+    property: Property.SCALE_ROUND,
+    parent: 'scale',
+    child: 'round'
+  },
+  {
     property: Property.SCALE_TYPE,
     parent: 'scale',
     child: 'type'
@@ -127,12 +150,8 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
     property: Property.SCALE_ZERO,
     parent: 'scale',
     child: 'zero'
-  },
-  {
-    property: Property.SCALE_ROUND,
-    parent: 'scale',
-    child: 'round'
   }
+
   // TODO: other bin parameters
   // TODO: axis, legend
 ];

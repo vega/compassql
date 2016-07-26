@@ -34,9 +34,12 @@ export interface BinQuery extends EnumSpec<boolean> {
 
 export interface ScaleQuery extends EnumSpec<boolean> {
   // TODO: add other properties from vegalite/src/scale
+  clamp?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+  exponent?: number | EnumSpec<number> | ShortEnumSpec;
   round?: boolean | EnumSpec<boolean> | ShortEnumSpec;
   type?: ScaleType | EnumSpec<ScaleType> | ShortEnumSpec;
   zero?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+
 }
 
 export function isDimension(encQ: EncodingQuery) {

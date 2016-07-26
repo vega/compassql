@@ -38,6 +38,10 @@ export interface QueryConfig {
 
   scaleBandSizes?: number[];
 
+  scaleClamps?: boolean[];
+
+  scaleExponents?: number[];
+
   scaleRounds?: boolean[];
 
   scaleTypes?: ScaleType[];
@@ -102,7 +106,11 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   numberOrdinalProportion: .05,
 
   maxBinsList: [5, 10, 20],
+
   scaleBandSizes: [17, 21],
+
+  scaleExponents: [0.5, 1, 2],
+
   scaleTypes: [ScaleType.LINEAR, ScaleType.LOG],
 
   // CONSTRAINTS
