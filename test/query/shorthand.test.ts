@@ -6,7 +6,7 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
-import {spec as specShorthand, encoding, fieldDef as fieldDefShorthand} from '../../src/query/shorthand';
+import {spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand} from '../../src/query/shorthand';
 
 import {assert} from 'chai';
 
@@ -47,7 +47,7 @@ describe('query/shorthand', () => {
 
   describe('encoding', () => {
     it('should return correct encoding string for raw field', () => {
-       const str = encoding({channel: Channel.X, field: 'a', type: Type.QUANTITATIVE});
+       const str = encodingShorthand({channel: Channel.X, field: 'a', type: Type.QUANTITATIVE});
        assert.equal(str, 'x:a,q');
     });
   });
