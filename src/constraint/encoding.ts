@@ -4,7 +4,7 @@ import {Type} from 'vega-lite/src/type';
 import {QueryConfig} from '../config';
 import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
 import {getNestedEncodingProperty, Property} from '../property';
-import {scaleType as actualScaleType, EncodingQuery, isEnumSpec, isDimension, isMeasure} from '../query';
+import {scaleType as _scaleType, EncodingQuery, isEnumSpec, isDimension, isMeasure} from '../query';
 import {PrimitiveType, Schema} from '../schema';
 import {contains, every} from '../util';
 import {ScaleType} from 'vega-lite/src/scale';
@@ -221,7 +221,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.scale) {
-        const scaleType = actualScaleType(encQ);
+        const scaleType = _scaleType(encQ);
         const type = encQ.type;
 
         if (contains([Type.ORDINAL, Type.NOMINAL], type)) {
