@@ -474,6 +474,13 @@ describe('query', () => {
       assert.equal(str, 'a,q,scale={"zero":true}');
     });
 
+    it('should return correct fieldDef string for scale with clamp=true', () => {
+      const str = stringifyEncodingQueryFieldDef({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {clamp: true}
+      });
+      assert.equal(str, 'a,q,scale={"clamp":true}');
+    });
+
     // TODO: Update tests for other scale.*
 
     it('should return correct fieldDef string for ambiguous bin field', () => {
