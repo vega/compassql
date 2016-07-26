@@ -258,28 +258,52 @@ describe('enumerator', () => {
       });
     });
 
-    describe('scaleType', () => {
-      it('should correctly enumerate scaleType', () => {
+    describe('scaleClamp', () => {
+      it('should correctly enumerate scaleClamp', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
             {
               channel: Channel.X,
               scale: {
-                type: {values: [undefined, ScaleType.LOG, ScaleType.POW, ScaleType.ORDINAL]}
+                clamp: {values: [true, false]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.SCALE_TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_CLAMP](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 2);
+        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).clamp, true);
+        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).clamp, false);
+      });
+    });
+
+    describe('scaleExponent', () => {
+      it('should correctly enumerate scaleExponent', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {
+                exponent: {values: [0.5, 1, 2]}
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_EXPONENT](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
-        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
-        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POW);
+        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, 0.5);
+        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, 1);
+        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, 2);
       });
     });
 
@@ -304,6 +328,31 @@ describe('enumerator', () => {
         assert.equal(answerSet.length, 2);
         assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).round, true);
         assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).round, false);
+      });
+    });
+
+    describe('scaleType', () => {
+      it('should correctly enumerate scaleType', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {
+                type: {values: [undefined, ScaleType.LOG, ScaleType.POW, ScaleType.ORDINAL]}
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 3);
+        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
+        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POW);
       });
     });
 
