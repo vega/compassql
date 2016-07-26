@@ -283,6 +283,30 @@ describe('enumerator', () => {
       });
     });
 
+    describe('scaleRound', () => {
+      it('should correctly enumerate scaleRound', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {
+                round: {values: [true, false]}
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_ROUND](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 2);
+        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).round, true);
+        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).round, false);
+      });
+    });
+
     describe('timeUnit', () => {
       it('should correctly enumerate timeUnits', () => {
         const specM = buildSpecQueryModel({
