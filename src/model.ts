@@ -13,8 +13,10 @@ import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 
 import {QueryConfig} from './config';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
-import {SHORT_ENUM_SPEC, SpecQuery, EnumSpec} from './query';
-import {initEnumSpec, isAggregate, isEnumSpec, isDimension, isMeasure, stack, stringifySpecQuery} from './query';
+import {EnumSpec, SHORT_ENUM_SPEC, initEnumSpec, isEnumSpec} from './enumspec';
+import {SpecQuery, isAggregate, stack} from './query/spec';
+import {isDimension, isMeasure} from './query/encoding';
+import {spec as specShorthand} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
@@ -71,7 +73,7 @@ export interface EnumSpecIndex {
   type?: EnumSpecIndexTuple<Type>[];
 }
 
-function getDefaultName(prop: Property) {
+export function getDefaultName(prop: Property) {
   switch (prop) {
     case Property.MARK:
       return 'm';
@@ -402,7 +404,7 @@ export class SpecQueryModel {
   }
 
   public toShorthand(): string {
-    return stringifySpecQuery(this._spec);
+    return specShorthand(this._spec);
   }
 
   private _encoding(): Encoding {
@@ -454,7 +456,11 @@ export class SpecQueryModel {
     if (data) {
       spec.data = data;
     }
-    // TODO: transform
+
+    if (this._spec.transform) {
+      spec.transform = this._spec.transform;
+    }
+
     spec.mark = this._spec.mark as Mark;
     spec.encoding = this._encoding();
     if (spec.encoding === null) {

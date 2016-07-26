@@ -9,7 +9,8 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
-import {SHORT_ENUM_SPEC, ScaleQuery} from '../src/query';
+import {ScaleQuery} from '../src/query/encoding';
+import {SHORT_ENUM_SPEC} from '../src/enumspec';
 import {extend, some} from '../src/util';
 
 import {schema} from './fixture';

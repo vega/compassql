@@ -12,7 +12,8 @@ import {Property} from '../../src/property';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
-import {SHORT_ENUM_SPEC, SpecQuery} from '../../src/query';
+import {SpecQuery} from '../../src/query/spec';
+import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {duplicate} from '../../src/util';
 
 describe('constraints/spec', () => {

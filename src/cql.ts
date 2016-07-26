@@ -12,15 +12,12 @@ export import nest = require('./nest');
 export import property = require('./property');
 
 // Make it so that we can call cql.query() as method, or access other methods inside cql.query
-import * as cqlQuery from './query';
-import {query as queryFn} from './query';
+import * as cqlQuery from './query/query';
+import {query as queryFn} from './query/query';
+
 export const query = extend(queryFn, cqlQuery);
 
-// TODO(https://github.com/uwdata/compassql/issues/112): properly extract enumSpec from query
-export const enumSpec = {
-  isEnumSpec: cqlQuery.isEnumSpec
-};
-
+export import enumspec = require('./enumspec');
 export import ranking = require('./ranking/ranking');
 export import schema = require('./schema');
 export import util = require('./util');
