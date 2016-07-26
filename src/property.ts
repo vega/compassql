@@ -159,7 +159,7 @@ export function isEncodingProperty(prop: Property): boolean {
   return ENCODING_INDEX[prop] !== undefined;
 }
 
-export function getNestedEncodingProperty(prop: Property | string) {
+export function getNestedEncodingProperty(prop: Property) {
   return NESTED_ENCODING_INDEX[prop];
 }
 
