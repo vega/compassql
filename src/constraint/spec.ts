@@ -10,9 +10,9 @@ import {QueryConfig} from '../config';
 import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {getNestedEncodingProperty, Property, isEncodingProperty} from '../property';
 import {Schema} from '../schema';
-import {ScaleQuery, EncodingQuery, isEnumSpec, isMeasure} from '../query';
+import {isEnumSpec} from '../enumspec';
+import {EncodingQuery, isMeasure, ScaleQuery} from '../query/encoding';
 import {contains, every, some} from '../util';
-
 
 export interface SpecConstraintChecker {
   (specM: SpecQueryModel, schema: Schema, opt: QueryConfig): boolean;

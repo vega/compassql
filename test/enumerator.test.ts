@@ -10,7 +10,8 @@ import {Type} from 'vega-lite/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {ENUMERATOR_INDEX} from '../src/enumerator';
 import {SpecQueryModel} from '../src/model';
-import {BinQuery, ScaleQuery, SpecQuery} from '../src/query';
+import {BinQuery, ScaleQuery} from '../src/query/encoding';
+import {SpecQuery} from '../src/query/spec';
 import {Property} from '../src/property';
 import {extend} from '../src/util';
 

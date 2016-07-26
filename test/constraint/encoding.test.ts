@@ -9,7 +9,8 @@ import {Type} from 'vega-lite/src/type';
 import {Property} from '../../src/property';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {EncodingConstraintModel, ENCODING_CONSTRAINTS, ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
-import {SHORT_ENUM_SPEC, EncodingQuery} from '../../src/query';
+import {EncodingQuery} from '../../src/query/encoding';
+import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {duplicate} from '../../src/util';
 
 import {schema} from '../fixture';

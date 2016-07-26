@@ -13,8 +13,10 @@ import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 
 import {QueryConfig} from './config';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
-import {SHORT_ENUM_SPEC, SpecQuery, EnumSpec} from './query';
-import {initEnumSpec, isAggregate, isEnumSpec, isDimension, isMeasure, stack, stringifySpecQuery} from './query';
+import {EnumSpec, SHORT_ENUM_SPEC, initEnumSpec, isEnumSpec} from './enumspec';
+import {SpecQuery, isAggregate, stack} from './query/spec';
+import {isDimension, isMeasure} from './query/encoding';
+import {spec as specShorthand} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
@@ -394,7 +396,7 @@ export class SpecQueryModel {
   }
 
   public toShorthand(): string {
-    return stringifySpecQuery(this._spec);
+    return specShorthand(this._spec);
   }
 
   private _encoding(): Encoding {
