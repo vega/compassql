@@ -25,7 +25,7 @@ export interface EncodingQuery {
   type?: Type | EnumSpec<Type> | ShortEnumSpec;
   // TODO: value
 
-  // TODO: scaleQuery, axisQuery, legendQuery
+  // TODO: axisQuery, legendQuery
 }
 
 export interface BinQuery extends EnumSpec<boolean> {
