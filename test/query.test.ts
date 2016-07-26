@@ -474,6 +474,13 @@ describe('query', () => {
       assert.equal(str, 'a,q,scale={"zero":true}');
     });
 
+    it('should return correct fieldDef string for scale with exponent of 3 and supported scaleType', () => {
+       const str = stringifyEncodingQueryFieldDef({
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.POW, exponent: 3}
+       });
+       assert.equal(str, 'a,q,scale={"type":"pow","exponent":3}');
+    });
+
     // TODO: Update tests for other scale.*
 
     it('should return correct fieldDef string for ambiguous bin field', () => {
