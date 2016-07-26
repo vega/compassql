@@ -448,7 +448,11 @@ export class SpecQueryModel {
     if (data) {
       spec.data = data;
     }
-    // TODO: transform
+
+    if (this._spec.transform) {
+      spec.transform = this._spec.transform;
+    }
+
     spec.mark = this._spec.mark as Mark;
     spec.encoding = this._encoding();
     if (spec.encoding === null) {
