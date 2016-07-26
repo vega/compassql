@@ -6,14 +6,14 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
-import {spec, encoding, fieldDef as fieldDefShorthand} from '../../src/query/shorthand';
+import {spec as specShorthand, encoding, fieldDef as fieldDefShorthand} from '../../src/query/shorthand';
 
 import {assert} from 'chai';
 
 describe('query/shorthand', () => {
   describe('spec', () => {
     it('should return correct spec string for specific specQuery', () => {
-      const str = spec({
+      const str = specShorthand({
         mark: Mark.POINT,
         encodings: [
             {channel: Channel.X, field: 'a', type: Type.QUANTITATIVE}
@@ -23,7 +23,7 @@ describe('query/shorthand', () => {
     });
 
     it('should include stack for stacked specQuery', () => {
-      const str = spec({
+      const str = specShorthand({
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, field: 'q', type: Type.QUANTITATIVE, aggregate: AggregateOp.SUM},
@@ -35,7 +35,7 @@ describe('query/shorthand', () => {
     });
 
     it('should return correct spec string for ambiguous specQuery', () => {
-      const str = spec({
+      const str = specShorthand({
         mark: SHORT_ENUM_SPEC,
         encodings: [
             {channel: SHORT_ENUM_SPEC, field: SHORT_ENUM_SPEC, type: SHORT_ENUM_SPEC, aggregate: SHORT_ENUM_SPEC}

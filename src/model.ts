@@ -16,7 +16,7 @@ import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProp
 import {EnumSpec, SHORT_ENUM_SPEC, initEnumSpec, isEnumSpec} from './enumspec';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure} from './query/encoding';
-import {spec} from './query/shorthand';
+import {spec as specShorthand} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
@@ -396,7 +396,7 @@ export class SpecQueryModel {
   }
 
   public toShorthand(): string {
-    return spec(this._spec);
+    return specShorthand(this._spec);
   }
 
   private _encoding(): Encoding {
