@@ -1,12 +1,7 @@
-import {EnumSpec, ShortEnumSpec} from '../enumspec';
-import {Field} from './encoding';
+import {Filter} from 'vega-lite/src/filter';
+import {Formula} from 'vega-lite/src/transform';
 
 export interface TransformQuery {
-  filter: FilterQuery[];
-}
-
-export interface FilterQuery {
-  field: Field | EnumSpec<Field> | ShortEnumSpec;
-  operator: string;
-  operand: any | EnumSpec<any> | ShortEnumSpec;
+  calculate?: Formula[];
+  filter?: Filter | string | (Filter|string)[];
 }
