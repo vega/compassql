@@ -347,22 +347,21 @@ export function stringifyEncodingQueryFieldDef(encQ: EncodingQuery): string {
   return (fn ? fn + '(' + fieldType + ')' : fieldType);
 }
 
-export function scaleType(encQ: EncodingQuery): ScaleType {
-  let scaleType = (encQ.scale as ScaleQuery).type as ScaleType;
+export function scaleType(scaleType: ScaleType, timeUnit: TimeUnit, type: Type) {
   if (scaleType !== undefined) {
     return scaleType;
+  }
+
+  if (type === Type.QUANTITATIVE) {
+    return ScaleType.LINEAR;
+  } else if (type === Type.ORDINAL || type === Type.NOMINAL) {
+    return ScaleType.ORDINAL;
   } else {
-    const type = encQ.type;
-    if (type === Type.QUANTITATIVE) {
-      return ScaleType.LINEAR;
-    } else if (type === Type.ORDINAL || type === Type.NOMINAL) {
-      return ScaleType.ORDINAL;
-    } else if (type === Type.TEMPORAL) {
-      if (encQ.timeUnit) {
-        return defaultScaleType(encQ.timeUnit as TimeUnit);
-      } else {
-        return ScaleType.TIME;
-      }
+    // Down here, type is guaranteeed to be Type.TEMPORAL
+    if (timeUnit !== undefined) {
+      return defaultScaleType(timeUnit);
+    } else {
+      return ScaleType.TIME;
     }
   }
 }

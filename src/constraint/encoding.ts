@@ -1,10 +1,11 @@
 import {Channel, getSupportedRole} from 'vega-lite/src/channel';
+import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {QueryConfig} from '../config';
 import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
 import {getNestedEncodingProperty, Property} from '../property';
-import {scaleType as _scaleType, EncodingQuery, isEnumSpec, isDimension, isMeasure} from '../query';
+import {scaleType as _scaleType, ScaleQuery, EncodingQuery, isEnumSpec, isDimension, isMeasure} from '../query';
 import {PrimitiveType, Schema} from '../schema';
 import {contains, every} from '../util';
 import {ScaleType} from 'vega-lite/src/scale';
@@ -221,8 +222,10 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.scale) {
-        const scaleType = _scaleType(encQ);
-        const type = encQ.type;
+        const sType = (encQ.scale as ScaleQuery).type as ScaleType;
+        const timeUnit = encQ.timeUnit as TimeUnit;
+        const type = encQ.type as Type;
+        const scaleType = _scaleType(sType, timeUnit, type);
 
         if (contains([Type.ORDINAL, Type.NOMINAL], type)) {
             return contains([ScaleType.ORDINAL, undefined], scaleType);

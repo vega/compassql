@@ -2,7 +2,7 @@ import {SUM_OPS} from 'vega-lite/src/aggregate';
 import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
-
+import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -11,7 +11,7 @@ import {QueryConfig} from '../config';
 import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {getNestedEncodingProperty, Property, isEncodingProperty} from '../property';
 import {Schema} from '../schema';
-import {scaleType, ScaleQuery, EncodingQuery, isEnumSpec, isMeasure} from '../query';
+import {scaleType as _scaleType, ScaleQuery, EncodingQuery, isEnumSpec, isMeasure} from '../query';
 import {contains, every, some} from '../util';
 
 
@@ -324,7 +324,14 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     if (mark === Mark.AREA || mark === Mark.BAR) {
       for (let encQ of encodings) {
         if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale) {
-          if (scaleType(encQ) === ScaleType.LOG) {
+
+          const scale: ScaleQuery = encQ.scale as ScaleQuery;
+          let sType = scale.type as ScaleType;
+          let timeUnit = encQ.timeUnit as TimeUnit;
+          let type = encQ.type as Type;
+          let scaleType = _scaleType(sType, timeUnit, type);
+
+          if (scaleType === ScaleType.LOG) {
             return false;
           }
         }
@@ -543,12 +550,17 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
       for (let encQ of encodings) {
         if (encQ.scale) {
+
           const scale: ScaleQuery = encQ.scale as ScaleQuery;
-          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], scaleType(encQ)) &&
+          let sType = scale.type as ScaleType;
+          let timeUnit = encQ.timeUnit as TimeUnit;
+          let type = encQ.type as Type;
+          let scaleType = _scaleType(sType, timeUnit, type);
+
+          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], scaleType) &&
              (scale.zero === true)) {
                return false;
           }
-
         }
       }
 
