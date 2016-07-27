@@ -78,6 +78,7 @@ export function scaleType(scaleType: ScaleType, timeUnit: TimeUnit | EnumSpec<Ti
       return ScaleType.TIME;
     }
   } else {
+    /* istanbul ignore next */
     throw new Error();
   }
 }
