@@ -49,21 +49,36 @@ export function isMeasure(encQ: EncodingQuery) {
       (encQ.type === Type.TEMPORAL && !encQ.timeUnit);
 }
 
-export function scaleType(scaleType: ScaleType, timeUnit: TimeUnit, type: Type) {
+/**
+ *  Returns the true scale type of an encoding.
+ *  @returns {ScaleType} If the scale type was not specified, it is inferred from the encoding's Type.
+ *  @returns {undefined} If the scale type was not specified and Type (or TimeUnit if applicable) is an EnumSpec, there is no clear scale type
+ */
+
+export function scaleType(scaleType: ScaleType, timeUnit, type) {
   if (scaleType !== undefined) {
     return scaleType;
+  }
+
+  if (isEnumSpec(type)) {
+    return undefined;
   }
 
   if (type === Type.QUANTITATIVE) {
     return ScaleType.LINEAR;
   } else if (type === Type.ORDINAL || type === Type.NOMINAL) {
     return ScaleType.ORDINAL;
-  } else {
-    // Down here, type is guaranteeed to be Type.TEMPORAL
+  } else if (type === Type.TEMPORAL) {
     if (timeUnit !== undefined) {
+      if (isEnumSpec(timeUnit)) {
+        return undefined;
+      }
       return defaultScaleType(timeUnit);
     } else {
       return ScaleType.TIME;
     }
+  } else {
+    throw new Error();
   }
 }
+
