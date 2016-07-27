@@ -1,6 +1,6 @@
 import {QueryConfig} from '../../config';
 import {SpecQueryModel} from '../../model';
-import {EncodingQuery} from '../../query';
+import {EncodingQuery} from '../../query/encoding';
 import {Dict} from '../../util';
 
 import {Schema} from '../../schema';

@@ -8,7 +8,7 @@ import {inferAll} from 'datalib/src/import/type';
 declare function require(name: string);
 var dl = require('datalib');
 
-import {EncodingQuery, BinQuery} from './query';
+import {BinQuery, EncodingQuery} from './query/encoding';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {contains, extend, keys} from './util';
 
