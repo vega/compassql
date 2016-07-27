@@ -36,6 +36,8 @@ export interface QueryConfig {
   /** Default maxbins to enumerate */
   maxBinsList?: number[];
 
+  scaleBandSizes?: number[];
+
   scaleTypes?: ScaleType[];
 
   scaleZeros?: boolean[];
@@ -98,6 +100,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   numberOrdinalProportion: .05,
 
   maxBinsList: [5, 10, 20],
+  scaleBandSizes: [17, 21],
   scaleTypes: [ScaleType.LINEAR, ScaleType.LOG],
 
   // CONSTRAINTS

@@ -53,6 +53,7 @@
         "test/query/query.test.ts",
         "test/query/shorthand.test.ts",
         "test/query/spec.test.ts",
+        "test/query/encoding.test.ts",
         "test/ranking/effectiveness/effectiveness.test.ts",
         "test/ranking/effectiveness/channel.test.ts",
         "test/ranking/effectiveness/mark.test.ts",
