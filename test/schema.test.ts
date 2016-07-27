@@ -135,18 +135,7 @@ describe('schema', () => {
         channel: Channel.X,
         bin: true  // should cause maxbins to be 10
       });
-      assert.equal(cardinality, 10);
-    });
-
-    it('should return the correct cardinality that is less than the maximum amount of bins', () => {
-      const cardinalityData = [{a: 0}, {a: 4}]; // min/max
-      const cardinalitySchema = Schema.build(cardinalityData);
-      const cardinality: number = cardinalitySchema.cardinality({
-        field: 'a',
-        channel: Channel.X,
-        bin: true  // should cause maxbins to be 10
-      });
-      assert.isTrue(cardinality < 10);
+      assert.equal(cardinality, 2);
     });
 
     it('should correctly return binned cardinality when specific bin parameters are specified', () => {
@@ -159,7 +148,7 @@ describe('schema', () => {
           maxbins: 5
         }
       });
-      assert.equal(cardinality, 5);
+      assert.equal(cardinality, 2);
     });
 
     it('should correctly compute new binned cardinality when bin params are not already cached', () => {
@@ -172,7 +161,30 @@ describe('schema', () => {
           maxbins: 7
         }
       });
-      assert.equal(cardinality, 7);
+      assert.equal(cardinality, 2);
+    });
+
+    it('should correctly compute new binned cardinality when binned cardinality is less than original cardinality', () => {
+      const cardinalityData = [
+        {a: 0}, {a: 1},                 // bin 0-1
+        {a: 2}, {a: 2}, {a: 3}, {a: 3}, // bin 2-3
+        {a: 6}, {a: 7}                  // bin 6-7
+      ];
+      const cardinalitySchema = Schema.build(cardinalityData);
+      const cardinalityNoBin: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X
+      });
+      const cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        bin: {
+          maxbins: 4
+        }
+      });
+
+      assert.equal(cardinalityNoBin, 6);
+      assert.equal(cardinality, 3);
     });
 
     it('should correctly compute cardinality for single timeUnits', () => {
@@ -197,7 +209,7 @@ describe('schema', () => {
         channel: Channel.X,
         timeUnit: 'yearmonthdate'
       });
-      assert.equal(cardinality, 10);
+      assert.equal(cardinality, 2);
     });
   });
 
