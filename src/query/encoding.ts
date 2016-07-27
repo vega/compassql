@@ -55,7 +55,9 @@ export function isMeasure(encQ: EncodingQuery) {
  *  @returns {undefined} If the scale type was not specified and Type (or TimeUnit if applicable) is an EnumSpec, there is no clear scale type
  */
 
-export function scaleType(scaleType: ScaleType | EnumSpec<ScaleType> | ShortEnumSpec, timeUnit: TimeUnit | EnumSpec<TimeUnit> | ShortEnumSpec, type: Type | EnumSpec<Type> | ShortEnumSpec) {
+export function scaleType(scaleType: ScaleType | EnumSpec<ScaleType> | ShortEnumSpec,
+    timeUnit: TimeUnit | EnumSpec<TimeUnit> | ShortEnumSpec,
+    type: Type | EnumSpec<Type> | ShortEnumSpec) {
   if (scaleType !== undefined) {
     return scaleType;
   }
