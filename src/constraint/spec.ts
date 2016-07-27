@@ -326,8 +326,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale) {
 
           let sType = scaleType((encQ.scale as ScaleQuery).type as ScaleType,
-                                    encQ.timeUnit as TimeUnit,
-                                    encQ.type as Type);
+                                 encQ.timeUnit as TimeUnit, encQ.type as Type);
 
           if (sType === ScaleType.LOG) {
             return false;
@@ -549,10 +548,10 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       for (let encQ of encodings) {
         if (encQ.scale) {
           const scale: ScaleQuery = encQ.scale as ScaleQuery;
+          const sType = scaleType(scale.type, encQ.timeUnit, encQ.type);
 
-          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC],
-              scaleType(scale.type as ScaleType, encQ.timeUnit as TimeUnit, encQ.type as Type)) &&
-              (scale.zero === true)) {
+          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], sType) &&
+             (scale.zero === true)) {
                return false;
           }
         }
