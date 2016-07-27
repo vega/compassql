@@ -180,7 +180,7 @@ export class Schema {
 }
 
 /**
- * @return a summary with the correct distinct property given a max number of bins
+ * @return a summary of the binning scheme determined from the given max number of bins
  */
 function binSummary(maxbins: number, summary: Summary) {
   const bin = dl.bins({
@@ -188,7 +188,8 @@ function binSummary(maxbins: number, summary: Summary) {
     max: summary.max,
     maxbins: maxbins
   });
-  return binToSum(bin, summary);
+
+  return binStats(bin, summary);
 }
 
 function timeUnitSummary(unit: TimeUnit, summary: Summary) {
@@ -201,7 +202,6 @@ function timeUnitSummary(unit: TimeUnit, summary: Summary) {
     case TimeUnit.HOURS:
     case TimeUnit.MINUTES:
     case TimeUnit.SECONDS:
-      // FIXME: call date function correctly? This syntax is odd.
       bin = dl.bins.date({
         min: summary.min,
         max: summary.max,
@@ -214,12 +214,62 @@ function timeUnitSummary(unit: TimeUnit, summary: Summary) {
         max: summary.max
       });
   }
-  return binToSum(bin, summary);
+
+  return binStats(bin, summary);
 }
 
-function binToSum(bin, summary) {
+/**
+ * @return a new summary based on a new binning scheme and old summary statistics
+ */
+function binStats(bin, summary: Summary): Summary {
+  // have the timeUnit bin scheme, need to determine new stats
+  // start with summary, pre-binning
   const result = extend({}, summary);
-  result.distinct = (bin.stop - bin.start) / bin.step;
+
+  const newUnique = binUnique(bin, summary.unique);
+  const values = uniqueToValues(newUnique);
+
+  result.unique = newUnique;
+  // 'count', 'valid', and 'missing' don't change
+  result.distinct = dl.count.distinct(values);
+  result.min = bin.start;
+  result.max = bin.stop;
+  result.mean = dl.mean(values);
+  result.stdev = dl.stdev(values);
+  result.median = dl.median(values);
+  const quartiles = dl.quartile(values);
+  result.q1 = quartiles[0];
+  result.q2 = quartiles[2];
+  result.modeskew = dl.modeskew(values);
+
+  return result;
+}
+
+/**
+ * @return a new unique object based off of the old unique count and a binning scheme
+ */
+function binUnique(bin, oldUnique) {
+  const newUnique = {};
+  for (var value in oldUnique) {
+    if (!newUnique[bin.value(value)]) {
+      newUnique[bin.value(value)] = oldUnique[value];
+    } else {
+      newUnique[bin.value(value)] += oldUnique[value];
+    }
+  }
+  return newUnique;
+}
+
+/**
+ * @return an array containing all the values recorded in a 'unique' object
+ */
+function uniqueToValues(unique) {
+  const result = [];
+  for (var value in unique) {
+    for (var i = 0; i < unique[value]; i++) {
+      result.push(value);
+    }
+  }
   return result;
 }
 
