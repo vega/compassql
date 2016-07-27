@@ -2,7 +2,6 @@ import {SUM_OPS} from 'vega-lite/src/aggregate';
 import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
-import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -326,7 +325,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale) {
 
           let sType = scaleType((encQ.scale as ScaleQuery).type,
-                                 encQ.timeUnit as TimeUnit, encQ.type);
+                                 encQ.timeUnit, encQ.type);
 
           if (sType === ScaleType.LOG) {
             return false;
