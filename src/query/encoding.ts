@@ -64,10 +64,12 @@ export function scaleType(scaleType: ScaleType, timeUnit: TimeUnit | EnumSpec<Ti
     return undefined;
   }
 
+  /* istanbul ignore else */
   if (type === Type.QUANTITATIVE) {
     return ScaleType.LINEAR;
   } else if (type === Type.ORDINAL || type === Type.NOMINAL) {
     return ScaleType.ORDINAL;
+
   } else if (type === Type.TEMPORAL) {
     if (timeUnit !== undefined) {
       if (isEnumSpec(timeUnit)) {
@@ -78,7 +80,6 @@ export function scaleType(scaleType: ScaleType, timeUnit: TimeUnit | EnumSpec<Ti
       return ScaleType.TIME;
     }
   } else {
-    /* istanbul ignore next */
     throw new Error();
   }
 }

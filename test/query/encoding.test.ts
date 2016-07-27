@@ -46,11 +46,18 @@
       });
     });
 
-    [TimeUnit.YEAR, TimeUnit.DATE, TimeUnit.MINUTES, TimeUnit.YEARMONTHDATEHOURSMINUTESSECONDS, TimeUnit.HOURSMINUTESSECONDS, TimeUnit.SECONDSMILLISECONDS,
-     TimeUnit.YEARQUARTERMONTH].forEach((timeU) => {
+    [TimeUnit.YEAR, TimeUnit.DATE, TimeUnit.MINUTES, TimeUnit.SECONDS, TimeUnit.MILLISECONDS, TimeUnit.YEARMONTH,
+     TimeUnit.YEARMONTHDATE, TimeUnit.YEARMONTHDATEHOURS, TimeUnit.YEARMONTHDATEHOURSMINUTES, TimeUnit.YEARMONTHDATEHOURSMINUTESSECONDS,
+     TimeUnit.HOURSMINUTES, TimeUnit.HOURSMINUTESSECONDS, TimeUnit.MINUTESSECONDS, TimeUnit.SECONDSMILLISECONDS,
+     TimeUnit.YEARQUARTER, TimeUnit.QUARTERMONTH, TimeUnit.YEARQUARTERMONTH].forEach((timeU) => {
        it('should return ScaleType.TIME if type is temporal and TimeUnit is ' + timeU + ' and scale type is not specified', () => {
          const sType = scaleType(undefined, timeU, Type.TEMPORAL);
          assert.equal(sType, ScaleType.TIME);
        });
+     });
+
+     it('should return ScaleType.TIME if type is temporal, TimeUnit is undefined, and scale type is not defined', () => {
+       const sType = scaleType(undefined, undefined, Type.TEMPORAL);
+       assert.equal(sType, ScaleType.TIME);
      });
   });
