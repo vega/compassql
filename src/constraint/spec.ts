@@ -12,7 +12,7 @@ import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {getNestedEncodingProperty, Property, isEncodingProperty} from '../property';
 import {Schema} from '../schema';
 import {isEnumSpec} from '../enumspec';
-import {scaleType as _scaleType, EncodingQuery, isMeasure, ScaleQuery} from '../query/encoding';
+import {scaleType, EncodingQuery, isMeasure, ScaleQuery} from '../query/encoding';
 import {contains, every, some} from '../util';
 
 export interface SpecConstraintChecker {
@@ -325,13 +325,11 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       for (let encQ of encodings) {
         if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale) {
 
-          const scale: ScaleQuery = encQ.scale as ScaleQuery;
-          let sType = scale.type as ScaleType;
-          let timeUnit = encQ.timeUnit as TimeUnit;
-          let type = encQ.type as Type;
-          let scaleType = _scaleType(sType, timeUnit, type);
+          let sType = scaleType((encQ.scale as ScaleQuery).type as ScaleType,
+                                    encQ.timeUnit as TimeUnit,
+                                    encQ.type as Type);
 
-          if (scaleType === ScaleType.LOG) {
+          if (sType === ScaleType.LOG) {
             return false;
           }
         }
@@ -550,15 +548,11 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
       for (let encQ of encodings) {
         if (encQ.scale) {
-
           const scale: ScaleQuery = encQ.scale as ScaleQuery;
-          let sType = scale.type as ScaleType;
-          let timeUnit = encQ.timeUnit as TimeUnit;
-          let type = encQ.type as Type;
-          let scaleType = _scaleType(sType, timeUnit, type);
 
-          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], scaleType) &&
-             (scale.zero === true)) {
+          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC],
+              scaleType(scale.type as ScaleType, encQ.timeUnit as TimeUnit, encQ.type as Type)) &&
+              (scale.zero === true)) {
                return false;
           }
         }
