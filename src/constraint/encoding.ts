@@ -4,7 +4,7 @@ import {Type} from 'vega-lite/src/type';
 import {QueryConfig} from '../config';
 import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
 import {getNestedEncodingProperty, Property} from '../property';
-import {EncodingQuery, isDimension, isMeasure, ScaleQuery} from '../query/encoding';
+import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery} from '../query/encoding';
 import {isEnumSpec} from '../enumspec';
 import {PrimitiveType, Schema} from '../schema';
 import {contains, every} from '../util';
@@ -221,22 +221,22 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.scale) {
-        const scaleType = (encQ.scale as ScaleQuery).type;
         const type = encQ.type;
+        const sType = scaleType((encQ.scale as ScaleQuery).type, encQ.timeUnit, type);
 
         if (contains([Type.ORDINAL, Type.NOMINAL], type)) {
-            return contains([ScaleType.ORDINAL, undefined], scaleType);
+            return contains([ScaleType.ORDINAL, undefined], sType);
         } else if (type === Type.TEMPORAL) {
           if(!encQ.timeUnit) {
-            return contains([ScaleType.TIME, ScaleType.UTC, undefined], scaleType);
+            return contains([ScaleType.TIME, ScaleType.UTC, undefined], sType);
           } else {
-            return contains([ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined], scaleType);
+            return contains([ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined], sType);
           }
         } else if (type === Type.QUANTITATIVE) {
           if (encQ.bin) {
-            return contains([ScaleType.LINEAR, undefined], scaleType);
+            return contains([ScaleType.LINEAR, undefined], sType);
           } else {
-            return contains([ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.LINEAR, undefined], scaleType);
+            return contains([ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.LINEAR, undefined], sType);
           }
         }
       }
