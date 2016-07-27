@@ -221,8 +221,8 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.scale) {
-        const type = encQ.type as Type;
-        const sType = scaleType((encQ.scale as ScaleQuery).type, encQ.timeUnit, encQ.type as Type);
+        const type = encQ.type;
+        const sType = scaleType((encQ.scale as ScaleQuery).type, encQ.timeUnit, type);
 
         if (contains([Type.ORDINAL, Type.NOMINAL], type)) {
             return contains([ScaleType.ORDINAL, undefined], sType);
