@@ -231,7 +231,7 @@ function binStats(bin, summary: Summary): Summary {
 
   result.unique = newUnique;
   // 'count', 'valid', and 'missing' don't change
-  result.distinct = dl.count.distinct(values);
+  result.distinct = keys(result.unique).length;
   result.min = bin.start;
   result.max = bin.stop;
   result.mean = dl.mean(values);
@@ -251,10 +251,12 @@ function binStats(bin, summary: Summary): Summary {
 function binUnique(bin, oldUnique) {
   const newUnique = {};
   for (var value in oldUnique) {
+    // date types are tricky, need to convert into correct unit
+    let bucket = bin.unit.date ? bin.value(bin.unit.unit(new Date(value))) : bin.value(value);
     if (!newUnique[bin.value(value)]) {
-      newUnique[bin.value(value)] = oldUnique[value];
+      newUnique[bucket] = oldUnique[value];
     } else {
-      newUnique[bin.value(value)] += oldUnique[value];
+      newUnique[bucket] += oldUnique[value];
     }
   }
   return newUnique;
