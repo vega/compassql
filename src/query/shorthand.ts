@@ -55,18 +55,18 @@ export function fieldDef(encQ: EncodingQuery): string {
   // Scale
   // TODO: convert this chunk into a loop of scale, axis, legend
   if (encQ.scale && !isEnumSpec(encQ.scale)) {
-    const scaleParamsArr = getNestedEncodingPropertyChildren(Property.SCALE);
-    var scaleParams = scaleParamsArr.reduce((scaleParamsObj, param: any) => {
-        if (encQ.scale[param]) {
-          scaleParamsObj[param] = encQ.scale[param];
-        }
-        return scaleParamsObj;
+    const nestedProps = getNestedEncodingPropertyChildren(Property.SCALE);
+    const nestedParams = nestedProps.reduce((scaleParamsObj, nestedScaleProp) => {
+      if (encQ.scale[nestedScaleProp.child]) {
+        scaleParamsObj[nestedScaleProp.child] = encQ.scale[nestedScaleProp.child];
+      }
+      return scaleParamsObj;
     }, {});
 
-      if(keys(scaleParams).length > 0) {
+    if(keys(nestedParams).length > 0) {
       params.push({
         key: 'scale',
-        value: JSON.stringify(scaleParams)
+        value: JSON.stringify(nestedParams)
       });
     }
   } else if (encQ.scale === false || encQ.scale === null) {
