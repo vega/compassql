@@ -13,8 +13,10 @@ import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 
 import {QueryConfig} from './config';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
-import {SHORT_ENUM_SPEC, SpecQuery, EnumSpec} from './query';
-import {initEnumSpec, isAggregate, isEnumSpec, isDimension, isMeasure, stack, stringifySpecQuery} from './query';
+import {EnumSpec, SHORT_ENUM_SPEC, initEnumSpec, isEnumSpec} from './enumspec';
+import {SpecQuery, isAggregate, stack} from './query/spec';
+import {isDimension, isMeasure} from './query/encoding';
+import {spec as specShorthand} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
@@ -52,10 +54,13 @@ export interface EnumSpecIndex {
   /** List of indice tuples of encoding mappings that require scale enumeration. */
   scale?: EnumSpecIndexTuple<boolean>[];
 
-  /** List of indice tuple for encoding mappings that require enumerating scale.scale_type */
+  /** List of indice tuple for encoding mappings that require enumerating scale.bandSize */
+  scaleBandSize?: EnumSpecIndexTuple<number>[];
+
+  /** List of indice tuple for encoding mappings that require enumerating scale.type */
   scaleType?: EnumSpecIndexTuple<ScaleType>[];
 
-  /** List of indice tuple for encoding mappings that require enumerating scale.scale_zero */
+  /** List of indice tuple for encoding mappings that require enumerating scale.zero */
   scaleZero?: EnumSpecIndexTuple<boolean>[];
 
   /** List of indice tuples of encoding mappings that require timeUnit enumeration. */
@@ -84,6 +89,8 @@ export function getDefaultName(prop: Property) {
       return 'b-mb';
     case Property.SCALE:
       return 's';
+    case Property.SCALE_BANDSIZE:
+      return 's-bs';
     case Property.SCALE_TYPE:
       return 's-t';
     case Property.SCALE_ZERO:
@@ -116,6 +123,9 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     // The config name for each prop is a plural form of the prop.
     case Property.BIN_MAXBINS:
       return opt.maxBinsList;
+
+    case Property.SCALE_BANDSIZE:
+      return opt.scaleBandSizes;
 
     case Property.SCALE_TYPE:
       return opt.scaleTypes;
@@ -394,7 +404,7 @@ export class SpecQueryModel {
   }
 
   public toShorthand(): string {
-    return stringifySpecQuery(this._spec);
+    return specShorthand(this._spec);
   }
 
   private _encoding(): Encoding {
@@ -446,7 +456,11 @@ export class SpecQueryModel {
     if (data) {
       spec.data = data;
     }
-    // TODO: transform
+
+    if (this._spec.transform) {
+      spec.transform = this._spec.transform;
+    }
+
     spec.mark = this._spec.mark as Mark;
     spec.encoding = this._encoding();
     if (spec.encoding === null) {

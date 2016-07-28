@@ -2,7 +2,7 @@ import {ENUMERATOR_INDEX} from '../src/enumerator';
 
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {SpecQueryModel} from './model';
-import {SpecQuery} from './query';
+import {SpecQuery} from './query/spec';
 import {Schema} from './schema';
 
 export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DEFAULT_QUERY_CONFIG) {

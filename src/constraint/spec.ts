@@ -10,9 +10,9 @@ import {QueryConfig} from '../config';
 import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
 import {getNestedEncodingProperty, Property, isEncodingProperty} from '../property';
 import {Schema} from '../schema';
-import {ScaleQuery, EncodingQuery, isEnumSpec, isMeasure} from '../query';
+import {isEnumSpec} from '../enumspec';
+import {scaleType, EncodingQuery, isMeasure, ScaleQuery} from '../query/encoding';
 import {contains, every, some} from '../util';
-
 
 export interface SpecConstraintChecker {
   (specM: SpecQueryModel, schema: Schema, opt: QueryConfig): boolean;
@@ -313,7 +313,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'omitBarAreaForLogScale',
     description: 'Do not use bar and area mark for x and y\'s log scale',
-    properties: [Property.MARK, Property.CHANNEL, Property.SCALE, Property.SCALE_TYPE], // Prpoerty.ScaleType and scale
+    properties: [Property.MARK, Property.CHANNEL, Property.SCALE, Property.SCALE_TYPE, Property.TYPE],
     allowEnumSpecForProperties: false,
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
@@ -323,7 +323,11 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     if (mark === Mark.AREA || mark === Mark.BAR) {
       for (let encQ of encodings) {
         if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale) {
-          if (((encQ.scale as ScaleQuery).type as ScaleType) === ScaleType.LOG) {
+
+          let sType = scaleType((encQ.scale as ScaleQuery).type,
+                                 encQ.timeUnit, encQ.type);
+
+          if (sType === ScaleType.LOG) {
             return false;
           }
         }
@@ -534,7 +538,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'scaleZeroMustMatchScaleType',
     description: 'ScaleZero should not be used with LOG, ORDINAL, TIME and UTC',
-    properties: [Property.SCALE, Property.SCALE_TYPE, Property.SCALE_ZERO],
+    properties: [Property.SCALE, Property.TYPE, Property.SCALE_TYPE, Property.SCALE_ZERO],
     allowEnumSpecForProperties: false,
     strict: true,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
@@ -543,7 +547,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       for (let encQ of encodings) {
         if (encQ.scale) {
           const scale: ScaleQuery = encQ.scale as ScaleQuery;
-          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], scale.type) &&
+          const sType = scaleType(scale.type, encQ.timeUnit, encQ.type);
+
+          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], sType) &&
              (scale.zero === true)) {
                return false;
           }

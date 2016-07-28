@@ -7,8 +7,9 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel, getDefaultName, getDefaultEnumValues} from '../src/model';
-import {DEFAULT_PROPERTY_PRECEDENCE, Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
-import {SHORT_ENUM_SPEC, SpecQuery, isEnumSpec} from '../src/query';
+import {Property, DEFAULT_PROPERTY_PRECEDENCE, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
+import {SHORT_ENUM_SPEC, isEnumSpec} from '../src/enumspec';
+import {SpecQuery} from '../src/query/spec';
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
 
@@ -246,6 +247,8 @@ describe('SpecQueryModel', () => {
   describe('toSpec', () => {
     it('should return a Vega-Lite spec if the query is completed', () => {
       const specM = buildSpecQueryModel({
+        data: {values: [{A: 1}]},
+        transform: {filter: 'datum.A===1'},
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
@@ -254,6 +257,8 @@ describe('SpecQueryModel', () => {
 
       const spec = specM.toSpec();
       assert.deepEqual(spec, {
+        data: {values: [{A: 1}]},
+        transform: {filter: 'datum.A===1'},
         mark: Mark.BAR,
         encoding: {
           x: {field: 'A', type: Type.QUANTITATIVE}

@@ -9,7 +9,8 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
-import {SHORT_ENUM_SPEC, ScaleQuery} from '../src/query';
+import {ScaleQuery} from '../src/query/encoding';
+import {SHORT_ENUM_SPEC} from '../src/enumspec';
 import {extend, some} from '../src/util';
 
 import {schema} from './fixture';
@@ -151,6 +152,29 @@ describe('generate', function () {
           );
         });
       });
+    });
+  });
+
+  describe('scale-bandSize', () => {
+    it('should enumerate correct scaleType with bandSize', () => {
+      const specQ = {
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: Channel.X,
+            scale: {
+              bandSize: 10,
+              type: {values: [undefined, ScaleType.LOG, ScaleType.TIME, ScaleType.ORDINAL]}
+            },
+            field: 'Q',
+            type: Type.NOMINAL
+          }
+        ]
+      };
+      const answerSet = generate(specQ, schema);
+      assert.equal(answerSet.length, 2);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
     });
   });
 
