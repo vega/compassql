@@ -61,10 +61,11 @@ export class Schema {
 
     // calculate preset bins
     for (let fieldSchema of fieldSchemas) {
+      fieldSchema.binStats = {};
+      fieldSchema.timeStats = {};
       if (fieldSchema.type === Type.QUANTITATIVE) {
-        fieldSchema.binStats = {};
         for (let maxbins of opt.maxBinsList) {
-          fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
+          fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats, fieldSchema.type);
         }
       } else if (fieldSchema.type === Type.TEMPORAL) {
         // need to get min/max of date data
@@ -81,9 +82,8 @@ export class Schema {
         }
 
         // enumerate a binning scheme for every timeUnit
-        fieldSchema.timeStats = {};
         for (let unit of TIMEUNITS) {
-          fieldSchema.timeStats[unit] = timeUnitSummary(unit, fieldSchema.stats);
+          fieldSchema.timeStats[unit] = timeUnitSummary(unit, fieldSchema.stats, fieldSchema.type);
         }
       }
     }
@@ -135,7 +135,7 @@ export class Schema {
       const maxbins: any = bin.maxbins;
       if (!fieldSchema.binStats[maxbins]) {
         // need to calculate
-        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
+        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats, fieldSchema.type);
       }
       return fieldSchema.binStats[maxbins].distinct;
     } else if (encQ.timeUnit) {
@@ -182,17 +182,17 @@ export class Schema {
 /**
  * @return a summary of the binning scheme determined from the given max number of bins
  */
-function binSummary(maxbins: number, summary: Summary) {
+function binSummary(maxbins: number, summary: Summary, type: Type) {
   const bin = dl.bins({
     min: summary.min,
     max: summary.max,
     maxbins: maxbins
   });
 
-  return binStats(bin, summary);
+  return binStats(bin, summary, type);
 }
 
-function timeUnitSummary(unit: TimeUnit, summary: Summary) {
+function timeUnitSummary(unit: TimeUnit, summary: Summary, type: Type) {
   var bin;
   switch (unit) {
     // these are the units that dl.bins.date supports
@@ -215,13 +215,13 @@ function timeUnitSummary(unit: TimeUnit, summary: Summary) {
       });
   }
 
-  return binStats(bin, summary);
+  return binStats(bin, summary, type);
 }
 
 /**
  * @return a new summary based on a new binning scheme and old summary statistics
  */
-function binStats(bin, summary: Summary): Summary {
+function binStats(bin, summary: Summary, type: Type): Summary {
   // have the timeUnit bin scheme, need to determine new stats
   // start with summary, pre-binning
   const result = extend({}, summary);
@@ -231,7 +231,7 @@ function binStats(bin, summary: Summary): Summary {
 
   result.unique = newUnique;
   // 'count', 'valid', and 'missing' don't change
-  result.distinct = keys(result.unique).length;
+  result.distinct = (type === Type.ORDINAL) ? keys(result.unique).length : (bin.stop - bin.start) / bin.step;
   result.min = bin.start;
   result.max = bin.stop;
   result.mean = dl.mean(values);

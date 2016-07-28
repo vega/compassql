@@ -135,7 +135,7 @@ describe('schema', () => {
         channel: Channel.X,
         bin: true  // should cause maxbins to be 10
       });
-      assert.equal(cardinality, 2);
+      assert.equal(cardinality, 10);
     });
 
     it('should correctly return binned cardinality when specific bin parameters are specified', () => {
@@ -148,7 +148,7 @@ describe('schema', () => {
           maxbins: 5
         }
       });
-      assert.equal(cardinality, 2);
+      assert.equal(cardinality, 5);
     });
 
     it('should correctly compute new binned cardinality when bin params are not already cached', () => {
@@ -161,10 +161,10 @@ describe('schema', () => {
           maxbins: 7
         }
       });
-      assert.equal(cardinality, 2);
+      assert.equal(cardinality, 7);
     });
 
-    it('should correctly compute new binned cardinality when binned cardinality is less than original cardinality', () => {
+    it('should correctly compute new binned cardinality when binned cardinality is less than non-binned cardinality', () => {
       const cardinalityData = [
         {a: 0}, {a: 1},                 // bin 0-1
         {a: 2}, {a: 2}, {a: 3}, {a: 3}, // bin 2-3
@@ -184,7 +184,46 @@ describe('schema', () => {
       });
 
       assert.equal(cardinalityNoBin, 6);
-      assert.equal(cardinality, 3);
+      assert.equal(cardinality, 4);
+    });
+
+    it('should correctly differentiate between cardinality for ordinal fields vs for linear fields', () => {
+      const ordinalCardinalityData = [];
+      // add enough non-distinct data to make the field ordinal and have multiple in-order, with skipping values
+      var total = 3 * (1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1);
+      for (var i = 0; i < total; i++) {
+        ordinalCardinalityData.push({a: 1});
+        ordinalCardinalityData.push({a: 3});
+        ordinalCardinalityData.push({a: 5});
+      }
+      const ordinalCardinalitySchema = Schema.build(ordinalCardinalityData);
+      const ordinalCardinality: number = ordinalCardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        bin: {
+          maxbins: 4
+        }
+      });
+
+      const quantitativeCardinalityData = [
+        {a: 1},
+        {a: 3},
+        {a: 5}
+      ];
+      const quantitativeCardinalitySchema = Schema.build(quantitativeCardinalityData);
+      const quantitativeCardinality: number = quantitativeCardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        bin: {
+          maxbins: 4
+        }
+      });
+
+      assert.equal(ordinalCardinalitySchema.type('a'), Type.ORDINAL);
+      assert.equal(ordinalCardinality, 3);
+
+      assert.equal(quantitativeCardinalitySchema.type('a'), Type.QUANTITATIVE);
+      assert.equal(quantitativeCardinality, 4);
     });
 
     it('should correctly compute cardinality for single timeUnits', () => {
@@ -209,7 +248,7 @@ describe('schema', () => {
         channel: Channel.X,
         timeUnit: 'yearmonthdate'
       });
-      assert.equal(cardinality, 2);
+      assert.equal(cardinality, 10);
     });
   });
 
