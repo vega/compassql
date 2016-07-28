@@ -4,83 +4,116 @@ import {EncodingQuery} from './encoding';
 import {SpecQuery, stack} from './spec';
 import {isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 
-import {getNestedEncodingPropertyChildren, Property} from '../property';
-import {keys} from '../util';
+import {getNestedEncodingPropertyChildren, Property, DEFAULT_PROPERTY_PRECEDENCE} from '../property';
+import {Dict, keys} from '../util';
+
 export function enumSpecShort(value: any): any {
   return (isEnumSpec(value) ? SHORT_ENUM_SPEC : value);
 }
 
-export function spec(specQ: SpecQuery): string {
-  const mark = enumSpecShort(specQ.mark);
-  const encodings = specQ.encodings.map(encoding)
-                        .sort()
-                        .join('|');  // sort at the end to ignore order
+const INCLUDE_ALL: Dict<boolean> = DEFAULT_PROPERTY_PRECEDENCE.reduce((m, prop) => {
+  m[prop] = true;
+  return m;
+}, {} as Dict<boolean>);
+
+export function spec(specQ: SpecQuery, include: Dict<boolean> = INCLUDE_ALL): string {
+  const parts = [];
+
+  if (include[Property.MARK]) {
+    parts.push(enumSpecShort(specQ.mark));
+  }
+
+  // TODO: transform
+
+  // TODO: stack Property
   const _stack = stack(specQ);
+  if (_stack) {
+    parts.push('stack=' + _stack.offset);
+  }
 
-  return mark + '|' +
-      // TODO: transform
-      (_stack ? 'stack=' + _stack.offset + '|' : '') +
-      encodings;
+  parts.push(specQ.encodings.map((encQ) => encoding(encQ))
+                        .sort()
+                        .join('|'));  // sort at the end to ignore order
+
+  return parts.join('|');
 }
 
-export function encoding(encQ: EncodingQuery): string {
-  return enumSpecShort(encQ.channel) + ':' + fieldDef(encQ);
+export function encoding(encQ: EncodingQuery, include: Dict<boolean> = INCLUDE_ALL): string {
+  const parts = [];
+  if (include[Property.CHANNEL]) {
+    parts.push(enumSpecShort(encQ.channel));
+  }
+
+  parts.push(fieldDef(encQ, include)); // fieldDef is never empty
+  return parts.join(':');
 }
 
-export function fieldDef(encQ: EncodingQuery): string {
+export function fieldDef(encQ: EncodingQuery, include: Dict<boolean> = INCLUDE_ALL): string {
   let fn = null;
-  const params: {key: string, value: any}[]=  [];
+
+  /** Encoding properties e.g., Scale, Axis, Legend */
+  const props: {key: string, value: boolean | Object}[] = [];
 
   if (encQ.autoCount === false) {
     return '-';
   }
 
-  if (encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
+  if (include[Property.AGGREGATE] && encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
     fn = encQ.aggregate;
-  } else if (encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
+  } else if (include[Property.TIMEUNIT] && encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
     fn = encQ.timeUnit;
-  } else if (encQ.bin && !isEnumSpec(encQ.bin)) {
+  } else if (include[Property.BIN] && encQ.bin && !isEnumSpec(encQ.bin)) {
     fn = 'bin';
-    if (encQ.bin['maxbins']) {
-      params.push({key: 'maxbins', value: encQ.bin['maxbins']});
+
+    if (include[Property.BIN_MAXBINS] && encQ.bin['maxbins']) {
+      props.push({key: 'maxbins', value: encQ.bin['maxbins']});
     }
-  } else if (encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
+  } else if (include[Property.AGGREGATE] && encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
     fn = 'count';
-  } else if (
-      (encQ.aggregate && isEnumSpec(encQ.aggregate)) ||
-      (encQ.autoCount && isEnumSpec(encQ.autoCount)) ||
-      (encQ.timeUnit && isEnumSpec(encQ.timeUnit)) ||
-      (encQ.bin && isEnumSpec(encQ.bin))
-    ) {
-    fn = SHORT_ENUM_SPEC + '';
+  } else {
+    for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
+      if (include[prop] && encQ[prop] && isEnumSpec(encQ[prop])) {
+        fn = SHORT_ENUM_SPEC + '';
+        break;
+      }
+    }
   }
 
   // Scale
-  // TODO: convert this chunk into a loop of scale, axis, legend
-  if (encQ.scale && !isEnumSpec(encQ.scale)) {
-    const nestedProps = getNestedEncodingPropertyChildren(Property.SCALE);
-    const nestedParams = nestedProps.reduce((scaleParamsObj, nestedScaleProp) => {
-      if (encQ.scale[nestedScaleProp.child]) {
-        scaleParamsObj[nestedScaleProp.child] = encQ.scale[nestedScaleProp.child];
-      }
-      return scaleParamsObj;
-    }, {});
+  // TODO: axis, legend
+  for (const nestedPropParent of [Property.SCALE]) {
+    if (include[nestedPropParent]) {
+      if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
+        const nestedProps = getNestedEncodingPropertyChildren(nestedPropParent);
+        const nestedPropChildren = nestedProps.reduce((p, nestedProp) => {
+          if (include[nestedProp.property] && encQ[nestedPropParent][nestedProp.child] !== undefined) {
+            p[nestedProp.child] = enumSpecShort(encQ[nestedPropParent][nestedProp.child]);
+          }
+          return p;
+        }, {});
 
-    if(keys(nestedParams).length > 0) {
-      params.push({
-        key: 'scale',
-        value: JSON.stringify(nestedParams)
-      });
+        if(keys(nestedPropChildren).length > 0) {
+          props.push({
+            key: nestedPropParent + '',
+            value: JSON.stringify(nestedPropChildren)
+          });
+        }
+      } else if (encQ[nestedPropParent] === false || encQ[nestedPropParent] === null) {
+        props.push({
+          key: nestedPropParent + '',
+          value: false
+        });
+      }
     }
-  } else if (encQ.scale === false || encQ.scale === null) {
-    params.push({
-      key: 'scale',
-      value: false
-    });
   }
 
-  const fieldType = enumSpecShort(encQ.field || '*') + ',' +
-    enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1) +
-    params.map((p) => ',' + p.key + '=' + p.value).join('');
-  return (fn ? fn + '(' + fieldType + ')' : fieldType);
+  // field
+  let fieldAndParams = include[Property.FIELD] ? enumSpecShort(encQ.field || '*') : '...';
+  // type
+  if (include[Property.TYPE]) {
+    fieldAndParams += ',' + enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1);
+  }
+  // encoding properties
+  fieldAndParams += props.map((p) => ',' + p.key + '=' + p.value).join('');
+  return (fn ? fn + '(' + fieldAndParams + ')' : fieldAndParams);
 }
