@@ -90,7 +90,7 @@ export function getDefaultName(prop: Property) {
     case Property.SCALE:
       return 's';
     case Property.SCALE_BANDSIZE:
-      return 'b-bs';
+      return 's-bs';
     case Property.SCALE_TYPE:
       return 's-t';
     case Property.SCALE_ZERO:
