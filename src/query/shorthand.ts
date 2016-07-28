@@ -7,20 +7,37 @@ import {isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 import {getNestedEncodingPropertyChildren, Property, DEFAULT_PROPERTY_PRECEDENCE} from '../property';
 import {Dict, keys} from '../util';
 
-export function enumSpecShort(value: any): any {
-  return (isEnumSpec(value) ? SHORT_ENUM_SPEC : value);
+type Replacer = (s: string) => string;
+
+export function value(v: any, replace: Replacer): any {
+  if (isEnumSpec(v)) {
+    return SHORT_ENUM_SPEC;
+  }
+  if (replace) {
+    return replace(v);
+  }
+  return v;
 }
 
-const INCLUDE_ALL: Dict<boolean> = DEFAULT_PROPERTY_PRECEDENCE.reduce((m, prop) => {
+export const INCLUDE_ALL: Dict<boolean> = DEFAULT_PROPERTY_PRECEDENCE.reduce((m, prop) => {
   m[prop] = true;
   return m;
 }, {} as Dict<boolean>);
 
-export function spec(specQ: SpecQuery, include: Dict<boolean> = INCLUDE_ALL): string {
+/**
+ * Returns a shorthand for a spec query
+ * @param specQ a spec query
+ * @param include Dict Set listing property types (key) to be included in the shorthand
+ * @param replace Dictionary of replace function for values of a particular property type (key)
+ */
+export function spec(specQ: SpecQuery,
+    include: Dict<boolean> = INCLUDE_ALL,
+    replace: Dict<Replacer> = {}
+    ): string {
   const parts = [];
 
   if (include[Property.MARK]) {
-    parts.push(enumSpecShort(specQ.mark));
+    parts.push(value(specQ.mark, replace[Property.MARK]));
   }
 
   // TODO: transform
@@ -28,27 +45,47 @@ export function spec(specQ: SpecQuery, include: Dict<boolean> = INCLUDE_ALL): st
   // TODO: stack Property
   const _stack = stack(specQ);
   if (_stack) {
+    // TODO: use shorthandValue once we have proper stack property
     parts.push('stack=' + _stack.offset);
   }
 
-  parts.push(specQ.encodings.map((encQ) => encoding(encQ))
+  parts.push(specQ.encodings.map((encQ) => encoding(encQ, include, replace))
                         .sort()
                         .join('|'));  // sort at the end to ignore order
 
   return parts.join('|');
 }
 
-export function encoding(encQ: EncodingQuery, include: Dict<boolean> = INCLUDE_ALL): string {
+/**
+ * Returns a shorthand for an encoding query
+ * @param encQ an encoding query
+ * @param include Dict Set listing property types (key) to be included in the shorthand
+ * @param replace Dictionary of replace function for values of a particular property type (key)
+ */
+export function encoding(encQ: EncodingQuery,
+    include: Dict<boolean> = INCLUDE_ALL,
+    replace: Dict<Replacer> = {}
+    ): string {
+
   const parts = [];
   if (include[Property.CHANNEL]) {
-    parts.push(enumSpecShort(encQ.channel));
+    parts.push(value(encQ.channel, replace[Property.CHANNEL]));
   }
 
-  parts.push(fieldDef(encQ, include)); // fieldDef is never empty
+  parts.push(fieldDef(encQ, include, replace)); // fieldDef is never empty
   return parts.join(':');
 }
 
-export function fieldDef(encQ: EncodingQuery, include: Dict<boolean> = INCLUDE_ALL): string {
+/**
+ * Returns a field definiton shorthand for an encoding query
+ * @param encQ an encoding query
+ * @param include Dict Set listing property types (key) to be included in the shorthand
+ * @param replace Dictionary of replace function for values of a particular property type (key)
+ */
+export function fieldDef(encQ: EncodingQuery,
+    include: Dict<boolean> = INCLUDE_ALL,
+    replace: Dict<Replacer> = {}): string {
+
   let fn = null;
 
   /** Encoding properties e.g., Scale, Axis, Legend */
@@ -59,17 +96,20 @@ export function fieldDef(encQ: EncodingQuery, include: Dict<boolean> = INCLUDE_A
   }
 
   if (include[Property.AGGREGATE] && encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
-    fn = encQ.aggregate;
+    fn = value(encQ.aggregate, replace[Property.AGGREGATE]);
   } else if (include[Property.TIMEUNIT] && encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
-    fn = encQ.timeUnit;
+    fn = value(encQ.timeUnit, replace[Property.TIMEUNIT]);
   } else if (include[Property.BIN] && encQ.bin && !isEnumSpec(encQ.bin)) {
     fn = 'bin';
 
     if (include[Property.BIN_MAXBINS] && encQ.bin['maxbins']) {
-      props.push({key: 'maxbins', value: encQ.bin['maxbins']});
+      props.push({
+        key: 'maxbins',
+        value: value(encQ.bin['maxbins'], replace[Property.BIN_MAXBINS])
+      });
     }
   } else if (include[Property.AGGREGATE] && encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
-    fn = 'count';
+    fn = value('count', replace[Property.AGGREGATE]);;
   } else {
     for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
       if (include[prop] && encQ[prop] && isEnumSpec(encQ[prop])) {
@@ -87,7 +127,7 @@ export function fieldDef(encQ: EncodingQuery, include: Dict<boolean> = INCLUDE_A
         const nestedProps = getNestedEncodingPropertyChildren(nestedPropParent);
         const nestedPropChildren = nestedProps.reduce((p, nestedProp) => {
           if (include[nestedProp.property] && encQ[nestedPropParent][nestedProp.child] !== undefined) {
-            p[nestedProp.child] = enumSpecShort(encQ[nestedPropParent][nestedProp.child]);
+            p[nestedProp.child] = value(encQ[nestedPropParent][nestedProp.child], replace[nestedProp.property]);
           }
           return p;
         }, {});
@@ -108,10 +148,11 @@ export function fieldDef(encQ: EncodingQuery, include: Dict<boolean> = INCLUDE_A
   }
 
   // field
-  let fieldAndParams = include[Property.FIELD] ? enumSpecShort(encQ.field || '*') : '...';
+  let fieldAndParams = include[Property.FIELD] ? value(encQ.field || '*', replace[Property.FIELD]) : '...';
   // type
   if (include[Property.TYPE]) {
-    fieldAndParams += ',' + enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1);
+    const typeShort = ((encQ.type || Type.QUANTITATIVE)+'').substr(0,1);
+    fieldAndParams += ',' + value(typeShort, replace[Property.TYPE]);
   }
   // encoding properties
   fieldAndParams += props.map((p) => ',' + p.key + '=' + p.value).join('');

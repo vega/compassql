@@ -6,7 +6,7 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
-import {spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand} from '../../src/query/shorthand';
+import {spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, INCLUDE_ALL} from '../../src/query/shorthand';
 
 import {assert} from 'chai';
 
@@ -20,6 +20,27 @@ describe('query/shorthand', () => {
         ]
       });
       assert.equal(str, 'point|x:a,q');
+    });
+
+    it('should return correct spec string for specific specQuery with channel replacer', () => {
+      const str = specShorthand({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: 'a', type: Type.QUANTITATIVE},
+            {channel: Channel.COLOR, field: 'b', type: Type.QUANTITATIVE}
+          ]
+        },
+        INCLUDE_ALL,
+        {
+          channel: (channel: any) => {
+            if (channel === Channel.X || channel === Channel.Y) {
+              return 'xy';
+            }
+            return channel;
+          }
+        }
+      );
+      assert.equal(str, 'point|color:b,q|xy:a,q');
     });
 
     it('should return correct spec string for specific specQuery when mark is not included.', () => {
