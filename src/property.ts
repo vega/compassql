@@ -162,7 +162,7 @@ export function getNestedEncodingProperty(prop: Property) {
   return NESTED_ENCODING_INDEX[prop];
 }
 
-export function getNestedEncodingPropertyChild(parent: Property) {
+export function getNestedEncodingPropertyChildren(parent: Property) {
   return NESTED_ENCODING_PROPERTY_PARENT_INDEX[parent];
 }
 
