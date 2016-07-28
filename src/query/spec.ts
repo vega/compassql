@@ -6,11 +6,12 @@ import {Mark, BAR, AREA} from 'vega-lite/src/mark';
 import {StackOffset, StackProperties} from 'vega-lite/src/stack';
 
 import {EnumSpec, ShortEnumSpec, isEnumSpec} from '../enumspec';
+import {ENCODING_PROPERTIES, isNestedEncodingProperty, Property} from '../property';
+import {contains, extend, keys, some} from '../util';
+
 import {TransformQuery} from './transform';
 import {EncodingQuery} from './encoding';
 
-import {ENCODING_PROPERTIES, isNestedEncodingProperty, Property} from '../property';
-import {contains, extend, keys, some} from '../util';
 
 
 export interface SpecQuery {
