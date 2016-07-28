@@ -23,7 +23,3 @@ export function initEnumSpec(prop: any, defaultName: string, defaultEnumValues: 
       values: defaultEnumValues
     }, prop);
 }
-
-export function enumSpecShort(value: any): string {
-  return (isEnumSpec(value) ? SHORT_ENUM_SPEC : value) + '';
-}

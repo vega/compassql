@@ -2,10 +2,13 @@ import {Type} from 'vega-lite/src/type';
 
 import {EncodingQuery} from './encoding';
 import {SpecQuery, stack} from './spec';
-import {enumSpecShort, isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
+import {isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 
 import {getNestedEncodingPropertyChildren, Property} from '../property';
 import {keys} from '../util';
+export function enumSpecShort(value: any): any {
+  return (isEnumSpec(value) ? SHORT_ENUM_SPEC : value);
+}
 
 export function spec(specQ: SpecQuery): string {
   const mark = enumSpecShort(specQ.mark);
