@@ -4,7 +4,6 @@ import {autoMaxBins} from 'vega-lite/src/bin';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 import * as dlBin from 'datalib/src/bins/bins';
-import {duplicate} from 'datalib/src/util';
 
 import {BinQuery, EncodingQuery} from './query/encoding';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
