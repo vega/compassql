@@ -1,6 +1,6 @@
 {
   "name": "compassql",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "CompassQL visualization query language",
   "main": "compassql.js",
   "directories": {
@@ -43,25 +43,25 @@
   },
   "homepage": "https://github.com/uwdata/compassql#readme",
   "devDependencies": {
-    "browserify": "^13.0.0",
-    "browserify-versionify": "^1.0.6",
-    "chai": "^3.4.1",
-    "datalib": "^1.7.0",
-    "exorcist": "^0.4.0",
-    "istanbul": "^0.4.2",
+    "browserify": "~13.0.0",
+    "browserify-versionify": "~1.0.6",
+    "chai": "~3.5.0",
+    "datalib": "~1.7.0",
+    "exorcist": "~0.4.0",
+    "istanbul": "~0.4.2",
     "mocha": "~2.4.4",
-    "nodemon": "^1.8.1",
-    "source-map-support": "^0.4.0",
-    "tsify": "^0.13.2",
-    "tslint": "^3.10.0",
-    "typescript": "^1.7.5",
-    "uglify-js": "^2.6.1",
-    "vega": "^2.5.2",
+    "nodemon": "~1.9.2",
+    "source-map-support": "~0.4.0",
+    "tsify": "~0.16.0",
+    "tslint": "~3.10.0",
+    "typescript": "~1.8.10",
+    "uglify-js": "~2.6.1",
+    "vega": "~2.6.0",
     "vega-datasets": "latest"
   },
   "dependencies": {
-    "vega-lite": "^1.1.0",
-    "typescript-json-schema": "0.1.1"
+    "vega-lite": "~1.1.0",
+    "typescript-json-schema": "~0.1.1"
   },
   "browserify": {
     "transform": [
