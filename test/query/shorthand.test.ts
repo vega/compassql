@@ -143,6 +143,34 @@ describe('query/shorthand', () => {
       assert.equal(str, '?(a,q)');
     });
 
+    it('should return correct fieldDefShorthand string for scale with a string[] domain', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.NOMINAL, scale: {domain: ['cats', 'dogs']}
+      });
+      assert.equal(str, 'a,n,scale={"domain":["cats","dogs"]}');
+    });
+
+    it('should return correct fieldDefShorthand string for scale with a number[] domain', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.NOMINAL, scale: {domain: [1,2]}
+      });
+      assert.equal(str, 'a,n,scale={"domain":[1,2]}');
+    });
+
+    it('should return correct fieldDefShorthand string for scale with a string[] range', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.NOMINAL, scale: {range: ['cats', 'dogs']}
+      });
+      assert.equal(str, 'a,n,scale={"range":["cats","dogs"]}');
+    });
+
+    it('should return correct fieldDefShorthand string for scale with a number[] range', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.NOMINAL, scale: {range: [1,2]}
+      });
+      assert.equal(str, 'a,n,scale={"range":[1,2]}');
+    });
+
     it('should return correct fieldDefShorthand string for bin field', () => {
        const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: true

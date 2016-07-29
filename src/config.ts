@@ -40,7 +40,11 @@ export interface QueryConfig {
 
   scaleClamps?: boolean[];
 
+  scaleDomains?: Array<string | number[] | string[]>;
+
   scaleExponents?: number[];
+
+  scaleRanges?: Array<string | number[] | string[]>;
 
   scaleRounds?: boolean[];
 
@@ -108,6 +112,10 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   maxBinsList: [5, 10, 20],
 
   scaleBandSizes: [17, 21],
+
+  scaleDomains: [undefined],
+
+  scaleRanges: [undefined],
 
   scaleExponents: [0.5, 1, 2],
 

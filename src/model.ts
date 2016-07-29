@@ -57,6 +57,15 @@ export interface EnumSpecIndex {
   /** List of indice tuple for encoding mappings that require enumerating scale.bandSize */
   scaleBandSize?: EnumSpecIndexTuple<number>[];
 
+  /** List of indice tuple for encoding mappings that require enumerating scale.domain */
+  scaleDomain?: EnumSpecIndexTuple<string | string[] | number[]>[];
+
+  /** List of indice tuple for encoding mappings that require enumerating scale.exponent */
+  scaleExponent?: EnumSpecIndexTuple<number>[];
+
+  /** List of indice tuple for encoding mappings that require enumerating scale.range */
+  scaleRange?: EnumSpecIndexTuple<string | string[] | number[]>[];
+
   /** List of indice tuple for encoding mappings that require enumerating scale.type */
   scaleType?: EnumSpecIndexTuple<ScaleType>[];
 
@@ -93,8 +102,12 @@ export function getDefaultName(prop: Property) {
       return 's-bs';
     case Property.SCALE_CLAMP:
       return 's-c';
+    case Property.SCALE_DOMAIN:
+      return 's-d';
     case Property.SCALE_EXPONENT:
       return 's-e';
+    case Property.SCALE_RANGE:
+      return 's-ra';
     case Property.SCALE_ROUND:
       return 's-r';
     case Property.SCALE_TYPE:
@@ -121,6 +134,8 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     case Property.BIN:
     case Property.SCALE:
     case Property.SCALE_CLAMP:
+    case Property.SCALE_DOMAIN:
+    case Property.SCALE_RANGE:
     case Property.SCALE_ROUND:
     case Property.SCALE_ZERO:
     case Property.AUTOCOUNT:
@@ -135,8 +150,14 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     case Property.SCALE_BANDSIZE:
       return opt.scaleBandSizes;
 
+    case Property.SCALE_DOMAIN:
+      return opt.scaleDomains;
+
     case Property.SCALE_EXPONENT:
       return opt.scaleExponents;
+
+    case Property.SCALE_RANGE:
+      return opt.scaleRanges;
 
     case Property.SCALE_TYPE:
       return opt.scaleTypes;

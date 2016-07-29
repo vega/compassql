@@ -282,6 +282,54 @@ describe('enumerator', () => {
       });
     });
 
+    describe('scaleDomain', () => {
+      it('should correctly enumerate scaleDomain with string[] values', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {
+                domain: {values: [undefined, ['cats', 'dogs'], ['chickens', 'pigs']]}
+              },
+              field: 'N',
+              type: Type.NOMINAL
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_DOMAIN](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 3);
+        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).domain, undefined);
+        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).domain, ['cats', 'dogs']);
+        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).domain, ['chickens', 'pigs']);
+      });
+
+      it('should correctly enumerate scaleDomain with number[] values', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {
+                domain: {values: [undefined, [1,3], [5,7]]}
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_DOMAIN](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 3);
+        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).domain, undefined);
+        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).domain, [1,3]);
+        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).domain, [5,7]);
+      });
+    });
+
     describe('scaleExponent', () => {
       it('should correctly enumerate scaleExponent', () => {
         const specM = buildSpecQueryModel({
@@ -304,6 +352,54 @@ describe('enumerator', () => {
         assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, 0.5);
         assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, 1);
         assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, 2);
+      });
+    });
+
+    describe('scaleRange', () => {
+      it('should correctly enumerate scaleRange with string[] values', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {
+                range: {values: [undefined, ['cats', 'dogs'], ['chickens', 'pigs']]}
+              },
+              field: 'N',
+              type: Type.NOMINAL
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_RANGE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 3);
+        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).range, undefined);
+        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).range, ['cats', 'dogs']);
+        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).range, ['chickens', 'pigs']);
+      });
+
+      it('should correctly enumerate scaleRange with number[] values', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {
+                range: {values: [undefined, [1,3], [5,7]]}
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_RANGE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 3);
+        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).range, undefined);
+        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).range, [1,3]);
+        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).range, [5,7]);
       });
     });
 
