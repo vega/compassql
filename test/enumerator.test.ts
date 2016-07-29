@@ -339,7 +339,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                exponent: {values: [0.5, 1, 2]}
+                exponent: {values: [0.5, 1, 2, undefined]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -349,10 +349,12 @@ describe('enumerator', () => {
         const enumerator = ENUMERATOR_INDEX[Property.SCALE_EXPONENT](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
-        assert.equal(answerSet.length, 3);
+        assert.equal(answerSet.length, 4);
         assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, 0.5);
         assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, 1);
         assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, 2);
+        assert.deepEqual((answerSet[3].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, undefined);
+
       });
     });
 
