@@ -10,6 +10,8 @@ import {generate} from '../src/generate';
 import {SpecQueryModel} from '../src/model';
 import {SpecQueryModelGroup} from '../src/modelgroup';
 import {nest, FIELD, FIELD_TRANSFORM, ENCODING, TRANSPOSE} from '../src/nest';
+import {Property} from '../src/property';
+import {REPLACE_BLANK_FIELDS, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS} from '../src/query/groupby';
 
 import {SHORT_ENUM_SPEC} from '../src/enumspec';
 import {contains, extend} from '../src/util';
@@ -17,6 +19,322 @@ import {contains, extend} from '../src/util';
 import {schema} from './fixture';
 
 describe('nest', () => {
+  describe('group by properties', () => {
+    describe('field ignoring function', () => {
+      it('should group visualization with same fields', () => {
+        const query = {
+          spec: {
+            mark: SHORT_ENUM_SPEC,
+            encodings: [{
+              channel: SHORT_ENUM_SPEC,
+              field: 'Q',
+              type: Type.QUANTITATIVE,
+              aggregate: {
+                name: 'a0',
+                values: [AggregateOp.MEAN, AggregateOp.MEDIAN]
+              }
+            }, {
+              channel: SHORT_ENUM_SPEC,
+              field: 'O',
+              type: Type.ORDINAL
+            }]
+          },
+          nest: [{
+            groupBy: [{property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}]
+          }],
+          config: DEFAULT_QUERY_CONFIG
+        };
+
+        const answerSet = generate(query.spec, schema);
+        const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
+
+        assert.equal(groups.length, 1);
+        assert.equal(groups[0].name, 'O|Q');
+      });
+
+      it('should group histogram and raw plots in the same group', () => {
+        const query = {
+          spec: {
+            mark: SHORT_ENUM_SPEC,
+            encodings: [{
+              channel: SHORT_ENUM_SPEC,
+              field: 'Q',
+              type: Type.QUANTITATIVE,
+              bin: SHORT_ENUM_SPEC,
+              aggregate: SHORT_ENUM_SPEC
+            }]
+          },
+          nest: [{
+            groupBy: [
+              {property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}
+            ]
+          }, {
+            groupBy: [
+              Property.AGGREGATE,
+              Property.TIMEUNIT,
+              Property.BIN
+            ]
+          }],
+          config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG)
+        };
+
+        const answerSet = generate(query.spec, schema);
+        const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
+
+        assert.equal(groups.length, 1);
+        assert.equal(groups[0].name, 'Q');
+        assert.equal(groups[0].items.length, 3);
+      });
+    });
+  });
+
+  describe('field, aggregate, bin, timeUnit', () => {
+    it('should group visualization with same fields and transformations', () => {
+      const query = {
+        spec: {
+        mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: SHORT_ENUM_SPEC,
+            field: 'Q',
+            type: Type.QUANTITATIVE,
+            aggregate: {
+              name: 'a0',
+              values: [AggregateOp.MEAN, AggregateOp.MEDIAN]
+            }
+          }, {
+            channel: SHORT_ENUM_SPEC,
+            field: 'O',
+            type: Type.ORDINAL
+          }]
+        },
+        nest: [{
+          groupBy: [
+            Property.FIELD,
+            Property.TYPE,
+            Property.AGGREGATE,
+            Property.BIN,
+            Property.TIMEUNIT
+          ]
+        }],
+        config: DEFAULT_QUERY_CONFIG
+      };
+
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
+
+      // two because have two different aggregation
+      assert.equal(groups.length, 2);
+      assert.equal(groups[0].name, 'O,o|mean(Q,q)');
+      assert.equal(groups[1].name, 'O,o|median(Q,q)');
+    });
+  });
+
+  describe('field, aggregate, bin, timeUnit, channel, type', () => {
+    it('should group visualizations with different retinal variables if has proper replace', () => {
+      const query = {
+        spec: {
+          mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: Channel.X,
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: Channel.Y,
+            field: 'Q1',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: {values: [Channel.COLOR, Channel.SIZE]},
+            field: 'Q2',
+            type: Type.QUANTITATIVE
+          }]
+        },
+        nest: [{
+          groupBy: [
+            Property.FIELD,
+            Property.TYPE,
+            Property.AGGREGATE,
+            Property.BIN,
+            Property.TIMEUNIT,
+            {property: Property.CHANNEL, replace: REPLACE_MARK_STYLE_CHANNELS}
+          ]
+        }],
+        config: DEFAULT_QUERY_CONFIG
+      };
+
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items;
+      assert.equal(groups.length, 1);
+    });
+
+    it('should group visualizations with different retinal variables', () => {
+      const query = {
+        spec: {
+          mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: Channel.X,
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: Channel.Y,
+            field: 'Q1',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: {values: [Channel.COLOR, Channel.SHAPE]},
+            field: 'O',
+            type: Type.ORDINAL
+          }]
+        },
+        nest: [{
+          groupBy: [
+            Property.FIELD,
+            Property.TYPE,
+            Property.AGGREGATE,
+            Property.BIN,
+            Property.TIMEUNIT,
+            {property: Property.CHANNEL, replace: REPLACE_MARK_STYLE_CHANNELS}
+          ]
+        }],
+        config: DEFAULT_QUERY_CONFIG
+      };
+
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items;
+      assert.equal(groups.length, 1);
+    });
+
+    it('should group visualizations with different retinal variables or transposed', () => {
+      const query = {
+        spec: {
+          mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: {values: [Channel.X, Channel.Y]},
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: {values: [Channel.X, Channel.Y]},
+            field: 'Q1',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: {values: [Channel.COLOR, Channel.SIZE]},
+            field: 'Q2',
+            type: Type.QUANTITATIVE
+          }]
+        },
+        nest: [{
+          groupBy: [
+            Property.FIELD,
+            Property.TYPE,
+            Property.AGGREGATE,
+            Property.BIN,
+            Property.TIMEUNIT,
+            {property: Property.CHANNEL, replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)}
+          ]
+        }],
+        config: DEFAULT_QUERY_CONFIG
+      };
+
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items;
+      assert.equal(groups.length, 1);
+    });
+
+    it('should separate different types of stacked and non-stacked visualizations', () => {
+      const query = {
+        spec: {
+          mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: Channel.X,
+            aggregate: AggregateOp.SUM,
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: Channel.Y,
+            field: 'N',
+            type: Type.NOMINAL
+          }, {
+            channel: Channel.COLOR,
+            field: 'N1',
+            type: Type.NOMINAL
+          }]
+        },
+        nest: [{
+          groupBy: [
+            Property.FIELD,
+            Property.TYPE,
+            Property.AGGREGATE,
+            Property.BIN,
+            Property.TIMEUNIT,
+            {property: Property.CHANNEL, replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)}
+          ]
+        }],
+        config: DEFAULT_QUERY_CONFIG
+      };
+
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items;
+      assert.equal(groups.length, 2);
+      assert.equal((groups[0] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q)');
+      (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModel) => {
+        return !contains([Mark.BAR, Mark.AREA], item.getMark());
+      });
+
+      assert.equal((groups[1] as SpecQueryModelGroup).name, 'stack=zero|style:N1,n|xy:N,n|xy:sum(Q,q)');
+      (groups[1] as SpecQueryModelGroup).items.forEach((item: SpecQueryModel) => {
+        return contains([Mark.BAR, Mark.AREA], item.getMark());
+      });
+    });
+
+    it('should separate different types of stacked and non-stacked visualizations even if it is nested ', () => {
+      const query = {
+        spec: {
+          mark: SHORT_ENUM_SPEC,
+          encodings: [{
+            channel: Channel.X,
+            aggregate: AggregateOp.SUM,
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }, {
+            channel: Channel.Y,
+            field: 'N',
+            type: Type.NOMINAL
+          }, {
+            channel: Channel.COLOR,
+            field: 'N1',
+            type: Type.NOMINAL
+          }]
+        },
+        nest: [{
+          groupBy: [
+            Property.FIELD,
+            Property.TYPE,
+            Property.AGGREGATE,
+            Property.BIN,
+            Property.TIMEUNIT,
+            {property: Property.CHANNEL, replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)}
+          ]
+        }, {
+          groupBy: [
+            {property: Property.CHANNEL, replace: extend({}, REPLACE_MARK_STYLE_CHANNELS)}
+          ]
+        }],
+        config: DEFAULT_QUERY_CONFIG
+      };
+
+      const answerSet = generate(query.spec, schema);
+      const groups = nest(answerSet, query).items;
+      assert.equal(groups.length, 2);
+      assert.equal((groups[0] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q)');
+      (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModelGroup) => {
+        return !contains([Mark.BAR, Mark.AREA], (item.items[0] as SpecQueryModel).getMark());
+      });
+
+      assert.equal((groups[1] as SpecQueryModelGroup).name, 'stack=zero|style:N1,n|xy:N,n|xy:sum(Q,q)');
+      (groups[1] as SpecQueryModelGroup).items.forEach((item: SpecQueryModelGroup) => {
+        return contains([Mark.BAR, Mark.AREA], (item.items[0] as SpecQueryModel).getMark());
+      });
+    });
+  });
+
   describe('field', () => {
     it('should group visualization with same fields', () => {
       const query = {

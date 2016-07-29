@@ -7,7 +7,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, INCLUDE_ALL, getReplacer} from '../../src/query/shorthand';
-import {REPLACE_BLANK_FIELDS} from '../../src/query/query';
+import {REPLACE_BLANK_FIELDS} from '../../src/query/groupby';
 
 import {assert} from 'chai';
 
