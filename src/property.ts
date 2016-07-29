@@ -138,16 +138,15 @@ const NESTED_ENCODING_INDEX: Dict<NestedEncodingProperty> =
 const NESTED_ENCODING_PROPERTY_PARENT_INDEX =
   NESTED_ENCODING_PROPERTIES.reduce((m, nestedProp) => {
     let parent = nestedProp.parent;
-    let child = nestedProp.child;
 
-    // if the parent does not exist in m, add it as a key in m with empty [] as value
+    // if the parent does not exist in m yet, add it as a key in m with empty [] as value
     if (!(parent in m)) {
       m[parent] = [];
     }
 
-    m[parent].push(child);
+    m[nestedProp.parent].push(nestedProp);
     return m;
-  }, {} as Dict<Array<String>>); // as Dict<Array<String>>);
+  }, {} as Dict<Array<NestedEncodingProperty>>); // as Dict<Array<String>>);
 
 const ENCODING_INDEX: Dict<Property> =
   ENCODING_PROPERTIES.reduce((m, prop) => {

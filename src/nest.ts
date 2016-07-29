@@ -75,7 +75,7 @@ registerKeyFn(FIELD, (specM: SpecQueryModel) => {
 });
 
 registerKeyFn(FIELD_TRANSFORM, (specM: SpecQueryModel) => {
-  return specM.getEncodings().map(fieldDefShorthand)
+  return specM.getEncodings().map((encQ) => fieldDefShorthand(encQ))
               .sort()
               .join('|');
 });
