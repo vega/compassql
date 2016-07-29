@@ -57,6 +57,9 @@ export interface EnumSpecIndex {
   /** List of indice tuple for encoding mappings that require enumerating scale.bandSize */
   scaleBandSize?: EnumSpecIndexTuple<number>[];
 
+  /** List of indice tuple for encoding mappings that require enumerating scale.clamp */
+  scaleClamp?: EnumSpecIndexTuple<boolean>[];
+
   /** List of indice tuple for encoding mappings that require enumerating scale.domain */
   scaleDomain?: EnumSpecIndexTuple<string | string[] | number[]>[];
 
