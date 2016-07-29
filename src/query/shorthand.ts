@@ -2,82 +2,159 @@ import {Type} from 'vega-lite/src/type';
 
 import {EncodingQuery} from './encoding';
 import {SpecQuery, stack} from './spec';
-import {enumSpecShort, isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
+import {isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 
-import {getNestedEncodingPropertyChildren, Property} from '../property';
-import {keys} from '../util';
+import {getNestedEncodingPropertyChildren, Property, DEFAULT_PROPERTY_PRECEDENCE} from '../property';
+import {Dict, keys} from '../util';
 
-export function spec(specQ: SpecQuery): string {
-  const mark = enumSpecShort(specQ.mark);
-  const encodings = specQ.encodings.map(encoding)
-                        .sort()
-                        .join('|');  // sort at the end to ignore order
+type Replacer = (s: string) => string;
+
+export function value(v: any, replace: Replacer): any {
+  if (isEnumSpec(v)) {
+    return SHORT_ENUM_SPEC;
+  }
+  if (replace) {
+    return replace(v);
+  }
+  return v;
+}
+
+export const INCLUDE_ALL: Dict<boolean> = DEFAULT_PROPERTY_PRECEDENCE.reduce((m, prop) => {
+  m[prop] = true;
+  return m;
+}, {} as Dict<boolean>);
+
+/**
+ * Returns a shorthand for a spec query
+ * @param specQ a spec query
+ * @param include Dict Set listing property types (key) to be included in the shorthand
+ * @param replace Dictionary of replace function for values of a particular property type (key)
+ */
+export function spec(specQ: SpecQuery,
+    include: Dict<boolean> = INCLUDE_ALL,
+    replace: Dict<Replacer> = {}
+    ): string {
+  const parts = [];
+
+  if (include[Property.MARK]) {
+    parts.push(value(specQ.mark, replace[Property.MARK]));
+  }
+
+  // TODO: transform
+
+  // TODO: stack Property
   const _stack = stack(specQ);
+  if (_stack) {
+    // TODO: use shorthandValue once we have proper stack property
+    parts.push('stack=' + _stack.offset);
+  }
 
-  return mark + '|' +
-      // TODO: transform
-      (_stack ? 'stack=' + _stack.offset + '|' : '') +
-      encodings;
+  parts.push(specQ.encodings.map((encQ) => encoding(encQ, include, replace))
+                        .sort()
+                        .join('|'));  // sort at the end to ignore order
+
+  return parts.join('|');
 }
 
-export function encoding(encQ: EncodingQuery): string {
-  return enumSpecShort(encQ.channel) + ':' + fieldDef(encQ);
+/**
+ * Returns a shorthand for an encoding query
+ * @param encQ an encoding query
+ * @param include Dict Set listing property types (key) to be included in the shorthand
+ * @param replace Dictionary of replace function for values of a particular property type (key)
+ */
+export function encoding(encQ: EncodingQuery,
+    include: Dict<boolean> = INCLUDE_ALL,
+    replace: Dict<Replacer> = {}
+    ): string {
+
+  const parts = [];
+  if (include[Property.CHANNEL]) {
+    parts.push(value(encQ.channel, replace[Property.CHANNEL]));
+  }
+
+  parts.push(fieldDef(encQ, include, replace)); // fieldDef is never empty
+  return parts.join(':');
 }
 
-export function fieldDef(encQ: EncodingQuery): string {
+/**
+ * Returns a field definiton shorthand for an encoding query
+ * @param encQ an encoding query
+ * @param include Dict Set listing property types (key) to be included in the shorthand
+ * @param replace Dictionary of replace function for values of a particular property type (key)
+ */
+export function fieldDef(encQ: EncodingQuery,
+    include: Dict<boolean> = INCLUDE_ALL,
+    replace: Dict<Replacer> = {}): string {
+
   let fn = null;
-  const params: {key: string, value: any}[]=  [];
+
+  /** Encoding properties e.g., Scale, Axis, Legend */
+  const props: {key: string, value: boolean | Object}[] = [];
 
   if (encQ.autoCount === false) {
     return '-';
   }
 
-  if (encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
-    fn = encQ.aggregate;
-  } else if (encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
-    fn = encQ.timeUnit;
-  } else if (encQ.bin && !isEnumSpec(encQ.bin)) {
+  if (include[Property.AGGREGATE] && encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
+    fn = value(encQ.aggregate, replace[Property.AGGREGATE]);
+  } else if (include[Property.TIMEUNIT] && encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
+    fn = value(encQ.timeUnit, replace[Property.TIMEUNIT]);
+  } else if (include[Property.BIN] && encQ.bin && !isEnumSpec(encQ.bin)) {
     fn = 'bin';
-    if (encQ.bin['maxbins']) {
-      params.push({key: 'maxbins', value: encQ.bin['maxbins']});
+
+    if (include[Property.BIN_MAXBINS] && encQ.bin['maxbins']) {
+      props.push({
+        key: 'maxbins',
+        value: value(encQ.bin['maxbins'], replace[Property.BIN_MAXBINS])
+      });
     }
-  } else if (encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
-    fn = 'count';
-  } else if (
-      (encQ.aggregate && isEnumSpec(encQ.aggregate)) ||
-      (encQ.autoCount && isEnumSpec(encQ.autoCount)) ||
-      (encQ.timeUnit && isEnumSpec(encQ.timeUnit)) ||
-      (encQ.bin && isEnumSpec(encQ.bin))
-    ) {
-    fn = SHORT_ENUM_SPEC + '';
+  } else if (include[Property.AGGREGATE] && encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
+    fn = value('count', replace[Property.AGGREGATE]);;
+  } else {
+    for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
+      if (include[prop] && encQ[prop] && isEnumSpec(encQ[prop])) {
+        fn = SHORT_ENUM_SPEC + '';
+        break;
+      }
+    }
   }
 
   // Scale
-  // TODO: convert this chunk into a loop of scale, axis, legend
-  if (encQ.scale && !isEnumSpec(encQ.scale)) {
-    const nestedProps = getNestedEncodingPropertyChildren(Property.SCALE);
-    const nestedParams = nestedProps.reduce((scaleParamsObj, nestedScaleProp) => {
-      if (encQ.scale[nestedScaleProp.child]) {
-        scaleParamsObj[nestedScaleProp.child] = encQ.scale[nestedScaleProp.child];
-      }
-      return scaleParamsObj;
-    }, {});
+  // TODO: axis, legend
+  for (const nestedPropParent of [Property.SCALE]) {
+    if (include[nestedPropParent]) {
+      if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
+        const nestedProps = getNestedEncodingPropertyChildren(nestedPropParent);
+        const nestedPropChildren = nestedProps.reduce((p, nestedProp) => {
+          if (include[nestedProp.property] && encQ[nestedPropParent][nestedProp.child] !== undefined) {
+            p[nestedProp.child] = value(encQ[nestedPropParent][nestedProp.child], replace[nestedProp.property]);
+          }
+          return p;
+        }, {});
 
-    if(keys(nestedParams).length > 0) {
-      params.push({
-        key: 'scale',
-        value: JSON.stringify(nestedParams)
-      });
+        if(keys(nestedPropChildren).length > 0) {
+          props.push({
+            key: nestedPropParent + '',
+            value: JSON.stringify(nestedPropChildren)
+          });
+        }
+      } else if (encQ[nestedPropParent] === false || encQ[nestedPropParent] === null) {
+        props.push({
+          key: nestedPropParent + '',
+          value: false
+        });
+      }
     }
-  } else if (encQ.scale === false || encQ.scale === null) {
-    params.push({
-      key: 'scale',
-      value: false
-    });
   }
 
-  const fieldType = enumSpecShort(encQ.field || '*') + ',' +
-    enumSpecShort(encQ.type || Type.QUANTITATIVE).substr(0,1) +
-    params.map((p) => ',' + p.key + '=' + p.value).join('');
-  return (fn ? fn + '(' + fieldType + ')' : fieldType);
+  // field
+  let fieldAndParams = include[Property.FIELD] ? value(encQ.field || '*', replace[Property.FIELD]) : '...';
+  // type
+  if (include[Property.TYPE]) {
+    const typeShort = ((encQ.type || Type.QUANTITATIVE)+'').substr(0,1);
+    fieldAndParams += ',' + value(typeShort, replace[Property.TYPE]);
+  }
+  // encoding properties
+  fieldAndParams += props.map((p) => ',' + p.key + '=' + p.value).join('');
+  return (fn ? fn + '(' + fieldAndParams + ')' : fieldAndParams);
 }
