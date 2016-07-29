@@ -69,6 +69,9 @@ export interface EnumSpecIndex {
   /** List of indice tuple for encoding mappings that require enumerating scale.range */
   scaleRange?: EnumSpecIndexTuple<string | string[] | number[]>[];
 
+  /** List of indice tuple for encoding mappings that require enumerating scale.round */
+  scaleRound?: EnumSpecIndexTuple<boolean>[];
+
   /** List of indice tuple for encoding mappings that require enumerating scale.type */
   scaleType?: EnumSpecIndexTuple<ScaleType>[];
 
