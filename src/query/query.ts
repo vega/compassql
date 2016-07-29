@@ -23,7 +23,6 @@ export function query(q: Query, schema: Schema, config?: Config) {
       keys(q.schema[field]).forEach(prop => {
         fieldSchema[prop] = q.schema[field][prop];
       });
-      schema.setSchema(field, fieldSchema);
     });
   }
 

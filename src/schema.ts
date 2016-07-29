@@ -163,19 +163,11 @@ export class Schema {
   }
 
   /**
-   * Overrides a field schema.
-   */
-  public setSchema(field: string, schema: FieldSchema) {
-    // FIXME: need to update this.fieldSchemas ?
-    this.fieldSchemaIndex[field] = schema;
-  }
-
-  /**
    * Get a field schema.
-   * @return a copy of the FieldSchema associated with the given field
+   * @return a reference to the FieldSchema associated with the given field
    */
   public getSchema(field: string) {
-    return duplicate(this.fieldSchemaIndex[field]);
+    return this.fieldSchemaIndex[field];
   }
 }
 
