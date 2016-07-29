@@ -242,6 +242,13 @@ describe('query/shorthand', () => {
        assert.equal(str, 'a,q,scale={"exponent":3,"type":"pow"}');
     });
 
+    it('should return correct fieldDef string for scale with nice=true', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {nice: true}
+      });
+      assert.equal(str, 'a,q,scale={"nice":true}');
+    });
+
     it('should return correct fieldDef string for scale with round=true', () => {
       const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {round: true}

@@ -63,6 +63,9 @@ export interface EnumSpecIndex {
   /** List of indice tuple for encoding mappings that require enumerating scale.exponent */
   scaleExponent?: EnumSpecIndexTuple<number>[];
 
+  /** List of indice tuple for encoding mappings that require enumerating scale.nice */
+  scaleNice?: EnumSpecIndexTuple<boolean>[];
+
   /** List of indice tuple for encoding mappings that require enumerating scale.range */
   scaleRange?: EnumSpecIndexTuple<string | string[] | number[]>[];
 
@@ -106,6 +109,8 @@ export function getDefaultName(prop: Property) {
       return 's-d';
     case Property.SCALE_EXPONENT:
       return 's-e';
+    case Property.SCALE_NICE:
+      return 's-n';
     case Property.SCALE_RANGE:
       return 's-ra';
     case Property.SCALE_ROUND:
@@ -134,6 +139,7 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     case Property.BIN:
     case Property.SCALE:
     case Property.SCALE_CLAMP:
+    case Property.SCALE_NICE:
     case Property.SCALE_ROUND:
     case Property.SCALE_ZERO:
     case Property.AUTOCOUNT:

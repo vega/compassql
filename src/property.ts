@@ -24,6 +24,7 @@ export enum Property {
   SCALE_CLAMP = 'scaleClamp' as any,
   SCALE_DOMAIN = 'scaleDomain' as any,
   SCALE_EXPONENT = 'scaleExponent' as any,
+  SCALE_NICE = 'scaleNice' as any,
   SCALE_RANGE = 'scaleRange' as any,
   SCALE_ROUND = 'scaleRound' as any,
   SCALE_TYPE = 'scaleType' as any,
@@ -57,6 +58,7 @@ export function hasNestedProperty(prop: Property) {
     case Property.SCALE_CLAMP:
     case Property.SCALE_DOMAIN:
     case Property.SCALE_EXPONENT:
+    case Property.SCALE_NICE:
     case Property.SCALE_RANGE:
     case Property.SCALE_ROUND:
     case Property.SCALE_TYPE:
@@ -81,6 +83,7 @@ export const ENCODING_PROPERTIES = [
   Property.SCALE_CLAMP,
   Property.SCALE_DOMAIN,
   Property.SCALE_EXPONENT,
+  Property.SCALE_NICE,
   Property.SCALE_RANGE,
   Property.SCALE_ROUND,
   Property.SCALE_TYPE,
@@ -111,6 +114,7 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   Property.SCALE_CLAMP,
   Property.SCALE_DOMAIN,
   Property.SCALE_EXPONENT,
+  Property.SCALE_NICE,
   Property.SCALE_RANGE,
   Property.SCALE_ROUND,
   Property.SCALE_TYPE,
@@ -148,6 +152,11 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
     property: Property.SCALE_EXPONENT,
     parent: 'scale',
     child: 'exponent'
+  },
+  {
+    property: Property.SCALE_NICE,
+    parent: 'scale',
+    child: 'nice'
   },
   {
     property: Property.SCALE_RANGE,

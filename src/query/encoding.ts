@@ -37,6 +37,7 @@ export interface ScaleQuery extends EnumSpec<boolean> {
   clamp?: boolean | EnumSpec<boolean> | ShortEnumSpec;
   domain?: string | number[] | string[] | EnumSpec<string | number[] | string[]> | ShortEnumSpec;
   exponent?: number | EnumSpec<number> | ShortEnumSpec;
+  nice?: boolean | EnumSpec<boolean> | ShortEnumSpec;
   range?: string | number[] | string[] | EnumSpec<string | number[] | string[]> | ShortEnumSpec;
   round?: boolean | EnumSpec<boolean> | ShortEnumSpec;
   type?: ScaleType | EnumSpec<ScaleType> | ShortEnumSpec;

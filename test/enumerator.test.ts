@@ -355,6 +355,28 @@ describe('enumerator', () => {
       });
     });
 
+    describe('scaleNice', () => {
+      it('should correctly enumerate scaleNice', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {
+                nice: {values: [undefined, true, false]}
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_NICE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 3);
+      });
+    });
+
     describe('scaleRange', () => {
       it('should correctly enumerate scaleRange with string[] values', () => {
         const specM = buildSpecQueryModel({

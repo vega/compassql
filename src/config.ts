@@ -44,6 +44,8 @@ export interface QueryConfig {
 
   scaleExponents?: number[];
 
+  scaleNices?: boolean[];
+
   scaleRanges?: Array<string | number[] | string[]>;
 
   scaleRounds?: boolean[];
