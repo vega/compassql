@@ -433,7 +433,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                round: {values: [true, false]}
+                round: {values: [true, false, undefined]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -443,9 +443,10 @@ describe('enumerator', () => {
         const enumerator = ENUMERATOR_INDEX[Property.SCALE_ROUND](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
-        assert.equal(answerSet.length, 2);
+        assert.equal(answerSet.length, 3);
         assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).round, true);
         assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).round, false);
+        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).round, undefined);
       });
     });
 
@@ -471,6 +472,31 @@ describe('enumerator', () => {
         assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
         assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
         assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POW);
+      });
+    });
+
+    describe('scaleUseRawDomain', () => {
+      it('should correctly enumerate scaleUseRawDomain', () => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.X,
+              scale: {
+                useRawDomain: {values: [true, false, undefined]}
+              },
+              field: 'Q',
+              type: Type.QUANTITATIVE
+            }
+          ]
+        });
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_USERAWDOMAIN](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
+
+        const answerSet = enumerator([], specM);
+        assert.equal(answerSet.length, 3);
+        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).useRawDomain, true);
+        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).useRawDomain, false);
+        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).useRawDomain, undefined);
       });
     });
 

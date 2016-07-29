@@ -78,6 +78,9 @@ export interface EnumSpecIndex {
   /** List of indice tuple for encoding mappings that require enumerating scale.type */
   scaleType?: EnumSpecIndexTuple<ScaleType>[];
 
+  /** List of indice tuple for encoding mappings that require enumerating scale.useRawDomain */
+  scaleUseRawDomain?: EnumSpecIndexTuple<boolean>[];
+
   /** List of indice tuple for encoding mappings that require enumerating scale.zero */
   scaleZero?: EnumSpecIndexTuple<boolean>[];
 
@@ -123,6 +126,8 @@ export function getDefaultName(prop: Property) {
       return 's-r';
     case Property.SCALE_TYPE:
       return 's-t';
+    case Property.SCALE_USERAWDOMAIN:
+      return 's-u';
     case Property.SCALE_ZERO:
       return 's-z';
     case Property.TIMEUNIT:
@@ -147,6 +152,7 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     case Property.SCALE_CLAMP:
     case Property.SCALE_NICE:
     case Property.SCALE_ROUND:
+    case Property.SCALE_USERAWDOMAIN:
     case Property.SCALE_ZERO:
     case Property.AUTOCOUNT:
       return [false, true];

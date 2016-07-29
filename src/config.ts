@@ -52,6 +52,8 @@ export interface QueryConfig {
 
   scaleTypes?: ScaleType[];
 
+  scaleUseRawDomains?: boolean[];
+
   scaleZeros?: boolean[];
 
   // SPECIAL MODE
