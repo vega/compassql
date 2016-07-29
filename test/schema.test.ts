@@ -16,6 +16,18 @@ describe('schema', () => {
       assert.isNotNull(schema);
       assert.equal(schema.fields().length, 0);
     });
+
+    it('should store FieldSchemas in the correct order', () => {
+      const data = [
+        {a: '1/1/2000', c: 'abc', d: 1, b: 1}
+      ];
+      var schema = Schema.build(data);
+
+      assert.equal(schema['fieldSchemas'][0]['field'], 'c');
+      assert.equal(schema['fieldSchemas'][1]['field'], 'a');
+      assert.equal(schema['fieldSchemas'][2]['field'], 'b');
+      assert.equal(schema['fieldSchemas'][3]['field'], 'd');
+    });
   });
 
   const data = [

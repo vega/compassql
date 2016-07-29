@@ -54,6 +54,20 @@ export class Schema {
       };
     });
 
+    // order the fieldSchemas (sort them)
+    const order = [Type.NOMINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.ORDINAL];
+    fieldSchemas.sort(function(a: FieldSchema, b: FieldSchema) {
+      // first order by type: nominal < temporal < quantitative < ordinal
+      if (order.indexOf(a.type) < order.indexOf(b.type)) {
+        return -1;
+      } else if (order.indexOf(a.type) > order.indexOf(b.type)) {
+        return 1;
+      } else {
+        // then order by field (alphabetically)
+        return a.field.localeCompare(b.field);
+      }
+    });
+
     let schema = new Schema(fieldSchemas);
 
     // calculate preset bins
