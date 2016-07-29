@@ -266,7 +266,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                clamp: {values: [true, false]}
+                clamp: {values: [true, false, undefined]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -276,9 +276,10 @@ describe('enumerator', () => {
         const enumerator = ENUMERATOR_INDEX[Property.SCALE_CLAMP](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
-        assert.equal(answerSet.length, 2);
+        assert.equal(answerSet.length, 3);
         assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).clamp, true);
         assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).clamp, false);
+        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).clamp, undefined);
       });
     });
 
