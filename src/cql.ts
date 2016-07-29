@@ -5,9 +5,10 @@ import {extend} from './util';
 export import constraint = require('./constraint/constraint');
 
 export import enumerate = require('./enumerator');
+export import enumSpec = require('./enumspec');
 export {generate} from './generate';
 export import model = require('./model');
-export import modelgroup = require('./modelgroup');
+export import modelGroup = require('./modelgroup');
 export import nest = require('./nest');
 export import property = require('./property');
 
@@ -17,7 +18,6 @@ import {query as queryFn} from './query/query';
 
 export const query = extend(queryFn, cqlQuery);
 
-export import enumspec = require('./enumspec');
 export import ranking = require('./ranking/ranking');
 export import schema = require('./schema');
 export import util = require('./util');
