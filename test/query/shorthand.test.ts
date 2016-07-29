@@ -6,7 +6,8 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
-import {spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, INCLUDE_ALL} from '../../src/query/shorthand';
+import {spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, INCLUDE_ALL, getReplacer} from '../../src/query/shorthand';
+import {REPLACE_BLANK_FIELDS} from '../../src/query/query';
 
 import {assert} from 'chai';
 
@@ -53,6 +54,21 @@ describe('query/shorthand', () => {
       assert.equal(str, 'x:a,q');
     });
 
+    it('should return correct spec string for a histogram with autoCount=true when groupBy field with blank replacer.', () => {
+      const str = specShorthand({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, bin: true, field: 'a', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, autoCount: true, type: Type.QUANTITATIVE}
+        ]
+      }, { // include
+        field: true
+      }, { // replacer
+        field: getReplacer(REPLACE_BLANK_FIELDS)
+      });
+      assert.equal(str, 'a');
+    });
+
     it('should include stack for stacked specQuery', () => {
       const str = specShorthand({
         mark: Mark.BAR,
@@ -92,7 +108,7 @@ describe('query/shorthand', () => {
     });
   });
 
-  describe('fieldDefShorthand', () => {
+  describe('fieldDef', () => {
     it('should return - for disabled autocount field', () => {
        const str = fieldDefShorthand({channel: Channel.X, autoCount: false});
        assert.equal(str, '-');
