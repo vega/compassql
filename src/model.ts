@@ -134,8 +134,6 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     case Property.BIN:
     case Property.SCALE:
     case Property.SCALE_CLAMP:
-    case Property.SCALE_DOMAIN:
-    case Property.SCALE_RANGE:
     case Property.SCALE_ROUND:
     case Property.SCALE_ZERO:
     case Property.AUTOCOUNT:
