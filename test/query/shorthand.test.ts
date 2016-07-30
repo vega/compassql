@@ -143,6 +143,34 @@ describe('query/shorthand', () => {
       assert.equal(str, '?(a,q)');
     });
 
+    it('should return correct fieldDefShorthand string for scale with a string[] domain', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.NOMINAL, scale: {domain: ['cats', 'dogs']}
+      });
+      assert.equal(str, 'a,n,scale={"domain":["cats","dogs"]}');
+    });
+
+    it('should return correct fieldDefShorthand string for scale with a number[] domain', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.NOMINAL, scale: {domain: [1,2]}
+      });
+      assert.equal(str, 'a,n,scale={"domain":[1,2]}');
+    });
+
+    it('should return correct fieldDefShorthand string for scale with a string[] range', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.NOMINAL, scale: {range: ['cats', 'dogs']}
+      });
+      assert.equal(str, 'a,n,scale={"range":["cats","dogs"]}');
+    });
+
+    it('should return correct fieldDefShorthand string for scale with a number[] range', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.NOMINAL, scale: {range: [1,2]}
+      });
+      assert.equal(str, 'a,n,scale={"range":[1,2]}');
+    });
+
     it('should return correct fieldDefShorthand string for bin field', () => {
        const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: true
@@ -200,7 +228,42 @@ describe('query/shorthand', () => {
        assert.equal(str, 'a,q,scale={"type":"log"}');
     });
 
-    it('should return correct fieldDefShorthand string for scale with zero=true', () => {
+    it('should return correct fieldDef string for scale with clamp=true', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {clamp: true}
+      });
+      assert.equal(str, 'a,q,scale={"clamp":true}');
+    });
+
+    it('should return correct fieldDef string for scale with round=true', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {round: true}
+      });
+      assert.equal(str, 'a,q,scale={"round":true}');
+    });
+
+    it('should return correct fieldDef string for scale with exponent of 3 and supported scaleType', () => {
+       const str = fieldDefShorthand({
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.POW, exponent: 3}
+       });
+       assert.equal(str, 'a,q,scale={"exponent":3,"type":"pow"}');
+    });
+
+    it('should return correct fieldDef string for scale with nice=true', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {nice: true}
+      });
+      assert.equal(str, 'a,q,scale={"nice":true}');
+    });
+
+    it('should return correct fieldDef string for scale with round=true', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {round: true}
+      });
+      assert.equal(str, 'a,q,scale={"round":true}');
+    });
+
+    it('should return correct fieldDef string for scale with zero=true', () => {
       const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {zero: true}
       });
