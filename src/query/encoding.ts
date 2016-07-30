@@ -35,7 +35,7 @@ export interface BinQuery extends EnumSpec<boolean> {
 export interface ScaleQuery extends EnumSpec<boolean> {
   // TODO: add other properties from vegalite/src/scale
   clamp?: boolean | EnumSpec<boolean> | ShortEnumSpec;
-  domain?: string | number[] | string[] | EnumSpec<string | number[] | string[]> | ShortEnumSpec;
+  domain?: number[] | string[] | EnumSpec<number[] | string[]> | ShortEnumSpec;
   exponent?: number | EnumSpec<number> | ShortEnumSpec;
   nice?: boolean | EnumSpec<boolean> | ShortEnumSpec;
   range?: string | number[] | string[] | EnumSpec<string | number[] | string[]> | ShortEnumSpec;

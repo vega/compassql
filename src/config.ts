@@ -15,7 +15,7 @@ export interface QueryConfig {
 
   propertyPrecedence?: Property[];
 
-  /** Defautl marks to enumerate. */
+  /** Default marks to enumerate. */
   marks?: Mark[];
 
   /** Default channels to enumerate. */
@@ -38,23 +38,13 @@ export interface QueryConfig {
 
   scaleBandSizes?: number[];
 
-  scaleClamps?: boolean[];
-
-  scaleDomains?: Array<string | number[] | string[]>;
+  scaleDomains?: Array<number[] | string[]>;
 
   scaleExponents?: number[];
 
-  scaleNices?: boolean[];
-
   scaleRanges?: Array<string | number[] | string[]>;
 
-  scaleRounds?: boolean[];
-
   scaleTypes?: ScaleType[];
-
-  scaleUseRawDomains?: boolean[];
-
-  scaleZeros?: boolean[];
 
   // SPECIAL MODE
   /**
@@ -111,19 +101,16 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   aggregates: [undefined, AggregateOp.MEAN],
   timeUnits: [undefined, TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.DATE], // TODO: include hours and minutes
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
-  numberOrdinalProportion: .05,
 
   maxBinsList: [5, 10, 20],
 
   scaleBandSizes: [17, 21],
-
   scaleDomains: [undefined],
-
+  scaleExponents: [1],
   scaleRanges: [undefined],
-
-  scaleExponents: [0.5, 1, 2],
-
   scaleTypes: [ScaleType.LINEAR, ScaleType.LOG],
+
+  numberOrdinalProportion: .05,
 
   // CONSTRAINTS
   // Spec Constraints -- See description inside src/constraints/spec.ts
