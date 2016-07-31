@@ -16,7 +16,7 @@
       }
     ]
   },
-  "groupBy": "fieldTransform" ,
+  "groupBy": ["field", "aggregate", "bin", "timeUnit"],
   "chooseBy": "effectiveness",
   "config": {
     "autoAddCount": true
