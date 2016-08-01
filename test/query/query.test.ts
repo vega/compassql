@@ -187,7 +187,8 @@ describe('query/query', () => {
         },
         groupBy: 'fieldTransform',
         chooseBy: 'effectiveness',
-        orderBy: 'effectiveness'
+        orderBy: 'effectiveness',
+        config: {}
       };
 
       assert.deepEqual(normalize(q), {
@@ -201,7 +202,28 @@ describe('query/query', () => {
           groupBy: 'fieldTransform',
           orderGroupBy: 'effectiveness'
         }],
-        chooseBy: 'effectiveness'
+        chooseBy: 'effectiveness',
+        config: {}
+      });
+    });
+
+    it('should correctly normalize query with only spec', () => {
+      const q: Query = {
+        spec: {
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
+          ]
+        }
+      };
+
+      assert.deepEqual(normalize(q), {
+        spec: {
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
+          ]
+        }
       });
     });
   });

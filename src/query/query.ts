@@ -39,31 +39,30 @@ export function query(q: Query, schema: Schema, config?: Config) {
  * Normalize the non-nested version of the query to a standardize nested
  */
 export function normalize(q: Query): Query {
-  if (q.groupBy) {
-    let nest: Nest = {
+  let normalizedQ: Query = {
+    spec: duplicate(q.spec), // We will cause side effect to q.spec in SpecQueryModel.build
+  };
+
+  if (q.groupBy && !q.nest) {
+    let groupByNest: Nest = {
       groupBy: q.groupBy
     };
 
     if (q.orderBy) {
-      nest.orderGroupBy = q.orderBy;
+      groupByNest.orderGroupBy = q.orderBy;
     }
-
-    let normalizedQ: Query = {
-      spec: duplicate(q.spec), // We will cause side effect to q.spec in SpecQueryModel.build
-      nest: [nest],
-    };
-
-    if (q.chooseBy) {
-      normalizedQ.chooseBy = q.chooseBy;
-    }
-
-    if (q.config) {
-      normalizedQ.config = q.config;
-    }
-
-    return normalizedQ;
+    normalizedQ.nest = [groupByNest];
   }
-  return duplicate(q); // We will cause side effect to q.spec in SpecQueryModel.build
+
+  if (q.chooseBy) {
+    normalizedQ.chooseBy = q.chooseBy;
+  }
+
+  if (q.config) {
+    normalizedQ.config = q.config;
+  }
+
+  return normalizedQ;
 }
 
 export interface Query {
