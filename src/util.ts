@@ -1,5 +1,5 @@
 import {isArray} from 'datalib/src/util';
-export {keys, duplicate, extend} from 'datalib/src/util';
+export {keys, duplicate, extend, isObject, isArray} from 'datalib/src/util';
 
 export interface Dict<T> {
   [key: string]: T;

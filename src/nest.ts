@@ -1,18 +1,22 @@
 import {Channel} from 'vega-lite/src/channel';
+import {isArray} from 'datalib/src/util';
 
+import {EnumSpec, isEnumSpec, SHORT_ENUM_SPEC} from './enumspec';
 import {SpecQueryModel} from './model';
 import {SpecQueryModelGroup} from './modelgroup';
-import {EnumSpec, isEnumSpec, SHORT_ENUM_SPEC} from './enumspec';
+import {Property} from './property';
+import {Dict, duplicate, keys} from './util';
+
+import {ExtendedGroupBy, isExtendedGroupBy} from './query/groupby';
 import {Query} from './query/query';
-import {fieldDef as fieldDefShorthand} from './query/shorthand';
+import {fieldDef as fieldDefShorthand, spec as specShorthand, Replacer, getReplacer} from './query/shorthand';
 import {stack} from './query/spec';
-import {Dict} from './util';
 
 
 /**
  * Registry for all possible grouping key functions.
  */
-let groupRegistry = {};
+let groupRegistry: Dict<(specM: SpecQueryModel) => string> = {};
 
 /**
  * Add a grouping function to the registry.
@@ -38,15 +42,46 @@ export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModel
   let groupIndex: Dict<SpecQueryModelGroup> = {};
 
   if (query.nest) {
+    // global `includes` and `replaces` will get augmented by each level's groupBy.
+    // Upper level's `groupBy` will get cascaded to lower-level groupBy.
+    // `replace` can be overriden in a lower-level to support different grouping.
+    let includes: Array<Dict<boolean>> = [];
+    let replaces: Array<Dict<Dict<string>>> = [];
+    let replacers: Array<Dict<Replacer>> = [];
+
+    for (let l = 0 ; l < query.nest.length; l++) {
+      includes.push( l > 0 ? duplicate(includes[l-1]) : {} );
+      replaces.push( l > 0 ? duplicate(replaces[l-1]) : {} );
+
+      const groupBy = query.nest[l].groupBy;
+      if (isArray(groupBy)) {
+        groupBy.forEach((grpBy: Property | ExtendedGroupBy) => {
+          if (isExtendedGroupBy(grpBy)) {
+            includes[l][grpBy.property] = true;
+            replaces[l][grpBy.property] = grpBy.replace;
+          } else {
+            includes[l][grpBy] = true;
+          }
+        });
+        const replaceFnIndex = keys(replaces[l]).reduce((fnIndex, prop: string) => {
+          fnIndex[prop] = getReplacer(replaces[l][prop]);
+          return fnIndex;
+        }, {});
+        replacers.push(replaceFnIndex);
+      }
+    }
+
+    // With includes and replacers, now we can construct the nesting tree
     specModels.forEach((specM) => {
       let path = '';
       let group: SpecQueryModelGroup = rootGroup;
       for (let l = 0 ; l < query.nest.length; l++) {
-        group.groupBy = query.nest[l].groupBy;
+        const groupBy = group.groupBy = query.nest[l].groupBy;
         group.orderGroupBy = query.nest[l].orderGroupBy;
 
-        const keyFn: (specM: SpecQueryModel) => string = groupRegistry[query.nest[l].groupBy];
-        const key = keyFn(specM);
+        const key = isArray(groupBy) ?
+          specShorthand(specM.specQuery, includes[l], replacers[l]) :
+          groupRegistry[groupBy](specM);
 
         path += '/' + key;
         if (!groupIndex[path]) { // this item already exists on the path
@@ -67,6 +102,7 @@ export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModel
   return rootGroup;
 }
 
+
 registerKeyFn(FIELD, (specM: SpecQueryModel) => {
   return specM.getEncodings().map((encQ) => { return encQ.field; })
               .filter((field) => field && field !== '*')
@@ -75,7 +111,7 @@ registerKeyFn(FIELD, (specM: SpecQueryModel) => {
 });
 
 registerKeyFn(FIELD_TRANSFORM, (specM: SpecQueryModel) => {
-  return specM.getEncodings().map(fieldDefShorthand)
+  return specM.getEncodings().map((encQ) => fieldDefShorthand(encQ))
               .sort()
               .join('|');
 });
