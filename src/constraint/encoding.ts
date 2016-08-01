@@ -123,7 +123,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.bin && encQ.scale) {
-        if ((encQ.bin === true) && (encQ.scale as ScaleQuery).zero === true) {
+        if ((encQ.scale as ScaleQuery).zero === true) {
           return false;
         }
       }
