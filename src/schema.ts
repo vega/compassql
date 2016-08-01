@@ -84,7 +84,7 @@ export class Schema {
       fieldSchema.timeStats = {};
       if (fieldSchema.type === Type.QUANTITATIVE) {
         for (let maxbins of opt.maxBinsList) {
-          fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats, fieldSchema.type);
+          fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
         }
       } else if (fieldSchema.type === Type.TEMPORAL) {
         // need to get min/max of date data
@@ -154,7 +154,7 @@ export class Schema {
       const maxbins: any = bin.maxbins;
       if (!fieldSchema.binStats[maxbins]) {
         // need to calculate
-        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats, fieldSchema.type);
+        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
       }
       return fieldSchema.binStats[maxbins].distinct;
     } else if (encQ.timeUnit) {
@@ -201,14 +201,14 @@ export class Schema {
 /**
  * @return a summary of the binning scheme determined from the given max number of bins
  */
-function binSummary(maxbins: number, summary: Summary, type: Type) {
+function binSummary(maxbins: number, summary: Summary) {
   const bin = dl.bins({
     min: summary.min,
     max: summary.max,
     maxbins: maxbins
   });
 
-  return binStats(bin, summary, type);
+  return binStats(bin, summary);
 }
 
 function timeUnitSummary(unit: TimeUnit, summary: Summary, type: Type) {
@@ -234,32 +234,21 @@ function timeUnitSummary(unit: TimeUnit, summary: Summary, type: Type) {
       });
   }
 
-  return binStats(bin, summary, type);
+  return binStats(bin, summary);
 }
 
 /**
  * @return a new summary based on a new binning scheme and old summary statistics
  */
-function binStats(bin, summary: Summary, type: Type): Summary {
+function binStats(bin, summary: Summary): Summary {
   // have the timeUnit bin scheme, need to determine new stats
   // start with summary, pre-binning
   const result = extend({}, summary);
 
-  const newUnique = binUnique(bin, summary.unique);
-  const values = uniqueToValues(newUnique);
-
-  result.unique = newUnique;
-  // 'count', 'valid', and 'missing' don't change
-  result.distinct = (type === Type.ORDINAL) ? keys(result.unique).length : (bin.stop - bin.start) / bin.step;
+  result.unique = binUnique(bin, summary.unique);
+  result.distinct = (bin.stop - bin.start) / bin.step;
   result.min = bin.start;
   result.max = bin.stop;
-  result.mean = dl.mean(values);
-  result.stdev = dl.stdev(values);
-  result.median = dl.median(values);
-  const quartiles = dl.quartile(values);
-  result.q1 = quartiles[0];
-  result.q2 = quartiles[2];
-  result.modeskew = dl.modeskew(values);
 
   return result;
 }
@@ -267,31 +256,18 @@ function binStats(bin, summary: Summary, type: Type): Summary {
 /**
  * @return a new unique object based off of the old unique count and a binning scheme
  */
-function binUnique(bin, oldUnique) {
+function binUnique(bin: Bin, oldUnique) {
   const newUnique = {};
   for (var value in oldUnique) {
     // date types are tricky, need to convert into correct unit
-    let bucket = bin.unit.date ? bin.value(bin.unit.unit(new Date(value))) : bin.value(value);
-    if (!newUnique[bin.value(value)]) {
+    let bucket: any = bin.unit.date ? bin.value(bin.unit.unit(new Date(value))) : bin.value(Number(value));
+    if (!newUnique[bucket]) {
       newUnique[bucket] = oldUnique[value];
     } else {
       newUnique[bucket] += oldUnique[value];
     }
   }
   return newUnique;
-}
-
-/**
- * @return an array containing all the values recorded in a 'unique' object
- */
-function uniqueToValues(unique) {
-  const result = [];
-  for (var value in unique) {
-    for (var i = 0; i < unique[value]; i++) {
-      result.push(value);
-    }
-  }
-  return result;
 }
 
 export enum PrimitiveType {
@@ -311,4 +287,18 @@ export interface FieldSchema {
   binStats?: {[key: string]: Summary};
   timeStats?: {[timeUnit: string]: Summary};
   title?: string;
+}
+
+interface Bin {
+  start: number | Date;
+  stop: number | Date;
+  step: number;
+  value(value: number | Date): number | Date;
+  index(value: number | Date): number;
+  unit: Unit;
+}
+
+interface Unit {
+  date?();
+  unit(date: Date): Date;
 }
