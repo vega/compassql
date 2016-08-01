@@ -3,7 +3,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {QueryConfig} from '../config';
 import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
-import {getNestedEncodingProperty, Property, SUPPORTED_SCALE_PROPERTY_INDEX} from '../property';
+import {getNestedEncodingProperty, Property, SCALE_PROPERTIES, SUPPORTED_SCALE_PROPERTY_INDEX} from '../property';
 import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery} from '../query/encoding';
 import {isEnumSpec} from '../enumspec';
 import {PrimitiveType, Schema} from '../schema';
@@ -142,7 +142,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
   },{
     name: 'scalePropertiesSupportedByScaleType',
     description: 'Scale properties must be supported by correct scale type',
-    properties: [Property.SCALE, Property.SCALE_TYPE, Property.TYPE],
+    properties: SCALE_PROPERTIES.concat([Property.SCALE, Property.TYPE]),
     allowEnumSpecForProperties: true,
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
@@ -150,15 +150,20 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
         const scale: ScaleQuery = encQ.scale as ScaleQuery;
         const hasScaleType: boolean = (scale.type !== undefined);
 
+        /**
+         *  If encQ.type is an EnumSpec and scale.type is undefined, it is equivalent
+         *  to scale type is EnumSpec. If scale type is an EnumSpec, we do not yet know
+         *  what the scale type is, and thus can ignore the constraint.
+         */
+
         if ((!hasScaleType && isEnumSpec(encQ.type)) || isEnumSpec(scale.type)) {
           return true;
         }
 
+        const sType = scaleType(scale.type, encQ.timeUnit, encQ.type);
+
         for (let scaleProp in scale) {
           if (SUPPORTED_SCALE_PROPERTY_INDEX[scaleProp]) {
-
-            const sType = scaleType(scale.type, encQ.timeUnit, encQ.type);
-
             if (!contains(SUPPORTED_SCALE_PROPERTY_INDEX[scaleProp], sType)) {
               return false;
             }

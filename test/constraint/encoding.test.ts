@@ -453,7 +453,7 @@ describe('constraints/encoding', () => {
         scale: {bandSize: 10, type: undefined}
       };
 
-      it('should return false if scaleTYpe does not suport scaleBandSize', () => {
+      it('should return false if scaleType does not suport scaleBandSize', () => {
         [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE,
          ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC]. forEach((scaleType) => {
           (encQ.scale as ScaleQuery).type = scaleType;
@@ -483,7 +483,7 @@ describe('constraints/encoding', () => {
       });
 
       it('should return true if scaleType supports scaleClamp', () => {
-        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
+        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.TIME, ScaleType.UTC, undefined].forEach((scaleType) => {
           (encQ.scale as ScaleQuery).type = scaleType;
           assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
         });
@@ -517,7 +517,7 @@ describe('constraints/encoding', () => {
 
       it('should return false if scaleType does not support scaleExponent', () => {
         [ScaleType.LINEAR, ScaleType.QUANTILE, ScaleType.QUANTIZE,
-         ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
+         ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC, undefined].forEach((scaleType) => {
           (encQ.scale as ScaleQuery).type = scaleType;
           assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
         });
@@ -547,7 +547,7 @@ describe('constraints/encoding', () => {
       });
 
       it('should return true if scaleType supports scaleNice', () => {
-        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
+        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.TIME, ScaleType.UTC, undefined].forEach((scaleType) => {
           (encQ.scale as ScaleQuery).type = scaleType;
           assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
         });
@@ -588,7 +588,7 @@ describe('constraints/encoding', () => {
 
       it('should return true if scaleType supports scaleRound', () => {
         [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.TIME,
-         ScaleType.UTC].forEach((scaleType) => {
+         ScaleType.UTC, undefined].forEach((scaleType) => {
            (encQ.scale as ScaleQuery).type = scaleType;
           assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
          });

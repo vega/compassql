@@ -212,6 +212,11 @@ const NESTED_ENCODING_PROPERTY_PARENT_INDEX =
     return m;
   }, {} as Dict<Array<NestedEncodingProperty>>); // as Dict<Array<String>>);
 
+export const SCALE_PROPERTIES: Property[] =
+  NESTED_ENCODING_PROPERTY_PARENT_INDEX['scale'].map((nestedProp) => {
+    return nestedProp.property;
+  });
+
 const ENCODING_INDEX: Dict<Property> =
   ENCODING_PROPERTIES.reduce((m, prop) => {
     m[prop] = prop;
