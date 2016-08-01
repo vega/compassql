@@ -116,6 +116,20 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       return true;
     }
   },{
+    name: 'omitScaleZeroWithBinnedField',
+    description: 'Do not use scale zero with binned field',
+    properties: [Property.SCALE, Property.SCALE_ZERO, Property.BIN],
+    allowEnumSpecForProperties: false,
+    strict: true,
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      if (encQ.bin && encQ.scale) {
+        if ((encQ.scale as ScaleQuery).zero === true) {
+          return false;
+        }
+      }
+      return true;
+    }
+  },{
     name: 'onlyOneTypeOfFunction',
     description: 'Only of of aggregate, autoCount, timeUnit, or bin should be applied at the same time.',
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN],
