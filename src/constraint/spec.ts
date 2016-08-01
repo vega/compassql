@@ -125,26 +125,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'omitScaleZeroWithBinnedField',
-    description: 'Do not use scale zero with binned field',
-    properties: [Property.SCALE, Property.SCALE_ZERO, Property.BIN],
-    allowEnumSpecForProperties: false,
-    strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      const encodings = specM.getEncodings();
-
-      for (let encQ of encodings) {
-        if (encQ.bin && encQ.scale) {
-          if ((encQ.bin === true) && (encQ.scale as ScaleQuery).zero === true) {
-            return false;
-          }
-        }
-      }
-
-      return true;
-    }
-  },
-  {
     name: 'autoAddCount',
     description: 'Automatically adding count only for plots with only ordinal, binned quantitative, or temporal with timeunit fields.',
     properties: [Property.BIN, Property.TIMEUNIT, Property.TYPE, Property.AUTOCOUNT],

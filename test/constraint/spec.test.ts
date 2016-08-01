@@ -57,30 +57,6 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('omitScaleZeroWithBinnedField', () => {
-    it('should return false if scale zero is used with binned field', () => {
-      const specM = buildSpecQueryModel({
-        mark: Mark.POINT,
-        encodings: [
-          {channel: Channel.X, bin: true, field: 'A', scale: {zero: true}, type: Type.QUANTITATIVE}
-        ]
-      });
-
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(specM, schema, defaultOpt));
-    });
-
-    it('should return true if scale zero is not used with binned field', () => {
-      const specM = buildSpecQueryModel({
-        mark: Mark.POINT,
-        encodings: [
-          {channel: Channel.X, bin: true, field: 'A', scale: {zero: false}, type: Type.QUANTITATIVE}
-        ]
-      });
-
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(specM, schema, defaultOpt));
-    });
-  });
-
   describe('hasAllRequiredPropertiesSpecific', () => {
     const specCModel = new SpecConstraintModel(
       {
