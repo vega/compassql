@@ -3,7 +3,7 @@ import {Mark} from 'vega-lite/src/mark';
 import {QueryConfig} from './config';
 import {checkEncoding} from './constraint/encoding';
 import {checkSpec} from './constraint/spec';
-import {EnumSpecIndex, EnumSpecIndexTuple, SpecQueryModel} from './model';
+import {EnumSpecIndex, SpecQueryModel} from './model';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from './property';
 import {EnumSpec} from './enumspec';
 import {Schema} from './schema';
@@ -60,17 +60,18 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
 
     return (answerSet: SpecQueryModel[], specM: SpecQueryModel) => {
       // index of encoding mappings that require enumeration
-      const indexTuples: EnumSpecIndexTuple<any>[] = enumSpecIndex[prop];
+      const indices = enumSpecIndex.encodingIndicesByProperty[prop];
 
       function enumerate(jobIndex: number) {
-        if (jobIndex === indexTuples.length) {
+        if (jobIndex === indices.length) {
           // emit and terminate
           answerSet.push(specM.duplicate());
           return;
         }
-        const indexTuple = indexTuples[jobIndex];
-        const encQ = specM.getEncodingQueryByIndex(indexTuple.index);
-        const propEnumSpec = specM.getEncodingProperty(indexTuple.index, prop);
+        const index = indices[jobIndex];
+        const enumSpec: EnumSpec<any> = enumSpecIndex.encodings[index][prop];
+        const encQ = specM.getEncodingQueryByIndex(index);
+        const propEnumSpec = specM.getEncodingProperty(index, prop);
 
         if (
             // TODO: encQ.exclude
@@ -84,21 +85,21 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
           ) { // TODO: encQ.excluded
           enumerate(jobIndex + 1);
         } else {
-          propEnumSpec.values.forEach((propVal) => {
+          enumSpec.values.forEach((propVal) => {
             if (propVal === null) {
               // our duplicate() method use JSON.stringify, parse and thus can accidentally
               // convert undefined in an array into null
               propVal = undefined;
             }
-            specM.setEncodingProperty(indexTuple.index, prop, propVal, indexTuple.enumSpec);
+            specM.setEncodingProperty(index, prop, propVal, enumSpec);
 
             // Check encoding constraint
-            const violatedEncodingConstraint = checkEncoding(prop, indexTuple, specM, schema, opt);
+            const violatedEncodingConstraint = checkEncoding(prop, enumSpec, index, specM, schema, opt);
             if (violatedEncodingConstraint) {
               return; // do not keep searching
             }
             // Check spec constraint
-            const violatedSpecConstraint = checkSpec(prop, indexTuple, specM, schema, opt);
+            const violatedSpecConstraint = checkSpec(prop, enumSpec, specM, schema, opt);
             if (violatedSpecConstraint) {
               return; // do not keep searching
             }
@@ -107,7 +108,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
           });
 
           // Reset to avoid side effect
-          specM.resetEncodingProperty(indexTuple.index, prop, indexTuple.enumSpec);
+          specM.resetEncodingProperty(index, prop, enumSpec);
         }
       }
 
