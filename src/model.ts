@@ -14,19 +14,75 @@ import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {QueryConfig} from './config';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
 import {EnumSpec, SHORT_ENUM_SPEC, initEnumSpec, isEnumSpec} from './enumspec';
+import {isEncodingProperty} from './property';
 import {SpecQuery, isAggregate, stack} from './query/spec';
-import {isDimension, isMeasure} from './query/encoding';
+import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
 import {spec as specShorthand} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
 
-/**
- * Part of EnumSpecIndex which lists all enumSpec in a specQuery.
- */
-export interface EnumSpecIndexTuple<T> {
-  enumSpec: EnumSpec<T>;
-  index?: number;
+export interface EncodingsEnumSpecIndex {
+  [index: number]: EncodingEnumSpecIndex;
+}
+
+export interface EncodingEnumSpecIndex {
+  /** Enum spec for channel enumeration. */
+  channel?: EnumSpec<Channel>;
+
+  /** Enum spec for aggregate enumeration. */
+  aggregate?: EnumSpec<AggregateOp>;
+
+  /** Enum spec for autoCount enumeration. */
+  autoCount?: EnumSpec<AggregateOp>;
+
+  /** Enum spec for bin enumeration. */
+  bin?: EnumSpec<boolean>;
+
+  /** Enum spec for bin.maxbins enumeration */
+  maxbin?: EnumSpec<number>;
+
+  /** Enum spec for scale enumeration. */
+  scale?: EnumSpec<boolean>;
+
+  /** Enum spec for scale.bandSize enumeration */
+  scaleBandSize?: EnumSpec<number>;
+
+  /** Enum spec for scale.clamp enumeration */
+  scaleClamp?: EnumSpec<boolean>;
+
+  /** Enum spec for scale.domain enumeration */
+  scaleDomain?: EnumSpec<string | string[] | number[]>;
+
+  /** Enum spec for scale.exponent enumeration */
+  scaleExponent?: EnumSpec<number>;
+
+  /** Enum spec for scale.nice enumeration */
+  scaleNice?: EnumSpec<boolean>;
+
+  /** Enum spec for scale.range enumeration */
+  scaleRange?: EnumSpec<string | string[] | number[]>;
+
+  /** Enum spec for scale.round enumeration */
+  scaleRound?: EnumSpec<boolean>;
+
+  /** Enum spec for scale.type enumeration */
+  scaleType?: EnumSpec<ScaleType>;
+
+  /** Enum spec for scale.useRawDomain enumeration */
+  scaleUseRawDomain?: EnumSpec<boolean>;
+
+  /** Enum spec for scale.zero enumeration */
+  scaleZero?: EnumSpec<boolean>;
+
+  /** Enum spec for timeUnit enumeration. */
+  timeUnit?: EnumSpec<TimeUnit>;
+
+  /** Enum spec for field enumeration. */
+  field?: EnumSpec<string>;
+
+  /** Enum spec for type enumeration. */
+  type?: EnumSpec<Type>;
 }
 
 /**
@@ -34,64 +90,27 @@ export interface EnumSpecIndexTuple<T> {
  */
 export interface EnumSpecIndex {
   /** Index tuple for the mark (if mark requires enumeration). */
-  mark?: EnumSpecIndexTuple<Mark>;
+  // TODO: replace with just EnumSpec<Mark>.
+  mark?: EnumSpec<Mark>;
 
-  /** List of indice tuples of encoding mappings that require channel enumeration. */
-  channel?: EnumSpecIndexTuple<Channel>[];
+  // TODO: transform
 
-  /** List of indice tuples of encoding mappings that require aggregate enumeration. */
-  aggregate?: EnumSpecIndexTuple<AggregateOp>[];
+  /**
+   * Dictionary mapping encoding index to an encoding enum spec index.
+   */
+  encodings: EncodingsEnumSpecIndex;
 
-  /** List of indice tuples of encoding mappings that require autoCount enumeration. */
-  autoCount?: EnumSpecIndexTuple<AggregateOp>[];
+  encodingIndicesByProperty: Dict<number[]>;
+}
 
-  /** List of indice tuples of encoding mappings that require bin enumeration. */
-  bin?: EnumSpecIndexTuple<boolean>[];
-
-  /** List of indice tuple for encoding mappings that require enumerating bin.maxbins */
-  maxbin?: EnumSpecIndexTuple<number>[];
-
-  /** List of indice tuples of encoding mappings that require scale enumeration. */
-  scale?: EnumSpecIndexTuple<boolean>[];
-
-  /** List of indice tuple for encoding mappings that require enumerating scale.bandSize */
-  scaleBandSize?: EnumSpecIndexTuple<number>[];
-
-  /** List of indice tuple for encoding mappings that require enumerating scale.clamp */
-  scaleClamp?: EnumSpecIndexTuple<boolean>[];
-
-  /** List of indice tuple for encoding mappings that require enumerating scale.domain */
-  scaleDomain?: EnumSpecIndexTuple<string | string[] | number[]>[];
-
-  /** List of indice tuple for encoding mappings that require enumerating scale.exponent */
-  scaleExponent?: EnumSpecIndexTuple<number>[];
-
-  /** List of indice tuple for encoding mappings that require enumerating scale.nice */
-  scaleNice?: EnumSpecIndexTuple<boolean>[];
-
-  /** List of indice tuple for encoding mappings that require enumerating scale.range */
-  scaleRange?: EnumSpecIndexTuple<string | string[] | number[]>[];
-
-  /** List of indice tuple for encoding mappings that require enumerating scale.round */
-  scaleRound?: EnumSpecIndexTuple<boolean>[];
-
-  /** List of indice tuple for encoding mappings that require enumerating scale.type */
-  scaleType?: EnumSpecIndexTuple<ScaleType>[];
-
-  /** List of indice tuple for encoding mappings that require enumerating scale.useRawDomain */
-  scaleUseRawDomain?: EnumSpecIndexTuple<boolean>[];
-
-  /** List of indice tuple for encoding mappings that require enumerating scale.zero */
-  scaleZero?: EnumSpecIndexTuple<boolean>[];
-
-  /** List of indice tuples of encoding mappings that require timeUnit enumeration. */
-  timeUnit?: EnumSpecIndexTuple<TimeUnit>[];
-
-  /** List of indice tuples of encoding mappings that require field enumeration. */
-  field?: EnumSpecIndexTuple<string>[];
-
-  /** List of indice tuples of encoding mappings that require type enumeration. */
-  type?: EnumSpecIndexTuple<Type>[];
+export function hasPropertyIndex(enumSpecIndex: EnumSpecIndex, prop: Property) {
+  if (isEncodingProperty(prop)) {
+    return !!enumSpecIndex.encodingIndicesByProperty[prop];
+  } if (prop === Property.MARK) {
+    return !!enumSpecIndex.mark;
+  }
+  /* istanbul ignore next */
+  throw new Error('Unimplemented for property ' + prop);
 }
 
 export function getDefaultName(prop: Property) {
@@ -197,6 +216,18 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
   throw new Error('No default enumValues for ' + prop);
 }
 
+function setEnumSpecIndex(enumSpecIndex: EnumSpecIndex, index: number, prop: Property, enumSpec: EnumSpec<any>) {
+  const encodingsIndex = enumSpecIndex.encodings;
+
+  // Init encoding index and set prop
+  const encIndex = encodingsIndex[index] = encodingsIndex[index] || {};
+  encIndex[prop] = enumSpec;
+
+  // Initialize indicesByProperty[prop] and add index
+  const encodingIndicesByProperty = enumSpecIndex.encodingIndicesByProperty;
+  (encodingIndicesByProperty[prop] = encodingIndicesByProperty[prop] || []).push(index);
+}
+
 /**
  * Internal class for specQuery that provides helper for the enumeration process.
  */
@@ -212,6 +243,7 @@ export class SpecQueryModel {
 
   private _rankingScore: Dict<RankingScore> = {};
 
+
   /**
    * Build an enumSpecIndex by detecting enumeration specifiers
    * in the input specQuery and replace short enum specs with
@@ -220,13 +252,13 @@ export class SpecQueryModel {
    * @return a SpecQueryModel that wraps the specQuery and the enumSpecIndex.
    */
   public static build(specQ: SpecQuery, schema: Schema, opt: QueryConfig): SpecQueryModel {
-    let enumSpecIndex: EnumSpecIndex = {};
+    let enumSpecIndex: EnumSpecIndex = {encodings: {}, encodingIndicesByProperty: {}};
 
     // mark
     if (isEnumSpec(specQ.mark)) {
       const name = getDefaultName(Property.MARK);
       specQ.mark = initEnumSpec(specQ.mark, name, opt.marks);
-      enumSpecIndex.mark = { enumSpec: specQ.mark };
+      enumSpecIndex.mark = specQ.mark;
     }
 
     // TODO: transform
@@ -251,13 +283,10 @@ export class SpecQueryModel {
           // Assign default enum spec name and enum values.
           const defaultEnumSpecName = getDefaultName(prop) + index;
           const defaultEnumValues = getDefaultEnumValues(prop, schema, opt);
-          encQ[prop] = initEnumSpec(encQ[prop], defaultEnumSpecName, defaultEnumValues);
+          const enumSpec = encQ[prop] = initEnumSpec(encQ[prop], defaultEnumSpecName, defaultEnumValues);
 
-          // Add index of the encoding mapping to the property's enum job.
-          (enumSpecIndex[prop] = enumSpecIndex[prop] || []).push({
-            enumSpec: encQ[prop],
-            index: index
-          } as EnumSpecIndexTuple<any>);
+          // Add index of the encoding mapping to the property's enum spec index.
+          setEnumSpecIndex(enumSpecIndex, index, prop, enumSpec);
         }
       });
 
@@ -271,13 +300,10 @@ export class SpecQueryModel {
             // Assign default enum spec name and enum values.
             const defaultEnumSpecName = getDefaultName(prop) + index;
             const defaultEnumValues = getDefaultEnumValues(prop, schema, opt);
-            propObj[child] = initEnumSpec(propObj[child], defaultEnumSpecName, defaultEnumValues);
+            const enumSpec = propObj[child] = initEnumSpec(propObj[child], defaultEnumSpecName, defaultEnumValues);
 
-            // Add index of the encoding mapping to the property's enum job.
-            (enumSpecIndex[prop] = enumSpecIndex[prop] || []).push({
-              enumSpec: propObj[child],
-              index: index
-            } as EnumSpecIndexTuple<any>);
+            // Add index of the encoding mapping to the property's enum spec index.
+            setEnumSpecIndex(enumSpecIndex, index, prop, enumSpec);
           }
         }
       });
@@ -286,7 +312,7 @@ export class SpecQueryModel {
     // AUTO COUNT
     // Add Auto Count Field
     if (opt.autoAddCount) {
-      const countEncQ = {
+      const countEncQ: EncodingQuery = {
         channel: {
           name: getDefaultName(Property.CHANNEL) + specQ.encodings.length,
           values: getDefaultEnumValues(Property.CHANNEL, schema, opt)
@@ -300,12 +326,10 @@ export class SpecQueryModel {
       specQ.encodings.push(countEncQ);
 
       const index = specQ.encodings.length - 1;
-      [Property.CHANNEL, Property.AUTOCOUNT].forEach((prop) => {
-        (enumSpecIndex[prop] = enumSpecIndex[prop] || []).push({
-            enumSpec: countEncQ[prop],
-            index: index
-          } as EnumSpecIndexTuple<any>);
-      });
+
+      // Add index of the encoding mapping to the property's enum spec index.
+      setEnumSpecIndex(enumSpecIndex, index, Property.CHANNEL, countEncQ.channel);
+      setEnumSpecIndex(enumSpecIndex, index, Property.AUTOCOUNT, countEncQ.autoCount);
     }
 
     return new SpecQueryModel(specQ, enumSpecIndex, schema, opt, {});
@@ -348,7 +372,7 @@ export class SpecQueryModel {
   }
 
   public resetMark() {
-    const enumSpec = this._spec.mark = this._enumSpecIndex.mark.enumSpec;
+    const enumSpec = this._spec.mark = this._enumSpecIndex.mark;
     delete this._enumSpecAssignment[enumSpec.name];
   }
 

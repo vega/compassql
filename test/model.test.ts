@@ -80,7 +80,7 @@ describe('SpecQueryModel', () => {
         // check if type is enumspec
         assert.isTrue(isEnumSpec(specM.getEncodingQueryByIndex(0).type));
         // check if enumeration specifier index has an index for type
-        assert.isOk(specM.enumSpecIndex.type);
+        assert.isOk(specM.enumSpecIndex.encodings[0].type);
       });
     });
 
@@ -98,7 +98,8 @@ describe('SpecQueryModel', () => {
         specQ.encodings[0][prop] = SHORT_ENUM_SPEC;
 
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isOk(enumSpecIndex[prop]);
+        assert.isOk(enumSpecIndex.encodingIndicesByProperty[prop]);
+        assert.isOk(enumSpecIndex.encodings[0][prop]);
       });
 
       it('should have ' + prop + ' enumSpecIndex if it is an EnumSpec.', () => {
@@ -112,7 +113,8 @@ describe('SpecQueryModel', () => {
         };
 
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isOk(enumSpecIndex[prop]);
+        assert.isOk(enumSpecIndex.encodingIndicesByProperty[prop]);
+        assert.isOk(enumSpecIndex.encodings[0][prop]);
       });
 
       it('should not have ' + prop + ' enumSpecIndex if it is specific.', () => {
@@ -120,7 +122,8 @@ describe('SpecQueryModel', () => {
         // do not set to enum spec = make it specific
 
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isNotOk(enumSpecIndex[prop]);
+        assert.isNotOk(enumSpecIndex.encodingIndicesByProperty[prop]);
+        assert.isNotOk(enumSpecIndex.encodings[0]);
       });
     });
 
@@ -136,7 +139,8 @@ describe('SpecQueryModel', () => {
         specQ.encodings[0][parent][child] = SHORT_ENUM_SPEC;
 
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isOk(enumSpecIndex[prop]);
+        assert.isOk(enumSpecIndex.encodingIndicesByProperty[prop]);
+        assert.isOk(enumSpecIndex.encodings[0][prop]);
       });
 
       it('should have ' + prop + ' enumSpecIndex if it is an EnumSpec.', () => {
@@ -147,14 +151,16 @@ describe('SpecQueryModel', () => {
         };
 
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isOk(enumSpecIndex[prop]);
+        assert.isOk(enumSpecIndex.encodingIndicesByProperty[prop]);
+        assert.isOk(enumSpecIndex.encodings[0][prop]);
       });
 
       it('should not have ' + prop + ' enumSpecIndex if it is specific.', () => {
         let specQ = duplicate(templateSpecQ);
 
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isNotOk(enumSpecIndex[prop]);
+        assert.isNotOk(enumSpecIndex.encodingIndicesByProperty[prop]);
+        assert.isNotOk(enumSpecIndex.encodings[0]);
       });
     });
 
@@ -171,8 +177,8 @@ describe('SpecQueryModel', () => {
       });
 
       it('should add new channel and autoCount to the enumSpec', () => {
-        assert.equal(model.enumSpecIndex.autoCount[0].index, 1);
-        assert.equal(model.enumSpecIndex.channel[0].index, 1);
+        assert.equal(model.enumSpecIndex.encodingIndicesByProperty['autoCount'][0], 1);
+        assert.equal(model.enumSpecIndex.encodingIndicesByProperty['channel'][0], 1);
       });
     });
   });
