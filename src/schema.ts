@@ -55,12 +55,17 @@ export class Schema {
     });
 
     // order the fieldSchemas (sort them)
-    const order = [Type.NOMINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.ORDINAL];
+    const order = {
+      'nominal': 0,
+      'ordinal': 1,
+      'temporal': 2,
+      'quantitative': 3
+    };
     fieldSchemas.sort(function(a: FieldSchema, b: FieldSchema) {
       // first order by type: nominal < temporal < quantitative < ordinal
-      if (order.indexOf(a.type) < order.indexOf(b.type)) {
+      if (order[a.type] < order[b.type]) {
         return -1;
-      } else if (order.indexOf(a.type) > order.indexOf(b.type)) {
+      } else if (order[a.type] > order[b.type]) {
         return 1;
       } else {
         // then order by field (alphabetically)
