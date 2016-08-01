@@ -201,8 +201,8 @@ export class Schema {
 /**
  * @return a summary of the binning scheme determined from the given max number of bins
  */
-function binSummary(maxbins: number, summary: Summary) {
-  const bin = dl.bins({
+function binSummary(maxbins: number, summary: Summary): Summary {
+  const bin: Bin = dl.bins({
     min: summary.min,
     max: summary.max,
     maxbins: maxbins
@@ -211,8 +211,8 @@ function binSummary(maxbins: number, summary: Summary) {
   return binStats(bin, summary);
 }
 
-function timeUnitSummary(unit: TimeUnit, summary: Summary, type: Type) {
-  var bin;
+function timeUnitSummary(unit: TimeUnit, summary: Summary, type: Type): Summary {
+  var bin: Bin;
   switch (unit) {
     // these are the units that dl.bins.date supports
     case TimeUnit.YEAR:
@@ -240,7 +240,7 @@ function timeUnitSummary(unit: TimeUnit, summary: Summary, type: Type) {
 /**
  * @return a new summary based on a new binning scheme and old summary statistics
  */
-function binStats(bin, summary: Summary): Summary {
+function binStats(bin: Bin, summary: Summary): Summary {
   // have the timeUnit bin scheme, need to determine new stats
   // start with summary, pre-binning
   const result = extend({}, summary);
@@ -260,7 +260,12 @@ function binUnique(bin: Bin, oldUnique) {
   const newUnique = {};
   for (var value in oldUnique) {
     // date types are tricky, need to convert into correct unit
-    let bucket: any = bin.unit.date ? bin.value(bin.unit.unit(new Date(value))) : bin.value(Number(value));
+    let bucket: number | string;
+    if (bin.unit.date) {
+      bucket = bin.value(bin.unit.unit(new Date(value))).toString();
+    } else {
+      bucket = bin.value(Number(value)) as number;
+    }
     if (!newUnique[bucket]) {
       newUnique[bucket] = oldUnique[value];
     } else {
@@ -287,18 +292,4 @@ export interface FieldSchema {
   binStats?: {[key: string]: Summary};
   timeStats?: {[timeUnit: string]: Summary};
   title?: string;
-}
-
-interface Bin {
-  start: number | Date;
-  stop: number | Date;
-  step: number;
-  value(value: number | Date): number | Date;
-  index(value: number | Date): number;
-  unit: Unit;
-}
-
-interface Unit {
-  date?();
-  unit(date: Date): Date;
 }
