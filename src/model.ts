@@ -160,8 +160,17 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
 
     // For other properties, take default enumValues from config.
     // The config name for each prop is a plural form of the prop.
+    case Property.AGGREGATE:
+      return opt.aggregates;
+
     case Property.BIN_MAXBINS:
       return opt.maxBinsList;
+
+    case Property.CHANNEL:
+      return opt.channels;
+
+    case Property.MARK:
+      return opt.marks;
 
     case Property.SCALE_BANDSIZE:
       return opt.scaleBandSizes;
@@ -177,15 +186,6 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
 
     case Property.SCALE_TYPE:
       return opt.scaleTypes;
-
-    case Property.MARK:
-      return opt.marks;
-
-    case Property.CHANNEL:
-      return opt.channels;
-
-    case Property.AGGREGATE:
-      return opt.aggregates;
 
     case Property.TIMEUNIT:
       return opt.timeUnits;
