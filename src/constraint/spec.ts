@@ -320,20 +320,20 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       const mark = specM.getMark();
       const encodings = specM.getEncodings();
 
-    if (mark === Mark.AREA || mark === Mark.BAR) {
-      for (let encQ of encodings) {
-        if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale) {
+      if (mark === Mark.AREA || mark === Mark.BAR) {
+        for (let encQ of encodings) {
+          if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale) {
 
-          let sType = scaleType((encQ.scale as ScaleQuery).type,
-                                 encQ.timeUnit, encQ.type);
+            let sType = scaleType((encQ.scale as ScaleQuery).type,
+                                  encQ.timeUnit, encQ.type);
 
-          if (sType === ScaleType.LOG) {
-            return false;
+            if (sType === ScaleType.LOG) {
+              return false;
+            }
           }
         }
       }
-    }
-    return true;
+      return true;
     }
   },
   {
