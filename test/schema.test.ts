@@ -199,45 +199,6 @@ describe('schema', () => {
       assert.equal(cardinality, 4);
     });
 
-    it('should correctly differentiate between cardinality for ordinal fields vs for linear fields', () => {
-      const ordinalCardinalityData = [];
-      // add enough non-distinct data to make the field ordinal and have multiple in-order, with skipping values
-      var total = 3 * (1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1);
-      for (var i = 0; i < total; i++) {
-        ordinalCardinalityData.push({a: 1});
-        ordinalCardinalityData.push({a: 3});
-        ordinalCardinalityData.push({a: 5});
-      }
-      const ordinalCardinalitySchema = Schema.build(ordinalCardinalityData);
-      const ordinalCardinality: number = ordinalCardinalitySchema.cardinality({
-        field: 'a',
-        channel: Channel.X,
-        bin: {
-          maxbins: 4
-        }
-      });
-
-      const quantitativeCardinalityData = [
-        {a: 1},
-        {a: 3},
-        {a: 5}
-      ];
-      const quantitativeCardinalitySchema = Schema.build(quantitativeCardinalityData);
-      const quantitativeCardinality: number = quantitativeCardinalitySchema.cardinality({
-        field: 'a',
-        channel: Channel.X,
-        bin: {
-          maxbins: 4
-        }
-      });
-
-      assert.equal(ordinalCardinalitySchema.type('a'), Type.ORDINAL);
-      assert.equal(ordinalCardinality, 3);
-
-      assert.equal(quantitativeCardinalitySchema.type('a'), Type.QUANTITATIVE);
-      assert.equal(quantitativeCardinality, 4);
-    });
-
     it('should correctly compute cardinality for single timeUnits', () => {
       const cardinalityData = [{a: '1/1/2016'}];
       const cardinalitySchema = Schema.build(cardinalityData);
