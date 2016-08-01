@@ -7,7 +7,16 @@ import {isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 import {getNestedEncodingPropertyChildren, Property, DEFAULT_PROPERTY_PRECEDENCE} from '../property';
 import {Dict, keys} from '../util';
 
-type Replacer = (s: string) => string;
+export type Replacer = (s: string) => string;
+
+export function getReplacer(replace: Dict<string>): Replacer {
+  return (s: string) => {
+    if (replace[s] !== undefined) {
+      return replace[s];
+    }
+    return s;
+  };
+}
 
 export function value(v: any, replace: Replacer): any {
   if (isEnumSpec(v)) {
@@ -50,8 +59,10 @@ export function spec(specQ: SpecQuery,
   }
 
   parts.push(specQ.encodings.map((encQ) => encoding(encQ, include, replace))
-                        .sort()
-                        .join('|'));  // sort at the end to ignore order
+                  .filter((encQStr) => !!encQStr)
+                  .sort() // sort at the end to ignore order
+                  .join('|')
+            );
 
   return parts.join('|');
 }
@@ -71,8 +82,10 @@ export function encoding(encQ: EncodingQuery,
   if (include[Property.CHANNEL]) {
     parts.push(value(encQ.channel, replace[Property.CHANNEL]));
   }
-
-  parts.push(fieldDef(encQ, include, replace)); // fieldDef is never empty
+  const fieldDefStr = fieldDef(encQ, include, replace);
+  if (fieldDefStr) {
+    parts.push(fieldDefStr);
+  }
   return parts.join(':');
 }
 
@@ -91,12 +104,12 @@ export function fieldDef(encQ: EncodingQuery,
   /** Encoding properties e.g., Scale, Axis, Legend */
   const props: {key: string, value: boolean | Object}[] = [];
 
-  if (encQ.autoCount === false) {
+  if (include[Property.AGGREGATE] && encQ.autoCount === false) {
     return '-';
-  }
-
-  if (include[Property.AGGREGATE] && encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
+  } else if (include[Property.AGGREGATE] && encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
     fn = value(encQ.aggregate, replace[Property.AGGREGATE]);
+  } else if (include[Property.AGGREGATE] && encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
+    fn = value('count', replace[Property.AGGREGATE]);;
   } else if (include[Property.TIMEUNIT] && encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
     fn = value(encQ.timeUnit, replace[Property.TIMEUNIT]);
   } else if (include[Property.BIN] && encQ.bin && !isEnumSpec(encQ.bin)) {
@@ -108,8 +121,6 @@ export function fieldDef(encQ: EncodingQuery,
         value: value(encQ.bin['maxbins'], replace[Property.BIN_MAXBINS])
       });
     }
-  } else if (include[Property.AGGREGATE] && encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
-    fn = value('count', replace[Property.AGGREGATE]);;
   } else {
     for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
       if (include[prop] && encQ[prop] && isEnumSpec(encQ[prop])) {
