@@ -9,7 +9,7 @@ import {Type} from 'vega-lite/src/type';
 import {Property} from '../../src/property';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {EncodingConstraintModel, ENCODING_CONSTRAINTS, ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
-import {EncodingQuery} from '../../src/query/encoding';
+import {EncodingQuery, ScaleQuery} from '../../src/query/encoding';
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {duplicate} from '../../src/util';
 
@@ -349,6 +349,26 @@ describe('constraints/encoding', () => {
         type: Type.QUANTITATIVE
       };
       assert.isFalse(ENCODING_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(encQ, schema, defaultOpt));
+    });
+  });
+
+  describe('omitScaleZeroWithBinnedField', () => {
+    let encQ: EncodingQuery = {
+      channel: Channel.X,
+      bin: true,
+      field: 'A',
+      scale: {zero: undefined},
+      type: Type.QUANTITATIVE
+    };
+
+    it('should return false if scale zero is used with binned field', () => {
+      (encQ.scale as ScaleQuery).zero = true;
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(encQ, schema, defaultOpt));
+    });
+
+    it('should return true if scale zero is not used with binned field', () => {
+      (encQ.scale as ScaleQuery).zero = false;
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(encQ, schema, defaultOpt));
     });
   });
 
