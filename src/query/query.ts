@@ -1,16 +1,17 @@
 import {Config} from 'vega-lite/src/config';
 
 import {SpecQuery} from './spec';
+import {GroupBy} from './groupby';
 
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../config';
 import {generate} from '../generate';
 import {nest} from '../nest';
-
 import {rank} from '../ranking/ranking';
 import {Schema} from '../schema';
 import {duplicate, extend} from '../util';
 
 export import encoding = require('./encoding');
+export import groupBy = require('./groupby');
 export import shorthand = require('./shorthand');
 export import spec = require('./spec');
 export import transform = require('./transform');
@@ -68,13 +69,13 @@ export function normalize(q: Query): Query {
 export interface Query {
   spec: SpecQuery;
   nest?: Nest[];
-  groupBy?: string;
+  groupBy?: GroupBy;
   orderBy?: string;
   chooseBy?: string;
   config?: QueryConfig;
 }
 
 export interface Nest {
-  groupBy: string;
+  groupBy: GroupBy;
   orderGroupBy?: string;
 }

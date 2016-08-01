@@ -1,10 +1,11 @@
 import {SpecQueryModel} from './model';
+import {GroupBy} from './query/groupby';
 
 export interface SpecQueryModelGroup {
   name: string;
   path: string;
   items: (SpecQueryModel | SpecQueryModelGroup)[];
-  groupBy?: string;
+  groupBy?: GroupBy;
   orderGroupBy?: string;
 }
 
