@@ -13,11 +13,15 @@ export interface EnumSpec<T> {
   values?: T[];
 }
 
+export interface ExtendedEnumSpec<T> extends EnumSpec<T> {
+  [prop: string]: any;
+}
+
 export function isEnumSpec(prop: any) {
   return prop === SHORT_ENUM_SPEC || (prop !== undefined && (!!prop.values || !!prop.name) && !isArray(prop));
 }
 
-export function initEnumSpec(prop: any, defaultName: string, defaultEnumValues: any[]): EnumSpec<any> & any {
+export function initEnumSpec(prop: any, defaultName: string, defaultEnumValues: any[]): ExtendedEnumSpec<any> {
   return extend({}, {
       name: defaultName,
       values: defaultEnumValues

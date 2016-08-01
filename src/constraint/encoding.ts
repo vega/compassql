@@ -1,16 +1,17 @@
 import {Channel, getSupportedRole} from 'vega-lite/src/channel';
+import {ScaleType} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
+import {AbstractConstraint, AbstractConstraintModel} from './base';
+
 import {QueryConfig} from '../config';
-import {EnumSpecIndexTuple, SpecQueryModel} from '../model';
+import {SpecQueryModel} from '../model';
 import {getNestedEncodingProperty, Property, SCALE_PROPERTIES, SUPPORTED_SCALE_PROPERTY_INDEX} from '../property';
-import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery} from '../query/encoding';
-import {isEnumSpec} from '../enumspec';
+import {isEnumSpec, EnumSpec} from '../enumspec';
 import {PrimitiveType, Schema} from '../schema';
 import {contains, every} from '../util';
-import {ScaleType} from 'vega-lite/src/scale';
 
-import {AbstractConstraint, AbstractConstraintModel} from './base';
+import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery} from '../query/encoding';
 
 /**
  * Collection of constraints for a single encoding mapping.
@@ -296,12 +297,12 @@ export const ENCODING_CONSTRAINTS_BY_PROPERTY: {[prop: string]: EncodingConstrai
 /**
  * Check all encoding constraints for a particular property and index tuple
  */
-export function checkEncoding(prop: Property, indexTuple: EnumSpecIndexTuple<any>,
+export function checkEncoding(prop: Property, enumSpec: EnumSpec<any>, index: number,
   specM: SpecQueryModel, schema: Schema, opt: QueryConfig): string {
 
   // Check encoding constraint
   const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[prop] || [];
-  const encQ = specM.getEncodingQueryByIndex(indexTuple.index);
+  const encQ = specM.getEncodingQueryByIndex(index);
 
   for (let i = 0; i < encodingConstraints.length; i++) {
     const c = encodingConstraints[i];
@@ -314,7 +315,7 @@ export function checkEncoding(prop: Property, indexTuple: EnumSpecIndexTuple<any
         let violatedConstraint = '(enc) ' + c.name();
         /* istanbul ignore if */
         if (opt.verbose) {
-          console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+          console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + enumSpec.name);
         }
         return violatedConstraint;
       }

@@ -7,12 +7,13 @@ import {Type} from 'vega-lite/src/type';
 import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 import {QueryConfig} from '../config';
-import {SpecQueryModel, EnumSpecIndexTuple} from '../model';
+import {isEnumSpec, EnumSpec} from '../enumspec';
+import {SpecQueryModel} from '../model';
 import {getNestedEncodingProperty, Property, isEncodingProperty} from '../property';
 import {Schema} from '../schema';
-import {isEnumSpec} from '../enumspec';
-import {scaleType, EncodingQuery, isMeasure, ScaleQuery} from '../query/encoding';
 import {contains, every, some} from '../util';
+
+import {scaleType, EncodingQuery, isMeasure, ScaleQuery} from '../query/encoding';
 
 export interface SpecConstraintChecker {
   (specM: SpecQueryModel, schema: Schema, opt: QueryConfig): boolean;
@@ -171,8 +172,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           throw new Error('Unsupported Type');
         });
       } else {
-        const neverHaveAutoCount = every(specM.enumSpecIndex.autoCount, (indexTuple: EnumSpecIndexTuple<boolean>) => {
-          return !isEnumSpec(specM.getEncodingQueryByIndex(indexTuple.index).autoCount);
+        const neverHaveAutoCount = every(specM.enumSpecIndex.encodingIndicesByProperty['autoCount'], (index: number) => {
+          return !isEnumSpec(specM.getEncodingQueryByIndex(index).autoCount);
         });
         if (neverHaveAutoCount) {
           // If the query surely does not have autoCount
@@ -558,7 +559,7 @@ export const SPEC_CONSTRAINTS_BY_PROPERTY: {[prop: string]: SpecConstraintModel[
 /**
  * Check all encoding constraints for a particular property and index tuple
  */
-export function checkSpec(prop: Property, indexTuple: EnumSpecIndexTuple<any>,
+export function checkSpec(prop: Property, enumSpec: EnumSpec<any>,
   specM: SpecQueryModel, schema: Schema, opt: QueryConfig): string {
 
   // Check encoding constraint
@@ -575,7 +576,7 @@ export function checkSpec(prop: Property, indexTuple: EnumSpecIndexTuple<any>,
         let violatedConstraint = '(spec) ' + c.name();
         /* istanbul ignore if */
         if (opt.verbose) {
-          console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + indexTuple.enumSpec.name);
+          console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + enumSpec.name);
         }
         return violatedConstraint;
       }
