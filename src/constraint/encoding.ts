@@ -154,7 +154,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
          //  to scale type is EnumSpec. If scale type is an EnumSpec, we do not yet know
          //  what the scale type is, and thus can ignore the constraint.
 
-        if ((!(scale.type !== undefined) && isEnumSpec(encQ.type)) || isEnumSpec(scale.type)) {
+        if ((scale.type === undefined && isEnumSpec(encQ.type)) || isEnumSpec(scale.type)) {
           return true;
         }
 
