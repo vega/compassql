@@ -10,7 +10,7 @@ export interface SpecQueryModelGroup {
 }
 
 export function isSpecQueryModelGroup(item: SpecQueryModel | SpecQueryModelGroup): item is SpecQueryModelGroup {
-  return item.hasOwnProperty('items');
+  return item && item.hasOwnProperty('items');
 }
 
 export function getTopItem(g: SpecQueryModelGroup): SpecQueryModel {
