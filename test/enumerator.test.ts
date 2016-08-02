@@ -339,7 +339,8 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                exponent: {values: [0.5, 1, 2, undefined]}
+                exponent: {values: [0.5, 1, 2, undefined]},
+                type: ScaleType.LOG
               },
               field: 'Q',
               type: Type.QUANTITATIVE

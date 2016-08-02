@@ -515,30 +515,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       }
       return true;
     }
-  },
-  {
-    name: 'scaleZeroMustMatchScaleType',
-    description: 'ScaleZero should not be used with LOG, ORDINAL, TIME and UTC',
-    properties: [Property.SCALE, Property.TYPE, Property.SCALE_TYPE, Property.SCALE_ZERO],
-    allowEnumSpecForProperties: false,
-    strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      const encodings = specM.getEncodings();
-
-      for (let encQ of encodings) {
-        if (encQ.scale) {
-          const scale: ScaleQuery = encQ.scale as ScaleQuery;
-          const sType = scaleType(scale.type, encQ.timeUnit, encQ.type);
-
-          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], sType) &&
-             (scale.zero === true)) {
-               return false;
-          }
-        }
-      }
-
-      return true;
-    }
   }
 ].map((sc) => new SpecConstraintModel(sc));
 

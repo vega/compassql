@@ -6,7 +6,7 @@ import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
-import {getNestedEncodingProperty, Property} from '../property';
+import {getNestedEncodingProperty, Property, SCALE_PROPERTIES, SUPPORTED_SCALE_PROPERTY_INDEX} from '../property';
 import {isEnumSpec, EnumSpec} from '../enumspec';
 import {PrimitiveType, Schema} from '../schema';
 import {contains, every} from '../util';
@@ -151,6 +151,36 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.timeUnit && encQ.type !== Type.TEMPORAL) {
         return false;
+      }
+      return true;
+    }
+  },{
+    name: 'scalePropertiesSupportedByScaleType',
+    description: 'Scale properties must be supported by correct scale type',
+    properties: SCALE_PROPERTIES.concat([Property.SCALE, Property.TYPE]),
+    allowEnumSpecForProperties: true,
+    strict: true,
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      if (encQ.scale) {
+        const scale: ScaleQuery = encQ.scale as ScaleQuery;
+
+         //  If encQ.type is an EnumSpec and scale.type is undefined, it is equivalent
+         //  to scale type is EnumSpec. If scale type is an EnumSpec, we do not yet know
+         //  what the scale type is, and thus can ignore the constraint.
+
+        if ((scale.type === undefined && isEnumSpec(encQ.type)) || isEnumSpec(scale.type)) {
+          return true;
+        }
+
+        const sType = scaleType(scale.type, encQ.timeUnit, encQ.type);
+
+        for (let scaleProp in scale) {
+          if (SUPPORTED_SCALE_PROPERTY_INDEX[scaleProp]) {
+            if (!contains(SUPPORTED_SCALE_PROPERTY_INDEX[scaleProp], sType)) {
+              return false;
+            }
+          }
+        }
       }
       return true;
     }
