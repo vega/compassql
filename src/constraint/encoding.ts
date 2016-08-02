@@ -149,15 +149,12 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.scale) {
         const scale: ScaleQuery = encQ.scale as ScaleQuery;
-        const hasScaleType: boolean = (scale.type !== undefined);
 
-        /**
-         *  If encQ.type is an EnumSpec and scale.type is undefined, it is equivalent
-         *  to scale type is EnumSpec. If scale type is an EnumSpec, we do not yet know
-         *  what the scale type is, and thus can ignore the constraint.
-         */
+         //  If encQ.type is an EnumSpec and scale.type is undefined, it is equivalent
+         //  to scale type is EnumSpec. If scale type is an EnumSpec, we do not yet know
+         //  what the scale type is, and thus can ignore the constraint.
 
-        if ((!hasScaleType && isEnumSpec(encQ.type)) || isEnumSpec(scale.type)) {
+        if ((!(scale.type !== undefined) && isEnumSpec(encQ.type)) || isEnumSpec(scale.type)) {
           return true;
         }
 
