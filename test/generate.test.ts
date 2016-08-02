@@ -178,6 +178,60 @@ describe('generate', function () {
     });
   });
 
+  describe('scale-clamp', () => {
+    it('should enumerate correct scale type when scale clamp is used with scale exponent and Type.Quantitative', () => {
+      const specQ = {
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: Channel.X,
+            scale: {
+              clamp: true,
+              exponent: [1,2],
+              type: {values: [undefined, ScaleType.LINEAR, ScaleType.LOG, ScaleType.ORDINAL,
+                              ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.SQRT,
+                              ScaleType.TIME, ScaleType.UTC]}
+            },
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+      const answerSet = generate(specQ, schema);
+      assert.equal(answerSet.length, 2);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
+      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POW);
+    });
+  });
+
+  describe('scale-nice', () => {
+    it('should enuemrate correct scale type when scale nice is used with scale round and Type.QUANTITATIVE', () => {
+      const specQ = {
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: Channel.X,
+            scale: {
+              nice: true,
+              round: true,
+              type: {values: [undefined, ScaleType.LINEAR, ScaleType.LOG, ScaleType.ORDINAL,
+                              ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.SQRT,
+                              ScaleType.TIME, ScaleType.UTC]}
+            },
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+      const answerSet = generate(specQ, schema);
+      assert.equal(answerSet.length, 4);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LINEAR);
+      assert.equal((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
+      assert.equal((answerSet[3].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POW);
+    });
+  });
+
   describe('scale-zero', () => {
     it('should enumerate correct scale type when scale zero is used without bar mark or binning', () => {
       const specQ = {
