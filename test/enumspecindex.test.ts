@@ -14,14 +14,14 @@ describe('enumspecindex', () => {
 
     it('should return false if mark is set', () => {
       let enumSpecIndex = new EnumSpecIndex()
-        .setMark({name: 'marks', values: [Mark.POINT, Mark.BAR, Mark.LINE]});
+        .setMark({name: 'mark', values: [Mark.POINT, Mark.BAR, Mark.LINE]});
       assert.equal(enumSpecIndex.isEmpty(), false);
     });
 
     it('should return false if mark and encoding property are set', () => {
       let enumSpecIndex = new EnumSpecIndex()
         .setEncodingProperty(0, Property.SCALE, {name: 'scale', values: [true, false]})
-        .setMark({name: 'marks', values: [Mark.POINT, Mark.BAR, Mark.LINE]});
+        .setMark({name: 'mark', values: [Mark.POINT, Mark.BAR, Mark.LINE]});
       assert.equal(enumSpecIndex.isEmpty(), false);
     });
 
@@ -45,7 +45,7 @@ describe('enumspecindex', () => {
 
     it('should return true if enumSpecIndex contains Property.MARK when Property.MARK is specified', () => {
       let enumSpecIndex = new EnumSpecIndex()
-        .setMark({name: 'marks', values: [Mark.POINT, Mark.BAR, Mark.LINE]});
+        .setMark({name: 'mark', values: [Mark.POINT, Mark.BAR, Mark.LINE]});
       assert.equal(enumSpecIndex.hasProperty(Property.MARK), true);
     });
 
