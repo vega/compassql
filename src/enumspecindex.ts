@@ -84,13 +84,13 @@ export class EnumSpecIndex {
   private _encodings: EncodingsEnumSpecIndex;
   private _encodingIndicesByProperty: Dict<number[]>;
 
-  constructor(mark: EnumSpec<Mark>, encodings: EncodingsEnumSpecIndex, encodingIndicesByProperty: Dict<number[]>) {
-    this._mark = mark;
-    this._encodings = encodings;
-    this._encodingIndicesByProperty = encodingIndicesByProperty;
+  constructor() {
+    this._mark = undefined;
+    this._encodings = {};
+    this._encodingIndicesByProperty = {};
   }
 
-  public set(index: number, prop: Property, enumSpec: EnumSpec<any>) {
+  public setEncodingProperty(index: number, prop: Property, enumSpec: EnumSpec<any>) {
     const encodingsIndex = this._encodings;
 
     // Init encoding index and set prop
@@ -100,6 +100,8 @@ export class EnumSpecIndex {
     // Initialize indicesByProperty[prop] and add index
     const encodingIndicesByProperty = this._encodingIndicesByProperty;
     (encodingIndicesByProperty[prop] = encodingIndicesByProperty[prop] || []).push(index);
+
+    return this;
   }
 
   public hasProperty(prop: Property) {
@@ -116,8 +118,9 @@ export class EnumSpecIndex {
     return !this.mark && keys(this.encodingIndicesByProperty).length === 0;
   }
 
-  public set mark(mark) {
+  public setMark(mark) {
     this._mark = mark;
+    return this;
   }
 
   public get mark() {
