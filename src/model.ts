@@ -145,12 +145,12 @@ export class SpecQueryModel {
    * @return a SpecQueryModel that wraps the specQuery and the enumSpecIndex.
    */
   public static build(specQ: SpecQuery, schema: Schema, opt: QueryConfig): SpecQueryModel {
-    let enumSpecIndex: EnumSpecIndex = new EnumSpecIndex(undefined, {}, {});
+    let enumSpecIndex: EnumSpecIndex = new EnumSpecIndex();
     // mark
     if (isEnumSpec(specQ.mark)) {
       const name = getDefaultName(Property.MARK);
       specQ.mark = initEnumSpec(specQ.mark, name, opt.marks);
-      enumSpecIndex.mark = specQ.mark;
+      enumSpecIndex.setMark(specQ.mark);
     }
 
     // TODO: transform
@@ -178,7 +178,7 @@ export class SpecQueryModel {
           const enumSpec = encQ[prop] = initEnumSpec(encQ[prop], defaultEnumSpecName, defaultEnumValues);
 
           // Add index of the encoding mapping to the property's enum spec index.
-          enumSpecIndex.set(index, prop, enumSpec);
+          enumSpecIndex.setEncodingProperty(index, prop, enumSpec);
         }
       });
 
@@ -195,7 +195,7 @@ export class SpecQueryModel {
             const enumSpec = propObj[child] = initEnumSpec(propObj[child], defaultEnumSpecName, defaultEnumValues);
 
             // Add index of the encoding mapping to the property's enum spec index.
-            enumSpecIndex.set(index, prop, enumSpec);
+            enumSpecIndex.setEncodingProperty(index, prop, enumSpec);
           }
         }
       });
@@ -220,8 +220,8 @@ export class SpecQueryModel {
       const index = specQ.encodings.length - 1;
 
       // Add index of the encoding mapping to the property's enum spec index.
-      enumSpecIndex.set(index, Property.CHANNEL, countEncQ.channel);
-      enumSpecIndex.set(index, Property.AUTOCOUNT, countEncQ.autoCount);
+      enumSpecIndex.setEncodingProperty(index, Property.CHANNEL, countEncQ.channel);
+      enumSpecIndex.setEncodingProperty(index, Property.AUTOCOUNT, countEncQ.autoCount);
     }
 
     return new SpecQueryModel(specQ, enumSpecIndex, schema, opt, {});
