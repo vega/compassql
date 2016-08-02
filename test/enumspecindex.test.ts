@@ -51,7 +51,7 @@ describe('enumspecindex', () => {
 
     it('should return false if enumSpecIndex does not contain Property.MARK when Property.MARK is specified', () => {
       let enumSpecIndex = new EnumSpecIndex();
-      assert.equal(enumSpecIndex.hasProperty(Property.SCALE), false);
+      assert.equal(enumSpecIndex.hasProperty(Property.MARK), false);
     });
   });
 });
