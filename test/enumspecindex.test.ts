@@ -1,42 +1,57 @@
 import {EnumSpecIndex} from '../src/enumspecindex';
+import {SHORT_ENUM_SPEC} from '../src/enumspec';
 import {Property} from '../src/property';
 
 import {assert} from 'chai';
 
 describe('enumspecindex', () => {
   describe('isEmpty', () => {
-    it('should return false if enumSpecIndex has mark and encodingIndicesByProperty', () => {
-      const enumSpecIndex = new EnumSpecIndex({name: 'mark', values: undefined}, {}, {'test': [1, 2]});
+    it('should return false if encoding property is set', () => {
+      let enumSpecIndex = new EnumSpecIndex()
+        .setEncodingProperty(0, Property.SCALE, SHORT_ENUM_SPEC);
       assert.equal(enumSpecIndex.isEmpty(), false);
     });
 
-    it('should return false if enumSpecIndex has encodingIndicesByProperty', () => {
-      const enumSpecIndex = new EnumSpecIndex(undefined, {}, {'test': [1, 2]});
+    it('should return false if mark is set', () => {
+      let enumSpecIndex = new EnumSpecIndex()
+        .setMark(SHORT_ENUM_SPEC);
       assert.equal(enumSpecIndex.isEmpty(), false);
     });
 
-    it('should return false if enumSpecIndex has mark', () => {
-      const enumSpecIndex = new EnumSpecIndex({name: 'mark', values: undefined}, {}, {});
+    it('should return false if mark and encoding property are set', () => {
+      let enumSpecIndex = new EnumSpecIndex()
+        .setEncodingProperty(0, Property.SCALE, SHORT_ENUM_SPEC)
+        .setMark(SHORT_ENUM_SPEC);
       assert.equal(enumSpecIndex.isEmpty(), false);
     });
 
-    it('should return true if enumSpecIndex does not have mark and encodingIndicesByProperty', () => {
-      const enumSpecIndex = new EnumSpecIndex(undefined, {}, {});
-      assert.equal(enumSpecIndex.isEmpty(), true);
+    it('should return true if mark and encoding property are not set', () => {
+      let enumSpecindex = new EnumSpecIndex();
+      assert.equal(enumSpecindex.isEmpty(), true);
     });
   });
 
   describe('hasProperty', () => {
     it('should return true if encodingIndicesByProperty contains a specified encoding property', () => {
-      const enumSpecIndex = new EnumSpecIndex(undefined, {}, {'scale': [1,2]});
+      let enumSpecIndex = new EnumSpecIndex()
+        .setEncodingProperty(0, Property.SCALE, SHORT_ENUM_SPEC);
       assert.equal(enumSpecIndex.hasProperty(Property.SCALE), true);
     });
 
     it('should return false if encodingIndicesByProperty does not contain a specified encoding property', () => {
-      const enumSpecIndex = new EnumSpecIndex(undefined, {}, {'channel': [1,2]});
-      assert.equal(enumSpecIndex.hasProperty(Property.BIN), false);
+      let enumSpecIndex = new EnumSpecIndex();
+      assert.equal(enumSpecIndex.hasProperty(Property.SCALE), false);
     });
 
-    // TODO: Case for Property.MARK
+    it('should return true if enumSpecIndex contains Property.MARK when Property.MARK is specified', () => {
+      let enumSpecIndex = new EnumSpecIndex()
+        .setMark(SHORT_ENUM_SPEC);
+      assert.equal(enumSpecIndex.hasProperty(Property.MARK), true);
+    });
+
+    it('should return false if enumSpecIndex does not contain Property.MARK when Property.MARK is specified', () => {
+      let enumSpecIndex = new EnumSpecIndex();
+      assert.equal(enumSpecIndex.hasProperty(Property.SCALE), false);
+    });
   });
 });
