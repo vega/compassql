@@ -449,8 +449,8 @@ describe('constraints/encoding', () => {
       let encQ: EncodingQuery = {
         channel: Channel.X,
         field: 'A',
-        type: Type.QUANTITATIVE,
-        scale: {bandSize: 10, type: undefined}
+        type: Type.NOMINAL,
+        scale: {bandSize: 10}
       };
 
       it('should return false if scaleType does not suport scaleBandSize', () => {
@@ -472,7 +472,7 @@ describe('constraints/encoding', () => {
         channel: Channel.X,
         field: 'A',
         type: Type.QUANTITATIVE,
-        scale: {clamp: true, type: undefined}
+        scale: {clamp: true}
       };
 
       it('should return false if scaleType does not support scaleClamp', () => {
@@ -495,7 +495,7 @@ describe('constraints/encoding', () => {
         channel: Channel.X,
         field: 'A',
         type: Type.QUANTITATIVE,
-        scale: {domain: [1, 2], type: undefined}
+        scale: {domain: [1, 2]}
       };
 
       it('should return true if scaleType supports scaleDomain', () => {
@@ -512,7 +512,7 @@ describe('constraints/encoding', () => {
         channel: Channel.X,
         field: 'A',
         type: Type.QUANTITATIVE,
-        scale: {exponent: 1, type: undefined}
+        scale: {exponent: 1}
       };
 
       it('should return false if scaleType does not support scaleExponent', () => {
@@ -536,7 +536,7 @@ describe('constraints/encoding', () => {
         channel: Channel.X,
         field: 'A',
         type: Type.QUANTITATIVE,
-        scale: {nice: true, type: undefined}
+        scale: {nice: true}
       };
 
       it('should return false if scaleType does not support scaleNice', () => {
@@ -559,7 +559,7 @@ describe('constraints/encoding', () => {
         channel: Channel.X,
         field: 'A',
         type: Type.QUANTITATIVE,
-        scale: {range: [1, 2], type: undefined}
+        scale: {range: [1, 2]}
       };
 
       it('should return true if scaleType supports scaleRange', () => {
@@ -576,7 +576,7 @@ describe('constraints/encoding', () => {
         channel: Channel.X,
         field: 'A',
         type: Type.QUANTITATIVE,
-        scale: {round: true, type: undefined}
+        scale: {round: true}
       };
 
       it('should return true if scaleType does not support scaleRound', () => {
@@ -600,7 +600,7 @@ describe('constraints/encoding', () => {
         channel: Channel.X,
         field: 'A',
         type: Type.QUANTITATIVE,
-        scale: {useRawDomain: true, type: undefined}
+        scale: {useRawDomain: true}
       };
 
       it('should return true if scaleType supports scaleUseRawDomain', () => {
