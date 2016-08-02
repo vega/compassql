@@ -4,17 +4,13 @@ import {Data} from 'vega-lite/src/data';
 import {Encoding} from 'vega-lite/src/encoding';
 import {FieldDef} from 'vega-lite/src/fielddef';
 import {Mark} from 'vega-lite/src/mark';
-import {ScaleType} from 'vega-lite/src/scale';
-import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
-
-
 
 import {QueryConfig} from './config';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
 import {EnumSpec, SHORT_ENUM_SPEC, initEnumSpec, isEnumSpec} from './enumspec';
-import {isEncodingProperty} from './property';
+import {EnumSpecIndex} from './enumspecindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
 import {spec as specShorthand} from './query/shorthand';
@@ -149,8 +145,7 @@ export class SpecQueryModel {
    * @return a SpecQueryModel that wraps the specQuery and the enumSpecIndex.
    */
   public static build(specQ: SpecQuery, schema: Schema, opt: QueryConfig): SpecQueryModel {
-    let enumSpecIndex: EnumSpecIndex = {encodings: {}, encodingIndicesByProperty: {}};
-
+    let enumSpecIndex: EnumSpecIndex = new EnumSpecIndex(undefined, {}, {});
     // mark
     if (isEnumSpec(specQ.mark)) {
       const name = getDefaultName(Property.MARK);
@@ -183,7 +178,7 @@ export class SpecQueryModel {
           const enumSpec = encQ[prop] = initEnumSpec(encQ[prop], defaultEnumSpecName, defaultEnumValues);
 
           // Add index of the encoding mapping to the property's enum spec index.
-          setEnumSpecIndex(enumSpecIndex, index, prop, enumSpec);
+          enumSpecIndex.set(index, prop, enumSpec);
         }
       });
 
@@ -200,7 +195,7 @@ export class SpecQueryModel {
             const enumSpec = propObj[child] = initEnumSpec(propObj[child], defaultEnumSpecName, defaultEnumValues);
 
             // Add index of the encoding mapping to the property's enum spec index.
-            setEnumSpecIndex(enumSpecIndex, index, prop, enumSpec);
+            enumSpecIndex.set(index, prop, enumSpec);
           }
         }
       });
@@ -225,8 +220,8 @@ export class SpecQueryModel {
       const index = specQ.encodings.length - 1;
 
       // Add index of the encoding mapping to the property's enum spec index.
-      setEnumSpecIndex(enumSpecIndex, index, Property.CHANNEL, countEncQ.channel);
-      setEnumSpecIndex(enumSpecIndex, index, Property.AUTOCOUNT, countEncQ.autoCount);
+      enumSpecIndex.set(index, Property.CHANNEL, countEncQ.channel);
+      enumSpecIndex.set(index, Property.AUTOCOUNT, countEncQ.autoCount);
     }
 
     return new SpecQueryModel(specQ, enumSpecIndex, schema, opt, {});
