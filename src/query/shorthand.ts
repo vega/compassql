@@ -1,6 +1,6 @@
 import {Type} from 'vega-lite/src/type';
 
-import {EncodingQuery} from './encoding';
+import {EncodingQuery, SortFieldQuery} from './encoding';
 import {SpecQuery, stack} from './spec';
 import {isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 
@@ -119,6 +119,15 @@ export function fieldDef(encQ: EncodingQuery,
       props.push({
         key: 'maxbins',
         value: value(encQ.bin['maxbins'], replace[Property.BIN_MAXBINS])
+      });
+    }
+  } else if (include[Property.SORT] && encQ.sort && !isEnumSpec(encQ.sort)) {
+    if ((encQ.sort as SortFieldQuery)['op']) {
+      // TODO
+    } else {
+     props.push({
+       key: 'sort',
+       value: encQ.sort
       });
     }
   } else {

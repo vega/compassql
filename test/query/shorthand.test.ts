@@ -5,6 +5,7 @@ import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
+import {SortOrder} from '../../src/query/encoding';
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, INCLUDE_ALL, getReplacer} from '../../src/query/shorthand';
 import {REPLACE_BLANK_FIELDS} from '../../src/query/groupby';
@@ -157,6 +158,13 @@ describe('query/shorthand', () => {
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, timeUnit: SHORT_ENUM_SPEC
         });
       assert.equal(str, '?(a,q)');
+    });
+
+    it('should return correct fieldDefShorthand string for sort with ascending', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: SortOrder.ASCENDING
+      });
+      assert.equal(str, 'a,q,sort=ascending');
     });
 
     it('should return correct fieldDefShorthand string for scale with a string[] domain', () => {
