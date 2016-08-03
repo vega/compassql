@@ -9,6 +9,7 @@ import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel, getDefaultName, getDefaultEnumValues} from '../src/model';
 import {Property, DEFAULT_PROPERTY_PRECEDENCE, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
 import {SHORT_ENUM_SPEC, isEnumSpec} from '../src/enumspec';
+import {SortOrder} from '../src/query/encoding';
 import {SpecQuery} from '../src/query/spec';
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
@@ -268,6 +269,50 @@ describe('SpecQueryModel', () => {
         mark: Mark.BAR,
         encoding: {
           x: {field: 'A', type: Type.QUANTITATIVE}
+        },
+        config: DEFAULT_SPEC_CONFIG
+      });
+    });
+
+    it('should return a correct Vega-Lite spec if the query has sort: SortOrder', () => {
+      const specM = buildSpecQueryModel({
+        data: {values: [{A: 1}]},
+        transform: {filter: 'datum.A===1'},
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', sort: SortOrder.ASCENDING, type: Type.QUANTITATIVE}
+        ]
+      });
+
+      const spec = specM.toSpec();
+      assert.deepEqual(spec, {
+        data: {values: [{A: 1}]},
+        transform: {filter: 'datum.A===1'},
+        mark: Mark.BAR,
+        encoding: {
+          x: {field: 'A', sort: SortOrder.ASCENDING, type: Type.QUANTITATIVE}
+        },
+        config: DEFAULT_SPEC_CONFIG
+      });
+    });
+
+    it('should return a correct Vega-Lite spec if sort is a Sort field definition object', () => {
+      const specM = buildSpecQueryModel({
+        data: {values: [{A: 1}]},
+        transform: {filter: 'datum.A===1'},
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', sort: {field: 'A', op: AggregateOp.MEAN}, type: Type.QUANTITATIVE}
+        ]
+      });
+
+      const spec = specM.toSpec();
+      assert.deepEqual(spec, {
+        data: {values: [{A: 1}]},
+        transform: {filter: 'datum.A===1'},
+        mark: Mark.BAR,
+        encoding: {
+          x: {field: 'A', sort: {field: 'A', op: AggregateOp.MEAN}, type: Type.QUANTITATIVE}
         },
         config: DEFAULT_SPEC_CONFIG
       });

@@ -17,7 +17,8 @@ export enum Property {
   FIELD = 'field' as any,
   TYPE = 'type' as any,
 
-  // TODO: Sort
+  // - Sort
+  SORT = 'sort' as any,
 
   // - Scale
   SCALE = 'scale' as any,
@@ -46,6 +47,7 @@ export function hasNestedProperty(prop: Property) {
   switch (prop) {
     case Property.BIN:
     case Property.SCALE:
+    case Property.SORT:
       // TODO: AXIS, LEGEND
       return true;
     case Property.MARK:
@@ -81,6 +83,7 @@ export const ENCODING_PROPERTIES = [
   Property.AUTOCOUNT,
   Property.FIELD,
   Property.TYPE,
+  Property.SORT,
   Property.SCALE,
   Property.SCALE_BANDSIZE,
   Property.SCALE_CLAMP,
@@ -104,6 +107,7 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   Property.TIMEUNIT,
   Property.AGGREGATE,
   Property.AUTOCOUNT,
+  Property.SORT,
 
   // Nested Transform Property
   Property.BIN_MAXBINS,

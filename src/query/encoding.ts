@@ -21,11 +21,32 @@ export interface EncodingQuery {
   bin?: boolean | BinQuery | ShortEnumSpec;
   scale?: boolean | ScaleQuery | ShortEnumSpec;
 
+  sort?: SortOrder | SortFieldQuery | ShortEnumSpec;
+
   field?: Field | EnumSpec<Field> | ShortEnumSpec;
   type?: Type | EnumSpec<Type> | ShortEnumSpec;
   // TODO: value
 
   // TODO: axisQuery, legendQuery
+}
+
+export enum SortOrder {
+    ASCENDING = 'ascending' as any,
+    DESCENDING = 'descending' as any,
+    NONE = 'none' as any,
+}
+
+export interface SortFieldQuery {
+  /**
+   * The field name to aggregate over.
+   */
+  field: string;
+  /**
+   * The sort aggregation operator
+   */
+  op: AggregateOp;
+
+  order?: SortOrder;
 }
 
 export interface BinQuery extends EnumSpec<boolean> {
