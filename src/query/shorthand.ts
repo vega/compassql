@@ -150,7 +150,7 @@ export function fieldDef(encQ: EncodingQuery,
             }
             return p;
           }, {});
-  
+
           if(keys(nestedPropChildren).length > 0) {
             props.push({
               key: nestedPropParent + '',
