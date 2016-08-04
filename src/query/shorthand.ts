@@ -136,29 +136,30 @@ export function fieldDef(encQ: EncodingQuery,
   for (const nestedPropParent of [Property.SCALE, Property.SORT]) {
     if (include[nestedPropParent]) {
       if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
-        // Sort can be a string
+        // `sort` can be a string (ascending/descending).
         if (isString(encQ[nestedPropParent])) {
           props.push({
             key: nestedPropParent + '',
             value: encQ[nestedPropParent]
           });
-        }
-
-        const nestedProps = getNestedEncodingPropertyChildren(nestedPropParent);
-        const nestedPropChildren = nestedProps.reduce((p, nestedProp) => {
-          if (include[nestedProp.property] && encQ[nestedPropParent][nestedProp.child] !== undefined) {
-            p[nestedProp.child] = value(encQ[nestedPropParent][nestedProp.child], replace[nestedProp.property]);
+        } else {
+          const nestedProps = getNestedEncodingPropertyChildren(nestedPropParent);
+          const nestedPropChildren = nestedProps.reduce((p, nestedProp) => {
+            if (include[nestedProp.property] && encQ[nestedPropParent][nestedProp.child] !== undefined) {
+              p[nestedProp.child] = value(encQ[nestedPropParent][nestedProp.child], replace[nestedProp.property]);
+            }
+            return p;
+          }, {});
+  
+          if(keys(nestedPropChildren).length > 0) {
+            props.push({
+              key: nestedPropParent + '',
+              value: JSON.stringify(nestedPropChildren)
+            });
           }
-          return p;
-        }, {});
-
-        if(keys(nestedPropChildren).length > 0) {
-          props.push({
-            key: nestedPropParent + '',
-            value: JSON.stringify(nestedPropChildren)
-          });
         }
       } else if (encQ[nestedPropParent] === false || encQ[nestedPropParent] === null) {
+        // `scale`, `axis`, `legend` can be false/null. 
         props.push({
           key: nestedPropParent + '',
           value: false
