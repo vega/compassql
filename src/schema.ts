@@ -1,7 +1,7 @@
 import {Type} from 'vega-lite/src/type';
 import {Channel} from 'vega-lite/src/channel';
 import {autoMaxBins} from 'vega-lite/src/bin';
-import {TimeUnit, TIMEUNITS, convertDate} from 'vega-lite/src/timeunit';
+import {TimeUnit, convertDate} from 'vega-lite/src/timeunit';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 
@@ -173,7 +173,7 @@ export class Schema {
         fieldSchema.timeUnitCardinalities[encQ.timeUnit as string] = keys(unique).length;
       }
       // TODO: 'weekday' is an exception
-      return fieldSchema.timeUnitCardinalities[encQ.timeUnit as string]
+      return fieldSchema.timeUnitCardinalities[encQ.timeUnit as string];
     } else {
       return fieldSchema ? fieldSchema.stats.distinct : null;
     }
