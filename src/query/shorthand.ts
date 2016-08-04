@@ -1,6 +1,6 @@
 import {Type} from 'vega-lite/src/type';
 
-import {EncodingQuery, SortFieldQuery} from './encoding';
+import {EncodingQuery} from './encoding';
 import {SpecQuery, stack} from './spec';
 import {isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 
@@ -121,13 +121,6 @@ export function fieldDef(encQ: EncodingQuery,
         value: value(encQ.bin['maxbins'], replace[Property.BIN_MAXBINS])
       });
     }
-  } else if (include[Property.SORT] && encQ.sort && !isEnumSpec(encQ.sort)) {
-    if (!(encQ.sort as SortFieldQuery)['op']) {
-     props.push({
-       key: 'sort',
-       value: encQ.sort
-      });
-    }
   } else {
     for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
       if (include[prop] && encQ[prop] && isEnumSpec(encQ[prop])) {
@@ -141,7 +134,12 @@ export function fieldDef(encQ: EncodingQuery,
   // TODO: axis, legend
   for (const nestedPropParent of [Property.SCALE, Property.SORT]) {
     if (include[nestedPropParent]) {
-      if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
+      if (typeof encQ[nestedPropParent] === 'string') {
+        props.push({
+          key: nestedPropParent + '',
+          value: encQ[nestedPropParent]
+        });
+      } else if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
         const nestedProps = getNestedEncodingPropertyChildren(nestedPropParent);
         const nestedPropChildren = nestedProps.reduce((p, nestedProp) => {
           if (include[nestedProp.property] && encQ[nestedPropParent][nestedProp.child] !== undefined) {
