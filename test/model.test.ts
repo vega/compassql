@@ -302,7 +302,7 @@ describe('SpecQueryModel', () => {
         transform: {filter: 'datum.A===1'},
         mark: Mark.BAR,
         encodings: [
-          {channel: Channel.X, field: 'A', sort: {field: 'A', op: AggregateOp.MEAN}, type: Type.QUANTITATIVE}
+          {channel: Channel.X, field: 'A', sort: {field: 'A', op: AggregateOp.MEAN, order: SortOrder.ASCENDING}, type: Type.QUANTITATIVE}
         ]
       });
 
@@ -312,7 +312,7 @@ describe('SpecQueryModel', () => {
         transform: {filter: 'datum.A===1'},
         mark: Mark.BAR,
         encoding: {
-          x: {field: 'A', sort: {field: 'A', op: AggregateOp.MEAN}, type: Type.QUANTITATIVE}
+          x: {field: 'A', sort: {field: 'A', op: AggregateOp.MEAN, order: SortOrder.ASCENDING}, type: Type.QUANTITATIVE}
         },
         config: DEFAULT_SPEC_CONFIG
       });
