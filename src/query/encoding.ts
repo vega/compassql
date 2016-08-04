@@ -21,7 +21,7 @@ export interface EncodingQuery {
   bin?: boolean | BinQuery | ShortEnumSpec;
   scale?: boolean | ScaleQuery | ShortEnumSpec;
 
-  sort?: SortOrder | SortFieldQuery | ShortEnumSpec;
+  sort?: SortOrder | SortField;
 
   field?: Field | EnumSpec<Field> | ShortEnumSpec;
   type?: Type | EnumSpec<Type> | ShortEnumSpec;
@@ -36,7 +36,7 @@ export enum SortOrder {
     NONE = 'none' as any,
 }
 
-export interface SortFieldQuery {
+export interface SortField {
   /**
    * The field name to aggregate over.
    */
