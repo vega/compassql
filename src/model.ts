@@ -32,6 +32,14 @@ export function getDefaultName(prop: Property) {
       return 'b';
     case Property.BIN_MAXBINS:
       return 'b-mb';
+    case Property.SORT:
+      return 'so';
+    case Property.SORT_FIELD:
+      return 'so-f';
+    case Property.SORT_OP:
+      return 'so-op';
+    case Property.SORT_ORDER:
+      return 'so-or';
     case Property.SCALE:
       return 's';
     case Property.SCALE_BANDSIZE:
@@ -68,6 +76,7 @@ export function getDefaultName(prop: Property) {
 export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryConfig): any[] {
   switch (prop) {
     case Property.FIELD:       // For field, by default enumerate all fields
+    case Property.SORT_FIELD:
       return schema.fields();
 
     // True, False for boolean values
@@ -95,6 +104,15 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
 
     case Property.MARK:
       return opt.marks;
+
+    case Property.SORT:
+      return opt.sorts;
+
+    case Property.SORT_OP:
+      return opt.sortOps;
+
+    case Property.SORT_ORDER:
+      return opt.sortOrders;
 
     case Property.SCALE_BANDSIZE:
       return opt.scaleBandSizes;
@@ -391,7 +409,7 @@ export class SpecQueryModel {
       if (isEnumSpec(encQ.channel)) return null;
 
       // assemble other property into a field def.
-      const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.SCALE, Property.TIMEUNIT, Property.FIELD, Property.TYPE];
+      const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.SORT, Property.SCALE, Property.TIMEUNIT, Property.FIELD, Property.TYPE];
       for (let j = 0; j < PROPERTIES.length; j++) {
         const prop = PROPERTIES[j];
 

@@ -1,8 +1,9 @@
-import {Channel} from 'vega-lite/src/channel';
 import {AggregateOp} from 'vega-lite/src/aggregate';
+import {Channel} from 'vega-lite/src/channel';
+import {ScaleType} from 'vega-lite/src/scale';
+import {SortOrder, SortField} from 'vega-lite/src/sort';
 import {defaultScaleType, TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
-import {ScaleType} from 'vega-lite/src/scale';
 
 import {EnumSpec, isEnumSpec, ShortEnumSpec} from '../enumspec';
 import {contains} from '../util';
@@ -20,6 +21,8 @@ export interface EncodingQuery {
 
   bin?: boolean | BinQuery | ShortEnumSpec;
   scale?: boolean | ScaleQuery | ShortEnumSpec;
+
+  sort?: SortOrder | SortField;
 
   field?: Field | EnumSpec<Field> | ShortEnumSpec;
   type?: Type | EnumSpec<Type> | ShortEnumSpec;
