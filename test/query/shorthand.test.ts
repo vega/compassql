@@ -4,8 +4,8 @@ import {Mark} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
+import {SortOrder} from 'vega-lite/src/sort';
 
-import {SortOrder} from '../../src/query/encoding';
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, INCLUDE_ALL, getReplacer} from '../../src/query/shorthand';
 import {REPLACE_BLANK_FIELDS} from '../../src/query/groupby';

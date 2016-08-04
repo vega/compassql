@@ -3,6 +3,7 @@ import {AggregateOp} from 'vega-lite/src/aggregate';
 import {defaultScaleType, TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 import {ScaleType} from 'vega-lite/src/scale';
+import {SortOrder, SortField} from 'vega-lite/src/sort';
 
 import {EnumSpec, isEnumSpec, ShortEnumSpec} from '../enumspec';
 import {contains} from '../util';
@@ -28,25 +29,6 @@ export interface EncodingQuery {
   // TODO: value
 
   // TODO: axisQuery, legendQuery
-}
-
-export enum SortOrder {
-    ASCENDING = 'ascending' as any,
-    DESCENDING = 'descending' as any,
-    NONE = 'none' as any,
-}
-
-export interface SortField {
-  /**
-   * The field name to aggregate over.
-   */
-  field: string;
-  /**
-   * The sort aggregation operator
-   */
-  op: AggregateOp;
-
-  order?: SortOrder;
 }
 
 export interface BinQuery extends EnumSpec<boolean> {

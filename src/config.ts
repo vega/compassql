@@ -3,10 +3,10 @@ import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Config} from 'vega-lite/src/config';
 import {Mark} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
+import {SortOrder} from 'vega-lite/src/sort';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-import {SortOrder} from './query/encoding';
 import {Property, DEFAULT_PROPERTY_PRECEDENCE} from './property';
 
 export interface QueryConfig {
@@ -116,7 +116,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
   // TODO: Come back and implement correctly when designing sort enumeration.
   sorts: [SortOrder.ASCENDING, SortOrder.DESCENDING],
-  sortOps: [undefined, AggregateOp.MEAN],
+  sortOps: [AggregateOp.MIN, AggregateOp.MEAN],
   sortOrders: [SortOrder.ASCENDING, SortOrder.DESCENDING],
 
   scaleBandSizes: [17, 21],

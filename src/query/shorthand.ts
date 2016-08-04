@@ -1,4 +1,5 @@
 import {Type} from 'vega-lite/src/type';
+import {isString} from 'datalib/src/util';
 
 import {EncodingQuery} from './encoding';
 import {SpecQuery, stack} from './spec';
@@ -134,12 +135,14 @@ export function fieldDef(encQ: EncodingQuery,
   // TODO: axis, legend
   for (const nestedPropParent of [Property.SCALE, Property.SORT]) {
     if (include[nestedPropParent]) {
-      if (typeof encQ[nestedPropParent] === 'string') {
-        props.push({
-          key: nestedPropParent + '',
-          value: encQ[nestedPropParent]
-        });
-      } else if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
+      if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
+        if (isString(encQ[nestedPropParent])) {
+          props.push({
+            key: nestedPropParent + '',
+            value: encQ[nestedPropParent]
+          });
+        }
+
         const nestedProps = getNestedEncodingPropertyChildren(nestedPropParent);
         const nestedPropChildren = nestedProps.reduce((p, nestedProp) => {
           if (include[nestedProp.property] && encQ[nestedPropParent][nestedProp.child] !== undefined) {
