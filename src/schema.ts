@@ -1,7 +1,7 @@
 import {Type} from 'vega-lite/src/type';
 import {Channel} from 'vega-lite/src/channel';
 import {autoMaxBins} from 'vega-lite/src/bin';
-import {TimeUnit, convertDate} from 'vega-lite/src/timeunit';
+import {TimeUnit, convert} from 'vega-lite/src/timeunit';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 
@@ -167,7 +167,7 @@ export class Schema {
       if (!fieldSchema.timeUnitCardinalities[encQ.timeUnit as string]) {
         var unique = {};
         keys(fieldSchema.stats.unique).forEach(function(dateString) {
-          var date = convertDate(encQ.timeUnit as TimeUnit, new Date(dateString), true);
+          var date = convert(encQ.timeUnit as TimeUnit, new Date(dateString), true);
           unique[date.toString()] = true;
         });
         fieldSchema.timeUnitCardinalities[encQ.timeUnit as string] = keys(unique).length;
