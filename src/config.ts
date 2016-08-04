@@ -40,6 +40,12 @@ export interface QueryConfig {
   // TODO: Come back and implement correctly when designing sort enumeration.
   sorts?: SortOrder[];
 
+  sortFields?: string[];
+
+  sortOps?: AggregateOp[];
+
+  sortOrders?: SortOrder[];
+
   scaleBandSizes?: number[];
 
   scaleDomains?: Array<number[] | string[]>;
@@ -110,6 +116,9 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
   // TODO: Come back and implement correctly when designing sort enumeration.
   sorts: [SortOrder.ASCENDING, SortOrder.DESCENDING],
+  sortFields: [undefined],
+  sortOps: [undefined, AggregateOp.MEAN],
+  sortOrders: [SortOrder.ASCENDING, SortOrder.DESCENDING],
 
   scaleBandSizes: [17, 21],
   scaleDomains: [undefined],

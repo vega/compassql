@@ -167,6 +167,35 @@ describe('query/shorthand', () => {
       assert.equal(str, 'a,q,sort=ascending');
     });
 
+    it('should return correct fieldDefShorthand string for sort field definition object', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
+      });
+      assert.equal(str, 'a,q,sort={"field":"a","op":"mean","order":"descending"}');
+    });
+
+    it('should return correct fieldDefShorthand string for bin with sort field definition object', () => {
+      const str = fieldDefShorthand({
+        bin: true, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
+      });
+      assert.equal(str, 'bin(a,q,sort={"field":"a","op":"mean","order":"descending"})');
+    });
+
+    it('should return correct fieldDefShorthand string for bin with maxbins and sort field definition object', () => {
+      const str = fieldDefShorthand({
+        bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
+      });
+      assert.equal(str, 'bin(a,q,maxbins=20,sort={"field":"a","op":"mean","order":"descending"})');
+    });
+
+    it('should return correct fieldDefShorthand string for bin with maxbins, scale with scaleType ' +
+       'and sort field definition object', () => {
+      const str = fieldDefShorthand({
+        bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
+      });
+      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"},sort={"field":"a","op":"mean","order":"descending"})');
+    });
+
     it('should return correct fieldDefShorthand string for scale with a string[] domain', () => {
       const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.NOMINAL, scale: {domain: ['cats', 'dogs']}

@@ -122,9 +122,7 @@ export function fieldDef(encQ: EncodingQuery,
       });
     }
   } else if (include[Property.SORT] && encQ.sort && !isEnumSpec(encQ.sort)) {
-    if ((encQ.sort as SortFieldQuery)['op']) {
-      // TODO
-    } else {
+    if (!(encQ.sort as SortFieldQuery)['op']) {
      props.push({
        key: 'sort',
        value: encQ.sort
@@ -141,7 +139,7 @@ export function fieldDef(encQ: EncodingQuery,
 
   // Scale
   // TODO: axis, legend
-  for (const nestedPropParent of [Property.SCALE]) {
+  for (const nestedPropParent of [Property.SCALE, Property.SORT]) {
     if (include[nestedPropParent]) {
       if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
         const nestedProps = getNestedEncodingPropertyChildren(nestedPropParent);

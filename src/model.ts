@@ -34,6 +34,12 @@ export function getDefaultName(prop: Property) {
       return 'b-mb';
     case Property.SORT:
       return 'so';
+    case Property.SORT_FIELD:
+      return 'so-f';
+    case Property.SORT_OP:
+      return 'so-op';
+    case Property.SORT_ORDER:
+      return 'so-or';
     case Property.SCALE:
       return 's';
     case Property.SCALE_BANDSIZE:
@@ -100,6 +106,15 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
 
     case Property.SORT:
       return opt.sorts;
+
+    case Property.SORT_FIELD:
+      return opt.sortFields;
+
+    case Property.SORT_OP:
+      return opt.sortOps;
+
+    case Property.SORT_ORDER:
+      return opt.sortOrders;
 
     case Property.SCALE_BANDSIZE:
       return opt.scaleBandSizes;
