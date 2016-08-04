@@ -136,6 +136,7 @@ export function fieldDef(encQ: EncodingQuery,
   for (const nestedPropParent of [Property.SCALE, Property.SORT]) {
     if (include[nestedPropParent]) {
       if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
+        // Sort can be a string
         if (isString(encQ[nestedPropParent])) {
           props.push({
             key: nestedPropParent + '',
