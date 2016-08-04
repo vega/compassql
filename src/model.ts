@@ -76,6 +76,7 @@ export function getDefaultName(prop: Property) {
 export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryConfig): any[] {
   switch (prop) {
     case Property.FIELD:       // For field, by default enumerate all fields
+    case Property.SORT_FIELD:
       return schema.fields();
 
     // True, False for boolean values
@@ -106,9 +107,6 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
 
     case Property.SORT:
       return opt.sorts;
-
-    case Property.SORT_FIELD:
-      return opt.sortFields;
 
     case Property.SORT_OP:
       return opt.sortOps;
