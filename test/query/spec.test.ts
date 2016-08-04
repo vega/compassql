@@ -6,6 +6,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {assert} from 'chai';
 
+import {SortOrder} from '../../src/query/encoding';
 import {fromSpec, stack} from '../../src/query/spec';
 import {without} from '../../src/util';
 
@@ -231,6 +232,53 @@ describe('query/spec', () => {
         config: {}
       });
     });
+
+    it('should produce correct SpecQuery with sort: SortOrder', () => {
+      const specQ = fromSpec({
+        data: {values: [{x: 1}, {x: 2}]},
+        transform: {filter: 'datum.x ===2'},
+        mark: Mark.POINT,
+        encoding: {
+          x: {field: 'x', sort: SortOrder.ASCENDING, type: Type.QUANTITATIVE},
+          y: {field: 'x', type: Type.QUANTITATIVE, scale: null}
+        },
+        config: {}
+      });
+      assert.deepEqual(specQ, {
+        data: {values: [{x: 1}, {x: 2}]},
+        transform: {filter: 'datum.x ===2'},
+        mark: Mark.POINT,
+        encodings: [
+          {channel: 'x', field: 'x', sort: SortOrder.ASCENDING, type: Type.QUANTITATIVE},
+          {channel: 'y', field: 'x', type: Type.QUANTITATIVE, scale: false}
+        ],
+        config: {}
+      });
+    });
+
+    it('should produce correct SpecQuery with sort: SortField definition object', () => {
+      const specQ = fromSpec({
+        data: {values: [{x: 1}, {x: 2}]},
+        transform: {filter: 'datum.x ===2'},
+        mark: Mark.POINT,
+        encoding: {
+          x: {field: 'x', sort: {field: 'x', op: AggregateOp.MEAN, order: SortOrder.ASCENDING}, type: Type.QUANTITATIVE},
+          y: {field: 'x', type: Type.QUANTITATIVE, scale: null}
+        },
+        config: {}
+      });
+      assert.deepEqual(specQ, {
+        data: {values: [{x: 1}, {x: 2}]},
+        transform: {filter: 'datum.x ===2'},
+        mark: Mark.POINT,
+        encodings: [
+          {channel: 'x', field: 'x', sort: {field: 'x', op: AggregateOp.MEAN, order: SortOrder.ASCENDING}, type: Type.QUANTITATIVE},
+          {channel: 'y', field: 'x', type: Type.QUANTITATIVE, scale: false}
+        ],
+        config: {}
+      });
+    });
+
 
     it('should produce correct SpecQuery without data, transform, config', () => {
       const specQ = fromSpec({
