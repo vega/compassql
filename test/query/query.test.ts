@@ -65,29 +65,6 @@ describe('query/query', () => {
       assert.equal((<SpecQueryModel>result.items[0]).specQuery.mark, 'tick');
       assert.equal((<SpecQueryModel>result.items[1]).specQuery.mark, 'point');
     });
-
-    it('should return a plot with name on x', () => {
-      const q: Query = {
-        spec: {
-          data: {url: 'data/cars.json'},
-          mark: '?',
-          encodings: [
-            {channel: Channel.Y, field: 'Cylinders', type: Type.ORDINAL},
-            {field: 'Name', type: Type.NOMINAL, channel: '?'}
-          ],
-          config: {
-            overlay: {line: true},
-            scale: {useRawDomain: true},
-            facet: {cell: {width: 150, height: 150}}
-          }
-        },
-        orderBy: 'effectiveness',
-        config: {verbose: true}
-      };
-      const result = query(q, schema).result;
-      assert.equal((<SpecQueryModel>result.items[0]).specQuery.encodings[1].field, 'Name');
-      assert.equal((<SpecQueryModel>result.items[0]).specQuery.encodings[1].channel, Channel.X);
-    });
   });
 
   describe('normalize', () => {
