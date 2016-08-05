@@ -74,6 +74,27 @@ describe('generate', function () {
       });
     });
 
+    describe('NxO', () => {
+      const query = {
+        mark: '?',
+        encodings: [
+          {channel: Channel.Y, field: 'O', type: Type.ORDINAL},
+          {field: 'N', type: Type.NOMINAL, channel: '?'}
+        ]
+      };
+
+      const answerSet = generate(query, schema);
+
+      it('should generate a table with x and y as dimensions with autocount turned off', () => {
+        answerSet.forEach((specM) => {
+          assert.isTrue(
+            specM.getEncodingQueryByChannel(Channel.X).type === Type.NOMINAL &&
+            specM.getEncodingQueryByChannel(Channel.Y).type === Type.ORDINAL
+          );
+        });
+      });
+    });
+
     describe('QxQ', () => {
       it('should not return any of bar, tick, line, or area', () => {
         const query = {
@@ -142,9 +163,9 @@ describe('generate', function () {
         }]
       };
 
-      const answerSet = generate(query, schema);
+      const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
 
-      it('should return not generate a plot with both x and y as dimensions.', () => {
+      it('should not generate a plot with both x and y as dimensions with auto add count enabled', () => {
         answerSet.forEach((specM) => {
           assert.isFalse(
             specM.getEncodingQueryByChannel(Channel.X).type === Type.NOMINAL &&

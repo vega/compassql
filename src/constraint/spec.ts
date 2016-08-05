@@ -501,17 +501,20 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'omitTableWithOcclusion',
-    description: 'Raw Plots with x and y are both dimensions should be omitted as they often lead to occlusion.',
+    name: 'omitTableWithOcclusionIfAutoAddCount',
+    description: 'Plots without aggregation or autocount where x and y are both dimensions should be omitted if autoAddCount is enabled as they often lead to occlusion',
     properties: [Property.CHANNEL, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
     allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      if (specM.isDimension(Channel.X) &&
+      if(opt.autoAddCount) {
+        // TODO(#186): take mark properties channel into account
+        if (specM.isDimension(Channel.X) &&
           specM.isDimension(Channel.Y) &&
           !specM.isAggregate() // TODO: refactor based on statistics
         ) {
-        return false;
+          return false;
+        }
       }
       return true;
     }

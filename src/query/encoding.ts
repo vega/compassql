@@ -53,6 +53,7 @@ export function isDimension(encQ: EncodingQuery) {
   return contains([Type.NOMINAL, Type.ORDINAL], encQ.type) ||
       (!isEnumSpec(encQ.bin) && !!encQ.bin) ||          // surely Q type
       (!isEnumSpec(encQ.timeUnit) && !!encQ.timeUnit);  // surely T type
+      // TODO For T type, take scale type of the timeUnit into account
 }
 
 export function isMeasure(encQ: EncodingQuery) {
