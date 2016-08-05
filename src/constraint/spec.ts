@@ -508,7 +508,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if(opt.autoAddCount) {
-        // TODO: add mark properties channel into account
+        // TODO(#186): take mark properties channel into account
         if (specM.isDimension(Channel.X) &&
           specM.isDimension(Channel.Y) &&
           !specM.isAggregate() // TODO: refactor based on statistics
