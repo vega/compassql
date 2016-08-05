@@ -4,9 +4,7 @@ import {autoMaxBins} from 'vega-lite/src/bin';
 import {TimeUnit, convert} from 'vega-lite/src/timeunit';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
-
-declare function require(name: string);
-var dl = require('datalib');
+import * as dlBin from 'datalib/src/bins/bins';
 
 import {BinQuery, EncodingQuery} from './query/encoding';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
@@ -46,7 +44,8 @@ export class Schema {
         }
       } else if (primitiveType === PrimitiveType.DATE) {
         type = Type.TEMPORAL;
-        // need to get correct min/max of date data
+        // need to get correct min/max of date data because datalib's summary method does not
+        // calculate this correctly for date types.
         summary.min = new Date(data[0][field]);
         summary.max = new Date(data[0][field]);
         for (var i = 0; i < data.length; i++) {
@@ -61,15 +60,14 @@ export class Schema {
       } else {
         type = Type.NOMINAL;
       }
-      var fieldSchema: FieldSchema = {
+      return {
         field: field,
         type: type,
         primitiveType: primitiveType,
         stats: summary,
-        timeUnitCardinalities: {},
-        binStats: {}
+        timeStats: {} as {[timeUnit: string]: Summary},
+        binStats: {} as {[key: string]: Summary}
       };
-      return fieldSchema;
     });
 
     // order the fieldSchemas (sort them)
@@ -91,18 +89,22 @@ export class Schema {
       }
     });
 
-    let schema = new Schema(fieldSchemas);
-
-    // calculate preset bins for quantitative data
+    // calculate preset bins for quantitative and temporal data
     for (let fieldSchema of fieldSchemas) {
       if (fieldSchema.type === Type.QUANTITATIVE) {
         for (let maxbins of opt.maxBinsList) {
           fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
         }
+      } else if (fieldSchema.type === Type.TEMPORAL) {
+        for (let unit of opt.timeUnits) {
+          if (unit !== undefined) {
+            fieldSchema.timeStats[unit] = timeSummary(unit, fieldSchema.stats);
+          }
+        }
       }
     }
 
-    return schema;
+    return new Schema(fieldSchemas);
   }
 
   constructor(fieldSchemas: FieldSchema[]) {
@@ -131,7 +133,10 @@ export class Schema {
     return this.fieldSchemaIndex[field] ? this.fieldSchemaIndex[field].type : null;
   }
 
-  public cardinality(encQ: EncodingQuery) {
+  /** @return cardinality of the field associated with encQ, null if it doesn't exist.
+   *  @param augmentTimeUnitDomain - TimeUnit field domains will not be augmented if explicitly set to false.
+   */
+  public cardinality(encQ: EncodingQuery, augmentTimeUnitDomain: boolean = true) {
     const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
     if (encQ.aggregate || encQ.autoCount) {
       return 1;
@@ -153,29 +158,24 @@ export class Schema {
       }
       return fieldSchema.binStats[maxbins].distinct;
     } else if (encQ.timeUnit) {
-      // handle single time units
-      switch (encQ.timeUnit) {
-        // TODO: this should not always be the case once Vega-Lite supports turning off domain augmenting (VL issue #1385)
-        case TimeUnit.SECONDS: return 60;
-        case TimeUnit.MINUTES: return 60;
-        case TimeUnit.HOURS: return 24;
-        case TimeUnit.DAY: return 7;
-        case TimeUnit.DATE: return 31;
-        case TimeUnit.MONTH: return 12;
-        case TimeUnit.QUARTER: return 4;
-        case TimeUnit.MILLISECONDS: return 1000;
+      if (augmentTimeUnitDomain) {
+        switch (encQ.timeUnit) {
+          // TODO: this should not always be the case once Vega-Lite supports turning off domain augmenting (VL issue #1385)
+          case TimeUnit.SECONDS: return 60;
+          case TimeUnit.MINUTES: return 60;
+          case TimeUnit.HOURS: return 24;
+          case TimeUnit.DAY: return 7;
+          case TimeUnit.DATE: return 31;
+          case TimeUnit.MONTH: return 12;
+          case TimeUnit.QUARTER: return 4;
+          case TimeUnit.MILLISECONDS: return 1000;
+        }
       }
-      // handle multi-timeunits
       // if the cardinality for the timeUnit is not cached, calculate it
-      if (!fieldSchema.timeUnitCardinalities[encQ.timeUnit as string]) {
-        var unique = {};
-        keys(fieldSchema.stats.unique).forEach(function(dateString) {
-          var date = convert(encQ.timeUnit as TimeUnit, new Date(dateString));
-          unique[date.toString()] = true;
-        });
-        fieldSchema.timeUnitCardinalities[encQ.timeUnit as string] = keys(unique).length;
+      if (!fieldSchema.timeStats[encQ.timeUnit as string]) {
+        fieldSchema.timeStats[encQ.timeUnit as string] = timeSummary(encQ.timeUnit as TimeUnit, fieldSchema.stats);
       }
-      return fieldSchema.timeUnitCardinalities[encQ.timeUnit as string];
+      return fieldSchema.timeStats[encQ.timeUnit as string].distinct;
     } else {
       return fieldSchema ? fieldSchema.stats.distinct : null;
     }
@@ -210,7 +210,7 @@ export class Schema {
  * @return a summary of the binning scheme determined from the given max number of bins
  */
 function binSummary(maxbins: number, summary: Summary): Summary {
-  const bin: Bin = dl.bins({
+  const bin = dlBin({
     min: summary.min,
     max: summary.max,
     maxbins: maxbins
@@ -226,10 +226,27 @@ function binSummary(maxbins: number, summary: Summary): Summary {
   return result;
 }
 
+/** @return a modified version of the passed summary with unique and distinct set according to the timeunit */
+function timeSummary(timeunit: TimeUnit, summary: Summary): Summary {
+  const result = extend({}, summary);
+
+  var unique: {[value: string]: number} = {};
+  keys(summary.unique).forEach(function(dateString) {
+    let date: Date = new Date(dateString);
+    let key: string = ((timeunit === TimeUnit.DAY) ? date.getDay() : convert(timeunit, new Date(dateString))).toString();
+    unique[key] = unique[key] ? unique[key] + summary.unique[dateString] : summary.unique[dateString];
+  });
+
+  result.unique = unique;
+  result.distinct = keys(unique).length;
+
+  return result;
+}
+
 /**
  * @return a new unique object based off of the old unique count and a binning scheme
  */
-function binUnique(bin: Bin, oldUnique) {
+function binUnique(bin, oldUnique) {
   const newUnique = {};
   for (var value in oldUnique) {
     let bucket: number = bin.value(Number(value)) as number;
@@ -257,6 +274,6 @@ export interface FieldSchema {
   primitiveType: PrimitiveType;
   stats: Summary;
   binStats?: {[key: string]: Summary};
-  timeUnitCardinalities?: {[timeUnit: string]: number};
+  timeStats?: {[timeUnit: string]: Summary};
   title?: string;
 }

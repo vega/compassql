@@ -39,16 +39,6 @@ interface Summary {
   modeskew: number;
 }
 
-/** Describes a binning scheme. This is returned by the dl.bins and dl.bins.date methods. */
-interface Bin {
-  start: number;
-  stop: number;
-  step: number;
-  value(value: number | Date): number | Date;
-  index(value: number | Date): number;
-  unit: BinUnit;
-}
-
 /** Part of the Bin interface */
 interface BinUnit {
   date?(): any;
