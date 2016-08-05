@@ -210,17 +210,6 @@ describe('schema', () => {
       assert.equal(cardinality, 12);
     });
 
-    it('should correctly compute cardinality for single timeUnits', () => {
-      const cardinalityData = [{a: '1/1/2016'}];
-      const cardinalitySchema = Schema.build(cardinalityData);
-      const cardinality: number = cardinalitySchema.cardinality({
-        field: 'a',
-        channel: Channel.X,
-        timeUnit: 'month'
-      });
-      assert.equal(cardinality, 12);
-    });
-
     it('should correctly compute cardinality for multiple timeUnits when relevant timeUnits are the same and irrelevant timeUnits are different', () => {
       const cardinalityData = [];
       for (var i = 1; i <= 30; i++) {
