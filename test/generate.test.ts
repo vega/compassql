@@ -121,6 +121,27 @@ describe('generate', function () {
         });
       });
     });
+
+    describe('NxO', () => {
+      const query = {
+        mark: '?',
+        encodings: [
+          {channel: Channel.Y, field: 'O', type: Type.ORDINAL},
+          {field: 'N', type: Type.NOMINAL, channel: '?'}
+        ]
+      };
+
+      const answerSet = generate(query, schema);
+
+      it('should generate a table with x and y as dimensions with autocount turned off', () => {
+        answerSet.forEach((specM) => {
+          assert.isTrue(
+            specM.getEncodingQueryByChannel(Channel.X).type === Type.NOMINAL &&
+            specM.getEncodingQueryByChannel(Channel.Y).type === Type.ORDINAL
+          );
+        });
+      });
+    });
   });
 
   describe('3D', () => {
@@ -151,27 +172,6 @@ describe('generate', function () {
             specM.getEncodingQueryByChannel(Channel.Y).type === Type.NOMINAL
           );
         });
-      });
-    });
-  });
-
-  describe('NxO', () => {
-    const query = {
-      mark: '?',
-      encodings: [
-        {channel: Channel.Y, field: 'O', type: Type.ORDINAL},
-        {field: 'N', type: Type.NOMINAL, channel: '?'}
-      ]
-    };
-
-    const answerSet = generate(query, schema);
-
-    it('should generate a table with x and y as dimensions with autocount turned off', () => {
-      answerSet.forEach((specM) => {
-        assert.isTrue(
-          specM.getEncodingQueryByChannel(Channel.X).type === Type.NOMINAL &&
-          specM.getEncodingQueryByChannel(Channel.Y).type === Type.ORDINAL
-        );
       });
     });
   });
