@@ -1,5 +1,7 @@
 import {Channel} from 'vega-lite/src/channel';
+import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
+
 
 import {schema} from '../fixture';
 import {rank} from '../../src/ranking/ranking';
@@ -14,14 +16,14 @@ describe('ranking', () => {
     let group: SpecQueryModelGroup =
       rank(
         {name: '', path: '', items: []},
-        { spec: {
-            data: {url: 'data/cars.json'},
-            mark: '?',
+        {
+          spec: {
+            mark: Mark.BAR,
             encodings: [
-              {channel: Channel.Y, field: 'Cylinders', type: Type.ORDINAL},
-              {field: 'Name', type: Type.NOMINAL, channel: '?'}
+              {channel: Channel.SHAPE, field: 'N', type: Type.NOMINAL},
             ]
           },
+          chooseBy: "effectiveness"
         },
         schema,
         0
