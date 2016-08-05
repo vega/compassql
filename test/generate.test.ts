@@ -144,7 +144,7 @@ describe('generate', function () {
 
       const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
 
-      it('should return not generate a plot with both x and y as dimensions.', () => {
+      it('should not generate a plot with both x and y as dimensions with auto add count enabled', () => {
         answerSet.forEach((specM) => {
           assert.isFalse(
             specM.getEncodingQueryByChannel(Channel.X).type === Type.NOMINAL &&
