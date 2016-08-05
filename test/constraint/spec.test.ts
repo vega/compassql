@@ -952,8 +952,8 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('omitTableWithOcclusion', () => {
-    it('return false for raw plot with both x and y as dimensions.', () => {
+  describe('omitTableWithOcclusionIfAutoAddCount', () => {
+    it('return false for raw plot with both x and y as dimensions without autocount or aggregation.', () => {
       [Mark.POINT, Mark.CIRCLE, Mark.SQUARE, Mark.LINE, Mark.AREA, Mark.BAR].forEach((mark) => {
         const specM = buildSpecQueryModel({
           mark: mark,
@@ -962,7 +962,8 @@ describe('constraints/spec', () => {
             {channel: Channel.Y, field: 'N20', type: Type.NOMINAL}
           ]
         });
-        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitTableWithOcclusion'].satisfy(specM, schema, {autoAddCount: true}));
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitTableWithOcclusionIfAutoAddCount'].satisfy(specM, schema, {autoAddCount: true}));
+
       });
     });
   });
