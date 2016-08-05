@@ -180,6 +180,7 @@ describe('schema', () => {
       const cardinalityData = [
         {a: 0}, {a: 1},                 // bin 0-1
         {a: 2}, {a: 2}, {a: 3}, {a: 3}, // bin 2-3
+                                        // bin 4-5 (empty)
         {a: 6}, {a: 7}                  // bin 6-7
       ];
       const cardinalitySchema = Schema.build(cardinalityData);

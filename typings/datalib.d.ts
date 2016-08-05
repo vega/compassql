@@ -39,12 +39,6 @@ interface Summary {
   modeskew: number;
 }
 
-/** Part of the Bin interface */
-interface BinUnit {
-  date?(): any;
-  unit(date: Date): Date;
-}
-
 declare module 'datalib/src/stats' {
   export function summary(data:any): Summary[];
 }
