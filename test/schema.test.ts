@@ -150,17 +150,6 @@ describe('schema', () => {
       assert.equal(cardinality, 10);
     });
 
-    it('should return the correct cardinality that is less than the maximum amount of bins', () => {
-      const cardinalityData = [{a: 0}, {a: 4}]; // min/max
-      const cardinalitySchema = Schema.build(cardinalityData);
-      const cardinality: number = cardinalitySchema.cardinality({
-        field: 'a',
-        channel: Channel.X,
-        bin: true  // should cause maxbins to be 10
-      });
-      assert.isTrue(cardinality < 10);
-    });
-
     it('should correctly return binned cardinality when specific bin parameters are specified', () => {
       const cardinalityData = [{a: 0}, {a: 5}]; // min/max
       const cardinalitySchema = Schema.build(cardinalityData);
@@ -185,6 +174,171 @@ describe('schema', () => {
         }
       });
       assert.equal(cardinality, 7);
+    });
+
+    it('should correctly compute new binned cardinality when binned cardinality is less than non-binned cardinality', () => {
+      const cardinalityData = [
+        {a: 0}, {a: 1},                 // bin 0-1
+        {a: 2}, {a: 2}, {a: 3}, {a: 3}, // bin 2-3
+                                        // bin 4-5 (empty)
+        {a: 6}, {a: 7}                  // bin 6-7
+      ];
+      const cardinalitySchema = Schema.build(cardinalityData);
+      const cardinalityNoBin: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X
+      });
+      const cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        bin: {
+          maxbins: 4
+        }
+      });
+
+      assert.equal(cardinalityNoBin, 6);
+      assert.equal(cardinality, 4);
+    });
+
+    it('should correctly compute cardinality for single timeUnits with domain augmenting set to true', () => {
+      const cardinalityData = [{a: '1/1/2016'}];
+      const cardinalitySchema = Schema.build(cardinalityData);
+      const cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'month'
+      });
+      assert.equal(cardinality, 12);
+    });
+
+    it('should correctly compute cardinality for single timeUnits with domain augmenting set to false', () => {
+      const cardinalityData = [
+        {a: '1/1/2016'},
+        {a: '2/1/2016'},
+        {a: '2/1/2016'}
+      ];
+      const cardinalitySchema = Schema.build(cardinalityData);
+      const cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'month'
+      }, false);
+      assert.equal(cardinality, 2);
+    });
+
+    it('should correctly compute cardinality for multiple timeUnits when relevant timeUnits are the same and irrelevant timeUnits are different', () => {
+      const cardinalityData = [];
+      for (var i = 1; i <= 30; i++) {
+        cardinalityData.push({
+          a: 'June ' + i + ', 2000'
+        });
+      }
+      const cardinalitySchema = Schema.build(cardinalityData);
+      const cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'yearmonth'
+      });
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATE);
+      assert.equal(cardinality, 1);
+    });
+
+    it('should correctly compute cardinality for multiple timeUnits when there are not duplicate dates', () => {
+      const numYears = 5;
+      const cardinalityData = [];
+      for (var i = 1; i <= numYears; i++) {
+        cardinalityData.push({
+          a: 'June ' + i + ', 200' + i
+        });
+      }
+      const cardinalitySchema = Schema.build(cardinalityData);
+      const cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'yearmonth'
+      });
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATE);
+      assert.equal(cardinality, numYears);
+    });
+
+    it('should correctly compute cardinality for `yearquarter` timeunit', () => {
+      let cardinalityData = [{a: 'June 21, 1996'}, {a: 'January 21, 1996'}];
+      let cardinalitySchema = Schema.build(cardinalityData);
+      let cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'yearquarter'
+      });
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATE);
+      assert.equal(cardinality, 2);
+
+      cardinalityData = [{a: 'June 21, 1996'}, {a: 'May 21, 1996'}];
+      cardinalitySchema = Schema.build(cardinalityData);
+      cardinality = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'yearquarter'
+      });
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATE);
+      assert.equal(cardinality, 1);
+    });
+
+    it('should correctly compute cardinality for `year` timeunit', () => {
+      let cardinalityData = [{a: 'June 21, 2000'}, {a: 'June 21, 2000'}];
+      let cardinalitySchema = Schema.build(cardinalityData);
+      let cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'year'
+      });
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATE);
+      assert.equal(cardinality, 1);
+
+      cardinalityData = [{a: 'June 21, 2000'}, {a: 'June 21, 2010'}];
+      cardinalitySchema = Schema.build(cardinalityData);
+      cardinality = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'year'
+      });
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATE);
+      assert.equal(cardinality, 2);
+    });
+
+    it('should correctly compute cardinality for `quartermonth` timeunit', () => {
+      // should be the same as the 'month' cardinality
+      let cardinalityData = [
+        {a: 'June 1, 2000'},
+        {a: 'May  1, 2000'},
+        {a: 'May  1, 2000'},
+        {a: 'January  1, 2000'}
+      ];
+      let cardinalitySchema = Schema.build(cardinalityData);
+      let cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'quartermonth'
+      });
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATE);
+      assert.equal(cardinality, 3);
+    });
+
+    it('should correctly compute cardinality for `hoursminutes` timeunit', () => {
+      // should be the same as the 'month' cardinality
+      let cardinalityData = [
+        {a: 'June 1, 2000 00:00:00'},
+        {a: 'June 1, 2000 01:01:00'},
+        {a: 'May 15, 2000 01:01:00'},
+        {a: 'June 1, 2000 01:02:00'}
+      ];
+      let cardinalitySchema = Schema.build(cardinalityData);
+      let cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'hoursminutes'
+      });
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATE);
+      assert.equal(cardinality, 3);
     });
   });
 
