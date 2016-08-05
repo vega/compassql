@@ -74,6 +74,27 @@ describe('generate', function () {
       });
     });
 
+    describe('NxO', () => {
+      const query = {
+        mark: '?',
+        encodings: [
+          {channel: Channel.Y, field: 'O', type: Type.ORDINAL},
+          {field: 'N', type: Type.NOMINAL, channel: '?'}
+        ]
+      };
+
+      const answerSet = generate(query, schema);
+
+      it('should generate a table with x and y as dimensions with autocount turned off', () => {
+        answerSet.forEach((specM) => {
+          assert.isTrue(
+            specM.getEncodingQueryByChannel(Channel.X).type === Type.NOMINAL &&
+            specM.getEncodingQueryByChannel(Channel.Y).type === Type.ORDINAL
+          );
+        });
+      });
+    });
+
     describe('QxQ', () => {
       it('should not return any of bar, tick, line, or area', () => {
         const query = {
@@ -118,27 +139,6 @@ describe('generate', function () {
         answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), Mark.AREA);
           assert.notEqual(specM.getMark(), Mark.LINE);
-        });
-      });
-    });
-
-    describe('NxO', () => {
-      const query = {
-        mark: '?',
-        encodings: [
-          {channel: Channel.Y, field: 'O', type: Type.ORDINAL},
-          {field: 'N', type: Type.NOMINAL, channel: '?'}
-        ]
-      };
-
-      const answerSet = generate(query, schema);
-
-      it('should generate a table with x and y as dimensions with autocount turned off', () => {
-        answerSet.forEach((specM) => {
-          assert.isTrue(
-            specM.getEncodingQueryByChannel(Channel.X).type === Type.NOMINAL &&
-            specM.getEncodingQueryByChannel(Channel.Y).type === Type.ORDINAL
-          );
         });
       });
     });
