@@ -37,13 +37,11 @@ export function rank(group: SpecQueryModelGroup, query: Query, schema: Schema, l
     if (query.orderBy || query.chooseBy) {
       group.items.sort(comparator(query.orderBy || query.chooseBy, schema, query.config));
       if (query.chooseBy) {
-        if (group.items.length === 0) {
-          // if answerSet is empty, rootGroup has no items
-          // thus, SpecQueryModelGroup also has no items
-          group.items = [];
-        } else {
+        if (group.items.length > 0) {
           // for chooseBy -- only keep the top-item
           group.items = [group.items[0]];
+        } else {
+          group.items = [];
         }
       }
     }
