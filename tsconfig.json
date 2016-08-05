@@ -60,6 +60,7 @@
         "test/ranking/effectiveness/effectiveness.test.ts",
         "test/ranking/effectiveness/channel.test.ts",
         "test/ranking/effectiveness/mark.test.ts",
+        "test/ranking/ranking.test.ts",
         "test/enumerator.test.ts",
         "test/enumspec.test.ts",
         "test/enumspecindex.test.ts",
