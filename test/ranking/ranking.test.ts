@@ -23,7 +23,7 @@ describe('ranking', () => {
               {channel: Channel.SHAPE, field: 'N', type: Type.NOMINAL},
             ]
           },
-          chooseBy: "effectiveness"
+          chooseBy: 'effectiveness'
         },
         schema,
         0
