@@ -11,26 +11,24 @@ import {assert} from 'chai';
 
 describe('ranking', () => {
   describe('rank', () => {
-    describe('group.items', () => {
-      let group: SpecQueryModelGroup =
-        rank(
-          {name: '', path: '', items: []},
-          { spec: {
-              data: {url: 'data/cars.json'},
-              mark: '?',
-              encodings: [
-                {channel: Channel.Y, field: 'Cylinders', type: Type.ORDINAL},
-                {field: 'Name', type: Type.NOMINAL, channel: '?'}
-              ]
-            },
+    let group: SpecQueryModelGroup =
+      rank(
+        {name: '', path: '', items: []},
+        { spec: {
+            data: {url: 'data/cars.json'},
+            mark: '?',
+            encodings: [
+              {channel: Channel.Y, field: 'Cylinders', type: Type.ORDINAL},
+              {field: 'Name', type: Type.NOMINAL, channel: '?'}
+            ]
           },
-          schema,
-          0
-        );
+        },
+        schema,
+        0
+      );
 
-      it('should be an empty array if the answerSet is empty', () => {
-        assert.deepEqual(group.items, []);
-      });
+    it('should return an empty group if the input group is empty', () => {
+      assert.deepEqual(group.items, []);
     });
   });
 });
