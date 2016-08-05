@@ -14,6 +14,7 @@ export import encoding = require('./encoding');
 export import groupBy = require('./groupby');
 export import shorthand = require('./shorthand');
 export import spec = require('./spec');
+export import template = require('./template');
 export import transform = require('./transform');
 
 export function query(q: Query, schema: Schema, config?: Config) {
