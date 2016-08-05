@@ -13,8 +13,8 @@ import {assert} from 'chai';
 
 describe('ranking', () => {
   describe('rank', () => {
-    let group: SpecQueryModelGroup =
-      rank(
+    it('should return an empty group if the input group is empty', () => {
+      let group: SpecQueryModelGroup = rank(
         {name: '', path: '', items: []},
         {
           spec: {
@@ -28,8 +28,6 @@ describe('ranking', () => {
         schema,
         0
       );
-
-    it('should return an empty group if the input group is empty', () => {
       assert.deepEqual(group.items, []);
     });
   });
