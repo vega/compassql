@@ -3,6 +3,7 @@ import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Config} from 'vega-lite/src/config';
 import {Mark} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
+import {SortOrder} from 'vega-lite/src/sort';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
@@ -35,6 +36,15 @@ export interface QueryConfig {
 
   /** Default maxbins to enumerate */
   maxBinsList?: number[];
+
+  // TODO: Come back and implement correctly when designing sort enumeration.
+  sorts?: SortOrder[];
+
+  sortFields?: string[];
+
+  sortOps?: AggregateOp[];
+
+  sortOrders?: SortOrder[];
 
   scaleBandSizes?: number[];
 
@@ -103,6 +113,11 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
   maxBinsList: [5, 10, 20],
+
+  // TODO: Come back and implement correctly when designing sort enumeration.
+  sorts: [SortOrder.ASCENDING, SortOrder.DESCENDING],
+  sortOps: [AggregateOp.MIN, AggregateOp.MEAN],
+  sortOrders: [SortOrder.ASCENDING, SortOrder.DESCENDING],
 
   scaleBandSizes: [17, 21],
   scaleDomains: [undefined],

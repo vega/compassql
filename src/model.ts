@@ -4,114 +4,19 @@ import {Data} from 'vega-lite/src/data';
 import {Encoding} from 'vega-lite/src/encoding';
 import {FieldDef} from 'vega-lite/src/fielddef';
 import {Mark} from 'vega-lite/src/mark';
-import {ScaleType} from 'vega-lite/src/scale';
-import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
-
-
 
 import {QueryConfig} from './config';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
 import {EnumSpec, SHORT_ENUM_SPEC, initEnumSpec, isEnumSpec} from './enumspec';
-import {isEncodingProperty} from './property';
+import {EnumSpecIndex} from './enumspecindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
 import {spec as specShorthand} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
-
-export interface EncodingsEnumSpecIndex {
-  [index: number]: EncodingEnumSpecIndex;
-}
-
-export interface EncodingEnumSpecIndex {
-  /** Enum spec for channel enumeration. */
-  channel?: EnumSpec<Channel>;
-
-  /** Enum spec for aggregate enumeration. */
-  aggregate?: EnumSpec<AggregateOp>;
-
-  /** Enum spec for autoCount enumeration. */
-  autoCount?: EnumSpec<AggregateOp>;
-
-  /** Enum spec for bin enumeration. */
-  bin?: EnumSpec<boolean>;
-
-  /** Enum spec for bin.maxbins enumeration */
-  maxbin?: EnumSpec<number>;
-
-  /** Enum spec for scale enumeration. */
-  scale?: EnumSpec<boolean>;
-
-  /** Enum spec for scale.bandSize enumeration */
-  scaleBandSize?: EnumSpec<number>;
-
-  /** Enum spec for scale.clamp enumeration */
-  scaleClamp?: EnumSpec<boolean>;
-
-  /** Enum spec for scale.domain enumeration */
-  scaleDomain?: EnumSpec<string | string[] | number[]>;
-
-  /** Enum spec for scale.exponent enumeration */
-  scaleExponent?: EnumSpec<number>;
-
-  /** Enum spec for scale.nice enumeration */
-  scaleNice?: EnumSpec<boolean>;
-
-  /** Enum spec for scale.range enumeration */
-  scaleRange?: EnumSpec<string | string[] | number[]>;
-
-  /** Enum spec for scale.round enumeration */
-  scaleRound?: EnumSpec<boolean>;
-
-  /** Enum spec for scale.type enumeration */
-  scaleType?: EnumSpec<ScaleType>;
-
-  /** Enum spec for scale.useRawDomain enumeration */
-  scaleUseRawDomain?: EnumSpec<boolean>;
-
-  /** Enum spec for scale.zero enumeration */
-  scaleZero?: EnumSpec<boolean>;
-
-  /** Enum spec for timeUnit enumeration. */
-  timeUnit?: EnumSpec<TimeUnit>;
-
-  /** Enum spec for field enumeration. */
-  field?: EnumSpec<string>;
-
-  /** Enum spec for type enumeration. */
-  type?: EnumSpec<Type>;
-}
-
-/**
- * Object that stores different types of EnumSpecIndexTuple
- */
-export interface EnumSpecIndex {
-  /** Index tuple for the mark (if mark requires enumeration). */
-  // TODO: replace with just EnumSpec<Mark>.
-  mark?: EnumSpec<Mark>;
-
-  // TODO: transform
-
-  /**
-   * Dictionary mapping encoding index to an encoding enum spec index.
-   */
-  encodings: EncodingsEnumSpecIndex;
-
-  encodingIndicesByProperty: Dict<number[]>;
-}
-
-export function hasPropertyIndex(enumSpecIndex: EnumSpecIndex, prop: Property) {
-  if (isEncodingProperty(prop)) {
-    return !!enumSpecIndex.encodingIndicesByProperty[prop];
-  } if (prop === Property.MARK) {
-    return !!enumSpecIndex.mark;
-  }
-  /* istanbul ignore next */
-  throw new Error('Unimplemented for property ' + prop);
-}
 
 export function getDefaultName(prop: Property) {
   switch (prop) {
@@ -127,6 +32,14 @@ export function getDefaultName(prop: Property) {
       return 'b';
     case Property.BIN_MAXBINS:
       return 'b-mb';
+    case Property.SORT:
+      return 'so';
+    case Property.SORT_FIELD:
+      return 'so-f';
+    case Property.SORT_OP:
+      return 'so-op';
+    case Property.SORT_ORDER:
+      return 'so-or';
     case Property.SCALE:
       return 's';
     case Property.SCALE_BANDSIZE:
@@ -163,6 +76,7 @@ export function getDefaultName(prop: Property) {
 export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryConfig): any[] {
   switch (prop) {
     case Property.FIELD:       // For field, by default enumerate all fields
+    case Property.SORT_FIELD:
       return schema.fields();
 
     // True, False for boolean values
@@ -191,6 +105,15 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     case Property.MARK:
       return opt.marks;
 
+    case Property.SORT:
+      return opt.sorts;
+
+    case Property.SORT_OP:
+      return opt.sortOps;
+
+    case Property.SORT_ORDER:
+      return opt.sortOrders;
+
     case Property.SCALE_BANDSIZE:
       return opt.scaleBandSizes;
 
@@ -214,18 +137,6 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
   }
   /* istanbul ignore next */
   throw new Error('No default enumValues for ' + prop);
-}
-
-function setEnumSpecIndex(enumSpecIndex: EnumSpecIndex, index: number, prop: Property, enumSpec: EnumSpec<any>) {
-  const encodingsIndex = enumSpecIndex.encodings;
-
-  // Init encoding index and set prop
-  const encIndex = encodingsIndex[index] = encodingsIndex[index] || {};
-  encIndex[prop] = enumSpec;
-
-  // Initialize indicesByProperty[prop] and add index
-  const encodingIndicesByProperty = enumSpecIndex.encodingIndicesByProperty;
-  (encodingIndicesByProperty[prop] = encodingIndicesByProperty[prop] || []).push(index);
 }
 
 /**
@@ -252,13 +163,12 @@ export class SpecQueryModel {
    * @return a SpecQueryModel that wraps the specQuery and the enumSpecIndex.
    */
   public static build(specQ: SpecQuery, schema: Schema, opt: QueryConfig): SpecQueryModel {
-    let enumSpecIndex: EnumSpecIndex = {encodings: {}, encodingIndicesByProperty: {}};
-
+    let enumSpecIndex: EnumSpecIndex = new EnumSpecIndex();
     // mark
     if (isEnumSpec(specQ.mark)) {
       const name = getDefaultName(Property.MARK);
       specQ.mark = initEnumSpec(specQ.mark, name, opt.marks);
-      enumSpecIndex.mark = specQ.mark;
+      enumSpecIndex.setMark(specQ.mark);
     }
 
     // TODO: transform
@@ -286,7 +196,7 @@ export class SpecQueryModel {
           const enumSpec = encQ[prop] = initEnumSpec(encQ[prop], defaultEnumSpecName, defaultEnumValues);
 
           // Add index of the encoding mapping to the property's enum spec index.
-          setEnumSpecIndex(enumSpecIndex, index, prop, enumSpec);
+          enumSpecIndex.setEncodingProperty(index, prop, enumSpec);
         }
       });
 
@@ -303,7 +213,7 @@ export class SpecQueryModel {
             const enumSpec = propObj[child] = initEnumSpec(propObj[child], defaultEnumSpecName, defaultEnumValues);
 
             // Add index of the encoding mapping to the property's enum spec index.
-            setEnumSpecIndex(enumSpecIndex, index, prop, enumSpec);
+            enumSpecIndex.setEncodingProperty(index, prop, enumSpec);
           }
         }
       });
@@ -328,8 +238,8 @@ export class SpecQueryModel {
       const index = specQ.encodings.length - 1;
 
       // Add index of the encoding mapping to the property's enum spec index.
-      setEnumSpecIndex(enumSpecIndex, index, Property.CHANNEL, countEncQ.channel);
-      setEnumSpecIndex(enumSpecIndex, index, Property.AUTOCOUNT, countEncQ.autoCount);
+      enumSpecIndex.setEncodingProperty(index, Property.CHANNEL, countEncQ.channel);
+      enumSpecIndex.setEncodingProperty(index, Property.AUTOCOUNT, countEncQ.autoCount);
     }
 
     return new SpecQueryModel(specQ, enumSpecIndex, schema, opt, {});
@@ -499,7 +409,7 @@ export class SpecQueryModel {
       if (isEnumSpec(encQ.channel)) return null;
 
       // assemble other property into a field def.
-      const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.SCALE, Property.TIMEUNIT, Property.FIELD, Property.TYPE];
+      const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.SORT, Property.SCALE, Property.TIMEUNIT, Property.FIELD, Property.TYPE];
       for (let j = 0; j < PROPERTIES.length; j++) {
         const prop = PROPERTIES[j];
 

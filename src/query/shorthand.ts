@@ -1,4 +1,5 @@
 import {Type} from 'vega-lite/src/type';
+import {isString} from 'datalib/src/util';
 
 import {EncodingQuery} from './encoding';
 import {SpecQuery, stack} from './spec';
@@ -132,24 +133,33 @@ export function fieldDef(encQ: EncodingQuery,
 
   // Scale
   // TODO: axis, legend
-  for (const nestedPropParent of [Property.SCALE]) {
+  for (const nestedPropParent of [Property.SCALE, Property.SORT]) {
     if (include[nestedPropParent]) {
       if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
-        const nestedProps = getNestedEncodingPropertyChildren(nestedPropParent);
-        const nestedPropChildren = nestedProps.reduce((p, nestedProp) => {
-          if (include[nestedProp.property] && encQ[nestedPropParent][nestedProp.child] !== undefined) {
-            p[nestedProp.child] = value(encQ[nestedPropParent][nestedProp.child], replace[nestedProp.property]);
-          }
-          return p;
-        }, {});
-
-        if(keys(nestedPropChildren).length > 0) {
+        // `sort` can be a string (ascending/descending).
+        if (isString(encQ[nestedPropParent])) {
           props.push({
             key: nestedPropParent + '',
-            value: JSON.stringify(nestedPropChildren)
+            value: encQ[nestedPropParent]
           });
+        } else {
+          const nestedProps = getNestedEncodingPropertyChildren(nestedPropParent);
+          const nestedPropChildren = nestedProps.reduce((p, nestedProp) => {
+            if (include[nestedProp.property] && encQ[nestedPropParent][nestedProp.child] !== undefined) {
+              p[nestedProp.child] = value(encQ[nestedPropParent][nestedProp.child], replace[nestedProp.property]);
+            }
+            return p;
+          }, {});
+
+          if(keys(nestedPropChildren).length > 0) {
+            props.push({
+              key: nestedPropParent + '',
+              value: JSON.stringify(nestedPropChildren)
+            });
+          }
         }
       } else if (encQ[nestedPropParent] === false || encQ[nestedPropParent] === null) {
+        // `scale`, `axis`, `legend` can be false/null. 
         props.push({
           key: nestedPropParent + '',
           value: false

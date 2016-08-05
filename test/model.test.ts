@@ -3,6 +3,7 @@ import {assert} from 'chai';
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
+import {SortOrder} from 'vega-lite/src/sort';
 import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
@@ -268,6 +269,31 @@ describe('SpecQueryModel', () => {
         mark: Mark.BAR,
         encoding: {
           x: {field: 'A', type: Type.QUANTITATIVE}
+        },
+        config: DEFAULT_SPEC_CONFIG
+      });
+    });
+
+    it('should return a correct Vega-Lite spec if the query has sort: SortOrder', () => {
+      const specM = buildSpecQueryModel({
+        data: {values: [{A: 1}]},
+        transform: {filter: 'datum.A===1'},
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', sort: SortOrder.ASCENDING, type: Type.QUANTITATIVE},
+          {channel: Channel.Y, field: 'A', sort: {field: 'A', op: AggregateOp.MEAN, order: SortOrder.ASCENDING}, type: Type.QUANTITATIVE}
+
+        ]
+      });
+
+      const spec = specM.toSpec();
+      assert.deepEqual(spec, {
+        data: {values: [{A: 1}]},
+        transform: {filter: 'datum.A===1'},
+        mark: Mark.BAR,
+        encoding: {
+          x: {field: 'A', sort: SortOrder.ASCENDING, type: Type.QUANTITATIVE},
+          y: {field: 'A', sort: {field: 'A', op: AggregateOp.MEAN, order: SortOrder.ASCENDING}, type: Type.QUANTITATIVE}
         },
         config: DEFAULT_SPEC_CONFIG
       });

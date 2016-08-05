@@ -125,26 +125,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'omitScaleZeroWithBinnedField',
-    description: 'Do not use scale zero with binned field',
-    properties: [Property.SCALE, Property.SCALE_ZERO, Property.BIN],
-    allowEnumSpecForProperties: false,
-    strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      const encodings = specM.getEncodings();
-
-      for (let encQ of encodings) {
-        if (encQ.bin && encQ.scale) {
-          if ((encQ.bin === true) && (encQ.scale as ScaleQuery).zero === true) {
-            return false;
-          }
-        }
-      }
-
-      return true;
-    }
-  },
-  {
     name: 'autoAddCount',
     description: 'Automatically adding count only for plots with only ordinal, binned quantitative, or temporal with timeunit fields.',
     properties: [Property.BIN, Property.TIMEUNIT, Property.TYPE, Property.AUTOCOUNT],
@@ -533,30 +513,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         ) {
         return false;
       }
-      return true;
-    }
-  },
-  {
-    name: 'scaleZeroMustMatchScaleType',
-    description: 'ScaleZero should not be used with LOG, ORDINAL, TIME and UTC',
-    properties: [Property.SCALE, Property.TYPE, Property.SCALE_TYPE, Property.SCALE_ZERO],
-    allowEnumSpecForProperties: false,
-    strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      const encodings = specM.getEncodings();
-
-      for (let encQ of encodings) {
-        if (encQ.scale) {
-          const scale: ScaleQuery = encQ.scale as ScaleQuery;
-          const sType = scaleType(scale.type, encQ.timeUnit, encQ.type);
-
-          if (contains([ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC], sType) &&
-             (scale.zero === true)) {
-               return false;
-          }
-        }
-      }
-
       return true;
     }
   }

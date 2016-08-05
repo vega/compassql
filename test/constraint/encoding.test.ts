@@ -9,7 +9,7 @@ import {Type} from 'vega-lite/src/type';
 import {Property} from '../../src/property';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {EncodingConstraintModel, ENCODING_CONSTRAINTS, ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
-import {EncodingQuery} from '../../src/query/encoding';
+import {EncodingQuery, ScaleQuery} from '../../src/query/encoding';
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {duplicate} from '../../src/util';
 
@@ -352,6 +352,26 @@ describe('constraints/encoding', () => {
     });
   });
 
+  describe('omitScaleZeroWithBinnedField', () => {
+    let encQ: EncodingQuery = {
+      channel: Channel.X,
+      bin: true,
+      field: 'A',
+      scale: {zero: undefined},
+      type: Type.QUANTITATIVE
+    };
+
+    it('should return false if scale zero is used with binned field', () => {
+      (encQ.scale as ScaleQuery).zero = true;
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(encQ, schema, defaultOpt));
+    });
+
+    it('should return true if scale zero is not used with binned field', () => {
+      (encQ.scale as ScaleQuery).zero = false;
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(encQ, schema, defaultOpt));
+    });
+  });
+
   describe('dataTypeAndFunctionMatchScaleType', () => {
    [ScaleType.ORDINAL].forEach((scaleType) => {
      it('scaleType of ' + scaleType + ' matches data type ordinal with timeUnit', () => {
@@ -442,6 +462,201 @@ describe('constraints/encoding', () => {
       encQ.type = Type.TEMPORAL;
       assert.isTrue(ENCODING_CONSTRAINT_INDEX['timeUnitAppliedForTemporal'].satisfy(encQ, schema, defaultOpt));
     });
+  });
+
+  describe('scalePropertiesSupportedByScaleType', () => {
+    describe('scaleBandSize', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        field: 'A',
+        type: Type.NOMINAL,
+        scale: {bandSize: 10}
+      };
+
+      it('should return false if scaleType does not suport scaleBandSize', () => {
+        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE,
+         ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC]. forEach((scaleType) => {
+          (encQ.scale as ScaleQuery).type = scaleType;
+          assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+        });
+      });
+
+      it('should return true if scaleType supports scaleBandSize', () => {
+        (encQ.scale as ScaleQuery).type = ScaleType.ORDINAL;
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+      });
+    });
+
+    describe('scaleClamp', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        field: 'A',
+        type: Type.QUANTITATIVE,
+        scale: {clamp: true}
+      };
+
+      it('should return false if scaleType does not support scaleClamp', () => {
+         [ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.SQRT].forEach((scaleType) => {
+            (encQ.scale as ScaleQuery).type = scaleType;
+            assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+          });
+      });
+
+      it('should return true if scaleType supports scaleClamp', () => {
+        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.TIME, ScaleType.UTC, undefined].forEach((scaleType) => {
+          (encQ.scale as ScaleQuery).type = scaleType;
+          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+        });
+      });
+    });
+
+    describe('scaleDomain', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        field: 'A',
+        type: Type.QUANTITATIVE,
+        scale: {domain: [1, 2]}
+      };
+
+      it('should return true if scaleType supports scaleDomain', () => {
+        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.QUANTILE,
+         ScaleType.QUANTIZE, ScaleType.ORDINAL, ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
+          (encQ.scale as ScaleQuery).type = scaleType;
+          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+         });
+      });
+    });
+
+    describe('scaleExponent', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        field: 'A',
+        type: Type.QUANTITATIVE,
+        scale: {exponent: 1}
+      };
+
+      it('should return false if scaleType does not support scaleExponent', () => {
+        [ScaleType.LINEAR, ScaleType.QUANTILE, ScaleType.QUANTIZE,
+         ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC, undefined].forEach((scaleType) => {
+          (encQ.scale as ScaleQuery).type = scaleType;
+          assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+        });
+      });
+
+      it('should return true if scaleType supports scaleExponent', () => {
+        [ScaleType.LOG, ScaleType.POW, ScaleType.SQRT].forEach((scaleType) => {
+          (encQ.scale as ScaleQuery).type = scaleType;
+          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+        });
+      });
+    });
+
+    describe('scaleNice', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        field: 'A',
+        type: Type.QUANTITATIVE,
+        scale: {nice: true}
+      };
+
+      it('should return false if scaleType does not support scaleNice', () => {
+        [ScaleType.ORDINAL, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.SQRT].forEach((scaleType) => {
+          (encQ.scale as ScaleQuery).type = scaleType;
+          assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+         });
+      });
+
+      it('should return true if scaleType supports scaleNice', () => {
+        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.TIME, ScaleType.UTC, undefined].forEach((scaleType) => {
+          (encQ.scale as ScaleQuery).type = scaleType;
+          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+        });
+      });
+    });
+
+    describe('scaleRange', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        field: 'A',
+        type: Type.QUANTITATIVE,
+        scale: {range: [1, 2]}
+      };
+
+      it('should return true if scaleType supports scaleRange', () => {
+        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.POW, ScaleType.QUANTILE,
+         ScaleType.QUANTIZE, ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
+          (encQ.scale as ScaleQuery).type = scaleType;
+          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+         });
+      });
+    });
+
+    describe('scaleRound', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        field: 'A',
+        type: Type.QUANTITATIVE,
+        scale: {round: true}
+      };
+
+      it('should return true if scaleType does not support scaleRound', () => {
+        [ScaleType.ORDINAL, ScaleType.QUANTILE, ScaleType.QUANTIZE].forEach((scaleType) => {
+          (encQ.scale as ScaleQuery).type = scaleType;
+          assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+         });
+      });
+
+      it('should return true if scaleType supports scaleRound', () => {
+        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.TIME,
+         ScaleType.UTC, undefined].forEach((scaleType) => {
+           (encQ.scale as ScaleQuery).type = scaleType;
+          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+         });
+      });
+    });
+
+    describe('scaleUseRawDomain', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        field: 'A',
+        type: Type.QUANTITATIVE,
+        scale: {useRawDomain: true}
+      };
+
+      it('should return true if scaleType supports scaleUseRawDomain', () => {
+        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.QUANTILE,
+         ScaleType.QUANTIZE, ScaleType.ORDINAL, ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
+          (encQ.scale as ScaleQuery).type = scaleType;
+          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+         });
+      });
+    });
+
+    describe('scaleZero', () => {
+      let encQ: EncodingQuery = {
+        channel: Channel.X,
+        field: 'A',
+        type: Type.QUANTITATIVE,
+        scale: {zero: true}
+      };
+
+      it('should return false if scaleType does not support scaleZero', () => {
+        [ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
+          (encQ.scale as ScaleQuery).type = scaleType;
+          assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+        });
+      });
+
+      it('should return true if scaleType supports scaleZero', () => {
+        [ScaleType.LINEAR, ScaleType.POW, ScaleType.SQRT].forEach((scaleType) => {
+          (encQ.scale as ScaleQuery).type = scaleType;
+          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, defaultOpt));
+        });
+      });
+    });
+
+
+    // TODO: test for other scale properties
   });
 
   describe('typeMatchesSchemaType', () => {

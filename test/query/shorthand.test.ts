@@ -2,6 +2,7 @@ import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
+import {SortOrder} from 'vega-lite/src/sort';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
@@ -157,6 +158,42 @@ describe('query/shorthand', () => {
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, timeUnit: SHORT_ENUM_SPEC
         });
       assert.equal(str, '?(a,q)');
+    });
+
+    it('should return correct fieldDefShorthand string for sort with ascending', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: SortOrder.ASCENDING
+      });
+      assert.equal(str, 'a,q,sort=ascending');
+    });
+
+    it('should return correct fieldDefShorthand string for sort field definition object', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
+      });
+      assert.equal(str, 'a,q,sort={"field":"a","op":"mean","order":"descending"}');
+    });
+
+    it('should return correct fieldDefShorthand string for bin with sort field definition object', () => {
+      const str = fieldDefShorthand({
+        bin: true, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
+      });
+      assert.equal(str, 'bin(a,q,sort={"field":"a","op":"mean","order":"descending"})');
+    });
+
+    it('should return correct fieldDefShorthand string for bin with maxbins and sort field definition object', () => {
+      const str = fieldDefShorthand({
+        bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
+      });
+      assert.equal(str, 'bin(a,q,maxbins=20,sort={"field":"a","op":"mean","order":"descending"})');
+    });
+
+    it('should return correct fieldDefShorthand string for bin with maxbins, scale with scaleType ' +
+       'and sort field definition object', () => {
+      const str = fieldDefShorthand({
+        bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
+      });
+      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"},sort={"field":"a","op":"mean","order":"descending"})');
     });
 
     it('should return correct fieldDefShorthand string for scale with a string[] domain', () => {

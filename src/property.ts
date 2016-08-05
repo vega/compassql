@@ -1,4 +1,5 @@
 import {Dict} from './util';
+import {ScaleType} from 'vega-lite/src/scale';
 
 export enum Property {
   // TODO: Filter (Field, Value?)
@@ -16,7 +17,11 @@ export enum Property {
   FIELD = 'field' as any,
   TYPE = 'type' as any,
 
-  // TODO: Sort
+  // - Sort
+  SORT = 'sort' as any,
+  SORT_FIELD = 'sortField' as any,
+  SORT_OP = 'sortOp' as any,
+  SORT_ORDER = 'sortOrder' as any,
 
   // - Scale
   SCALE = 'scale' as any,
@@ -45,6 +50,7 @@ export function hasNestedProperty(prop: Property) {
   switch (prop) {
     case Property.BIN:
     case Property.SCALE:
+    case Property.SORT:
       // TODO: AXIS, LEGEND
       return true;
     case Property.MARK:
@@ -80,6 +86,10 @@ export const ENCODING_PROPERTIES = [
   Property.AUTOCOUNT,
   Property.FIELD,
   Property.TYPE,
+  Property.SORT,
+  Property.SORT_FIELD,
+  Property.SORT_OP,
+  Property.SORT_ORDER,
   Property.SCALE,
   Property.SCALE_BANDSIZE,
   Property.SCALE_CLAMP,
@@ -103,6 +113,11 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   Property.TIMEUNIT,
   Property.AGGREGATE,
   Property.AUTOCOUNT,
+
+  Property.SORT,
+  Property.SORT_FIELD,
+  Property.SORT_OP,
+  Property.SORT_ORDER,
 
   // Nested Transform Property
   Property.BIN_MAXBINS,
@@ -136,6 +151,21 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
     property: Property.BIN_MAXBINS,
     parent: 'bin',
     child: 'maxbins'
+  },
+  {
+    property: Property.SORT_FIELD,
+    parent: 'sort',
+    child: 'field'
+  },
+  {
+    property: Property.SORT_OP,
+    parent: 'sort',
+    child: 'op'
+  },
+  {
+    property: Property.SORT_ORDER,
+    parent: 'sort',
+    child: 'order'
   },
   {
     property: Property.SCALE_BANDSIZE,
@@ -211,6 +241,11 @@ const NESTED_ENCODING_PROPERTY_PARENT_INDEX =
     return m;
   }, {} as Dict<Array<NestedEncodingProperty>>); // as Dict<Array<String>>);
 
+export const SCALE_PROPERTIES: Property[] =
+  NESTED_ENCODING_PROPERTY_PARENT_INDEX['scale'].map((nestedProp) => {
+    return nestedProp.property;
+  });
+
 const ENCODING_INDEX: Dict<Property> =
   ENCODING_PROPERTIES.reduce((m, prop) => {
     m[prop] = prop;
@@ -232,3 +267,110 @@ export function getNestedEncodingPropertyChildren(parent: Property) {
 export function isNestedEncodingProperty(prop: Property) {
   return prop in NESTED_ENCODING_INDEX;
 }
+
+const SUPPORTED_SCALE_PROPERTY =
+[
+  {
+    property: 'bandSize',
+    supportedScaleType: [
+      ScaleType.ORDINAL
+    ]
+  },
+  {
+    property: 'clamp',
+    supportedScaleType: [
+      ScaleType.LINEAR,
+      ScaleType.LOG,
+      ScaleType.POW,
+      ScaleType.TIME,
+      ScaleType.UTC
+    ]
+  },
+  {
+    property: 'domain',
+    supportedScaleType: [
+      ScaleType.LINEAR,
+      ScaleType.LOG,
+      ScaleType.POW,
+      ScaleType.QUANTILE,
+      ScaleType.QUANTIZE,
+      ScaleType.ORDINAL,
+      ScaleType.SQRT,
+      ScaleType.TIME,
+      ScaleType.UTC
+    ]
+  },
+  {
+    property: 'exponent',
+    supportedScaleType: [
+      ScaleType.LOG,
+      ScaleType.POW,
+      ScaleType.SQRT
+    ]
+  },
+  {
+    property: 'nice',
+    supportedScaleType: [
+      ScaleType.LINEAR,
+      ScaleType.LOG,
+      ScaleType.POW,
+      ScaleType.TIME,
+      ScaleType.UTC
+    ]
+  },
+  {
+    property: 'range',
+    supportedScaleType: [
+      ScaleType.LINEAR,
+      ScaleType.LOG,
+      ScaleType.POW,
+      ScaleType.QUANTILE,
+      ScaleType.QUANTIZE,
+      ScaleType.ORDINAL,
+      ScaleType.SQRT,
+      ScaleType.TIME,
+      ScaleType.UTC
+    ]
+  },
+  {
+    property: 'round',
+    supportedScaleType: [
+      ScaleType.LINEAR,
+      ScaleType.LOG,
+      ScaleType.POW,
+      ScaleType.SQRT,
+      ScaleType.TIME,
+      ScaleType.UTC
+    ]
+  },
+  {
+    property: 'useRawDomain',
+    supportedScaleType: [
+      ScaleType.LINEAR,
+      ScaleType.LOG,
+      ScaleType.POW,
+      ScaleType.QUANTILE,
+      ScaleType.QUANTIZE,
+      ScaleType.ORDINAL,
+      ScaleType.SQRT,
+      ScaleType.TIME,
+      ScaleType.UTC
+    ]
+  },
+  {
+    property: 'zero',
+    supportedScaleType: [
+      ScaleType.LINEAR,
+      ScaleType.POW,
+      ScaleType.SQRT
+    ]
+  }
+];
+
+export const SUPPORTED_SCALE_PROPERTY_INDEX: Dict<ScaleType[]> =
+  SUPPORTED_SCALE_PROPERTY.reduce((m, scaleProp) => {
+    let prop = scaleProp.property;
+
+    m[prop] = scaleProp.supportedScaleType;
+    return m;
+  }, {} as Dict<ScaleType[]>);
