@@ -77,7 +77,7 @@ export interface QueryConfig {
   omitRawWithXYBothOrdinalScaleOrBin?: boolean;
   omitRepeatedField?: boolean;
   omitNonPositionalOverPositionalChannels?: boolean;
-  omitTableWithOcclusion?: boolean;
+  omitTableWithOcclusionIfAutoAddCount?: boolean;
   omitVerticalDotPlot?: boolean;
 
   preferredBinAxis?: Channel;
@@ -141,7 +141,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   omitRawContinuousFieldForAggregatePlot: true,
   omitRepeatedField: true,
   omitNonPositionalOverPositionalChannels: true,
-  omitTableWithOcclusion: true,
+  omitTableWithOcclusionIfAutoAddCount: true,
   omitVerticalDotPlot: false,
 
   preferredBinAxis: Channel.X,

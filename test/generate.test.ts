@@ -142,7 +142,7 @@ describe('generate', function () {
         }]
       };
 
-      const answerSet = generate(query, schema);
+      const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
 
       it('should return not generate a plot with both x and y as dimensions.', () => {
         answerSet.forEach((specM) => {
