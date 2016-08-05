@@ -153,6 +153,7 @@ export class Schema {
       }
       return fieldSchema.binStats[maxbins].distinct;
     } else if (encQ.timeUnit) {
+      // handle single time units
       switch (encQ.timeUnit) {
         // TODO: this should not always be the case once Vega-Lite supports turning off domain augmenting (VL issue #1385)
         case TimeUnit.SECONDS: return 60;
@@ -162,17 +163,18 @@ export class Schema {
         case TimeUnit.DATE: return 31;
         case TimeUnit.MONTH: return 12;
         case TimeUnit.QUARTER: return 4;
+        case TimeUnit.MILLISECONDS: return 1000;
       }
+      // handle multi-timeunits
       // if the cardinality for the timeUnit is not cached, calculate it
       if (!fieldSchema.timeUnitCardinalities[encQ.timeUnit as string]) {
         var unique = {};
         keys(fieldSchema.stats.unique).forEach(function(dateString) {
-          var date = convert(encQ.timeUnit as TimeUnit, new Date(dateString), true);
+          var date = convert(encQ.timeUnit as TimeUnit, new Date(dateString));
           unique[date.toString()] = true;
         });
         fieldSchema.timeUnitCardinalities[encQ.timeUnit as string] = keys(unique).length;
       }
-      // TODO: 'weekday' is an exception
       return fieldSchema.timeUnitCardinalities[encQ.timeUnit as string];
     } else {
       return fieldSchema ? fieldSchema.stats.distinct : null;
@@ -214,17 +216,8 @@ function binSummary(maxbins: number, summary: Summary): Summary {
     maxbins: maxbins
   });
 
-  return binStats(bin, summary);
-}
-
-/**
- * @return a new summary based on a new binning scheme and old summary statistics
- */
-function binStats(bin: Bin, summary: Summary): Summary {
-  // have the bin scheme, need to determine new stats
   // start with summary, pre-binning
   const result = extend({}, summary);
-
   result.unique = binUnique(bin, summary.unique);
   result.distinct = (bin.stop - bin.start) / bin.step;
   result.min = bin.start;
