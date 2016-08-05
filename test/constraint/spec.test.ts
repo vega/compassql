@@ -953,7 +953,7 @@ describe('constraints/spec', () => {
   });
 
   describe('omitTableWithOcclusionIfAutoAddCount', () => {
-    it('return false for raw plot with both x and y as dimensions.', () => {
+    it('return false for raw plot with both x and y as dimensions without autocount or aggregation.', () => {
       [Mark.POINT, Mark.CIRCLE, Mark.SQUARE, Mark.LINE, Mark.AREA, Mark.BAR].forEach((mark) => {
         const specM = buildSpecQueryModel({
           mark: mark,

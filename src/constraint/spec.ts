@@ -502,7 +502,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   },
   {
     name: 'omitTableWithOcclusionIfAutoAddCount',
-    description: 'Raw Plots with x and y are both dimensions should be omitted as they often lead to occlusion.',
+    description: 'Plots without aggregation or autocount where x and y are both dimensions should be omitted',
     properties: [Property.CHANNEL, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
     allowEnumSpecForProperties: false,
     strict: false,
