@@ -28,18 +28,18 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
     }
   });
 
-  let ENCODING_QUERY_INDEX: Dict<EncodingQuery> = {};
+  let encQIndex: Dict<EncodingQuery> = {};
 
   if (opt.smallBandSizeForHighCardinality || opt.smallBandSizeForFacet) {
     answerSet = answerSet.map(function(specQM) {
 
       [Channel.ROW, Channel.Y, Channel.COLUMN, Channel.X].forEach((channel) => {
-        ENCODING_QUERY_INDEX[channel] = specQM.getEncodingQueryByChannel(channel);
+        encQIndex[channel] = specQM.getEncodingQueryByChannel(channel);
       });
 
-      const yEncQ = ENCODING_QUERY_INDEX[Channel.Y];
+      const yEncQ = encQIndex[Channel.Y];
       if (yEncQ !== undefined) {
-        if (ENCODING_QUERY_INDEX[Channel.ROW] ||
+        if (encQIndex[Channel.ROW] ||
             schema.cardinality(yEncQ) > 10) {
 
           if (yEncQ.scale === undefined) {
@@ -62,9 +62,9 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
         }
       }
 
-      const xEncQ = ENCODING_QUERY_INDEX[Channel.X];
+      const xEncQ = encQIndex[Channel.X];
       if (xEncQ !== undefined) {
-        if (ENCODING_QUERY_INDEX[Channel.COLUMN] ||
+        if (encQIndex[Channel.COLUMN] ||
             schema.cardinality(xEncQ) > 10) {
 
           if (xEncQ.scale === undefined) {
@@ -93,9 +93,9 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
 
   if (opt.nominalScaleForHighCardinality) {
     answerSet = answerSet.map(function(specQM) {
-      ENCODING_QUERY_INDEX[Channel.COLOR] = specQM.getEncodingQueryByChannel(Channel.COLOR);
+      encQIndex[Channel.COLOR] = specQM.getEncodingQueryByChannel(Channel.COLOR);
 
-      const colorEncQ = ENCODING_QUERY_INDEX[Channel.COLOR];
+      const colorEncQ = encQIndex[Channel.COLOR];
       if ((colorEncQ !== undefined) && (colorEncQ.type === Type.NOMINAL) &&
           (schema.cardinality(colorEncQ) > 10)) {
 
