@@ -86,6 +86,12 @@ export interface QueryConfig {
   preferredNominalAxis?: Channel;
   preferredFacet?: Channel;
 
+  // Not sure where these belong..
+  smallBandSizeForHighCardinality?: {maxCardinality: number, bandSize: number};
+  smallBandSizeForFacet?: {maxCardinality: number, bandSize: number};
+  nominalScaleForHighCardinality?: {maxCardinality: number};
+
+
   // Encoding Constraints
 
   maxCardinalityForCategoricalColor?: number;
@@ -149,6 +155,11 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   preferredOrdinalAxis: Channel.Y, // ordinal on y makes it easier to read.
   preferredNominalAxis: Channel.Y, // nominal on y makes it easier to read.
   preferredFacet: Channel.ROW, // row make it easier to scroll than column
+
+  // what should their default values be?
+  smallBandSizeForHighCardinality: {maxCardinality: 10, bandSize: 12},
+  smallBandSizeForFacet: {maxCardinality: 10, bandSize: 12},
+  nominalScaleForHighCardinality: {maxCardinality: 10},
 
   // Encoding Constraints -- See description inside src/constraints/encoding.ts
   maxCardinalityForCategoricalColor: 20,
