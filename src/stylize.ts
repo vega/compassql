@@ -6,7 +6,7 @@ import {QueryConfig} from './config';
 import {SpecQueryModel} from './model';
 import {EncodingQuery, ScaleQuery, scaleType} from './query/encoding';
 import {Schema} from './schema';
-import {Dict} from './util';
+import {contains, Dict} from './util';
 
 export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryConfig): SpecQueryModel[] {
   answerSet = answerSet.map(function(specM) {
@@ -45,7 +45,7 @@ export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, sc
       }
 
       // We do not want to assign a bandSize if scale is set to false
-      if (yEncQ.scale && (scaleType((yEncQ.scale as ScaleQuery).type, yEncQ.timeUnit, yEncQ.type) === ScaleType.ORDINAL)) {
+      if (yEncQ.scale && contains([ScaleType.ORDINAL, undefined], scaleType((yEncQ.scale as ScaleQuery).type, yEncQ.timeUnit, yEncQ.type))) {
         if (!(yEncQ.scale as ScaleQuery).bandSize) {
           (yEncQ.scale as ScaleQuery).bandSize = 12;
         }
@@ -63,7 +63,7 @@ export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, sc
         xEncQ.scale = {};
       }
 
-      if (xEncQ.scale && (scaleType((xEncQ.scale as ScaleQuery).type, xEncQ.timeUnit, xEncQ.type) === ScaleType.ORDINAL)) {
+      if (xEncQ.scale && contains([ScaleType.ORDINAL, undefined], scaleType((xEncQ.scale as ScaleQuery).type, xEncQ.timeUnit, xEncQ.type))) {
         if (!(xEncQ.scale as ScaleQuery).bandSize) {
           (xEncQ.scale as ScaleQuery).bandSize = 12;
         }
