@@ -3,7 +3,6 @@ import {Type} from 'vega-lite/src/type';
 
 import {QueryConfig} from './config';
 import {SpecQueryModel} from './model';
-// import {Property} from './property';
 import {EncodingQuery, ScaleQuery} from './query/encoding';
 import {Schema} from './schema';
 import {Dict} from './util';

@@ -93,15 +93,14 @@ export interface QueryConfig {
   maxCardinalityForShape?: number;
   typeMatchesSchemaType?: boolean;
 
-  // Effectiveness Preference
-  maxGoodCardinalityForColor?: number; // FIXME: revise
-  maxGoodCardinalityForFacet?: number; // FIXME: revise
-
-  // POST ENUMERATION MODIFICATION
+  // STYLIZE
   smallBandSizeForHighCardinality?: {maxCardinality: number, bandSize: number};
   smallBandSizeForFacet?: {maxCardinality: number, bandSize: number};
   nominalScaleForHighCardinality?: {maxCardinality: number};
 
+  // EFFECTIVENESS PREFERENCE
+  maxGoodCardinalityForColor?: number; // FIXME: revise
+  maxGoodCardinalityForFacet?: number; // FIXME: revise
 }
 
 export const DEFAULT_QUERY_CONFIG: QueryConfig = {
@@ -162,13 +161,12 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   maxCardinalityForShape: 6,
   typeMatchesSchemaType: true,
 
-  // Ranking Preference
-
-  maxGoodCardinalityForFacet: 5, // FIXME: revise
-  maxGoodCardinalityForColor: 7, // FIXME: revise
-
-  // POST ENUMERATION MODIFICATION
+  // STYLIZE
   smallBandSizeForHighCardinality: {maxCardinality: 10, bandSize: 12},
   smallBandSizeForFacet: {maxCardinality: 10, bandSize: 12},
   nominalScaleForHighCardinality: {maxCardinality: 10},
+
+  // RANKING PREFERENCE
+  maxGoodCardinalityForFacet: 5, // FIXME: revise
+  maxGoodCardinalityForColor: 7, // FIXME: revise
 };
