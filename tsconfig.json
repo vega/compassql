@@ -71,6 +71,7 @@
         "test/nest.test.ts",
         "test/property.test.ts",
         "test/schema.test.ts",
+        "test/stylize.test.ts",
         "typings/chai.d.ts",
         "typings/datalib.d.ts",
         "typings/mocha.d.ts"
