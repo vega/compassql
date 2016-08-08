@@ -113,6 +113,18 @@ describe('stylize', () => {
   });
 
   describe('nominalColorScaleForHighCardinality', () => {
+    it('should not assign a range of category20 if cardinality of color is under 10', () => {
+        let specM = SpecQueryModel.build({
+            mark: Mark.POINT,
+            encodings: [
+              {channel: Channel.COLOR, field: 'N', scale: {}, type: Type.NOMINAL}
+            ]
+          }, schema, DEFAULT_QUERY_CONFIG);
+
+        specM = nominalColorScaleForHighCardinality(specM, schema);
+        assert.deepEqual((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, undefined);
+    });
+
     it('should not assign a range of category20 if cardinality of color is over 10 and range is already set', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.POINT,
