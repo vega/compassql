@@ -93,7 +93,11 @@ export interface QueryConfig {
   maxCardinalityForShape?: number;
   typeMatchesSchemaType?: boolean;
 
-  // Effectiveness Preference
+  // STYLIZE
+  smallBandSizeForHighCardinalityOrFacet?: {maxCardinality: number, bandSize: number};
+  nominalColorScaleForHighCardinality?: {maxCardinality: number, palette: string};
+
+  // EFFECTIVENESS PREFERENCE
   maxGoodCardinalityForColor?: number; // FIXME: revise
   maxGoodCardinalityForFacet?: number; // FIXME: revise
 }
@@ -156,8 +160,11 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   maxCardinalityForShape: 6,
   typeMatchesSchemaType: true,
 
-  // Ranking Preference
+  // STYLIZE
+  smallBandSizeForHighCardinalityOrFacet: {maxCardinality: 10, bandSize: 12},
+  nominalColorScaleForHighCardinality: {maxCardinality: 10, palette: 'category20'},
 
+  // RANKING PREFERENCE
   maxGoodCardinalityForFacet: 5, // FIXME: revise
   maxGoodCardinalityForColor: 7, // FIXME: revise
 };

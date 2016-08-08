@@ -4,6 +4,7 @@ import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {SpecQueryModel} from './model';
 import {SpecQuery} from './query/spec';
 import {Schema} from './schema';
+import {stylize} from './stylize';
 
 export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DEFAULT_QUERY_CONFIG) {
   // 1. Build a SpecQueryModel, which also contains enumSpecIndex
@@ -21,6 +22,10 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
       answerSet = answerSet.reduce(reducer, []);
     }
   });
+
+  if ((opt.nominalColorScaleForHighCardinality !== null) || (opt.smallBandSizeForHighCardinalityOrFacet !== null)) {
+    return stylize(answerSet, schema, opt);
+  }
 
   return answerSet;
 }
