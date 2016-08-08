@@ -19,6 +19,25 @@ const CONFIG_WITH_AUTO_ADD_COUNT = extend({}, DEFAULT_QUERY_CONFIG, {autoAddCoun
 
 describe('generate', function () {
   describe('1D', () => {
+    it('should generate answerSet with nominalColorScaleForHighCardinality and smallBandSizeForHighCardinalityOrFacet turned off', () => {
+      const specQ = {
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: Channel.X,
+            field: 'A',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+
+      const CONFIG_WITHOUT_HIGH_CARDINALITY_OR_FACET = extend(
+        {}, DEFAULT_QUERY_CONFIG, {nominalColorScaleForHighCardinality: null}, {smallBandSizeForHighCardinalityOrFacet: null});
+
+      const answerSet = generate(specQ, schema, CONFIG_WITHOUT_HIGH_CARDINALITY_OR_FACET);
+      assert.equal(answerSet.length, 1);
+    });
+
     describe('Q with aggregate=?, bin=?', () => {
       it('should enumerate raw, bin, aggregate', () => {
         const query = {
@@ -650,27 +669,6 @@ describe('generate', function () {
 
       const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).bandSize, 12);
-    });
-  });
-
-  describe('no nominalColorScaleForHighCardinality or smallBandSizeForHighCardinalityOrFacet config', () => {
-    it('should generate answerSet with nominalColorScaleForHighCardinality and smallBandSizeForHighCardinalityOrFacet turned off', () => {
-      const specQ = {
-        mark: Mark.POINT,
-        encodings: [
-          {
-            channel: Channel.X,
-            field: 'A',
-            type: Type.QUANTITATIVE
-          }
-        ]
-      };
-
-      const CONFIG_WITHOUT_HIGH_CARDINALITY_OR_FACET = extend(
-        {}, DEFAULT_QUERY_CONFIG, {nominalColorScaleForHighCardinality: null}, {smallBandSizeForHighCardinalityOrFacet: null});
-
-      const answerSet = generate(specQ, schema, CONFIG_WITHOUT_HIGH_CARDINALITY_OR_FACET);
-      assert.equal(answerSet.length, 1);
     });
   });
 });
