@@ -49,6 +49,7 @@
         "src/nest.ts",
         "src/property.ts",
         "src/schema.ts",
+        "src/stylize.ts",
         "src/util.ts",
         "test/constraint/encoding.test.ts",
         "test/constraint/spec.test.ts",

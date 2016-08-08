@@ -4,6 +4,7 @@ import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {SpecQueryModel} from './model';
 import {SpecQuery} from './query/spec';
 import {Schema} from './schema';
+import {stylize} from './stylize';
 
 export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DEFAULT_QUERY_CONFIG) {
   // 1. Build a SpecQueryModel, which also contains enumSpecIndex
@@ -22,5 +23,5 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
     }
   });
 
-  return answerSet;
+  return stylize(answerSet, schema, opt);
 }

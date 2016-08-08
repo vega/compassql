@@ -96,6 +96,12 @@ export interface QueryConfig {
   // Effectiveness Preference
   maxGoodCardinalityForColor?: number; // FIXME: revise
   maxGoodCardinalityForFacet?: number; // FIXME: revise
+
+  // POST ENUMERATION MODIFICATION
+  smallBandSizeForHighCardinality?: {maxCardinality: number, bandSize: number};
+  smallBandSizeForFacet?: {maxCardinality: number, bandSize: number};
+  nominalScaleForHighCardinality?: {maxCardinality: number};
+
 }
 
 export const DEFAULT_QUERY_CONFIG: QueryConfig = {
@@ -160,4 +166,9 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
   maxGoodCardinalityForFacet: 5, // FIXME: revise
   maxGoodCardinalityForColor: 7, // FIXME: revise
+
+  // POST ENUMERATION MODIFICATION
+  smallBandSizeForHighCardinality: {maxCardinality: 10, bandSize: 12},
+  smallBandSizeForFacet: {maxCardinality: 10, bandSize: 12},
+  nominalScaleForHighCardinality: {maxCardinality: 10},
 };
