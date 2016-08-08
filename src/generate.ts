@@ -23,5 +23,9 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
     }
   });
 
-  return stylize(answerSet, schema, opt);
+  if (opt.nominalScaleForHighCardinality || opt.smallBandSizeForHighCardinalityOrFacet) {
+    return stylize(answerSet, schema, opt);
+  }
+
+  return answerSet;
 }

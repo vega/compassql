@@ -94,8 +94,7 @@ export interface QueryConfig {
   typeMatchesSchemaType?: boolean;
 
   // STYLIZE
-  smallBandSizeForHighCardinality?: {maxCardinality: number, bandSize: number};
-  smallBandSizeForFacet?: {maxCardinality: number, bandSize: number};
+  smallBandSizeForHighCardinalityOrFacet?: {maxCardinality: number, bandSize: number};
   nominalScaleForHighCardinality?: {maxCardinality: number};
 
   // EFFECTIVENESS PREFERENCE
@@ -162,8 +161,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   typeMatchesSchemaType: true,
 
   // STYLIZE
-  smallBandSizeForHighCardinality: {maxCardinality: 10, bandSize: 12},
-  smallBandSizeForFacet: {maxCardinality: 10, bandSize: 12},
+  smallBandSizeForHighCardinalityOrFacet: {maxCardinality: 10, bandSize: 12},
   nominalScaleForHighCardinality: {maxCardinality: 10},
 
   // RANKING PREFERENCE
