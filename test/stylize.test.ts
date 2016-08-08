@@ -7,7 +7,7 @@ import {schema} from './fixture';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel} from '../src/model';
 import {ScaleQuery} from '../src/query/encoding';
-import {smallBandSizeForHighCardinalityOrFacet, nominalScaleForHighCardinality} from '../src/stylize';
+import {smallBandSizeForHighCardinalityOrFacet, nominalColorScaleForHighCardinality} from '../src/stylize';
 
 import {assert} from 'chai';
 
@@ -75,7 +75,7 @@ describe('stylize', () => {
     });
   });
 
-  describe('nominalScaleForHighCardinality', () => {
+  describe('nominalColorScaleForHighCardinality', () => {
     it('should assign a range of category20 if cardainality of color is over 10 and range is not already set', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.POINT,
@@ -84,7 +84,7 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = nominalScaleForHighCardinality(specM, schema);
+        specM = nominalColorScaleForHighCardinality(specM, schema);
         assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, 'category20');
     });
 
@@ -96,7 +96,7 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = nominalScaleForHighCardinality(specM, schema);
+        specM = nominalColorScaleForHighCardinality(specM, schema);
         assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, undefined);
     });
 
@@ -108,7 +108,7 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = nominalScaleForHighCardinality(specM, schema);
+        specM = nominalColorScaleForHighCardinality(specM, schema);
         assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, undefined);
     });
 
@@ -120,7 +120,7 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = nominalScaleForHighCardinality(specM, schema);
+        specM = nominalColorScaleForHighCardinality(specM, schema);
         assert.deepEqual((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, {name: 'scaleRange', values: [null]});
     });
   });

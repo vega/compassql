@@ -593,7 +593,7 @@ describe('generate', function () {
     });
   });
 
-  describe('nominalScaleForHighCardinality', () => {
+  describe('nominalColorScaleForHighCardinality', () => {
     it('should output range = category20', () => {
       const specQ = {
         mark: Mark.POINT,

@@ -23,7 +23,7 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
     }
   });
 
-  if (opt.nominalScaleForHighCardinality || opt.smallBandSizeForHighCardinalityOrFacet) {
+  if ((opt.nominalColorScaleForHighCardinality !== null) || (opt.smallBandSizeForHighCardinalityOrFacet !== null)) {
     return stylize(answerSet, schema, opt);
   }
 

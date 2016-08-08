@@ -16,8 +16,8 @@ export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryC
       specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
      }
 
-    if (opt.nominalScaleForHighCardinality) {
-      specM = nominalScaleForHighCardinality(specM, schema);
+    if (opt.nominalColorScaleForHighCardinality) {
+      specM = nominalColorScaleForHighCardinality(specM, schema);
     }
     return specM;
   });
@@ -76,7 +76,7 @@ export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, sc
   return specM;
 }
 
-export function nominalScaleForHighCardinality(specM: SpecQueryModel, schema: Schema): SpecQueryModel {
+export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schema: Schema): SpecQueryModel {
   encQIndex[Channel.COLOR] = specM.getEncodingQueryByChannel(Channel.COLOR);
 
   const colorEncQ = encQIndex[Channel.COLOR];
