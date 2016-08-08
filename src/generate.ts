@@ -30,8 +30,18 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
 
   let encQIndex: Dict<EncodingQuery> = {};
 
-  if (opt.smallBandSizeForHighCardinality || opt.smallBandSizeForFacet) {
-    answerSet = answerSet.map(function(specQM) {
+  answerSet = answerSet.map(function(specQM) {
+    let encodings = specQM.specQuery.encodings;
+    let encQPositionIndex: Dict<number> = {};
+
+
+    for (let i = 0; i < encodings.length; i++) {
+      let channel = encodings[i].channel as Channel;
+      encQPositionIndex[channel] = i;
+    }
+
+
+    if (opt.smallBandSizeForHighCardinality || opt.smallBandSizeForFacet) {
 
       [Channel.ROW, Channel.Y, Channel.COLUMN, Channel.X].forEach((channel) => {
         encQIndex[channel] = specQM.getEncodingQueryByChannel(channel);
@@ -44,7 +54,7 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
 
           if (yEncQ.scale === undefined) {
             specQM.setEncodingProperty(
-              specQM.getEncodingQueryIndexByChannel(Channel.Y),
+              encQPositionIndex[Channel.Y],
               Property.SCALE,
               true,
               {name: 'scale', values: [true, false]} // not sure what this EnumSpec should be
@@ -53,7 +63,7 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
 
           if (yEncQ.scale) {
             specQM.setEncodingProperty(
-              specQM.getEncodingQueryIndexByChannel(Channel.Y),
+              encQPositionIndex[Channel.Y],
               Property.SCALE_BANDSIZE,
               12,
               {name: 'scaleBandSize', values: [12]} // not sure what this EnumSpec should be
@@ -69,7 +79,7 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
 
           if (xEncQ.scale === undefined) {
             specQM.setEncodingProperty(
-              specQM.getEncodingQueryIndexByChannel(Channel.X),
+              encQPositionIndex[Channel.X],
               Property.SCALE,
               true,
               {name: 'scale', values: [true, false]} // not sure what this EnumSpec should be
@@ -78,7 +88,7 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
 
           if (xEncQ.scale) {
             specQM.setEncodingProperty(
-              specQM.getEncodingQueryIndexByChannel(Channel.X),
+              encQPositionIndex[Channel.X],
               Property.SCALE_BANDSIZE,
               12,
               {name: 'scaleBandSize', values: [12]} // not sure what this EnumSpec should be
@@ -86,13 +96,10 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
           }
         }
       }
+    }
 
-      return specQM;
-    });
-  }
+    if (opt.nominalScaleForHighCardinality) {
 
-  if (opt.nominalScaleForHighCardinality) {
-    answerSet = answerSet.map(function(specQM) {
       encQIndex[Channel.COLOR] = specQM.getEncodingQueryByChannel(Channel.COLOR);
 
       const colorEncQ = encQIndex[Channel.COLOR];
@@ -101,7 +108,7 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
 
         if (colorEncQ.scale === undefined) {
           specQM.setEncodingProperty(
-            specQM.getEncodingQueryIndexByChannel(Channel.COLOR),
+            encQPositionIndex[Channel.COLOR],
             Property.SCALE,
             true,
             {name: 'scale', values: [true, false]} // not sure what this EnumSpec should be
@@ -110,18 +117,16 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
 
         if (colorEncQ.scale) {
           specQM.setEncodingProperty(
-            specQM.getEncodingQueryIndexByChannel(Channel.COLOR),
+            encQPositionIndex[Channel.COLOR],
             Property.SCALE_RANGE,
             'category20',
             {name: 'scaleRange', values: [undefined]} // not sure what this EnumSpec should be
           );
         }
       }
-
-      return specQM;
-    });
-  }
-
+    }
+    return specQM;
+  });
   return answerSet;
 }
 

@@ -367,15 +367,6 @@ export class SpecQueryModel {
     return undefined;
   }
 
-  public getEncodingQueryIndexByChannel(channel: Channel) {
-    for (let i = 0; i < this._spec.encodings.length; i++) {
-      if (this._spec.encodings[i].channel === channel) {
-        return i;
-      }
-    }
-    return undefined;
-  }
-
   public getEncodingQueryByIndex(i: number) {
     return this._spec.encodings[i];
   }
