@@ -6,13 +6,12 @@ import {SpecQueryModel} from './model';
 // import {Property} from './property';
 import {EncodingQuery, ScaleQuery} from './query/encoding';
 import {Schema} from './schema';
-import {Dict, extend} from './util';
+import {Dict} from './util';
 
 export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryConfig): SpecQueryModel[] {
 
   answerSet = answerSet.map(function(specM) {
     let encQIndex: Dict<EncodingQuery> = {};
-    let encodings = specM.specQuery.encodings;
 
     if (opt.smallBandSizeForHighCardinality || opt.smallBandSizeForFacet) {
 
