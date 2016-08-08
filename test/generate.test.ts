@@ -629,5 +629,27 @@ describe('generate', function () {
       const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).bandSize, 12);
     });
+
+    it('should output bandSize = 12', () => {
+      const specQ = {
+        mark: Mark.BAR,
+        encodings: [
+          {
+            channel: Channel.Y,
+            field: 'A',
+            scale: {},
+            type: Type.QUANTITATIVE
+          },
+          {
+            channel: Channel.ROW,
+            field: 'A',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+
+      const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).bandSize, 12);
+    });
   });
 });

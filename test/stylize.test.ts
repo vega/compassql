@@ -9,8 +9,6 @@ import {SpecQueryModel} from '../src/model';
 import {ScaleQuery} from '../src/query/encoding';
 import {smallBandSizeForHighCardinalityOrFacet, nominalScaleForHighCardinality} from '../src/stylize';
 
-
-
 import {assert} from 'chai';
 
 describe('stylize', () => {
@@ -20,6 +18,19 @@ describe('stylize', () => {
           mark: Mark.BAR,
           encodings: [
             {channel: Channel.Y, field: 'Q', scale: {}, type: Type.QUANTITATIVE}
+          ]
+        }, schema, DEFAULT_QUERY_CONFIG);
+
+      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
+      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 12);
+    });
+
+    it('should assign a bandSize of 12 if cardinality of Y is over 10 and bandSize is not already set', () => {
+      let specM = SpecQueryModel.build({
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.Y, field: 'A', scale: {}, type: Type.QUANTITATIVE},
+            {channel: Channel.ROW, field: 'A', type: Type.QUANTITATIVE}
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
