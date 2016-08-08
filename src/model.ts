@@ -299,6 +299,10 @@ export class SpecQueryModel {
     return encQ[prop]; // encoding property (non-nested)
   }
 
+  public setEncodingQuery(index: number, encQ: EncodingQuery) {
+    this._spec.encodings[index] = encQ;
+  }
+
   public setEncodingProperty(index: number, prop: Property, value: any, enumSpec: EnumSpec<any>) {
     const encQ = this._spec.encodings[index];
     const nestedProp = getNestedEncodingProperty(prop);
