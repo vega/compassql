@@ -638,9 +638,9 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.Y,
-            field: 'Q',
+            field: 'O_100',
             scale: {},
-            type: Type.QUANTITATIVE
+            type: Type.ORDINAL
           }
         ]
       };
@@ -657,12 +657,12 @@ describe('generate', function () {
             channel: Channel.Y,
             field: 'A',
             scale: {},
-            type: Type.QUANTITATIVE
+            type: Type.ORDINAL
           },
           {
             channel: Channel.ROW,
             field: 'A',
-            type: Type.QUANTITATIVE
+            type: Type.ORDINAL
           }
         ]
       };

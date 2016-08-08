@@ -17,7 +17,7 @@ describe('stylize', () => {
       let specM = SpecQueryModel.build({
           mark: Mark.BAR,
           encodings: [
-            {channel: Channel.Y, field: 'Q', scale: {}, type: Type.QUANTITATIVE}
+            {channel: Channel.Y, field: 'O_100', scale: {}, type: Type.ORDINAL}
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
@@ -25,12 +25,12 @@ describe('stylize', () => {
       assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 12);
     });
 
-    it('should assign a bandSize of 12 if cardinality of Y is over 10 and bandSize is not already set', () => {
+    it('should assign a bandSize of 12 if there is a row channel and bandSize is not already set', () => {
       let specM = SpecQueryModel.build({
           mark: Mark.BAR,
           encodings: [
-            {channel: Channel.Y, field: 'A', scale: {}, type: Type.QUANTITATIVE},
-            {channel: Channel.ROW, field: 'A', type: Type.QUANTITATIVE}
+            {channel: Channel.Y, field: 'A', scale: {}, type: Type.ORDINAL},
+            {channel: Channel.ROW, field: 'A', type: Type.ORDINAL}
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
@@ -42,7 +42,7 @@ describe('stylize', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.BAR,
             encodings: [
-              {channel: Channel.Y, field: 'Q', scale: false, type: Type.QUANTITATIVE}
+              {channel: Channel.Y, field: 'O_100', scale: false, type: Type.ORDINAL}
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
@@ -50,23 +50,23 @@ describe('stylize', () => {
         assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, undefined);
     });
 
-    it('should not assign a bandSize if scale is an EnumSpec', () => {
+    it('should assign a bandSize if scale is an EnumSpec', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.BAR,
             encodings: [
-              {channel: Channel.Y, field: 'Q', scale: {name: 'scale', values: [true, false]}, type: Type.QUANTITATIVE}
+              {channel: Channel.Y, field: 'O_100', scale: {name: 'scale', values: [true, false]}, type: Type.ORDINAL}
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
         specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
-        assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, undefined);
+        assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 12);
     });
 
-    it('should not assign a bandSize if bandSize is an Enum Spec', () => {
+    it('should not assign a bandSize if bandSize is an EnumSpec', () => {
       let specM = SpecQueryModel.build({
           mark: Mark.BAR,
           encodings: [
-            {channel: Channel.Y, field: 'Q', scale: {bandSize: {name: 'scaleBandSize', values: [17, 21]}}, type: Type.QUANTITATIVE}
+            {channel: Channel.Y, field: 'O_100', scale: {bandSize: {name: 'scaleBandSize', values: [17, 21]}}, type: Type.ORDINAL}
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
@@ -100,7 +100,7 @@ describe('stylize', () => {
         assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, undefined);
     });
 
-    it('should not assign a range if cardinality of color is over 10 and scale is an Enum Spec', () => {
+    it('should assign a range if cardinality of color is over 10 and scale is an EnumSpec', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.POINT,
             encodings: [
@@ -109,7 +109,7 @@ describe('stylize', () => {
           }, schema, DEFAULT_QUERY_CONFIG);
 
         specM = nominalColorScaleForHighCardinality(specM, schema);
-        assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, undefined);
+        assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, 'category20');
     });
 
     it('should not assign a range if cardinality of color is over 10 and scale.range is an Enum Spec', () => {

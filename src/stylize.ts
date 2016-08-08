@@ -9,9 +9,7 @@ import {Schema} from './schema';
 import {Dict} from './util';
 
 export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryConfig): SpecQueryModel[] {
-
   answerSet = answerSet.map(function(specM) {
-
     if (opt.smallBandSizeForHighCardinalityOrFacet) {
       specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
      }
