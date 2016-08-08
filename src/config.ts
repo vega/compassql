@@ -162,7 +162,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
   // STYLIZE
   smallBandSizeForHighCardinalityOrFacet: {maxCardinality: 10, bandSize: 12},
-  nominalColorScaleForHighCardinality: {maxCardinality: 10, palette: 'categorical20'},
+  nominalColorScaleForHighCardinality: {maxCardinality: 10, palette: 'category20'},
 
   // RANKING PREFERENCE
   maxGoodCardinalityForFacet: 5, // FIXME: revise

@@ -2,7 +2,7 @@ import {Channel} from 'vega-lite/src/channel';
 import {ScaleType} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
-import {QueryConfig} from './config';
+import {DEFAULT_QUERY_CONFIG, QueryConfig} from './config';
 import {SpecQueryModel} from './model';
 import {EncodingQuery, ScaleQuery, scaleType} from './query/encoding';
 import {Schema} from './schema';
@@ -33,7 +33,7 @@ export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, sc
   const yEncQ = encQIndex[Channel.Y];
   if (yEncQ !== undefined) {
     if (encQIndex[Channel.ROW] ||
-        schema.cardinality(yEncQ) > 10) {
+        schema.cardinality(yEncQ) > DEFAULT_QUERY_CONFIG.smallBandSizeForHighCardinalityOrFacet.maxCardinality) {
 
       // We check for undefined rather than
       // yEncQ.scale = yEncQ.scale || {} to cover the case where
@@ -57,7 +57,7 @@ export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, sc
   const xEncQ = encQIndex[Channel.X];
   if (xEncQ !== undefined) {
     if (encQIndex[Channel.COLUMN] ||
-        schema.cardinality(xEncQ) > 10) {
+        schema.cardinality(xEncQ) > DEFAULT_QUERY_CONFIG.smallBandSizeForHighCardinalityOrFacet.maxCardinality) {
 
       // Just like y, we don't want to do this if scale is null/false
       if (xEncQ.scale === undefined) {
@@ -82,7 +82,7 @@ export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schem
 
   const colorEncQ = encQIndex[Channel.COLOR];
   if ((colorEncQ !== undefined) && (colorEncQ.type === Type.NOMINAL) &&
-      (schema.cardinality(colorEncQ) > 10)) {
+      (schema.cardinality(colorEncQ) > DEFAULT_QUERY_CONFIG.nominalColorScaleForHighCardinality.maxCardinality)) {
 
     if (colorEncQ.scale === undefined) {
       colorEncQ.scale = {};
@@ -90,7 +90,7 @@ export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schem
 
     if (colorEncQ.scale) {
       if (!(colorEncQ.scale as ScaleQuery).range) {
-        (colorEncQ.scale as ScaleQuery).range = 'category20';
+        (colorEncQ.scale as ScaleQuery).range = DEFAULT_QUERY_CONFIG.nominalColorScaleForHighCardinality.palette;
       }
     }
   }
