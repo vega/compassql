@@ -1,10 +1,10 @@
 import {Channel} from 'vega-lite/src/channel';
+import {ScaleType} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
 import {QueryConfig} from './config';
-import {isEnumSpec} from './enumspec';
 import {SpecQueryModel} from './model';
-import {EncodingQuery, ScaleQuery} from './query/encoding';
+import {EncodingQuery, ScaleQuery, scaleType} from './query/encoding';
 import {Schema} from './schema';
 import {Dict} from './util';
 
@@ -45,7 +45,7 @@ export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, sc
       }
 
       // We do not want to assign a bandSize if scale is set to false
-      if (yEncQ.scale) {
+      if (yEncQ.scale && (scaleType((yEncQ.scale as ScaleQuery).type, yEncQ.timeUnit, yEncQ.type) === ScaleType.ORDINAL)) {
         if (!(yEncQ.scale as ScaleQuery).bandSize) {
           (yEncQ.scale as ScaleQuery).bandSize = 12;
         }
@@ -63,7 +63,7 @@ export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, sc
         xEncQ.scale = {};
       }
 
-      if (xEncQ.scale) {
+      if (xEncQ.scale && (scaleType((xEncQ.scale as ScaleQuery).type, xEncQ.timeUnit, xEncQ.type) === ScaleType.ORDINAL)) {
         if (!(xEncQ.scale as ScaleQuery).bandSize) {
           (xEncQ.scale as ScaleQuery).bandSize = 12;
         }
