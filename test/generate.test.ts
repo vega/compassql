@@ -19,25 +19,6 @@ const CONFIG_WITH_AUTO_ADD_COUNT = extend({}, DEFAULT_QUERY_CONFIG, {autoAddCoun
 
 describe('generate', function () {
   describe('1D', () => {
-    it('should generate answerSet with nominalColorScaleForHighCardinality and smallBandSizeForHighCardinalityOrFacet turned off', () => {
-      const specQ = {
-        mark: Mark.POINT,
-        encodings: [
-          {
-            channel: Channel.X,
-            field: 'A',
-            type: Type.QUANTITATIVE
-          }
-        ]
-      };
-
-      const CONFIG_WITHOUT_HIGH_CARDINALITY_OR_FACET = extend(
-        {}, DEFAULT_QUERY_CONFIG, {nominalColorScaleForHighCardinality: null}, {smallBandSizeForHighCardinalityOrFacet: null});
-
-      const answerSet = generate(specQ, schema, CONFIG_WITHOUT_HIGH_CARDINALITY_OR_FACET);
-      assert.equal(answerSet.length, 1);
-    });
-
     describe('Q with aggregate=?, bin=?', () => {
       it('should enumerate raw, bin, aggregate', () => {
         const query = {
@@ -612,63 +593,84 @@ describe('generate', function () {
     });
   });
 
-  describe('nominalColorScaleForHighCardinality', () => {
-    it('should output range = category20', () => {
+  describe('stylizer', () => {
+    it('should generate answerSet when all stylizers are turned off', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
           {
-            channel: Channel.COLOR,
-            field: 'N20',
-            scale: {},
-            type: Type.NOMINAL
+            channel: Channel.X,
+            field: 'A',
+            type: Type.QUANTITATIVE
           }
         ]
       };
 
-      const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).range, 'category20');
-    });
-  });
+      const CONFIG_WITHOUT_HIGH_CARDINALITY_OR_FACET = extend(
+        {}, DEFAULT_QUERY_CONFIG, {nominalColorScaleForHighCardinality: null}, {smallBandSizeForHighCardinalityOrFacet: null});
 
-  describe('smallBandSizeForHighCardinalityOrFacet', () => {
-    it('should output bandSize = 12', () => {
-      const specQ = {
-        mark: Mark.BAR,
-        encodings: [
-          {
-            channel: Channel.Y,
-            field: 'O_100',
-            scale: {},
-            type: Type.ORDINAL
-          }
-        ]
-      };
-
-      const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).bandSize, 12);
+      const answerSet = generate(specQ, schema, CONFIG_WITHOUT_HIGH_CARDINALITY_OR_FACET);
+      assert.equal(answerSet.length, 1);
     });
 
-    it('should output bandSize = 12', () => {
-      const specQ = {
-        mark: Mark.BAR,
-        encodings: [
-          {
-            channel: Channel.Y,
-            field: 'A',
-            scale: {},
-            type: Type.ORDINAL
-          },
-          {
-            channel: Channel.ROW,
-            field: 'A',
-            type: Type.ORDINAL
-          }
-        ]
-      };
+    describe('nominalColorScaleForHighCardinality', () => {
+      it('should output range = category20', () => {
+        const specQ = {
+          mark: Mark.POINT,
+          encodings: [
+            {
+              channel: Channel.COLOR,
+              field: 'N20',
+              scale: {},
+              type: Type.NOMINAL
+            }
+          ]
+        };
 
-      const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).bandSize, 12);
+        const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).range, 'category20');
+      });
+    });
+
+    describe('smallBandSizeForHighCardinalityOrFacet', () => {
+      it('should output bandSize = 12', () => {
+        const specQ = {
+          mark: Mark.BAR,
+          encodings: [
+            {
+              channel: Channel.Y,
+              field: 'O_100',
+              scale: {},
+              type: Type.ORDINAL
+            }
+          ]
+        };
+
+        const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).bandSize, 12);
+      });
+
+      it('should output bandSize = 12', () => {
+        const specQ = {
+          mark: Mark.BAR,
+          encodings: [
+            {
+              channel: Channel.Y,
+              field: 'A',
+              scale: {},
+              type: Type.ORDINAL
+            },
+            {
+              channel: Channel.ROW,
+              field: 'A',
+              type: Type.ORDINAL
+            }
+          ]
+        };
+
+        const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).bandSize, 12);
+      });
     });
   });
 });
