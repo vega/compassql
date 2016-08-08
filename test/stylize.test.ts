@@ -13,6 +13,18 @@ import {assert} from 'chai';
 
 describe('stylize', () => {
   describe('smallBandSizeForHighCardinalityOrFacet', () => {
+    it('should not assign a bandSize of 12 if cardinality of Y is over 10 and bandSize is already set', () => {
+      let specM = SpecQueryModel.build({
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.Y, field: 'O_100', scale: {bandSize: 21}, type: Type.ORDINAL}
+          ]
+        }, schema, DEFAULT_QUERY_CONFIG);
+
+      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
+      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 21);
+    });
+
     it('should assign a bandSize of 12 if cardinality of Y is over 10 and bandSize is not already set', () => {
       let specM = SpecQueryModel.build({
           mark: Mark.BAR,
@@ -23,6 +35,19 @@ describe('stylize', () => {
 
       specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
       assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 12);
+    });
+
+    it('should not assign a bandSize of 12 if there is a row channel and bandSize is already set', () => {
+      let specM = SpecQueryModel.build({
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.Y, field: 'A', scale: {bandSize: 21}, type: Type.ORDINAL},
+            {channel: Channel.ROW, field: 'A', type: Type.ORDINAL}
+          ]
+        }, schema, DEFAULT_QUERY_CONFIG);
+
+      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
+      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 21);
     });
 
     it('should assign a bandSize of 12 if there is a row channel and bandSize is not already set', () => {
