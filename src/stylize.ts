@@ -4,7 +4,7 @@ import {Type} from 'vega-lite/src/type';
 import {QueryConfig} from './config';
 import {SpecQueryModel} from './model';
 // import {Property} from './property';
-import {EncodingQuery} from './query/encoding';
+import {EncodingQuery, ScaleQuery} from './query/encoding';
 import {Schema} from './schema';
 import {Dict, extend} from './util';
 
@@ -13,12 +13,6 @@ export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryC
   answerSet = answerSet.map(function(specM) {
     let encQIndex: Dict<EncodingQuery> = {};
     let encodings = specM.specQuery.encodings;
-    let encQPositionIndex: Dict<number> = {};
-
-    for (let index = 0; index < encodings.length; index++) {
-      let channel = encodings[index].channel as Channel;
-      encQPositionIndex[channel] = index;
-    }
 
     if (opt.smallBandSizeForHighCardinality || opt.smallBandSizeForFacet) {
 
@@ -32,36 +26,13 @@ export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryC
             schema.cardinality(yEncQ) > 10) {
 
           if (yEncQ.scale === undefined) {
-            yEncQ['scale'] = extend({},
-              yEncQ['scale'],
-              {values: undefined, name: undefined}
-            );
+            yEncQ.scale = yEncQ.scale || {};
           }
-
-          // if (yEncQ.scale === undefined) {
-          //   specM.setEncodingProperty(
-          //     encQPositionIndex[Channel.Y],
-          //     Property.SCALE,
-          //     true,
-          //     {name: 'scale', values: [true, false]}
-          //   );
-          // }
 
           if (yEncQ.scale) {
-            yEncQ['scale']['bandSize'] = 12;
+            (yEncQ.scale as ScaleQuery).bandSize = 12;
           }
-
-          // if (yEncQ.scale) {
-          //   specM.setEncodingProperty(
-          //     encQPositionIndex[Channel.Y],
-          //     Property.SCALE_BANDSIZE,
-          //     12,
-          //     {name: 'scaleBandSize', values: [12]}
-          //   );
-          // }
         }
-
-        specM.setEncodingQuery(encQPositionIndex[Channel.Y], yEncQ);
       }
 
       const xEncQ = encQIndex[Channel.X];
@@ -70,36 +41,13 @@ export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryC
             schema.cardinality(xEncQ) > 10) {
 
           if (xEncQ.scale === undefined) {
-            xEncQ['scale'] = extend({},
-              xEncQ['scale'],
-              {values: undefined, name: undefined}
-            );
+            xEncQ.scale = xEncQ.scale || {};
           }
-
-          // if (xEncQ.scale === undefined) {
-          //   specM.setEncodingProperty(
-          //     encQPositionIndex[Channel.X],
-          //     Property.SCALE,
-          //     true,
-          //     {name: 'scale', values: [true, false]}
-          //   );
-          // }
 
           if (xEncQ.scale) {
-            xEncQ['scale']['bandSize'] = 12;
+            (xEncQ.scale as ScaleQuery).bandSize = 12;
           }
-
-          // if (xEncQ.scale) {
-          //   specM.setEncodingProperty(
-          //     encQPositionIndex[Channel.X],
-          //     Property.SCALE_BANDSIZE,
-          //     12,
-          //     {name: 'scaleBandSize', values: [12]}
-          //   );
-          // }
         }
-
-        specM.setEncodingQuery(encQPositionIndex[Channel.X], xEncQ);
       }
     }
 
@@ -112,35 +60,13 @@ export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryC
           (schema.cardinality(colorEncQ) > 10)) {
 
         if (colorEncQ.scale === undefined) {
-          colorEncQ['scale'] = extend({},
-            colorEncQ['scale'],
-            {values: undefined, name: undefined}
-          );
+          colorEncQ.scale = colorEncQ.scale || {};
         }
-
-        // if (colorEncQ.scale === undefined) {
-        //   specM.setEncodingProperty(
-        //     encQPositionIndex[Channel.COLOR],
-        //     Property.SCALE,
-        //     true,
-        //     {name: 'scale', values: [true, false]}
-        //   );
-        // }
 
         if (colorEncQ.scale) {
-          colorEncQ['scale']['range'] = 'category20';
+          (colorEncQ.scale as ScaleQuery).range = 'category20';
         }
-        // if (colorEncQ.scale) {
-        //   specM.setEncodingProperty(
-        //     encQPositionIndex[Channel.COLOR],
-        //     Property.SCALE_RANGE,
-        //     'category20',
-        //     {name: 'scaleRange', values: [undefined]}
-        //   );
-        // }
       }
-
-      specM.setEncodingQuery(encQPositionIndex[Channel.COLOR], colorEncQ);
     }
     return specM;
   });
