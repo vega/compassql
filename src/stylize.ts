@@ -45,8 +45,8 @@ export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, sc
       }
 
       // We do not want to assign a bandSize if scale is set to false
-      if (yEncQ.scale && !isEnumSpec(yEncQ.scale)) {
-        if (!(yEncQ.scale as ScaleQuery).bandSize && !isEnumSpec((yEncQ.scale as ScaleQuery).bandSize)) {
+      if (yEncQ.scale) {
+        if (!(yEncQ.scale as ScaleQuery).bandSize) {
           (yEncQ.scale as ScaleQuery).bandSize = 12;
         }
       }
@@ -63,8 +63,8 @@ export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, sc
         xEncQ.scale = {};
       }
 
-      if (xEncQ.scale && !isEnumSpec(xEncQ.scale)) {
-        if (!(xEncQ.scale as ScaleQuery).bandSize && !isEnumSpec((xEncQ.scale as ScaleQuery).bandSize)) {
+      if (xEncQ.scale) {
+        if (!(xEncQ.scale as ScaleQuery).bandSize) {
           (xEncQ.scale as ScaleQuery).bandSize = 12;
         }
       }
@@ -85,8 +85,8 @@ export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schem
       colorEncQ.scale = {};
     }
 
-    if (colorEncQ.scale && !isEnumSpec(colorEncQ.scale)) {
-      if (!(colorEncQ.scale as ScaleQuery).range && !isEnumSpec((colorEncQ.scale as ScaleQuery).range)) {
+    if (colorEncQ.scale) {
+      if (!(colorEncQ.scale as ScaleQuery).range) {
         (colorEncQ.scale as ScaleQuery).range = 'category20';
       }
     }
