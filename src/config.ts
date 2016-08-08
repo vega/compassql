@@ -95,7 +95,7 @@ export interface QueryConfig {
 
   // STYLIZE
   smallBandSizeForHighCardinalityOrFacet?: {maxCardinality: number, bandSize: number};
-  nominalColorScaleForHighCardinality?: {maxCardinality: number};
+  nominalColorScaleForHighCardinality?: {maxCardinality: number, palette: string};
 
   // EFFECTIVENESS PREFERENCE
   maxGoodCardinalityForColor?: number; // FIXME: revise
@@ -162,7 +162,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
   // STYLIZE
   smallBandSizeForHighCardinalityOrFacet: {maxCardinality: 10, bandSize: 12},
-  nominalColorScaleForHighCardinality: {maxCardinality: 10},
+  nominalColorScaleForHighCardinality: {maxCardinality: 10, palette: 'categorical20'},
 
   // RANKING PREFERENCE
   maxGoodCardinalityForFacet: 5, // FIXME: revise
