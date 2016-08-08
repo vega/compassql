@@ -13,6 +13,18 @@ import {assert} from 'chai';
 
 describe('stylize', () => {
   describe('smallBandSizeForHighCardinalityOrFacet', () => {
+    it('should not assign a bandSize of 12 if cardinality of Y is under 10', () => {
+      let specM = SpecQueryModel.build({
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.Y, field: 'O', scale: {}, type: Type.ORDINAL}
+          ]
+        }, schema, DEFAULT_QUERY_CONFIG);
+
+      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
+      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, undefined);
+    });
+
     it('should not assign a bandSize of 12 if cardinality of Y is over 10 and bandSize is already set', () => {
       let specM = SpecQueryModel.build({
           mark: Mark.BAR,
