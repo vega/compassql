@@ -58,7 +58,6 @@ export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, sc
     if (encQIndex[Channel.COLUMN] ||
         schema.cardinality(xEncQ) > 10) {
 
-
       if (xEncQ.scale === undefined) {
         xEncQ.scale = {};
       }
