@@ -66,6 +66,7 @@ export interface QueryConfig {
   // CONSTRAINTS
   // Spec Constraints
 
+  aggregateOnly?: boolean;
   hasAppropriateGraphicTypeForMark?: boolean;
   omitAggregatePlotWithDimensionOnlyOnFacet?: boolean;
   omitBarLineAreaWithOcclusion?: boolean;
@@ -79,6 +80,7 @@ export interface QueryConfig {
   omitNonPositionalOverPositionalChannels?: boolean;
   omitTableWithOcclusionIfAutoAddCount?: boolean;
   omitVerticalDotPlot?: boolean;
+  rawOnly?: boolean;
 
   preferredBinAxis?: Channel;
   preferredTemporalAxis?: Channel;
@@ -135,6 +137,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   // Spec Constraints -- See description inside src/constraints/spec.ts
   autoAddCount: false,
 
+  aggregateOnly: false,
   hasAppropriateGraphicTypeForMark: true,
   omitAggregatePlotWithDimensionOnlyOnFacet: true,
   omitBarLineAreaWithOcclusion: true,
@@ -147,6 +150,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   omitNonPositionalOverPositionalChannels: true,
   omitTableWithOcclusionIfAutoAddCount: true,
   omitVerticalDotPlot: false,
+  rawOnly: false,
 
   preferredBinAxis: Channel.X,
   preferredTemporalAxis: Channel.X,
