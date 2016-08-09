@@ -43,7 +43,7 @@ describe('generate', function () {
         const specQ = {
           mark: Mark.POINT,
           encodings: [
-            {aggregate: {name: 'aggregate', values: [undefined, AggregateOp.MEAN, AggregateOp.COUNT]}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+            {aggregate: {name: 'aggregate', values: [undefined, AggregateOp.MEAN]}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
           ],
         };
         const CONFIG_WITH_OMIT_AGGREGATE = extend({}, DEFAULT_QUERY_CONFIG, {omitAggregate: true});
@@ -60,14 +60,13 @@ describe('generate', function () {
         const specQ = {
           mark: Mark.POINT,
           encodings: [
-            {aggregate: {name:'aggregate', values: [undefined, AggregateOp.MEAN, AggregateOp.COUNT]}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+            {aggregate: {name:'aggregate', values: [undefined, AggregateOp.MEAN]}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
           ]
         };
         const CONFIG_WITH_OMIT_RAW = extend({}, DEFAULT_QUERY_CONFIG, {omitRaw: true});
         const answerSet = generate(specQ, schema, CONFIG_WITH_OMIT_RAW);
-        assert.equal(answerSet.length, 2);
+        assert.equal(answerSet.length, 1);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEAN);
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).aggregate, AggregateOp.COUNT);
       });
     });
   });
