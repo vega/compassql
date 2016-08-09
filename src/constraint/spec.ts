@@ -10,6 +10,7 @@ import {QueryConfig} from '../config';
 import {isEnumSpec, EnumSpec} from '../enumspec';
 import {SpecQueryModel} from '../model';
 import {getNestedEncodingProperty, Property, isEncodingProperty} from '../property';
+import {isDimension} from '../query/encoding';
 import {Schema} from '../schema';
 import {contains, every, some} from '../util';
 
@@ -246,6 +247,24 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           }
         });
         return !hasDim || hasNonFacetDim;
+      }
+      return true;
+    }
+  },
+  {
+    name: 'omitAggregatePlotWithoutDimension',
+    description: 'Aggregate plots without dimension should be omitted',
+    properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TYPE],
+    allowEnumSpecForProperties: false,
+    strict: false,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      if (specM.isAggregate()) {
+        return some(specM.getEncodings(), (encQ: EncodingQuery) => {
+          if (isDimension(encQ)) {
+            return true;
+          }
+          return false;
+        });
       }
       return true;
     }
