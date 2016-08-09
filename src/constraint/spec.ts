@@ -229,6 +229,19 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
+    name: 'omitAggregate',
+    description: 'Omit aggregate plots.',
+    properties: [Property.AGGREGATE, Property.AUTOCOUNT],
+    allowEnumSpecForProperties: true,
+    strict: false,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      if (specM.isAggregate()) {
+        return false;
+      }
+      return true;
+    }
+  },
+  {
     name: 'omitAggregatePlotWithDimensionOnlyOnFacet',
     description: 'All required channels for the specified mark should be specified',
     properties: [Property.CHANNEL, Property.AGGREGATE, Property.AUTOCOUNT],
@@ -351,6 +364,19 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         // if non-positional channels are used, then both x and y must be used.
         specM.channelUsed(Channel.X) && specM.channelUsed(Channel.Y) :
         true;
+    }
+  },
+  {
+    name: 'omitRaw',
+    description: 'Omit raw plots.',
+    properties: [Property.AGGREGATE, Property.AUTOCOUNT],
+    allowEnumSpecForProperties: true,
+    strict: false,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      if (!specM.isAggregate()) {
+        return false;
+      }
+      return true;
     }
   },
   {
