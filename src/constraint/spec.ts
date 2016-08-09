@@ -102,21 +102,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'aggregateOnly',
-    description: 'Raw data should not be used if aggregateOnly config is turned on',
-    properties: [Property.AGGREGATE, Property.AUTOCOUNT],
-    allowEnumSpecForProperties: true,
-    strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      if (opt.aggregateOnly) {
-        if (!specM.isAggregate()) {
-          return false;
-        }
-      }
-      return true;
-    }
-  },
-  {
     name: 'alwaysIncludeZeroInScaleWithBarMark',
     description: 'Do not reccommend bar mark if scale does not start at zero',
     properties: [Property.MARK, Property.SCALE, Property.SCALE_ZERO, Property.CHANNEL, Property.TYPE],
@@ -241,6 +226,19 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       }
       /* istanbul ignore next */
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
+    }
+  },
+  {
+    name: 'omitAggregate',
+    description: 'Omit aggregate plots.',
+    properties: [Property.AGGREGATE, Property.AUTOCOUNT],
+    allowEnumSpecForProperties: true,
+    strict: false,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      if (specM.isAggregate()) {
+        return false;
+      }
+      return true;
     }
   },
   {
@@ -369,6 +367,19 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
+    name: 'omitRaw',
+    description: 'Omit raw plots.',
+    properties: [Property.AGGREGATE, Property.AUTOCOUNT],
+    allowEnumSpecForProperties: true,
+    strict: false,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      if (!specM.isAggregate()) {
+        return false;
+      }
+      return true;
+    }
+  },
+  {
     name: 'omitRawContinuousFieldForAggregatePlot',
     description: 'Aggregate plot should not use raw continuous field as group by values. ' +
       '(Quantitative should be binned. Temporal should have time unit.)',
@@ -440,21 +451,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       const encodings = specM.getEncodings();
       if (encodings.length === 1 && encodings[0].channel === Channel.Y) {
         return false;
-      }
-      return true;
-    }
-  },
-  {
-    name: 'rawOnly',
-    description: 'Aggregate data should not be used if rawOnly config is turned on',
-    properties: [Property.AGGREGATE, Property.AUTOCOUNT],
-    allowEnumSpecForProperties: true,
-    strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      if (opt.rawOnly) {
-        if (specM.isAggregate()) {
-          return false;
-        }
       }
       return true;
     }

@@ -66,21 +66,21 @@ export interface QueryConfig {
   // CONSTRAINTS
   // Spec Constraints
 
-  aggregateOnly?: boolean;
   hasAppropriateGraphicTypeForMark?: boolean;
+  omitAggregate?: boolean;
   omitAggregatePlotWithDimensionOnlyOnFacet?: boolean;
   omitBarLineAreaWithOcclusion?: boolean;
   omitBarTickWithSize?: boolean;
   omitFacetOverPositionalChannels?: boolean;
   omitMultipleNonPositionalChannels?: boolean;
   omitNonSumStack?: boolean;
+  omitRaw?: boolean;
   omitRawContinuousFieldForAggregatePlot?: boolean;
   omitRawWithXYBothOrdinalScaleOrBin?: boolean;
   omitRepeatedField?: boolean;
   omitNonPositionalOverPositionalChannels?: boolean;
   omitTableWithOcclusionIfAutoAddCount?: boolean;
   omitVerticalDotPlot?: boolean;
-  rawOnly?: boolean;
 
   preferredBinAxis?: Channel;
   preferredTemporalAxis?: Channel;
@@ -137,20 +137,20 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   // Spec Constraints -- See description inside src/constraints/spec.ts
   autoAddCount: false,
 
-  aggregateOnly: false,
   hasAppropriateGraphicTypeForMark: true,
+  omitAggregate: false,
   omitAggregatePlotWithDimensionOnlyOnFacet: true,
   omitBarLineAreaWithOcclusion: true,
   omitBarTickWithSize: true,
   omitFacetOverPositionalChannels: true,
   omitMultipleNonPositionalChannels: true,
   omitNonSumStack: true,
+  omitRaw: false,
   omitRawContinuousFieldForAggregatePlot: true,
   omitRepeatedField: true,
   omitNonPositionalOverPositionalChannels: true,
   omitTableWithOcclusionIfAutoAddCount: true,
   omitVerticalDotPlot: false,
-  rawOnly: false,
 
   preferredBinAxis: Channel.X,
   preferredTemporalAxis: Channel.X,
