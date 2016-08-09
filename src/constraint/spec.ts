@@ -232,7 +232,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitAggregate',
     description: 'Omit aggregate plots.',
     properties: [Property.AGGREGATE, Property.AUTOCOUNT],
-    allowEnumSpecForProperties: true,
+    allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if (specM.isAggregate()) {
@@ -370,7 +370,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitRaw',
     description: 'Omit raw plots.',
     properties: [Property.AGGREGATE, Property.AUTOCOUNT],
-    allowEnumSpecForProperties: true,
+    allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if (!specM.isAggregate()) {
