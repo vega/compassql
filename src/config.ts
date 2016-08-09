@@ -68,6 +68,7 @@ export interface QueryConfig {
 
   hasAppropriateGraphicTypeForMark?: boolean;
   omitAggregatePlotWithDimensionOnlyOnFacet?: boolean;
+  omitAggregatePlotWithoutDimension: boolean;
   omitBarLineAreaWithOcclusion?: boolean;
   omitBarTickWithSize?: boolean;
   omitFacetOverPositionalChannels?: boolean;
@@ -137,6 +138,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
   hasAppropriateGraphicTypeForMark: true,
   omitAggregatePlotWithDimensionOnlyOnFacet: true,
+  omitAggregatePlotWithoutDimension: false,
   omitBarLineAreaWithOcclusion: true,
   omitBarTickWithSize: true,
   omitFacetOverPositionalChannels: true,
