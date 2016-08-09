@@ -6,7 +6,7 @@ import {SpecQuery, stack} from './spec';
 import {isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 
 import {getNestedEncodingPropertyChildren, Property, DEFAULT_PROPERTY_PRECEDENCE} from '../property';
-import {Dict, keys} from '../util';
+import {Dict, extend, keys} from '../util';
 
 export type Replacer = (s: string) => string;
 
@@ -52,11 +52,21 @@ export function spec(specQ: SpecQuery,
 
   // TODO: transform
 
+  // TODO: extract this to its own stack method
   // TODO: stack Property
   const _stack = stack(specQ);
   if (_stack) {
-    // TODO: use shorthandValue once we have proper stack property
-    parts.push('stack=' + _stack.offset);
+    // TODO: Refactor this once we have property stack property.
+    // Exclude type since we don't care about type in stack
+    const includeExceptType = extend({}, include, {type: false});
+
+    const field = fieldDef(_stack.fieldEncQ, includeExceptType, replace);
+    const groupby = fieldDef(_stack.groupByEncQ, includeExceptType, replace);
+    parts.push(
+      `stack={field:${field},` +
+      (groupby ? `by:${groupby},` : '') +
+      `offset:${_stack.offset}}`
+    );
   }
 
   parts.push(specQ.encodings.map((encQ) => encoding(encQ, include, replace))
@@ -159,7 +169,7 @@ export function fieldDef(encQ: EncodingQuery,
           }
         }
       } else if (encQ[nestedPropParent] === false || encQ[nestedPropParent] === null) {
-        // `scale`, `axis`, `legend` can be false/null. 
+        // `scale`, `axis`, `legend` can be false/null.
         props.push({
           key: nestedPropParent + '',
           value: false

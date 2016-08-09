@@ -66,7 +66,7 @@ export function isAggregate(specQ: SpecQuery) {
 /**
  * @return the stack offset type for the specQuery
  */
-export function stack(specQ: SpecQuery): StackProperties {
+export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQuery, groupByEncQ: EncodingQuery} {
   const config = specQ.config;
   const stacked = (config && config.mark) ? config.mark.stacked : undefined;
 
@@ -109,7 +109,9 @@ export function stack(specQ: SpecQuery): StackProperties {
   if (xIsAggregate !== yIsAggregate) {
     return {
       groupbyChannel: xIsAggregate ? (!!yEncQ ? Y : null) : (!!xEncQ ? X : null),
+      groupByEncQ: xIsAggregate ? yEncQ : xEncQ,
       fieldChannel: xIsAggregate ? X : Y,
+      fieldEncQ: xIsAggregate ? xEncQ : yEncQ,
       stackByChannels: stackByChannels,
       offset: stacked || StackOffset.ZERO
     };
