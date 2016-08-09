@@ -37,6 +37,41 @@ describe('generate', function () {
     });
   });
 
+  describe('1D raw', () => {
+    describe('dotplot', () => {
+      it('should generate if there is only raw data', () => {
+        const specQ = {
+          mark: Mark.POINT,
+          encodings: [
+            {aggregate: {name: 'aggregate', values: [undefined, AggregateOp.MEAN, AggregateOp.COUNT]}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+          ],
+        };
+        const CONFIG_WITH_OMIT_AGGREGATE = extend({}, DEFAULT_QUERY_CONFIG, {omitAggregate: true});
+        const answerSet = generate(specQ, schema, CONFIG_WITH_OMIT_AGGREGATE);
+        assert.equal(answerSet.length, 1);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, undefined);
+      });
+    });
+  });
+
+  describe('1D aggregate', () => {
+    describe('dotplot with mean + histogram', () => {
+      it('should generate if there is only aggregate data', () => {
+        const specQ = {
+          mark: Mark.POINT,
+          encodings: [
+            {aggregate: {name:'aggregate', values: [undefined, AggregateOp.MEAN, AggregateOp.COUNT]}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+          ]
+        };
+        const CONFIG_WITH_OMIT_RAW = extend({}, DEFAULT_QUERY_CONFIG, {omitRaw: true});
+        const answerSet = generate(specQ, schema, CONFIG_WITH_OMIT_RAW);
+        assert.equal(answerSet.length, 2);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEAN);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).aggregate, AggregateOp.COUNT);
+      });
+    });
+  });
+
   describe('2D', () => {
     describe('x:N,y:N', () => {
       const query = {
