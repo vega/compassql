@@ -470,7 +470,7 @@ describe('constraints/spec', () => {
   });
 
   describe('omitAggregate', () => {
-    const CONFIG_WITH_RAW_ONLY = extend({}, DEFAULT_QUERY_CONFIG, {omitAggregate: true});
+    const CONFIG_WITH_OMIT_AGGREGATE = extend({}, DEFAULT_QUERY_CONFIG, {omitAggregate: true});
 
     it('should return true if there is only raw data', () => {
       const specM = buildSpecQueryModel({
@@ -479,7 +479,7 @@ describe('constraints/spec', () => {
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregate'].satisfy(specM, schema, CONFIG_WITH_RAW_ONLY));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregate'].satisfy(specM, schema, CONFIG_WITH_OMIT_AGGREGATE));
     });
 
     it('should return false if there is aggregate data', () => {
@@ -489,7 +489,7 @@ describe('constraints/spec', () => {
           {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregate'].satisfy(specM, schema, CONFIG_WITH_RAW_ONLY));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregate'].satisfy(specM, schema, CONFIG_WITH_OMIT_AGGREGATE));
     });
   });
 
@@ -817,7 +817,7 @@ describe('constraints/spec', () => {
   });
 
   describe('omitRaw', () => {
-    const CONFIG_WITH_AGGREGATE_ONLY = extend({}, DEFAULT_QUERY_CONFIG, {omitRaw: true});
+    const CONFIG_WITH_OMIT_RAW = extend({}, DEFAULT_QUERY_CONFIG, {omitRaw: true});
 
     it('should return false if there is raw data', () => {
       const specM = buildSpecQueryModel({
@@ -826,7 +826,7 @@ describe('constraints/spec', () => {
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, CONFIG_WITH_AGGREGATE_ONLY));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, CONFIG_WITH_OMIT_RAW));
     });
 
     it('should return true if data is aggregate', () => {
@@ -836,7 +836,7 @@ describe('constraints/spec', () => {
           {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, CONFIG_WITH_AGGREGATE_ONLY));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, CONFIG_WITH_OMIT_RAW));
     });
   });
 
