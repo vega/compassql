@@ -14,7 +14,7 @@ import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {SpecQuery} from '../../src/query/spec';
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
-import {duplicate} from '../../src/util';
+import {duplicate, extend} from '../../src/util';
 
 describe('constraints/spec', () => {
   const defaultOpt = DEFAULT_QUERY_CONFIG;
@@ -468,6 +468,7 @@ describe('constraints/spec', () => {
       assert.isFalse(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specM, schema, defaultOpt));
     });
   });
+
   describe('omitAggregatePlotWithDimensionOnlyOnFacet', () => {
     it('should return false if the only dimension is facet', () => {
       const specM = buildSpecQueryModel({
@@ -504,6 +505,39 @@ describe('constraints/spec', () => {
         ]
       });
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, defaultOpt));
+    });
+  });
+
+  describe('omitAggregatePlotWithoutDimension', () => {
+    const CONFIG_WITH_OMIT_AGGREGATE_PLOT_WITHOUT_DIMENSION = extend({}, DEFAULT_QUERY_CONFIG, {omitAggregatePlotWithoutDimension: true});
+    it('should return false if plot is aggregate and has no dimension', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithoutDimension'].satisfy(specM, schema, CONFIG_WITH_OMIT_AGGREGATE_PLOT_WITHOUT_DIMENSION));
+    });
+
+    it('should return true if plot is aggregate and has dimension', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'N', type: Type.NOMINAL, aggregate: AggregateOp.MEAN}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithoutDimension'].satisfy(specM, schema, CONFIG_WITH_OMIT_AGGREGATE_PLOT_WITHOUT_DIMENSION));
+    });
+
+    it('should return true if plot is not aggregate', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'N', type: Type.NOMINAL}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithoutDimension'].satisfy(specM, schema, CONFIG_WITH_OMIT_AGGREGATE_PLOT_WITHOUT_DIMENSION));
     });
   });
 
