@@ -25,5 +25,5 @@ export function initEnumSpec(prop: any, defaultName: string, defaultEnumValues: 
   return extend({}, {
       name: defaultName,
       values: defaultEnumValues
-    }, prop);
+    }, prop === SHORT_ENUM_SPEC ? {} : prop);
 }

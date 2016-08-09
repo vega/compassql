@@ -1,3 +1,5 @@
+import {Mark} from 'vega-lite/src/mark';
+
 import {assert} from 'chai';
 import {initEnumSpec, isEnumSpec, SHORT_ENUM_SPEC} from '../src/enumspec';
 
@@ -44,6 +46,14 @@ describe('enumspec', () => {
   });
 
   describe('initEnumSpec', () => {
+    it('should not extend the enumSpec with SHORT_ENUM_SPEC.', () => {
+      const mark = initEnumSpec(SHORT_ENUM_SPEC, 'm', [Mark.POINT]);
+      assert.deepEqual(mark, {
+        name: 'm',
+        values: [Mark.POINT]
+      });
+    });
+
     it('should return full enumSpec with other properties preserved', () => {
       const binQuery = initEnumSpec({values: [true, false], maxbins: 30}, 'b1', [true, false]);
       assert.deepEqual(binQuery.values, [true, false]);

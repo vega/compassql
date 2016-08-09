@@ -42,7 +42,10 @@ describe('SpecQueryModel', () => {
         encodings: []
       };
       const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-      assert.isOk(enumSpecIndex.mark);
+      assert.deepEqual(enumSpecIndex.mark, {
+        name: 'm',
+        values: DEFAULT_QUERY_CONFIG.marks
+      });
     });
 
     it('should have mark enumSpecIndex if mark is an EnumSpec.', () => {
@@ -53,7 +56,10 @@ describe('SpecQueryModel', () => {
         encodings: []
       };
       const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-      assert.isOk(enumSpecIndex.mark);
+      assert.deepEqual(enumSpecIndex.mark, {
+        name: 'm',
+        values: [Mark.BAR]
+      });
     });
 
     it('should have no mark enumSpecIndex if mark is specific.', () => {
