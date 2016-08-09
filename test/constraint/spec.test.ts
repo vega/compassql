@@ -14,7 +14,7 @@ import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {SpecQuery} from '../../src/query/spec';
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
-import {duplicate} from '../../src/util';
+import {duplicate, extend} from '../../src/util';
 
 describe('constraints/spec', () => {
   const defaultOpt = DEFAULT_QUERY_CONFIG;
@@ -31,6 +31,30 @@ describe('constraints/spec', () => {
         assert.isDefined(DEFAULT_QUERY_CONFIG[constraint.name()]);
       });
     }
+  });
+
+  describe('aggregateOnly', () => {
+    const CONFIG_WITH_AGGREGATE_ONLY = extend({}, DEFAULT_QUERY_CONFIG, {aggregateOnly: true});
+
+    it('should return false if there is raw data when aggregateOnly config is turned on', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['aggregateOnly'].satisfy(specM, schema, CONFIG_WITH_AGGREGATE_ONLY));
+    });
+
+    it('should return true if data is aggregate when aggregateOnly config is turned on', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['aggregateOnly'].satisfy(specM, schema, CONFIG_WITH_AGGREGATE_ONLY));
+    });
   });
 
   describe('alwaysIncludeZeroInScaleWithBarMark', () => {
@@ -990,6 +1014,30 @@ describe('constraints/spec', () => {
       });
 
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitVerticalDotPlot'].satisfy(specM, schema, defaultOpt));
+    });
+  });
+
+  describe('rawOnly', () => {
+    const CONFIG_WITH_RAW_ONLY = extend({}, DEFAULT_QUERY_CONFIG, {rawOnly: true});
+
+    it('should return true if there is only raw data when rawOnly config is turned on', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['rawOnly'].satisfy(specM, schema, CONFIG_WITH_RAW_ONLY));
+    });
+
+    it('should return false if there is aggregate data when rawOnly config is turned on', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['rawOnly'].satisfy(specM, schema, CONFIG_WITH_RAW_ONLY));
     });
   });
 });
