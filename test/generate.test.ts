@@ -39,7 +39,7 @@ describe('generate', function () {
 
   describe('1D raw', () => {
     describe('dotplot', () => {
-      it('should generate if there is only raw data', () => {
+      it('should generate only a raw dot plot if omitAggregate is enabled.', () => {
         const specQ = {
           mark: Mark.POINT,
           encodings: [
@@ -56,7 +56,7 @@ describe('generate', function () {
 
   describe('1D aggregate', () => {
     describe('dotplot with mean + histogram', () => {
-      it('should generate if there is only aggregate data', () => {
+      it('should generate only an aggregate dot plot if omitRaw is enabled.', () => {
         const specQ = {
           mark: Mark.POINT,
           encodings: [
