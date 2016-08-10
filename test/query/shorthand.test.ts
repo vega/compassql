@@ -24,6 +24,17 @@ describe('query/shorthand', () => {
       assert.equal(str, 'point|x:a,q');
     });
 
+    it('should exclude autoCount:false mapping', () => {
+      const str = specShorthand({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'a', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, autoCount: false, type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.equal(str, 'point|x:a,q');
+    });
+
     it('should return correct spec string for specific specQuery with channel replacer', () => {
       const str = specShorthand({
           mark: Mark.POINT,
