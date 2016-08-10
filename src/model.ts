@@ -493,10 +493,6 @@ export class SpecQueryModelGroup {
     return this._name;
   }
 
-  public set name(name: string) {
-    this._name = name;
-  }
-
   public get items() {
     return this._items;
   }
@@ -505,17 +501,17 @@ export class SpecQueryModelGroup {
     this._items = items;
   }
 
+  public get groupBy() {
+    return this._groupBy;
+  }
+
   public set groupBy(groupBy: GroupBy) {
     this._groupBy = groupBy;
   }
 
-  // Currently, we do not need to get orderGroupBy for anything in CQL.
-  // We also do not currently need to get or set anything for path.
-  // Should we have the methods available anyway?
-
-  // public get orderGroupBy() {
-  //   return this._orderGroupBy;
-  // }
+  public get orderGroupBy() {
+    return this._orderGroupBy;
+  }
 
   public set orderGroupBy(orderGroupBy: string) {
     this._orderGroupBy = orderGroupBy;
