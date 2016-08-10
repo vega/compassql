@@ -476,7 +476,7 @@ export class SpecQueryModelGroup {
     this._name = name;
     this._path = path;
     this._items = items;
-    this.groupBy = groupBy;
+    this._groupBy = groupBy;
     this._orderGroupBy = orderGroupBy;
   }
 
