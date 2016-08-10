@@ -7,8 +7,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
-import {SpecQueryModel} from '../src/model';
-import {SpecQueryModelGroup} from '../src/modelgroup';
+import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
 import {nest, FIELD, FIELD_TRANSFORM, ENCODING, TRANSPOSE} from '../src/nest';
 import {Property} from '../src/property';
 import {REPLACE_BLANK_FIELDS, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS} from '../src/query/groupby';

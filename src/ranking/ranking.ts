@@ -1,6 +1,5 @@
 import {QueryConfig} from '../config';
-import {SpecQueryModel} from '../model';
-import {SpecQueryModelGroup, getTopItem} from '../modelgroup';
+import {SpecQueryModel, SpecQueryModelGroup} from '../model';
 import {Query} from '../query/query';
 import {Dict} from '../util';
 import {Schema} from '../schema';
@@ -60,9 +59,7 @@ export function rank(group: SpecQueryModelGroup, query: Query, schema: Schema, l
       if (query.chooseBy) {
         if (group.items.length > 0) {
           // for chooseBy -- only keep the top-item
-          group.items = [group.items[0]];
-        } else { // except when the group is empty
-          group.items = [];
+          group.items.splice(1);
         }
       }
     }
@@ -96,8 +93,8 @@ export function comparator(name: string, schema: Schema, opt: QueryConfig) {
 
 export function groupComparator(name: string, schema: Schema, opt: QueryConfig) {
   return (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup) => {
-    const m1 = getTopItem(g1);
-    const m2 = getTopItem(g2);
+    const m1 = g1.getTopSpecQueryModel(g1);
+    const m2 = g2.getTopSpecQueryModel(g2);
     return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
   };
 }

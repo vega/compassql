@@ -2,8 +2,7 @@ import {Channel} from 'vega-lite/src/channel';
 import {isArray} from 'datalib/src/util';
 
 import {EnumSpec, isEnumSpec, SHORT_ENUM_SPEC} from './enumspec';
-import {SpecQueryModel} from './model';
-import {SpecQueryModelGroup} from './modelgroup';
+import {SpecQueryModel, SpecQueryModelGroup} from './model';
 import {Property} from './property';
 import {Dict, duplicate, keys} from './util';
 
@@ -37,11 +36,10 @@ export const SPEC = 'spec';
  * @return
  */
 export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModelGroup {
-
-  const rootGroup: SpecQueryModelGroup = { name: '', path: '', items: []};
-  let groupIndex: Dict<SpecQueryModelGroup> = {};
-
   if (query.nest) {
+    const rootGroup: SpecQueryModelGroup = new SpecQueryModelGroup();
+    let groupIndex: Dict<SpecQueryModelGroup> = {};
+
     // global `includes` and `replaces` will get augmented by each level's groupBy.
     // Upper level's `groupBy` will get cascaded to lower-level groupBy.
     // `replace` can be overriden in a lower-level to support different grouping.
@@ -85,21 +83,19 @@ export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModel
 
         path += '/' + key;
         if (!groupIndex[path]) { // this item already exists on the path
-          groupIndex[path] = {
-            name: key,
-            path: path,
-            items: []
-          };
+          groupIndex[path] = new SpecQueryModelGroup(key, path, []);
+
           group.items.push(groupIndex[path]);
         }
         group = groupIndex[path];
       }
       group.items.push(specM);
     });
+    return rootGroup;
   } else {
-    rootGroup.items = specModels;
+    // no nesting, just return a flat group
+    return new SpecQueryModelGroup('', '', specModels);
   }
-  return rootGroup;
 }
 
 
