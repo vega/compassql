@@ -7,7 +7,8 @@ import {EncodingQuery} from '../../query/encoding';
 import {Dict, extend, forEach, keys} from '../../util';
 
 import {Schema} from '../../schema';
-import {FeatureScore, getExtendedType, getFeatureScore} from './effectiveness';
+import {FeatureScore} from '../ranking';
+import {getExtendedType, getFeatureScore} from './effectiveness';
 import {BIN_Q, TIMEUNIT_T, Q, N, O, T} from './type';
 
 /**
@@ -22,7 +23,7 @@ export namespace TypeChannelScore {
     const ORDERED_TYPE_CHANNEL_SCORE = {
       x: 0,
       y: 0,
-      size: -0.45,  // TODO: penalize ordinal
+      size: -0.55,  // TODO: penalize ordinal
       color: -0.6,
       opacity: -0.75,
       text: -0.775, // FIXME revise
@@ -38,18 +39,18 @@ export namespace TypeChannelScore {
       });
     });
 
-    // Penalize row/column for bin quantitative / timeUnit_temporal
+    // Penalize row/column for bin quantitative / timeUnit_temporal / O less
     [BIN_Q ,TIMEUNIT_T, O].forEach((type) => {
       [Channel.ROW, Channel.COLUMN].forEach((channel) => {
-        SCORE[featurize(type, channel)] += 0.25;
+        SCORE[featurize(type, channel)] += 0.15;
       });
     });
 
     const NOMINAL_TYPE_CHANNEL_SCORE = {
       x: 0,
       y: 0,
-      color: -0.5, // TODO: make it adjustable based on preference
-      shape: -0.6,
+      color: -0.6, // TODO: make it adjustable based on preference
+      shape: -0.65,
       row: -0.7,
       column: -0.7,
       text: -0.8,
@@ -107,10 +108,13 @@ export namespace PreferredAxisScore {
     let score: Dict<number> = {};
 
     const preferredAxes = [{
-      feature: 'bin_' + Q,
+      feature: BIN_Q,
       opt: 'preferredBinAxis'
     },{
       feature: T,
+      opt: 'preferredTemporalAxis'
+    },{
+      feature: TIMEUNIT_T,
       opt: 'preferredTemporalAxis'
     },{
       feature: O,

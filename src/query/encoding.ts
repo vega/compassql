@@ -59,6 +59,7 @@ export function isDimension(encQ: EncodingQuery) {
 export function isMeasure(encQ: EncodingQuery) {
   return (encQ.type === Type.QUANTITATIVE && !encQ.bin) ||
       (encQ.type === Type.TEMPORAL && !encQ.timeUnit);
+      // TODO For T type, take scale type of the timeUnit into account
 }
 
 /**

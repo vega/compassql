@@ -8,6 +8,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, INCLUDE_ALL, getReplacer} from '../../src/query/shorthand';
+import {extend} from '../../src/util';
 import {REPLACE_BLANK_FIELDS} from '../../src/query/groupby';
 
 import {assert} from 'chai';
@@ -81,7 +82,20 @@ describe('query/shorthand', () => {
       assert.equal(str, 'a');
     });
 
-    it('should include stack for stacked specQuery', () => {
+
+    it('should return correct spec string for ambiguous specQuery', () => {
+      const str = specShorthand({
+        mark: SHORT_ENUM_SPEC,
+        encodings: [
+          {channel: SHORT_ENUM_SPEC, field: SHORT_ENUM_SPEC, type: SHORT_ENUM_SPEC, aggregate: SHORT_ENUM_SPEC}
+        ]
+      });
+      assert.equal(str, '?|?:?(?,?)');
+    });
+  });
+
+  describe('stack', () => {
+    it('should include stack for stacked specQuery by default', () => {
       const str = specShorthand({
         mark: Mark.BAR,
         encodings: [
@@ -93,14 +107,16 @@ describe('query/shorthand', () => {
       assert.equal(str, 'bar|stack={field:sum(q),by:n,offset:zero}|color:n1,n|x:sum(q,q)|y:n,n');
     });
 
-    it('should return correct spec string for ambiguous specQuery', () => {
+    it('should exclude stack for stacked specQuery if we exclude it', () => {
       const str = specShorthand({
-        mark: SHORT_ENUM_SPEC,
+        mark: Mark.BAR,
         encodings: [
-          {channel: SHORT_ENUM_SPEC, field: SHORT_ENUM_SPEC, type: SHORT_ENUM_SPEC, aggregate: SHORT_ENUM_SPEC}
+          {channel: Channel.X, field: 'q', type: Type.QUANTITATIVE, aggregate: AggregateOp.SUM},
+          {channel: Channel.Y, field: 'n', type: Type.NOMINAL},
+          {channel: Channel.COLOR, field: 'n1', type: Type.NOMINAL}
         ]
-      });
-      assert.equal(str, '?|?:?(?,?)');
+      }, extend({}, INCLUDE_ALL, {stack: false}));
+      assert.equal(str, 'bar|color:n1,n|x:sum(q,q)|y:n,n');
     });
   });
 

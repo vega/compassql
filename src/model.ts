@@ -476,7 +476,7 @@ export class SpecQueryModelGroup {
     this._name = name;
     this._path = path;
     this._items = items;
-    this.groupBy = groupBy;
+    this._groupBy = groupBy;
     this._orderGroupBy = orderGroupBy;
   }
 
@@ -495,10 +495,6 @@ export class SpecQueryModelGroup {
 
   public get items() {
     return this._items;
-  }
-
-  public set items(items: (SpecQueryModel | SpecQueryModelGroup)[]) {
-    this._items = items;
   }
 
   public get groupBy() {

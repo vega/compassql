@@ -17,7 +17,6 @@ import {Property} from '../../src/property';
 import {duplicate} from '../../src/util';
 
 describe('constraints/spec', () => {
-  const defaultOpt = DEFAULT_QUERY_CONFIG;
   const schema = new Schema([]);
 
   function buildSpecQueryModel(specQ: SpecQuery) {
@@ -42,7 +41,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['alwaysIncludeZeroInScaleWithBarMark'].satisfy(specM, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['alwaysIncludeZeroInScaleWithBarMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if scale starts at zero when bar mark is used', () => {
@@ -53,7 +52,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['alwaysIncludeZeroInScaleWithBarMark'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['alwaysIncludeZeroInScaleWithBarMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 
@@ -120,7 +119,7 @@ describe('constraints/spec', () => {
             autoCount: satisfy ? autoCount : !autoCount
           });
           const model = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
-          assert.equal(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(model, schema, defaultOpt), satisfy);
+          assert.equal(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(model, schema, DEFAULT_QUERY_CONFIG), satisfy);
         });
       });
     }
@@ -174,7 +173,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if the raw spec has one unbinned quantitative field.', () => {
@@ -186,7 +185,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if the raw spec has one temporal without time unit field.', () => {
@@ -198,7 +197,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return false if the raw spec have only nominal, ordinal, binned quantitative or temporal with time unit fields.', () => {
@@ -212,7 +211,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specM, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
   });
@@ -226,7 +225,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['channelPermittedByMarkType'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['channelPermittedByMarkType'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return false for unsupported channel', () => {
@@ -237,7 +236,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['channelPermittedByMarkType'].satisfy(specM, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['channelPermittedByMarkType'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 
@@ -251,7 +250,7 @@ describe('constraints/spec', () => {
             {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE}
           ]
         });
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specM, schema, defaultOpt));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
 
@@ -264,7 +263,7 @@ describe('constraints/spec', () => {
               {channel: channel, field: 'N', type: Type.NOMINAL}
             ]
           });
-          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specM, schema, defaultOpt));
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
     });
@@ -278,7 +277,7 @@ describe('constraints/spec', () => {
               {channel: channel, field: 'N', type: Type.NOMINAL}
             ]
           });
-          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specM, schema, defaultOpt));
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
     });
@@ -292,7 +291,7 @@ describe('constraints/spec', () => {
               {channel: channel, field: 'N', type: Type.NOMINAL}
             ]
           });
-          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specM, schema, defaultOpt));
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
     });
@@ -317,7 +316,7 @@ describe('constraints/spec', () => {
               {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE}
             ]
           });
-          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, defaultOpt));
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
 
@@ -330,7 +329,7 @@ describe('constraints/spec', () => {
               {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE}
             ]
           });
-          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, defaultOpt));
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
 
@@ -343,7 +342,7 @@ describe('constraints/spec', () => {
               {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE}
             ]
           });
-          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, defaultOpt));
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
 
@@ -356,7 +355,7 @@ describe('constraints/spec', () => {
               {channel: Channel.Y, field: 'N20', type: Type.NOMINAL}
             ]
           });
-          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, defaultOpt));
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
 
@@ -369,7 +368,7 @@ describe('constraints/spec', () => {
               {channel: Channel.Y, field: 'Q2', type: Type.QUANTITATIVE}
             ]
           });
-          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, defaultOpt));
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
 
@@ -382,7 +381,7 @@ describe('constraints/spec', () => {
               {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE}
             ]
           });
-          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, defaultOpt));
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
     });
@@ -397,7 +396,7 @@ describe('constraints/spec', () => {
               {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
             ]
           });
-          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, defaultOpt));
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
 
@@ -411,7 +410,7 @@ describe('constraints/spec', () => {
               {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
             ]
           });
-          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, defaultOpt));
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
 
@@ -424,7 +423,7 @@ describe('constraints/spec', () => {
               {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
             ]
           });
-          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, defaultOpt));
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
 
@@ -438,7 +437,7 @@ describe('constraints/spec', () => {
               {channel: Channel.SIZE, field:'*', aggregate: AggregateOp.COUNT, type: Type.QUANTITATIVE}
             ]
           });
-          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, defaultOpt));
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
     });
@@ -453,7 +452,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return false when there are repeated channels', function() {
@@ -465,7 +464,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specM, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 
@@ -501,7 +500,7 @@ describe('constraints/spec', () => {
           {channel: Channel.ROW, field: 'N', type: Type.NOMINAL}
         ]
       });
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if the only dimension is not facet', () => {
@@ -513,7 +512,7 @@ describe('constraints/spec', () => {
           {channel: Channel.SHAPE, field: 'N', type: Type.NOMINAL}
         ]
       });
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if there are both facet and non-facet dimension', () => {
@@ -526,7 +525,7 @@ describe('constraints/spec', () => {
           {channel: Channel.SHAPE, field: 'N', type: Type.NOMINAL}
         ]
       });
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 
@@ -574,7 +573,7 @@ describe('constraints/spec', () => {
           ]
         });
 
-        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitBarLineAreaWithOcclusion'].satisfy(specM, schema, defaultOpt));
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitBarLineAreaWithOcclusion'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
 
       it('should return true for aggregate ' + mark, () => {
@@ -586,7 +585,7 @@ describe('constraints/spec', () => {
           ]
         });
 
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarLineAreaWithOcclusion'].satisfy(specM, schema, defaultOpt));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarLineAreaWithOcclusion'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
 
@@ -600,7 +599,7 @@ describe('constraints/spec', () => {
           ]
         });
 
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarLineAreaWithOcclusion'].satisfy(specM, schema, defaultOpt));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarLineAreaWithOcclusion'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
 
       it('should return true for aggregate ' + mark, () => {
@@ -612,7 +611,7 @@ describe('constraints/spec', () => {
           ]
         });
 
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarLineAreaWithOcclusion'].satisfy(specM, schema, defaultOpt));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarLineAreaWithOcclusion'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
   });
@@ -629,7 +628,7 @@ describe('constraints/spec', () => {
           ]
         });
 
-        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitBarTickWithSize'].satisfy(specM, schema, defaultOpt));
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitBarTickWithSize'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
 
@@ -643,7 +642,7 @@ describe('constraints/spec', () => {
           ]
         });
 
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarTickWithSize'].satisfy(specM, schema, defaultOpt));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarTickWithSize'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
   });
@@ -658,7 +657,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if facet is used when both x and y are used', () => {
@@ -671,7 +670,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if facet is used when x or y is not used', () => {
@@ -683,7 +682,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specM, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 
@@ -697,7 +696,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitBarAreaForLogScale'].satisfy(specM, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitBarAreaForLogScale'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if either x or y channel of bar or area mark is not log scale', () => {
@@ -709,7 +708,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarAreaForLogScale'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarAreaForLogScale'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 
@@ -723,7 +722,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if there are one non-positional channels', () => {
@@ -736,7 +735,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return false if there are multiple non-positional channels', () => {
@@ -750,7 +749,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 
@@ -766,7 +765,7 @@ describe('constraints/spec', () => {
               {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
             ]
           });
-          assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, defaultOpt));
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
     });
@@ -782,7 +781,7 @@ describe('constraints/spec', () => {
               {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
             ]
           });
-          assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, defaultOpt));
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
     });
@@ -798,7 +797,7 @@ describe('constraints/spec', () => {
               {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
             ]
           });
-          assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, defaultOpt));
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
     });
@@ -813,7 +812,7 @@ describe('constraints/spec', () => {
             {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
           ]
         });
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, defaultOpt));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
   });
@@ -829,7 +828,7 @@ describe('constraints/spec', () => {
             {channel: channel, field: 'C', type: Type.NOMINAL}
           ]
         });
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specM, schema, defaultOpt));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
 
@@ -842,7 +841,7 @@ describe('constraints/spec', () => {
             {channel: channel, field: 'C', type: Type.NOMINAL}
           ]
         });
-        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specM, schema, defaultOpt));
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
   });
@@ -856,6 +855,26 @@ describe('constraints/spec', () => {
         ]
       });
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('It should return true if there is an enum spec aggregate', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {aggregate: SHORT_ENUM_SPEC, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('It should return true if there is an enum spec autoCount', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {autoCount: SHORT_ENUM_SPEC, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if data is aggregate', () => {
@@ -879,7 +898,7 @@ describe('constraints/spec', () => {
           ]
         });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if the aggregate plot groups by a temporal field with timeUnit', () => {
@@ -891,7 +910,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if the aggregate plot groups by a temporal field with timeUnit as enumSpec', () => {
@@ -903,7 +922,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return false if the aggregate plot groups by a raw quantitative field', () => {
@@ -915,7 +934,7 @@ describe('constraints/spec', () => {
           ]
         });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if the aggregate plot groups by a binned quantitative field', () => {
@@ -927,7 +946,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if the aggregate plot groups by a quantitative field with bin as enumSpec', () => {
@@ -939,7 +958,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true for a plot with only aggregated quantitative field.', () => {
@@ -950,7 +969,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true for any raw plot', () => {
@@ -963,7 +982,7 @@ describe('constraints/spec', () => {
           ]
         });
 
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, defaultOpt));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
   });
@@ -977,7 +996,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return false when raw data has a detail channel', () => {
@@ -988,7 +1007,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if any of the encoding channels contain aggregate', () => {
@@ -1000,7 +1019,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 
@@ -1014,7 +1033,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return false when there are repeated field', function() {
@@ -1026,7 +1045,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specM, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 
@@ -1055,7 +1074,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitVerticalDotPlot'].satisfy(specM, schema, defaultOpt));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitVerticalDotPlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
 
@@ -1067,7 +1086,7 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitVerticalDotPlot'].satisfy(specM, schema, defaultOpt));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitVerticalDotPlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 });

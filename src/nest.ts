@@ -36,11 +36,10 @@ export const SPEC = 'spec';
  * @return
  */
 export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModelGroup {
-
-  const rootGroup: SpecQueryModelGroup = new SpecQueryModelGroup();
-  let groupIndex: Dict<SpecQueryModelGroup> = {};
-
   if (query.nest) {
+    const rootGroup: SpecQueryModelGroup = new SpecQueryModelGroup();
+    let groupIndex: Dict<SpecQueryModelGroup> = {};
+
     // global `includes` and `replaces` will get augmented by each level's groupBy.
     // Upper level's `groupBy` will get cascaded to lower-level groupBy.
     // `replace` can be overriden in a lower-level to support different grouping.
@@ -92,10 +91,11 @@ export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModel
       }
       group.items.push(specM);
     });
+    return rootGroup;
   } else {
-    rootGroup.items = specModels;
+    // no nesting, just return a flat group
+    return new SpecQueryModelGroup('', '', specModels);
   }
-  return rootGroup;
 }
 
 

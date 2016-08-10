@@ -4,28 +4,9 @@ import {EncodingQuery} from '../../query/encoding';
 import {Dict} from '../../util';
 
 import {Schema} from '../../schema';
+import {FeatureScore, FeatureFactory, RankingScore} from '../ranking';
 import {TypeChannelScore, MarkChannelScore, PreferredAxisScore, PreferredFacetScore} from './channel';
 import {MarkScore} from './mark';
-
-export interface FeatureScore {
-  score: number;
-  type: string;
-  feature: string;
-}
-
-export interface FeatureInitializer {
-  (): Dict<number>;
-}
-
-export interface Featurizer {
-  (specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore[];
-}
-
-export interface FeatureFactory {
-  type: string;
-  init: FeatureInitializer;
-  getScore: Featurizer;
-}
 
 export let FEATURE_INDEX = {} as Dict<Dict<number>>;
 let FEATURE_FACTORIES: FeatureFactory[] = [];
@@ -88,7 +69,7 @@ export function getExtendedType(encQ: EncodingQuery) {
 }
 
 
-export default function (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) {
+export default function (specM: SpecQueryModel, schema: Schema, opt: QueryConfig): RankingScore {
   const features = FEATURE_FACTORIES.reduce((f, factory) => {
     const scores = factory.getScore(specM, schema, opt);
     return f.concat(scores);

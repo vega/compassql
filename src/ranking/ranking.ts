@@ -5,10 +5,31 @@ import {Dict} from '../util';
 import {Schema} from '../schema';
 
 export import effectiveness = require('./effectiveness/effectiveness');
+export import aggregation = require('./aggregation');
 
 export interface RankingScore {
   score: number;
-  [metadata: string]: any;
+  features: FeatureScore[];
+}
+
+export interface FeatureScore {
+  score: number;
+  type: string;
+  feature: string;
+}
+
+export interface FeatureInitializer {
+  (): Dict<number>;
+}
+
+export interface Featurizer {
+  (specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore[];
+}
+
+export interface FeatureFactory {
+  type: string;
+  init: FeatureInitializer;
+  getScore: Featurizer;
 }
 
 export interface RankingFunction {
@@ -38,9 +59,7 @@ export function rank(group: SpecQueryModelGroup, query: Query, schema: Schema, l
       if (query.chooseBy) {
         if (group.items.length > 0) {
           // for chooseBy -- only keep the top-item
-          group.items = [group.items[0]];
-        } else { // except when the group is empty
-          group.items = [];
+          group.items.splice(1);
         }
       }
     }
@@ -82,3 +101,5 @@ export function groupComparator(name: string, schema: Schema, opt: QueryConfig) 
 
 export const EFFECTIVENESS = 'effectiveness';
 register(EFFECTIVENESS, effectiveness.default);
+
+register(aggregation.name, aggregation.score);

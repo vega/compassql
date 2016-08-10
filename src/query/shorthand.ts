@@ -29,10 +29,13 @@ export function value(v: any, replace: Replacer): any {
   return v;
 }
 
-export const INCLUDE_ALL: Dict<boolean> = DEFAULT_PROPERTY_PRECEDENCE.reduce((m, prop) => {
-  m[prop] = true;
-  return m;
-}, {} as Dict<boolean>);
+export const INCLUDE_ALL: Dict<boolean> =
+  // TODO: remove manual stack concat once we really support enumerating it.
+  DEFAULT_PROPERTY_PRECEDENCE.concat([Property.STACK])
+    .reduce((m, prop) => {
+      m[prop] = true;
+      return m;
+    }, {} as Dict<boolean>);
 
 /**
  * Returns a shorthand for a spec query
@@ -53,20 +56,22 @@ export function spec(specQ: SpecQuery,
   // TODO: transform
 
   // TODO: extract this to its own stack method
-  // TODO: stack Property
-  const _stack = stack(specQ);
-  if (_stack) {
-    // TODO: Refactor this once we have property stack property.
-    // Exclude type since we don't care about type in stack
-    const includeExceptType = extend({}, include, {type: false});
+  if (include[Property.STACK]) {
+    const _stack = stack(specQ);
+    if (_stack) {
+      // TODO: Refactor this once we have child stack property.
 
-    const field = fieldDef(_stack.fieldEncQ, includeExceptType, replace);
-    const groupby = fieldDef(_stack.groupByEncQ, includeExceptType, replace);
-    parts.push(
-      `stack={field:${field},` +
-      (groupby ? `by:${groupby},` : '') +
-      `offset:${_stack.offset}}`
-    );
+      // Exclude type since we don't care about type in stack
+      const includeExceptType = extend({}, include, {type: false});
+
+      const field = fieldDef(_stack.fieldEncQ, includeExceptType, replace);
+      const groupby = fieldDef(_stack.groupByEncQ, includeExceptType, replace);
+      parts.push(
+        `stack={field:${field},` +
+        (groupby ? `by:${groupby},` : '') +
+        `offset:${_stack.offset}}`
+      );
+    }
   }
 
   parts.push(specQ.encodings.reduce((encQs, encQ) => {
