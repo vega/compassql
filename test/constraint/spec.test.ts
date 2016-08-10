@@ -858,6 +858,26 @@ describe('constraints/spec', () => {
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
+    it('should not exclude aggregate if aggregate if it is still an enum spec', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {aggregate: SHORT_ENUM_SPEC, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should not exclude autocount if it is still an enum spec', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {autoCount: SHORT_ENUM_SPEC, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
     it('should return true if data is aggregate', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
