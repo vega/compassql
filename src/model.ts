@@ -480,10 +480,10 @@ export class SpecQueryModelGroup {
     this._orderGroupBy = orderGroupBy;
   }
 
-  public getTopSpecQueryModel(g: SpecQueryModelGroup): SpecQueryModel {
-    const topItem = g._items[0];
+  public getTopSpecQueryModel(): SpecQueryModel {
+    const topItem = this._items[0];
     if (topItem instanceof SpecQueryModelGroup) {
-      return this.getTopSpecQueryModel(topItem);
+      return topItem.getTopSpecQueryModel();
     } else {
       return topItem;
     }
