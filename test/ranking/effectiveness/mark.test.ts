@@ -3,7 +3,7 @@ import {POINT, TICK, BAR, LINE, AREA, RULE, TEXT as TEXTMARK} from 'vega-lite/sr
 import {BIN_Q, TIMEUNIT_T, Q, N, O, T} from '../../../src/ranking/effectiveness/type';
 import {MarkScore} from '../../../src/ranking/effectiveness/mark';
 import {nestedMap} from '../../../src/util';
-import {RuleSet, testRuleSet} from './rule';
+import {testRuleSet} from '../rule';
 
 const MARK_SCORE = MarkScore.init();
 

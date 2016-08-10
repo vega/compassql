@@ -3,7 +3,7 @@ import {X, Y, SIZE, COLOR, OPACITY, TEXT, ROW, COLUMN, SHAPE, DETAIL} from 'vega
 import {BIN_Q, TIMEUNIT_T, Q, N, O, T} from '../../../src/ranking/effectiveness/type';
 import {TypeChannelScore, PreferredAxisScore, PreferredFacetScore, DimensionScore} from '../../../src/ranking/effectiveness/channel';
 import {nestedMap} from '../../../src/util';
-import {RuleSet, testRuleSet} from './rule';
+import {RuleSet, testRuleSet} from '../rule';
 
 export const TYPE_CHANNEL_RULESET: RuleSet<string> = {
   name: 'typeChannelScore (quantitative)',

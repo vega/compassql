@@ -9,7 +9,7 @@ import {SpecQueryModel} from '../../../src/model';
 import {extend, nestedMap} from '../../../src/util';
 import effectiveness from '../../../src/ranking/effectiveness/effectiveness';
 import {schema} from '../../fixture';
-import {RuleSet, Rule, testRuleSet} from './rule';
+import {RuleSet, Rule, testRuleSet} from '../rule';
 
 function build(specQ) {
   return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
