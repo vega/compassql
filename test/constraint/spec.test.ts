@@ -7,14 +7,14 @@ import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX, SpecConstraintModel} from '../../src/constraint/spec';
-import {Property} from '../../src/property';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
+import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX, SpecConstraintModel} from '../../src/constraint/spec';
+import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {SpecQuery} from '../../src/query/spec';
-import {SHORT_ENUM_SPEC} from '../../src/enumspec';
-import {duplicate, extend} from '../../src/util';
+import {Property} from '../../src/property';
+import {duplicate} from '../../src/util';
 
 describe('constraints/spec', () => {
   const defaultOpt = DEFAULT_QUERY_CONFIG;
@@ -470,8 +470,6 @@ describe('constraints/spec', () => {
   });
 
   describe('omitAggregate', () => {
-    const CONFIG_WITH_OMIT_AGGREGATE = extend({}, DEFAULT_QUERY_CONFIG, {omitAggregate: true});
-
     it('should return true if there is only raw data', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
@@ -479,7 +477,7 @@ describe('constraints/spec', () => {
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregate'].satisfy(specM, schema, CONFIG_WITH_OMIT_AGGREGATE));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregate'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return false if there is aggregate data', () => {
@@ -489,7 +487,7 @@ describe('constraints/spec', () => {
           {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregate'].satisfy(specM, schema, CONFIG_WITH_OMIT_AGGREGATE));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregate'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 
@@ -529,6 +527,39 @@ describe('constraints/spec', () => {
         ]
       });
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, defaultOpt));
+    });
+  });
+
+  describe('omitAggregatePlotWithoutDimension', () => {
+    it('should return false if plot is aggregate and has no dimension', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithoutDimension'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return true if plot is aggregate and has dimension', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.NOMINAL, aggregate: AggregateOp.MEAN},
+          {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithoutDimension'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return true if plot is not aggregate', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'N', type: Type.NOMINAL}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithoutDimension'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 
@@ -817,8 +848,6 @@ describe('constraints/spec', () => {
   });
 
   describe('omitRaw', () => {
-    const CONFIG_WITH_OMIT_RAW = extend({}, DEFAULT_QUERY_CONFIG, {omitRaw: true});
-
     it('should return false if there is raw data', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
@@ -826,7 +855,7 @@ describe('constraints/spec', () => {
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, CONFIG_WITH_OMIT_RAW));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if data is aggregate', () => {
@@ -836,7 +865,7 @@ describe('constraints/spec', () => {
           {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, CONFIG_WITH_OMIT_RAW));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 

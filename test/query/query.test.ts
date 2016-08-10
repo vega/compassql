@@ -5,14 +5,86 @@ import {assert} from 'chai';
 
 import {schema} from '../fixture';
 
+import {DEFAULT_QUERY_CONFIG} from '../../src/config';
+import {EnumSpec, SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {SpecQueryModel} from '../../src/model';
 import {isSpecQueryModelGroup, SpecQueryModelGroup} from '../../src/modelgroup';
 import {normalize, query, Query} from '../../src/query/query';
-import {EnumSpec} from '../../src/enumspec';
-import {duplicate} from '../../src/util';
+import {Property} from '../../src/property';
+import {duplicate, extend} from '../../src/util';
 
 describe('query/query', () => {
   describe('query()', () => {
+    describe('omitAggregatePlotWithoutDimension', () => {
+      it('?(Q) x ?(Q) should not produce MEAN(Q)xMEAN(Q) if omitAggregatePlotWithoutDimension is enabled.', () => {
+        const q = {
+          spec: {
+            mark: Mark.POINT,
+            encodings:[
+              {
+                channel: Channel.X,
+                bin: SHORT_ENUM_SPEC,
+                aggregate: SHORT_ENUM_SPEC,
+                field: 'Q',
+                type: Type.QUANTITATIVE
+              },
+              {
+                channel: Channel.Y,
+                bin: SHORT_ENUM_SPEC,
+                aggregate: SHORT_ENUM_SPEC,
+                field: 'Q1',
+                type: Type.QUANTITATIVE
+              }
+            ],
+          },
+          nest: [{
+            groupBy: [Property.FIELD, Property.AGGREGATE, Property.BIN, Property.TIMEUNIT]
+          }],
+          config: {
+            autoAddCount: true,
+            omitAggregatePlotWithoutDimension: true
+          }
+        };
+        const CONFIG_WITH_OMIT_AGGREGATE_PLOT_WITHOUT_DIMENSION = extend({}, DEFAULT_QUERY_CONFIG, {omitAggregatePlotWithoutDimension: true});
+        const result = query(q, schema, CONFIG_WITH_OMIT_AGGREGATE_PLOT_WITHOUT_DIMENSION).result;
+        assert.equal(result.items.length, 6);
+      });
+
+      it('?(Q) x ?(Q) should produce MEAN(Q)xMEAN(Q) if omitAggregatePlotWithoutDimension is disabled.', () => {
+        const q = {
+          spec: {
+            mark: Mark.POINT,
+            encodings:[
+              {
+              channel: Channel.X,
+              bin: SHORT_ENUM_SPEC,
+              aggregate: SHORT_ENUM_SPEC,
+              field: 'Q',
+              type: Type.QUANTITATIVE
+              },
+              {
+              channel: Channel.Y,
+              bin: SHORT_ENUM_SPEC,
+              aggregate: SHORT_ENUM_SPEC,
+              field: 'Q1',
+              type: Type.QUANTITATIVE
+              }
+            ],
+          },
+          nest: [{
+            groupBy: [Property.FIELD, Property.AGGREGATE, Property.BIN, Property.TIMEUNIT]
+          }],
+          config: {
+            autoAddCount: true,
+            omitAggregatePlotWithoutDimension: false
+          }
+        };
+        const CONFIG_WITH_OMIT_AGGREGATE_PLOT_WITHOUT_DIMENSION = extend({}, DEFAULT_QUERY_CONFIG, {omitAggregatePlotWithoutDimension: false});
+        const result = query(q, schema, CONFIG_WITH_OMIT_AGGREGATE_PLOT_WITHOUT_DIMENSION).result;
+        assert.equal(result.items.length, 7);
+      });
+    });
+
     describe('nested query', () => {
       const q: Query = {
         spec: {
@@ -49,6 +121,7 @@ describe('query/query', () => {
         assert.deepEqual(q, qCopy);
       });
     });
+
     it('enumerates a flat query correctly ', () => {
       const q: Query = {
         spec: {
