@@ -6,7 +6,8 @@ import {SpecQueryModel} from '../../model';
 import {Dict, forEach} from '../../util';
 import {Schema} from '../../schema';
 
-import {FeatureScore, getExtendedType, getFeatureScore} from './effectiveness';
+import {FeatureScore} from '../ranking';
+import {getExtendedType, getFeatureScore} from './effectiveness';
 import {BIN_Q, TIMEUNIT_T, Q, N, O, T, NONE} from './type';
 
 export namespace MarkScore {

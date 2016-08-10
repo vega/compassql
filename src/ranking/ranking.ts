@@ -9,7 +9,27 @@ export import effectiveness = require('./effectiveness/effectiveness');
 
 export interface RankingScore {
   score: number;
-  [metadata: string]: any;
+  features: FeatureScore[];
+}
+
+export interface FeatureScore {
+  score: number;
+  type: string;
+  feature: string;
+}
+
+export interface FeatureInitializer {
+  (): Dict<number>;
+}
+
+export interface Featurizer {
+  (specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore[];
+}
+
+export interface FeatureFactory {
+  type: string;
+  init: FeatureInitializer;
+  getScore: Featurizer;
 }
 
 export interface RankingFunction {

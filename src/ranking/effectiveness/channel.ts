@@ -7,7 +7,8 @@ import {EncodingQuery} from '../../query/encoding';
 import {Dict, extend, forEach, keys} from '../../util';
 
 import {Schema} from '../../schema';
-import {FeatureScore, getExtendedType, getFeatureScore} from './effectiveness';
+import {FeatureScore} from '../ranking';
+import {getExtendedType, getFeatureScore} from './effectiveness';
 import {BIN_Q, TIMEUNIT_T, Q, N, O, T} from './type';
 
 /**
