@@ -6,6 +6,7 @@ import {Dict} from '../util';
 import {Schema} from '../schema';
 
 export import effectiveness = require('./effectiveness/effectiveness');
+export import aggregation = require('./aggregation');
 
 export interface RankingScore {
   score: number;
@@ -103,3 +104,5 @@ export function groupComparator(name: string, schema: Schema, opt: QueryConfig) 
 
 export const EFFECTIVENESS = 'effectiveness';
 register(EFFECTIVENESS, effectiveness.default);
+
+register(aggregation.name, aggregation.score);

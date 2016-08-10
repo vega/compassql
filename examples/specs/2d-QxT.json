@@ -18,7 +18,10 @@
     ]
   },
   "nest": [
-    {"groupBy": ["field", "aggregate", "bin", "timeUnit"]},
+    {
+      "groupBy": ["field", "aggregate", "bin", "timeUnit"],
+      "orderGroupBy": "aggregationQuality"
+    },
     {
       "groupBy": [{
         "property": "channel",

@@ -23,6 +23,11 @@ const fixtures: FieldSchema[] = [{
   primitiveType: PrimitiveType.DATE,
   stats: {distinct: 100} as any // HACK so that we don't have to define all summary properties
 },{
+  field: 'T1',
+  type: Type.TEMPORAL,
+  primitiveType: PrimitiveType.DATE,
+  stats: {distinct: 100} as any // HACK so that we don't have to define all summary properties
+},{
   field: 'O',
   type: Type.ORDINAL,
   primitiveType: PrimitiveType.STRING,
