@@ -18,7 +18,7 @@ export const TYPE_CHANNEL_RULESET: RuleSet<string> = {
       };
     }),
     [BIN_Q, TIMEUNIT_T, O].map((type) => {
-      const order = [[X, Y], SIZE, [ROW, COLUMN], COLOR, OPACITY, SHAPE, DETAIL];
+      const order = [[X, Y], SIZE, COLOR, [ROW, COLUMN], OPACITY, SHAPE, DETAIL];
       return {
         name: type + '',
         items: nestedMap(order, (channel) => {

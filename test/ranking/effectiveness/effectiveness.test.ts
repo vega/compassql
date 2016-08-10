@@ -197,7 +197,16 @@ export const SET_3D: RuleSet<SpecQueryModel> = {
           {channel: Y, field: 'Q1', type: Type.QUANTITATIVE},
           {channel: COLOR, field: 'N', type: Type.NOMINAL}
         ]
-      },{
+      },[ROW, COLUMN].map((facet) => {
+        return {
+          mark: POINT,
+          encodings: [
+            {channel: X, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Y, field: 'Q1', type: Type.QUANTITATIVE},
+            {channel: facet, field: 'N', type: Type.NOMINAL}
+          ]
+        };
+      }),{
         mark: POINT,
         encodings: [
           {channel: X, field: 'Q', type: Type.QUANTITATIVE},
@@ -217,7 +226,16 @@ export const SET_3D: RuleSet<SpecQueryModel> = {
           {channel: Y, field: 'Q1', type: Type.QUANTITATIVE},
           {channel: COLOR, field: 'O', type: Type.ORDINAL}
         ]
-      },{
+      },[ROW, COLUMN].map((facet) => {
+        return {
+          mark: POINT,
+          encodings: [
+            {channel: X, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Y, field: 'Q1', type: Type.QUANTITATIVE},
+            {channel: facet, field: 'O', type: Type.ORDINAL}
+          ]
+        };
+      }),{
         mark: POINT,
         encodings: [
           {channel: X, field: 'Q', type: Type.QUANTITATIVE},
