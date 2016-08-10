@@ -38,9 +38,7 @@ export function rank(group: SpecQueryModelGroup, query: Query, schema: Schema, l
       if (query.chooseBy) {
         if (group.items.length > 0) {
           // for chooseBy -- only keep the top-item
-          group.items = [group.items[0]];
-        } else { // except when the group is empty
-          group.items = [];
+          group.items.splice(1);
         }
       }
     }

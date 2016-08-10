@@ -497,10 +497,6 @@ export class SpecQueryModelGroup {
     return this._items;
   }
 
-  public set items(items: (SpecQueryModel | SpecQueryModelGroup)[]) {
-    this._items = items;
-  }
-
   public get groupBy() {
     return this._groupBy;
   }
