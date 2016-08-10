@@ -67,6 +67,7 @@ export interface QueryConfig {
   // Spec Constraints
 
   hasAppropriateGraphicTypeForMark?: boolean;
+  omitAggregate?: boolean;
   omitAggregatePlotWithDimensionOnlyOnFacet?: boolean;
   omitAggregatePlotWithoutDimension?: boolean;
   omitBarLineAreaWithOcclusion?: boolean;
@@ -74,6 +75,7 @@ export interface QueryConfig {
   omitFacetOverPositionalChannels?: boolean;
   omitMultipleNonPositionalChannels?: boolean;
   omitNonSumStack?: boolean;
+  omitRaw?: boolean;
   omitRawContinuousFieldForAggregatePlot?: boolean;
   omitRawWithXYBothOrdinalScaleOrBin?: boolean;
   omitRepeatedField?: boolean;
@@ -137,6 +139,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   autoAddCount: false,
 
   hasAppropriateGraphicTypeForMark: true,
+  omitAggregate: false,
   omitAggregatePlotWithDimensionOnlyOnFacet: true,
   omitAggregatePlotWithoutDimension: false,
   omitBarLineAreaWithOcclusion: true,
@@ -144,6 +147,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   omitFacetOverPositionalChannels: true,
   omitMultipleNonPositionalChannels: true,
   omitNonSumStack: true,
+  omitRaw: false,
   omitRawContinuousFieldForAggregatePlot: true,
   omitRepeatedField: true,
   omitNonPositionalOverPositionalChannels: true,

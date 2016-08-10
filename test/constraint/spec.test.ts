@@ -469,6 +469,30 @@ describe('constraints/spec', () => {
     });
   });
 
+  describe('omitAggregate', () => {
+    const CONFIG_WITH_OMIT_AGGREGATE = extend({}, DEFAULT_QUERY_CONFIG, {omitAggregate: true});
+
+    it('should return true if there is only raw data', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregate'].satisfy(specM, schema, CONFIG_WITH_OMIT_AGGREGATE));
+    });
+
+    it('should return false if there is aggregate data', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregate'].satisfy(specM, schema, CONFIG_WITH_OMIT_AGGREGATE));
+    });
+  });
+
   describe('omitAggregatePlotWithDimensionOnlyOnFacet', () => {
     it('should return false if the only dimension is facet', () => {
       const specM = buildSpecQueryModel({
@@ -822,6 +846,30 @@ describe('constraints/spec', () => {
         });
         assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specM, schema, defaultOpt));
       });
+    });
+  });
+
+  describe('omitRaw', () => {
+    const CONFIG_WITH_OMIT_RAW = extend({}, DEFAULT_QUERY_CONFIG, {omitRaw: true});
+
+    it('should return false if there is raw data', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, CONFIG_WITH_OMIT_RAW));
+    });
+
+    it('should return true if data is aggregate', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, CONFIG_WITH_OMIT_RAW));
     });
   });
 
