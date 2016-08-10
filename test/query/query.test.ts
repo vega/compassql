@@ -10,6 +10,7 @@ import {isSpecQueryModelGroup, SpecQueryModelGroup} from '../../src/modelgroup';
 import {normalize, query, Query} from '../../src/query/query';
 import {EnumSpec} from '../../src/enumspec';
 import {duplicate} from '../../src/util';
+import {Schema} from '../../src/schema';
 
 describe('query/query', () => {
   describe('query()', () => {
@@ -64,6 +65,29 @@ describe('query/query', () => {
       assert.equal(result.items.length, 2);
       assert.equal((<SpecQueryModel>result.items[0]).specQuery.mark, 'tick');
       assert.equal((<SpecQueryModel>result.items[1]).specQuery.mark, 'point');
+    });
+    it('correctly overrides properties of the provided schema when q has a schema property specified', () => {
+      const q: Query = {
+        spec: {
+          data: {
+            values: [
+              {x: '1/1/2000'}
+            ]
+          },
+          mark: 'point',
+          encodings: [
+            {channel: Channel.X, field: 'x', type: Type.TEMPORAL}
+          ]
+        },
+        orderBy: 'effectiveness',
+        schema: {x: {type: 'nominal'}}
+      };
+      const s = Schema.build(q.spec.data.values);
+      const result = query(q, s).result;
+
+      // result should have a schema with the x field as nominal
+      assert.equal(result.items[0]['_schema'].fieldSchemas[0].type, Type.NOMINAL);
+      assert.equal(result.items[0]['_schema'].fieldSchemaIndex['x'].type, Type.NOMINAL);
     });
   });
 

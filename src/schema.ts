@@ -204,6 +204,14 @@ export class Schema {
     const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
     return fieldSchema ? fieldSchema.stats : null;
   }
+
+  /**
+   * Get a field schema.
+   * @return a reference to the FieldSchema associated with the given field
+   */
+  public getSchema(field: string) {
+    return this.fieldSchemaIndex[field];
+  }
 }
 
 /**
