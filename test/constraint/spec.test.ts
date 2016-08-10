@@ -858,7 +858,7 @@ describe('constraints/spec', () => {
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should not exclude aggregate if aggregate if it is still an enum spec', () => {
+    it('should not exclude aggregate if it is still an enum spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
