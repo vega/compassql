@@ -108,18 +108,18 @@ describe('2D aggregate', () => {
           mark: Mark.POINT,
           encodings:[
             {
-            channel: Channel.X,
-            bin: SHORT_ENUM_SPEC,
-            aggregate: SHORT_ENUM_SPEC,
-            field: 'Q',
-            type: Type.QUANTITATIVE
+              channel: Channel.X,
+              bin: SHORT_ENUM_SPEC,
+              aggregate: SHORT_ENUM_SPEC,
+              field: 'Q',
+              type: Type.QUANTITATIVE
             },
             {
-            channel: Channel.Y,
-            bin: SHORT_ENUM_SPEC,
-            aggregate: SHORT_ENUM_SPEC,
-            field: 'Q1',
-            type: Type.QUANTITATIVE
+              channel: Channel.Y,
+              bin: SHORT_ENUM_SPEC,
+              aggregate: SHORT_ENUM_SPEC,
+              field: 'Q1',
+              type: Type.QUANTITATIVE
             }
           ],
         },
