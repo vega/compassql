@@ -548,7 +548,8 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, field: 'N', type: Type.NOMINAL, aggregate: AggregateOp.MEAN}
+          {channel: Channel.X, field: 'Q', type: Type.NOMINAL, aggregate: AggregateOp.MEAN},
+          {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
         ]
       });
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithoutDimension'].satisfy(specM, schema, CONFIG_WITH_OMIT_AGGREGATE_PLOT_WITHOUT_DIMENSION));
