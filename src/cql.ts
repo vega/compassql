@@ -8,7 +8,6 @@ export import enumerate = require('./enumerator');
 export import enumSpec = require('./enumspec');
 export {generate} from './generate';
 export import model = require('./model');
-export import modelGroup = require('./modelgroup');
 export import nest = require('./nest');
 export import property = require('./property');
 

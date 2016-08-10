@@ -13,6 +13,7 @@ import {EnumSpec, SHORT_ENUM_SPEC, initEnumSpec, isEnumSpec} from './enumspec';
 import {EnumSpecIndex} from './enumspecindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
+import {GroupBy} from './query/groupby';
 import {spec as specShorthand} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
@@ -460,5 +461,67 @@ export class SpecQueryModel {
 
   public setRankingScore(rankingName: string, score: RankingScore) {
     this._rankingScore[rankingName] = score;
+  }
+}
+
+export class SpecQueryModelGroup {
+  private _name: string;
+  private _path: string;
+  private _items: (SpecQueryModel | SpecQueryModelGroup)[];
+  private _groupBy: GroupBy;
+  private _orderGroupBy: string;
+
+  constructor(name: string = '', path: string = '', items: (SpecQueryModel | SpecQueryModelGroup)[] = [],
+              groupBy: GroupBy = undefined, orderGroupBy: string = undefined) {
+    this._name = name;
+    this._path = path;
+    this._items = items;
+    this.groupBy = groupBy;
+    this._orderGroupBy = orderGroupBy;
+  }
+
+  public getTopSpecModel(g: SpecQueryModelGroup): SpecQueryModel {
+    const topItem = g._items[0];
+    if (topItem instanceof SpecQueryModelGroup) {
+      return this.getTopSpecModel(topItem);
+    } else {
+      return topItem;
+    }
+  }
+
+  public get name() {
+    return this._name;
+  }
+
+  public set name(name: string) {
+    this._name = name;
+  }
+
+  public get path() {
+    return this._path;
+  }
+
+  public set path(path: string) {
+    this._path = path;
+  }
+
+  public get items() {
+    return this._items;
+  }
+
+  public set items(items: (SpecQueryModel | SpecQueryModelGroup)[]) {
+    this._items = items;
+  }
+
+  public set groupBy(groupBy: GroupBy) {
+    this._groupBy = groupBy;
+  }
+
+  public get orderGroupBy() {
+    return this._orderGroupBy;
+  }
+
+  public set orderGroupBy(orderGroupBy: string) {
+    this._orderGroupBy = orderGroupBy;
   }
 }
