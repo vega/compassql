@@ -267,7 +267,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'omitAggregatePlotWithoutDimension',
     description: 'Aggregate plots without dimension should be omitted',
-    properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TYPE],
+    properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.BIN, Property.TIMEUNIT, Property.TYPE],
     allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
