@@ -108,10 +108,13 @@ export namespace PreferredAxisScore {
     let score: Dict<number> = {};
 
     const preferredAxes = [{
-      feature: 'bin_' + Q,
+      feature: BIN_Q,
       opt: 'preferredBinAxis'
     },{
       feature: T,
+      opt: 'preferredTemporalAxis'
+    },{
+      feature: TIMEUNIT_T,
       opt: 'preferredTemporalAxis'
     },{
       feature: O,

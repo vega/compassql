@@ -48,7 +48,7 @@ describe('typeChannelScore', () => {
 export const PREFERRED_AXIS_RULESET: RuleSet<string> = {
   name: 'preferredAxisScore (bin, temporal)',
   rules: [].concat(
-    [BIN_Q, T].map((type) => {
+    [BIN_Q, TIMEUNIT_T, T].map((type) => {
       return {
         name: type + '',
         items: nestedMap([X, Y], (channel) => {
