@@ -13,7 +13,7 @@
   },
   "nest": [
     {
-      "groupBy": ["field", "aggregate", "bin", "timeUnit"],
+      "groupBy": ["field", "aggregate", "bin", "timeUnit", "stack"],
       "orderGroupBy": "aggregationQuality"
     },
     {"groupBy": "encoding", "orderGroupBy": "effectiveness"},

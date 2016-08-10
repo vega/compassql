@@ -72,7 +72,8 @@ describe('nest', () => {
             groupBy: [
               Property.AGGREGATE,
               Property.TIMEUNIT,
-              Property.BIN
+              Property.BIN,
+              Property.STACK
             ]
           }],
           config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG)
@@ -84,6 +85,35 @@ describe('nest', () => {
         assert.equal(groups.length, 1);
         assert.equal(groups[0].name, 'Q');
         assert.equal(groups[0].items.length, 3);
+      });
+
+      it('should group stacked and non-stacked plots of same fields in the same group', () => {
+        const query = {
+          spec: {
+            mark: SHORT_ENUM_SPEC,
+            encodings: [{
+              channel: SHORT_ENUM_SPEC,
+              field: 'N',
+              type: Type.NOMINAL
+            },{
+              channel: SHORT_ENUM_SPEC,
+              field: 'N1',
+              type: Type.NOMINAL
+            }]
+          },
+          nest: [{
+            groupBy: [
+              {property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}
+            ]
+          }],
+          config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG)
+        };
+
+        const answerSet = generate(query.spec, schema);
+        const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
+
+        assert.equal(groups.length, 1);
+        assert.equal(groups[0].name, 'N|N1');
       });
     });
   });
@@ -113,7 +143,8 @@ describe('nest', () => {
             Property.TYPE,
             Property.AGGREGATE,
             Property.BIN,
-            Property.TIMEUNIT
+            Property.TIMEUNIT,
+            Property.STACK
           ]
         }],
         config: DEFAULT_QUERY_CONFIG
@@ -155,6 +186,7 @@ describe('nest', () => {
             Property.AGGREGATE,
             Property.BIN,
             Property.TIMEUNIT,
+            Property.STACK,
             {property: Property.CHANNEL, replace: REPLACE_MARK_STYLE_CHANNELS}
           ]
         }],
@@ -191,6 +223,7 @@ describe('nest', () => {
             Property.AGGREGATE,
             Property.BIN,
             Property.TIMEUNIT,
+            Property.STACK,
             {property: Property.CHANNEL, replace: REPLACE_MARK_STYLE_CHANNELS}
           ]
         }],
@@ -227,6 +260,7 @@ describe('nest', () => {
             Property.AGGREGATE,
             Property.BIN,
             Property.TIMEUNIT,
+            Property.STACK,
             {property: Property.CHANNEL, replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)}
           ]
         }],
@@ -264,6 +298,7 @@ describe('nest', () => {
             Property.AGGREGATE,
             Property.BIN,
             Property.TIMEUNIT,
+            Property.STACK,
             {property: Property.CHANNEL, replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)}
           ]
         }],
@@ -310,6 +345,7 @@ describe('nest', () => {
             Property.AGGREGATE,
             Property.BIN,
             Property.TIMEUNIT,
+            Property.STACK,
             {property: Property.CHANNEL, replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)}
           ]
         }, {

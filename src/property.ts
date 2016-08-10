@@ -2,10 +2,13 @@ import {Dict} from './util';
 import {ScaleType} from 'vega-lite/src/scale';
 
 export enum Property {
+  MARK = 'mark' as any,
+
   // TODO: Filter (Field, Value?)
 
-
-  MARK = 'mark' as any,
+  // Layout
+  STACK = 'stack' as any,
+  // TODO: sub parts of stack
 
   // Encoding Properties
   CHANNEL = 'channel' as any,
@@ -54,6 +57,7 @@ export function hasNestedProperty(prop: Property) {
       // TODO: AXIS, LEGEND
       return true;
     case Property.MARK:
+    case Property.STACK:
     case Property.CHANNEL:
     case Property.AGGREGATE:
     case Property.AUTOCOUNT:
@@ -107,6 +111,8 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   // Projection
   Property.TYPE, // type is a constraint for field
   Property.FIELD,
+
+  // TODO: Add stack and remove it from INCLUDE_ALL in shorthand
 
   // Field Transform
   Property.BIN,
