@@ -858,7 +858,7 @@ describe('constraints/spec', () => {
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should not exclude aggregate if it is still an enum spec', () => {
+    it('It should return true if there is an enum spec aggregate', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
@@ -868,7 +868,7 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should not exclude autocount if it is still an enum spec', () => {
+    it('It should return true if there is an enum spec autoCount', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
