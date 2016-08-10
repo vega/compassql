@@ -2,8 +2,7 @@ import {Channel} from 'vega-lite/src/channel';
 import {isArray} from 'datalib/src/util';
 
 import {EnumSpec, isEnumSpec, SHORT_ENUM_SPEC} from './enumspec';
-import {SpecQueryModel} from './model';
-import {SpecQueryModelGroup} from './modelgroup';
+import {SpecQueryModel, SpecQueryModelGroup} from './model';
 import {Property} from './property';
 import {Dict, duplicate, keys} from './util';
 
@@ -38,7 +37,7 @@ export const SPEC = 'spec';
  */
 export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModelGroup {
 
-  const rootGroup: SpecQueryModelGroup = { name: '', path: '', items: []};
+  const rootGroup: SpecQueryModelGroup = new SpecQueryModelGroup();
   let groupIndex: Dict<SpecQueryModelGroup> = {};
 
   if (query.nest) {
@@ -85,11 +84,8 @@ export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModel
 
         path += '/' + key;
         if (!groupIndex[path]) { // this item already exists on the path
-          groupIndex[path] = {
-            name: key,
-            path: path,
-            items: []
-          };
+          groupIndex[path] = new SpecQueryModelGroup(key, path, []);
+
           group.items.push(groupIndex[path]);
         }
         group = groupIndex[path];

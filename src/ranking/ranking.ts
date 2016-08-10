@@ -1,6 +1,5 @@
 import {QueryConfig} from '../config';
-import {SpecQueryModel} from '../model';
-import {SpecQueryModelGroup, getTopItem} from '../modelgroup';
+import {SpecQueryModel, SpecQueryModelGroup} from '../model';
 import {Query} from '../query/query';
 import {Dict} from '../util';
 import {Schema} from '../schema';
@@ -75,8 +74,8 @@ export function comparator(name: string, schema: Schema, opt: QueryConfig) {
 
 export function groupComparator(name: string, schema: Schema, opt: QueryConfig) {
   return (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup) => {
-    const m1 = getTopItem(g1);
-    const m2 = getTopItem(g2);
+    const m1 = g1.getTopSpecModel(g1);
+    const m2 = g2.getTopSpecModel(g2);
     return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
   };
 }

@@ -7,8 +7,7 @@ import {schema} from '../fixture';
 
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {EnumSpec, SHORT_ENUM_SPEC} from '../../src/enumspec';
-import {SpecQueryModel} from '../../src/model';
-import {isSpecQueryModelGroup, SpecQueryModelGroup} from '../../src/modelgroup';
+import {SpecQueryModel, SpecQueryModelGroup} from '../../src/model';
 import {normalize, query, Query} from '../../src/query/query';
 import {Property} from '../../src/property';
 import {duplicate, extend} from '../../src/util';
@@ -103,10 +102,10 @@ describe('query/query', () => {
       const result = output.result;
 
       it('enumerates a nested query correctly ', () => {
-        assert.isTrue(isSpecQueryModelGroup(result.items[0]));
-        if (isSpecQueryModelGroup(result.items[0])) {
+        assert.isTrue(result.items[0] instanceof SpecQueryModelGroup);
+        if (result.items[0] instanceof SpecQueryModelGroup) {
           const group1: SpecQueryModelGroup = <SpecQueryModelGroup> result.items[0];
-          assert.isFalse(isSpecQueryModelGroup(group1.items[0]));
+          assert.isFalse(group1.items[0] instanceof SpecQueryModelGroup);
           assert.equal(group1.items.length, 2);
           assert.equal((<SpecQueryModel>group1.items[0]).specQuery.mark, 'tick');
           assert.equal((<SpecQueryModel>group1.items[1]).specQuery.mark, 'point');
@@ -133,7 +132,7 @@ describe('query/query', () => {
         orderBy: 'effectiveness',
       };
       const result = query(q, schema).result;
-      assert.isFalse(isSpecQueryModelGroup(result.items[0]));
+      assert.isFalse(result.items[0] instanceof SpecQueryModelGroup);
       assert.equal(result.items.length, 2);
       assert.equal((<SpecQueryModel>result.items[0]).specQuery.mark, 'tick');
       assert.equal((<SpecQueryModel>result.items[1]).specQuery.mark, 'point');
