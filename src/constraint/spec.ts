@@ -233,7 +233,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     name: 'omitAggregate',
     description: 'Omit aggregate plots.',
     properties: [Property.AGGREGATE, Property.AUTOCOUNT],
-    allowEnumSpecForProperties: false,
+    allowEnumSpecForProperties: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if (specM.isAggregate()) {
