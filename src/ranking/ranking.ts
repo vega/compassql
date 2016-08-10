@@ -74,8 +74,8 @@ export function comparator(name: string, schema: Schema, opt: QueryConfig) {
 
 export function groupComparator(name: string, schema: Schema, opt: QueryConfig) {
   return (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup) => {
-    const m1 = g1.getTopSpecQueryModel(g1);
-    const m2 = g2.getTopSpecQueryModel(g2);
+    const m1 = g1.getTopSpecQueryModel();
+    const m2 = g2.getTopSpecQueryModel();
     return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
   };
 }
