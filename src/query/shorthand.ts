@@ -108,24 +108,14 @@ export function spec(specQ: SpecQuery,
 }
 
 export function filter(_filter: string | Filter | (string | Filter)[]): string {
-  let filterExpression = '';
-
   if (_filter instanceof Array) {
-    filterExpression += _filter.map(function(filterItem) {
-      if (isString(filterItem)) {
-        return '(' + filterItem + ')';
-      } else {
-        return '(' + expression(filterItem) + ')';
-      }
-    })
-    .join(' && ');
+    const filters = _filter.map(filter);
+    return filters.length > 1 ? '(' + filters.join(') && (') + ')' : filters[0];
   } else if (typeof _filter === 'string') {
-    filterExpression += _filter;
+    return _filter;
   } else { // FilterObj
-    filterExpression += expression(_filter);
+    return expression(_filter);
   }
-
-  return filterExpression;
 }
 
 export function calculate(formulaArr: Formula[]): string {
