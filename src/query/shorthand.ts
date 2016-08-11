@@ -1,3 +1,6 @@
+import {expression} from 'vega-lite/src/filter';
+import {Filter} from 'vega-lite/src/filter';
+import {Formula} from 'vega-lite/src/transform';
 import {Type} from 'vega-lite/src/type';
 import {isString} from 'datalib/src/util';
 
@@ -53,7 +56,15 @@ export function spec(specQ: SpecQuery,
     parts.push(value(specQ.mark, replace[Property.MARK]));
   }
 
-  // TODO: transform
+  if (specQ.transform) {
+    if (specQ.transform.calculate !== undefined) {
+      parts.push(`calculate:${calculate(specQ.transform.calculate)}`);
+    }
+
+    if (specQ.transform.filter !== undefined) {
+      parts.push(`filter:${filter(specQ.transform.filter)}`);
+    }
+  }
 
   // TODO: extract this to its own stack method
   if (include[Property.STACK]) {
@@ -89,6 +100,45 @@ export function spec(specQ: SpecQuery,
   );
 
   return parts.join('|');
+}
+
+export function filter(_filter: string | Filter | (string | Filter)[]): string {
+  let filterExpression = '';
+
+  if (_filter instanceof Array) {
+    if (_filter.length > 0) {
+      if (typeof _filter[0] === 'string') {
+        filterExpression += _filter[0];
+        for (let i = 1; i < _filter.length; i++) {
+          filterExpression += ',' + _filter[i];
+        }
+      } else { // FilterObj Array
+        filterExpression += expression(_filter[0]);
+        for (let j = 1; j < _filter.length; j++) {
+          filterExpression += ',' + expression(_filter[j]);
+        }
+      }
+    }
+  } else if (typeof _filter === 'string') {
+    filterExpression += _filter;
+  } else { // FilterObj
+    filterExpression += expression(_filter);
+  }
+
+  return filterExpression;
+}
+
+export function calculate(formulaArr: Formula[]): string {
+  if (formulaArr.length > 0) {
+    let calculateExpression = '';
+    calculateExpression += `{${formulaArr[0].field}:${formulaArr[0].expr}}`;
+
+    for (let k = 1; k < formulaArr.length; k++) {
+      calculateExpression += `,{${formulaArr[k].field}:${formulaArr[k].expr}}`;
+    }
+
+    return calculateExpression;
+  }
 }
 
 /**
