@@ -90,18 +90,19 @@ export function spec(specQ: SpecQuery,
     }
   }
 
-  parts.push(specQ.encodings.reduce((encQs, encQ) => {
-      // Exclude encoding mapping with autoCount=false as they are basically disabled.
-      if (encQ.autoCount !== false) {
-        const str = encoding(encQ, include, replace);
-        if (str) { // only add if the shorthand isn't an empty string.
-          encQs.push(str);
+  parts.push(
+    specQ.encodings.reduce((encQs, encQ) => {
+        // Exclude encoding mapping with autoCount=false as they are basically disabled.
+        if (encQ.autoCount !== false) {
+          const str = encoding(encQ, include, replace);
+          if (str) { // only add if the shorthand isn't an empty string.
+            encQs.push(str);
+          }
         }
-      }
-      return encQs;
-    }, [])
-    .sort() // sort at the end to ignore order
-    .join('|')
+        return encQs;
+      }, [])
+      .sort() // sort at the end to ignore order
+      .join('|')
   );
 
   return parts.join('|');
@@ -121,8 +122,7 @@ export function filter(_filter: string | Filter | (string | Filter)[]): string {
 export function calculate(formulaArr: Formula[]): string {
   return formulaArr.map(function(calculateItem) {
     return `{${calculateItem.field}:${calculateItem.expr}}`;
-  })
-  .join(',');
+  }).join(',');
 }
 
 /**
