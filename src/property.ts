@@ -6,7 +6,7 @@ export enum Property {
 
   FILTER = 'filter' as any,
   // TODO: Sub-properties for filter
-  
+
   CALCULATE = 'calculate' as any,
   // TODO: Sub-properties for calculate
 
