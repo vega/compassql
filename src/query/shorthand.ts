@@ -34,7 +34,7 @@ export function value(v: any, replace: Replacer): any {
 
 export const INCLUDE_ALL: Dict<boolean> =
   // TODO: remove manual stack concat once we really support enumerating it.
-  DEFAULT_PROPERTY_PRECEDENCE.concat([Property.STACK])
+  DEFAULT_PROPERTY_PRECEDENCE.concat([Property.STACK, Property.FILTER, Property.CALCULATE])
     .reduce((m, prop) => {
       m[prop] = true;
       return m;
@@ -57,12 +57,16 @@ export function spec(specQ: SpecQuery,
   }
 
   if (specQ.transform) {
-    if (specQ.transform.calculate !== undefined) {
-      parts.push(`calculate:${calculate(specQ.transform.calculate)}`);
+    if (include[Property.CALCULATE]) {
+      if (specQ.transform.calculate !== undefined) {
+        parts.push('calculate:' + calculate(specQ.transform.calculate));
+      }
     }
 
-    if (specQ.transform.filter !== undefined) {
-      parts.push(`filter:${filter(specQ.transform.filter)}`);
+    if (include[Property.FILTER]) {
+      if (specQ.transform.filter !== undefined) {
+        parts.push('filter:' + filter(specQ.transform.filter));
+      }
     }
   }
 
