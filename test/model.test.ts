@@ -280,6 +280,46 @@ describe('SpecQueryModel', () => {
       });
     });
 
+    it('should return a spec with bin=true if the bin has no parameter.', () => {
+      const specM = buildSpecQueryModel({
+        data: {values: [{A: 1}]},
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, bin: true, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      const spec = specM.toSpec();
+      assert.deepEqual(spec, {
+        data: {values: [{A: 1}]},
+        mark: Mark.BAR,
+        encoding: {
+          x: {bin: true, field: 'A', type: Type.QUANTITATIVE}
+        },
+        config: DEFAULT_SPEC_CONFIG
+      });
+    });
+
+    it('should return a spec with bin as object if the bin has no parameter.', () => {
+      const specM = buildSpecQueryModel({
+        data: {values: [{A: 1}]},
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, bin: {maxbins: 50}, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      const spec = specM.toSpec();
+      assert.deepEqual(spec, {
+        data: {values: [{A: 1}]},
+        mark: Mark.BAR,
+        encoding: {
+          x: {bin: {maxbins: 50}, field: 'A', type: Type.QUANTITATIVE}
+        },
+        config: DEFAULT_SPEC_CONFIG
+      });
+    });
+
     it('should return a correct Vega-Lite spec if the query has sort: SortOrder', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{A: 1}]},
