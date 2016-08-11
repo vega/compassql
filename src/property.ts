@@ -5,8 +5,10 @@ export enum Property {
   MARK = 'mark' as any,
 
   FILTER = 'filter' as any,
+  // TODO: Sub-properties for filter
+  
   CALCULATE = 'calculate' as any,
-  // TODO: (Field, Value?)
+  // TODO: Sub-properties for calculate
 
   // Layout
   STACK = 'stack' as any,
