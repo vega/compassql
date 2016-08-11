@@ -106,19 +106,14 @@ export function filter(_filter: string | Filter | (string | Filter)[]): string {
   let filterExpression = '';
 
   if (_filter instanceof Array) {
-    if (_filter.length > 0) {
-      if (typeof _filter[0] === 'string') {
-        filterExpression += _filter[0];
-        for (let i = 1; i < _filter.length; i++) {
-          filterExpression += ',' + _filter[i];
-        }
-      } else { // FilterObj Array
-        filterExpression += expression(_filter[0]);
-        for (let j = 1; j < _filter.length; j++) {
-          filterExpression += ',' + expression(_filter[j]);
-        }
+    filterExpression += _filter.map(function(filterItem) {
+      if (isString(filterItem)) {
+        return '(' + filterItem + ')';
+      } else {
+        return '(' + expression(filterItem) + ')';
       }
-    }
+    })
+    .join(' && ');
   } else if (typeof _filter === 'string') {
     filterExpression += _filter;
   } else { // FilterObj
@@ -129,16 +124,10 @@ export function filter(_filter: string | Filter | (string | Filter)[]): string {
 }
 
 export function calculate(formulaArr: Formula[]): string {
-  if (formulaArr.length > 0) {
-    let calculateExpression = '';
-    calculateExpression += `{${formulaArr[0].field}:${formulaArr[0].expr}}`;
-
-    for (let k = 1; k < formulaArr.length; k++) {
-      calculateExpression += `,{${formulaArr[k].field}:${formulaArr[k].expr}}`;
-    }
-
-    return calculateExpression;
-  }
+  return formulaArr.map(function(calculateItem) {
+    return `{${calculateItem.field}:${calculateItem.expr}}`;
+  })
+  .join(',');
 }
 
 /**

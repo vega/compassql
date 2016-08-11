@@ -129,14 +129,14 @@ describe('query/shorthand', () => {
 
     it('should return a correct filter string when passed a string array', () => {
       const str = filterShorthand(['datum["b2"] > 60', 'datum["b2"] < 65']);
-      assert.equal(str, 'datum["b2"] > 60,datum["b2"] < 65');
+      assert.equal(str, '(datum["b2"] > 60) && (datum["b2"] < 65)');
     });
 
     it('should return a correct filter string when passed an array of FilterObjects', () => {
       const str = filterShorthand([
         {field: 'color', equal: 'red'}, {field: 'color', in: ['red', 'yellow']}, {field: 'x', range: [0,5]}
       ]);
-      assert.equal(str, 'datum["color"]==="red",indexof(["red","yellow"], datum["color"]) !== -1,inrange(datum["x"], 0, 5)');
+      assert.equal(str, '(datum["color"]==="red") && (indexof(["red","yellow"], datum["color"]) !== -1) && (inrange(datum["x"], 0, 5))');
     });
   });
 
