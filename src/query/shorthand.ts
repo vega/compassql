@@ -33,7 +33,7 @@ export function value(v: any, replace: Replacer): any {
 }
 
 export const INCLUDE_ALL: Dict<boolean> =
-  // TODO: remove manual stack concat once we really support enumerating it.
+  // TODO: remove manual STACK, FILTER, CALCULATE concat once we really support enumerating it.
   DEFAULT_PROPERTY_PRECEDENCE.concat([Property.STACK, Property.FILTER, Property.CALCULATE])
     .reduce((m, prop) => {
       m[prop] = true;
