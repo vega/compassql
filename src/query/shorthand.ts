@@ -81,10 +81,11 @@ export function spec(specQ: SpecQuery,
 
       const field = fieldDef(_stack.fieldEncQ, includeExceptType, replace);
       const groupby = fieldDef(_stack.groupByEncQ, includeExceptType, replace);
+
       parts.push(
-        `stack={field:${field},` +
-        (groupby ? `by:${groupby},` : '') +
-        `offset:${_stack.offset}}`
+        'stack={field:' + field + ',' +
+        (groupby ? 'by:' + groupby + ',' : '') +
+        'offset:' + _stack.offset + '}'
       );
     }
   }
