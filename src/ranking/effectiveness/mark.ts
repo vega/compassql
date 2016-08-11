@@ -82,7 +82,7 @@ export namespace MarkScore {
         });
       });
       // no occlusion
-      [NONE, N].forEach((yType) => {
+      [NONE, N, O].forEach((yType) => {
         const noOccludedQxN = {
           bar: 0,
           point: -0.2,
@@ -126,7 +126,7 @@ export namespace MarkScore {
         });
       });
 
-      [TIMEUNIT_T, O].forEach((yType) => {
+      [TIMEUNIT_T].forEach((yType) => {
         const noOccludedQxBinQ = {
           line: 0,
           area: -0.1,

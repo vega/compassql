@@ -70,7 +70,7 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
 
     rules.push({
       name: 'O plot with varying marks',
-      items: nestedMap([LINE, AREA, BAR, POINT, TICK, RULE], (mark) => {
+      items: nestedMap([BAR, POINT, TICK, [LINE, AREA], RULE], (mark) => {
         return countplot(mark, 'O', Type.ORDINAL);
       })
     });

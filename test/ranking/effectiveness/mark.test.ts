@@ -65,7 +65,7 @@ export const CD_RULESET = {
 
       // No Occlusion
 
-      [TIMEUNIT_T, O].forEach((dimensionType) => {
+      [TIMEUNIT_T].forEach((dimensionType) => {
         const orderedDimNoOcclusionRank = [LINE, AREA, BAR, POINT, TICK, TEXTMARK, RULE];
 
         _rules.push({
@@ -103,7 +103,7 @@ export const CD_RULESET = {
         // TODO: RULE should be terrible
       });
 
-      [N].forEach((dimensionType) => {
+      [N, O].forEach((dimensionType) => {
         const binDimNoOcclusionRank = [BAR, POINT, TICK, TEXTMARK, [LINE, AREA], RULE];
 
         _rules.push({
