@@ -1,3 +1,6 @@
+import {expression} from 'vega-lite/src/filter';
+import {Filter} from 'vega-lite/src/filter';
+import {Formula} from 'vega-lite/src/transform';
 import {Type} from 'vega-lite/src/type';
 import {isString} from 'datalib/src/util';
 
@@ -30,8 +33,8 @@ export function value(v: any, replace: Replacer): any {
 }
 
 export const INCLUDE_ALL: Dict<boolean> =
-  // TODO: remove manual stack concat once we really support enumerating it.
-  DEFAULT_PROPERTY_PRECEDENCE.concat([Property.STACK])
+  // TODO: remove manual STACK, FILTER, CALCULATE concat once we really support enumerating it.
+  DEFAULT_PROPERTY_PRECEDENCE.concat([Property.STACK, Property.FILTER, Property.CALCULATE])
     .reduce((m, prop) => {
       m[prop] = true;
       return m;
@@ -53,7 +56,19 @@ export function spec(specQ: SpecQuery,
     parts.push(value(specQ.mark, replace[Property.MARK]));
   }
 
-  // TODO: transform
+  if (specQ.transform) {
+    if (include[Property.CALCULATE]) {
+      if (specQ.transform.calculate !== undefined) {
+        parts.push('calculate:' + calculate(specQ.transform.calculate));
+      }
+    }
+
+    if (include[Property.FILTER]) {
+      if (specQ.transform.filter !== undefined) {
+        parts.push('filter:' + filter(specQ.transform.filter));
+      }
+    }
+  }
 
   // TODO: extract this to its own stack method
   if (include[Property.STACK]) {
@@ -66,29 +81,48 @@ export function spec(specQ: SpecQuery,
 
       const field = fieldDef(_stack.fieldEncQ, includeExceptType, replace);
       const groupby = fieldDef(_stack.groupByEncQ, includeExceptType, replace);
+
       parts.push(
-        `stack={field:${field},` +
-        (groupby ? `by:${groupby},` : '') +
-        `offset:${_stack.offset}}`
+        'stack={field:' + field + ',' +
+        (groupby ? 'by:' + groupby + ',' : '') +
+        'offset:' + _stack.offset + '}'
       );
     }
   }
 
-  parts.push(specQ.encodings.reduce((encQs, encQ) => {
-      // Exclude encoding mapping with autoCount=false as they are basically disabled.
-      if (encQ.autoCount !== false) {
-        const str = encoding(encQ, include, replace);
-        if (str) { // only add if the shorthand isn't an empty string.
-          encQs.push(str);
+  parts.push(
+    specQ.encodings.reduce((encQs, encQ) => {
+        // Exclude encoding mapping with autoCount=false as they are basically disabled.
+        if (encQ.autoCount !== false) {
+          const str = encoding(encQ, include, replace);
+          if (str) { // only add if the shorthand isn't an empty string.
+            encQs.push(str);
+          }
         }
-      }
-      return encQs;
-    }, [])
-    .sort() // sort at the end to ignore order
-    .join('|')
+        return encQs;
+      }, [])
+      .sort() // sort at the end to ignore order
+      .join('|')
   );
 
   return parts.join('|');
+}
+
+export function filter(_filter: string | Filter | (string | Filter)[]): string {
+  if (_filter instanceof Array) {
+    const filters = _filter.map(filter);
+    return filters.length > 1 ? '(' + filters.join(') && (') + ')' : filters[0];
+  } else if (typeof _filter === 'string') {
+    return _filter;
+  } else { // FilterObj
+    return expression(_filter);
+  }
+}
+
+export function calculate(formulaArr: Formula[]): string {
+  return formulaArr.map(function(calculateItem) {
+    return `{${calculateItem.field}:${calculateItem.expr}}`;
+  }).join(',');
 }
 
 /**

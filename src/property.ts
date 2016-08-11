@@ -4,7 +4,11 @@ import {ScaleType} from 'vega-lite/src/scale';
 export enum Property {
   MARK = 'mark' as any,
 
-  // TODO: Filter (Field, Value?)
+  FILTER = 'filter' as any,
+  // TODO: Sub-properties for filter
+
+  CALCULATE = 'calculate' as any,
+  // TODO: Sub-properties for calculate
 
   // Layout
   STACK = 'stack' as any,
@@ -57,6 +61,8 @@ export function hasNestedProperty(prop: Property) {
       // TODO: AXIS, LEGEND
       return true;
     case Property.MARK:
+    case Property.FILTER:
+    case Property.CALCULATE:
     case Property.STACK:
     case Property.CHANNEL:
     case Property.AGGREGATE:
@@ -113,6 +119,10 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   Property.FIELD,
 
   // TODO: Add stack and remove it from INCLUDE_ALL in shorthand
+
+  // TODO: Add filter and remove it from INCLUDE_ALL in shorthand
+
+  // TODO: Add calculate and remove it from INCLUDE_ALL in shorthand
 
   // Field Transform
   Property.BIN,
