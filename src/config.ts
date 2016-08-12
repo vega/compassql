@@ -236,7 +236,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   scaleDomains: [undefined],
   scaleExponents: [1],
   scaleRanges: [undefined],
-  scaleTypes: [ScaleType.LINEAR, ScaleType.LOG],
+  scaleTypes: [undefined, ScaleType.LOG],
 
   numberOrdinalProportion: .05,
 
