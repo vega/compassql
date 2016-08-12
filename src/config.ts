@@ -200,7 +200,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   axisGridWidths: [undefined],
 
   axisFormats: [undefined],
-  axisLabelAngles: [0, -45],
+  axisLabelAngles: [undefined],
   axisLabelMaxLengths: [undefined],
 
   axisSubDivides: [undefined],
