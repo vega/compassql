@@ -30,9 +30,9 @@ export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryC
 }
 
 export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, schema: Schema, encQIndex: Dict<EncodingQuery>, opt: QueryConfig): SpecQueryModel {
- [Channel.ROW, Channel.Y, Channel.COLUMN, Channel.X].forEach((channel) => {
-        encQIndex[channel] = specM.getEncodingQueryByChannel(channel);
-      });
+  [Channel.ROW, Channel.Y, Channel.COLUMN, Channel.X].forEach((channel) => {
+    encQIndex[channel] = specM.getEncodingQueryByChannel(channel);
+  });
 
   const yEncQ = encQIndex[Channel.Y];
   if (yEncQ !== undefined) {
