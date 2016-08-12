@@ -337,8 +337,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         for (let encQ of encodings) {
           if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale) {
 
-            let sType = scaleType((encQ.scale as ScaleQuery).type,
-                                  encQ.timeUnit, encQ.type);
+            let sType = scaleType(encQ);
 
             if (sType === ScaleType.LOG) {
               return false;
