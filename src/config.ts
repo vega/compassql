@@ -277,7 +277,6 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   nominalColorScaleForHighCardinality: {maxCardinality: 10, palette: 'category20'},
   xAxisOnTopForHighYCardinalityWithoutColumn: {maxCardinality: 30, orient: AxisOrient.TOP},
 
-
   // RANKING PREFERENCE
   maxGoodCardinalityForFacet: 5, // FIXME: revise
   maxGoodCardinalityForColor: 7, // FIXME: revise
