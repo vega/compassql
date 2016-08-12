@@ -7,8 +7,8 @@ import {Dict, forEach} from '../../util';
 import {Schema} from '../../schema';
 
 import {FeatureScore} from '../ranking';
-import {getExtendedType, getFeatureScore} from './effectiveness';
-import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, NONE} from './type';
+import {getFeatureScore} from './effectiveness';
+import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, NONE, getExtendedType} from './type';
 
 export namespace MarkScore {
   export const MARK_SCORE = 'markScore';

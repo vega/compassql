@@ -1,15 +1,12 @@
-import {ScaleType} from 'vega-lite/src/scale';
 
 import {QueryConfig} from '../../config';
 import {SpecQueryModel} from '../../model';
-import {EncodingQuery, scaleType} from '../../query/encoding';
 import {Dict} from '../../util';
 
 import {Schema} from '../../schema';
 import {FeatureScore, FeatureFactory, RankingScore} from '../ranking';
 import {TypeChannelScore, MarkChannelScore, PreferredAxisScore, PreferredFacetScore} from './channel';
 import {MarkScore} from './mark';
-import {ExtendedType} from './type';
 
 export let FEATURE_INDEX = {} as Dict<Dict<number>>;
 let FEATURE_FACTORIES: FeatureFactory[] = [];
@@ -66,17 +63,6 @@ addFeatureFactory({
 // TODO: stacking
 // TODO: Channel, Cardinality
 // TODO: Penalize over encoding
-
-export function getExtendedType(encQ: EncodingQuery): ExtendedType {
-  if (encQ.bin) {
-    return ExtendedType.BIN_Q;
-  } else if (encQ.timeUnit) {
-    const sType = scaleType(encQ);
-    return sType === ScaleType.ORDINAL ? ExtendedType.TIMEUNIT_O : ExtendedType.TIMEUNIT_T;
-  }
-  return encQ.type as ExtendedType;
-}
-
 
 export default function (specM: SpecQueryModel, schema: Schema, opt: QueryConfig): RankingScore {
   const features = FEATURE_FACTORIES.reduce((f, factory) => {

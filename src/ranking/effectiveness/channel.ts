@@ -8,8 +8,8 @@ import {Dict, extend, forEach, keys} from '../../util';
 
 import {Schema} from '../../schema';
 import {FeatureScore} from '../ranking';
-import {getExtendedType, getFeatureScore} from './effectiveness';
-import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, ExtendedType} from './type';
+import {getFeatureScore} from './effectiveness';
+import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, ExtendedType, getExtendedType} from './type';
 
 /**
  * Field Type (with Bin and TimeUnit) and Channel Score (Cleveland / Mackinlay based)

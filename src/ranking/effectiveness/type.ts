@@ -1,5 +1,7 @@
+import {ScaleType} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
+import {EncodingQuery, scaleType} from '../../query/encoding';
 /**
  * Finer grained data types that takes binning and timeUnit into account.
  */
@@ -29,3 +31,12 @@ export const TIMEUNIT_O = ExtendedType.TIMEUNIT_O;
 export const O = ExtendedType.O;
 export const N = ExtendedType.N;
 export const NONE = ExtendedType.NONE;
+
+export function getExtendedType(encQ: EncodingQuery): ExtendedType {
+  if (encQ.bin) {
+    return ExtendedType.BIN_Q;
+  } else if (encQ.timeUnit) {
+    return scaleType(encQ) === ScaleType.ORDINAL ? ExtendedType.TIMEUNIT_O : ExtendedType.TIMEUNIT_T;
+  }
+  return encQ.type as ExtendedType;
+}
