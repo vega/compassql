@@ -266,6 +266,8 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   Property.AXIS,
 
   // Nested Encoding Property
+
+  // - Scale
   Property.SCALE_BANDSIZE,
   Property.SCALE_CLAMP,
   Property.SCALE_DOMAIN,
@@ -277,6 +279,7 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   Property.SCALE_USERAWDOMAIN,
   Property.SCALE_ZERO,
 
+  // - Axis
   Property.AXIS_AXISCOLOR,
   Property.AXIS_AXISWIDTH,
   Property.AXIS_CHARACTERWIDTH,

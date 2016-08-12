@@ -86,7 +86,7 @@ export interface QueryConfig {
 
   axisTickWidths?: number[];
 
-  axisValues?: number[];
+  axisValuesList?: number[];
 
   axisTitles?: string[];
 
@@ -204,7 +204,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   axisLabelMaxLengths: [undefined],
 
   axisSubDivides: [undefined],
-  axisTicks: [5, 10],
+  axisTicks: [undefined],
   axisTickColors: [undefined],
   axisTickLabelColors: [undefined],
   axisTickLabelFonts: [undefined],
@@ -215,7 +215,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   axisTickSizeMinors: [undefined],
   axisTickSizeEnds: [undefined],
   axisTickWidths: [undefined],
-  axisValues: [undefined],
+  axisValuesList: [undefined],
 
   axisTitles: [undefined],
   axisTitleColors: [undefined],

@@ -248,7 +248,7 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
       return opt.axisTickWidths;
 
     case Property.AXIS_VALUES:
-      return opt.axisValues;
+      return opt.axisValuesList;
 
     case Property.AXIS_TITLE:
       return opt.axisTitles;
