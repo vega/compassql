@@ -1,4 +1,5 @@
 import {AggregateOp} from 'vega-lite/src/aggregate';
+import {AxisOrient} from 'vega-lite/src/axis';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
@@ -276,6 +277,29 @@ describe('query/shorthand', () => {
         bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
       });
       assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"},sort={"field":"a","op":"mean","order":"descending"})');
+    });
+
+    it('should return correct fieldDefShorthand string for bin with maxbins, axis with orient, scale with scaleType ' +
+       'and sort field definition object', () => {
+      const str = fieldDefShorthand({
+        axis: {orient: AxisOrient.TOP}, bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
+      });
+      assert.equal(str, 'bin(a,q,maxbins=20,axis={"orient":"top"},scale={"type":"log"},sort={"field":"a","op":"mean","order":"descending"})');
+    });
+
+    it('should return correct fieldDefShorthand string for axis with orient, shortTimeLabels, ticks, and title', () => {
+      const str = specShorthand({
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: Channel.X,
+            field: 'a',
+            type: Type.QUANTITATIVE,
+            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}
+          }
+        ]
+      });
+      assert.equal(str, 'point|x:a,q,axis={"orient":"top","shortTimeLabels":true,"ticks":5,"title":"test x channel"}');
     });
 
     it('should return correct fieldDefShorthand string for scale with a string[] domain', () => {

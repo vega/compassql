@@ -1,5 +1,6 @@
 import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR} from 'vega-lite/src/channel';
 import {AggregateOp} from 'vega-lite/src/aggregate';
+import {AxisOrient} from 'vega-lite/src/axis';
 import {Config} from 'vega-lite/src/config';
 import {Mark} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
@@ -36,6 +37,72 @@ export interface QueryConfig {
 
   /** Default maxbins to enumerate */
   maxBinsList?: number[];
+
+  axisAxisColors?: string[];
+
+  axisAxisWidths?: number[];
+
+  axisLayers?: string[];
+
+  axisOffsets?: number[];
+
+  axisOrients?: AxisOrient[];
+
+  axisGridColors?: string[];
+
+  axisGridDashes?: number[];
+
+  axisGridOpacities?: number[];
+
+  axisGridWidths?: number[];
+
+  axisFormats?: string[];
+
+  axisLabelAngles?: number[];
+
+  axisLabelMaxLengths?: number[];
+
+  axisSubDivides?: number[];
+
+  axisTicks?: number[];
+
+  axisTickColors?: string[];
+
+  axisTickLabelColors?: string[];
+
+  axisTickLabelFonts?: string[];
+
+  axisTickLabelFontSizes?: number[];
+
+  axisTickPaddings?: number[];
+
+  axisTickSizes?: number[];
+
+  axisTickSizeMajors?: number[];
+
+  axisTickSizeMinors?: number[];
+
+  axisTickSizeEnds?: number[];
+
+  axisTickWidths?: number[];
+
+  axisValuesList?: number[];
+
+  axisTitles?: string[];
+
+  axisTitleColors?: string[];
+
+  axisTitleFonts?: string[];
+
+  axisTitleFontWeights?: number[];
+
+  axisTitleFontSizes?: number[];
+
+  axisTitleOffsets?: number[];
+
+  axisTitleMaxLengths?: number[];
+
+  axisCharacterWidths?: number[];
 
   // TODO: Come back and implement correctly when designing sort enumeration.
   sorts?: SortOrder[];
@@ -120,6 +187,44 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
   maxBinsList: [5, 10, 20],
+
+  axisAxisColors: [undefined],
+  axisAxisWidths: [undefined],
+  axisLayers: ['front', 'back'],
+  axisOffsets: [undefined],
+  axisOrients: [undefined],
+
+  axisGridColors: [undefined],
+  axisGridDashes: [undefined],
+  axisGridOpacities: [undefined],
+  axisGridWidths: [undefined],
+
+  axisFormats: [undefined],
+  axisLabelAngles: [undefined],
+  axisLabelMaxLengths: [undefined],
+
+  axisSubDivides: [undefined],
+  axisTicks: [undefined],
+  axisTickColors: [undefined],
+  axisTickLabelColors: [undefined],
+  axisTickLabelFonts: [undefined],
+  axisTickLabelFontSizes: [undefined],
+  axisTickPaddings: [undefined],
+  axisTickSizes: [undefined],
+  axisTickSizeMajors: [undefined],
+  axisTickSizeMinors: [undefined],
+  axisTickSizeEnds: [undefined],
+  axisTickWidths: [undefined],
+  axisValuesList: [undefined],
+
+  axisTitles: [undefined],
+  axisTitleColors: [undefined],
+  axisTitleFonts: [undefined],
+  axisTitleFontWeights: [undefined],
+  axisTitleFontSizes: [undefined],
+  axisTitleOffsets: [undefined],
+  axisTitleMaxLengths: [undefined],
+  axisCharacterWidths: [undefined],
 
   // TODO: Come back and implement correctly when designing sort enumeration.
   sorts: [SortOrder.ASCENDING, SortOrder.DESCENDING],

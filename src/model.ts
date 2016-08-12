@@ -63,6 +63,80 @@ export function getDefaultName(prop: Property) {
       return 's-u';
     case Property.SCALE_ZERO:
       return 's-z';
+    case Property.AXIS:
+      return 'ax';
+    case Property.AXIS_AXISCOLOR:
+      return 'ax-ac';
+    case Property.AXIS_AXISWIDTH:
+      return 'ax-aw';
+    case Property.AXIS_LAYER:
+      return 'ax-lay';
+    case Property.AXIS_OFFSET:
+      return 'ax-of';
+    case Property.AXIS_ORIENT:
+      return 'ax-or';
+    case Property.AXIS_GRID:
+      return 'ax-g';
+    case Property.AXIS_GRIDCOLOR:
+      return 'ax-gc';
+    case Property.AXIS_GRIDDASH:
+      return 'ax-gd';
+    case Property.AXIS_GRIDOPACITY:
+      return 'ax-go';
+    case Property.AXIS_GRIDWIDTH:
+      return 'ax-gw';
+    case Property.AXIS_LABELS:
+      return 'ax-lab';
+    case Property.AXIS_FORMAT:
+      return 'ax-f';
+    case Property.AXIS_LABELANGLE:
+      return 'ax-labang';
+    case Property.AXIS_LABELMAXLENGTH:
+      return 'ax-lablml';
+    case Property.AXIS_SHORTTIMELABELS:
+      return 'ax-stl';
+    case Property.AXIS_SUBDIVIDE:
+      return 'ax-s';
+    case Property.AXIS_TICKS:
+      return 'ax-t';
+    case Property.AXIS_TICKCOLOR:
+      return 'ax-tc';
+    case Property.AXIS_TICKLABELCOLOR:
+      return 'ax-tlc';
+    case Property.AXIS_TICKLABELFONT:
+      return 'ax-tlf';
+    case Property.AXIS_TICKLABELFONTSIZE:
+      return 'ax-tlfs';
+    case Property.AXIS_TICKPADDING:
+      return 'ax-tp';
+    case Property.AXIS_TICKSIZE:
+      return 'ax-ts';
+    case Property.AXIS_TICKSIZEMAJOR:
+      return 'ax-tsma';
+    case Property.AXIS_TICKSIZEMINOR:
+      return 'ax-tsmi';
+    case Property.AXIS_TICKSIZEEND:
+      return 'ax-tse';
+    case Property.AXIS_TICKWIDTH:
+      return 'ax-tw';
+    case Property.AXIS_VALUES:
+      return 'ax-v';
+    case Property.AXIS_TITLE:
+      return 'ax-tit';
+    case Property.AXIS_TITLECOLOR:
+      return 'ax-titc';
+    case Property.AXIS_TITLEFONT:
+      return 'ax-titf';
+    case Property.AXIS_TITLEFONTSIZE:
+      return 'ax-titfs';
+    case Property.AXIS_TITLEFONTWEIGHT:
+      return 'ax-titfw';
+    case Property.AXIS_TITLEOFFSET:
+      return 'ax-tito';
+    case Property.AXIS_TITLEMAXLENGTH:
+      return 'ax-titml';
+    case Property.AXIS_CHARACTERWIDTH:
+      return 'ax-cw';
     case Property.TIMEUNIT:
       return 'tu';
     case Property.FIELD:
@@ -81,6 +155,10 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
       return schema.fields();
 
     // True, False for boolean values
+    case Property.AXIS:
+    case Property.AXIS_GRID:
+    case Property.AXIS_LABELS:
+    case Property.AXIS_SHORTTIMELABELS:
     case Property.BIN:
     case Property.SCALE:
     case Property.SCALE_CLAMP:
@@ -96,6 +174,105 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     // The config name for each prop is a plural form of the prop.
     case Property.AGGREGATE:
       return opt.aggregates;
+
+    case Property.AXIS_AXISCOLOR:
+      return opt.axisAxisColors;
+
+    case Property.AXIS_AXISWIDTH:
+      return opt.axisAxisWidths;
+
+    case Property.AXIS_LAYER:
+      return opt.axisLayers;
+
+    case Property.AXIS_OFFSET:
+      return opt.axisOffsets;
+
+    case Property.AXIS_ORIENT:
+      return opt.axisOrients;
+
+    case Property.AXIS_GRIDCOLOR:
+      return opt.axisGridColors;
+
+    case Property.AXIS_GRIDDASH:
+      return opt.axisGridDashes;
+
+    case Property.AXIS_GRIDOPACITY:
+      return opt.axisGridOpacities;
+
+    case Property.AXIS_GRIDWIDTH:
+      return opt.axisGridWidths;
+
+    case Property.AXIS_FORMAT:
+      return opt.axisFormats;
+
+    case Property.AXIS_LABELANGLE:
+      return opt.axisLabelAngles;
+
+    case Property.AXIS_LABELMAXLENGTH:
+      return opt.axisLabelMaxLengths;
+
+    case Property.AXIS_SUBDIVIDE:
+      return opt.axisSubDivides;
+
+    case Property.AXIS_TICKS:
+      return opt.axisTicks;
+
+    case Property.AXIS_TICKCOLOR:
+      return opt.axisTickColors;
+
+    case Property.AXIS_TICKLABELCOLOR:
+      return opt.axisTickLabelColors;
+
+    case Property.AXIS_TICKLABELFONT:
+      return opt.axisTickLabelFonts;
+
+    case Property.AXIS_TICKLABELFONTSIZE:
+      return opt.axisTickLabelFontSizes;
+
+    case Property.AXIS_TICKPADDING:
+      return opt.axisTickPaddings;
+
+    case Property.AXIS_TICKSIZE:
+      return opt.axisTickSizes;
+
+    case Property.AXIS_TICKSIZEMAJOR:
+      return opt.axisTickSizeMajors;
+
+    case Property.AXIS_TICKSIZEMINOR:
+      return opt.axisTickSizeMinors;
+
+    case Property.AXIS_TICKSIZEEND:
+      return opt.axisTickSizeEnds;
+
+    case Property.AXIS_TICKWIDTH:
+      return opt.axisTickWidths;
+
+    case Property.AXIS_VALUES:
+      return opt.axisValuesList;
+
+    case Property.AXIS_TITLE:
+      return opt.axisTitles;
+
+    case Property.AXIS_TITLECOLOR:
+      return opt.axisTitleColors;
+
+    case Property.AXIS_TITLEFONT:
+      return opt.axisTitleFonts;
+
+    case Property.AXIS_TITLEFONTWEIGHT:
+      return opt.axisTitleFontWeights;
+
+    case Property.AXIS_TITLEFONTSIZE:
+      return opt.axisTitleFontSizes;
+
+    case Property.AXIS_TITLEOFFSET:
+      return opt.axisTitleOffsets;
+
+    case Property.AXIS_TITLEMAXLENGTH:
+      return opt.axisTitleMaxLengths;
+
+    case Property.AXIS_CHARACTERWIDTH:
+      return opt.axisCharacterWidths;
 
     case Property.BIN_MAXBINS:
       return opt.maxBinsList;
@@ -410,7 +587,7 @@ export class SpecQueryModel {
       if (isEnumSpec(encQ.channel)) return null;
 
       // assemble other property into a field def.
-      const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.SORT, Property.SCALE, Property.TIMEUNIT, Property.FIELD, Property.TYPE];
+      const PROPERTIES = [Property.AGGREGATE, Property.AXIS, Property.BIN, Property.SORT, Property.SCALE, Property.TIMEUNIT, Property.FIELD, Property.TYPE];
       for (let j = 0; j < PROPERTIES.length; j++) {
         const prop = PROPERTIES[j];
 

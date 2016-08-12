@@ -1,4 +1,5 @@
 import {AggregateOp} from 'vega-lite/src/aggregate';
+import {AxisOrient} from 'vega-lite/src/axis';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark, BAR, AREA, PRIMITIVE_MARKS} from 'vega-lite/src/mark';
 import {StackOffset} from 'vega-lite/src/stack';
@@ -216,7 +217,11 @@ describe('query/spec', () => {
         transform: {filter: 'datum.x ===2'},
         mark: Mark.POINT,
         encoding: {
-          x: {field: 'x', type: Type.QUANTITATIVE},
+          x: {
+            field: 'x',
+            type: Type.QUANTITATIVE,
+            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}
+          },
           y: {field: 'x', type: Type.QUANTITATIVE, scale: null}
         },
         config: {}
@@ -226,7 +231,7 @@ describe('query/spec', () => {
         transform: {filter: 'datum.x ===2'},
         mark: Mark.POINT,
         encodings: [
-          {channel: 'x', field: 'x', type: Type.QUANTITATIVE},
+          {channel: 'x', field: 'x', type: Type.QUANTITATIVE, axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
           {channel: 'y', field: 'x', type: Type.QUANTITATIVE, scale: false}
         ],
         config: {}
