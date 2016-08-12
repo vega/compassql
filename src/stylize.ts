@@ -4,7 +4,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG, QueryConfig} from './config';
 import {SpecQueryModel} from './model';
-import {EncodingQuery, ScaleQuery, scaleType} from './query/encoding';
+import {AxisQuery, EncodingQuery, ScaleQuery, scaleType} from './query/encoding';
 import {Schema} from './schema';
 import {contains, Dict} from './util';
 
@@ -16,6 +16,10 @@ export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryC
 
     if (opt.nominalColorScaleForHighCardinality) {
       specM = nominalColorScaleForHighCardinality(specM, schema);
+    }
+
+    if (opt.xAxisOnTopForHighYCardinalityWithoutColumn) {
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
     }
     return specM;
   });
@@ -91,6 +95,33 @@ export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schem
     if (colorEncQ.scale) {
       if (!(colorEncQ.scale as ScaleQuery).range) {
         (colorEncQ.scale as ScaleQuery).range = DEFAULT_QUERY_CONFIG.nominalColorScaleForHighCardinality.palette;
+      }
+    }
+  }
+
+  return specM;
+}
+
+export function xAxisOnTopForHighYCardinalityWithoutColumn(specM: SpecQueryModel, schema: Schema): SpecQueryModel {
+ [Channel.COLUMN, Channel.X, Channel.Y].forEach((channel) => {
+        encQIndex[channel] = specM.getEncodingQueryByChannel(channel);
+      });
+
+  if (encQIndex[Channel.COLUMN] === undefined) {
+    const xEncQ = encQIndex[Channel.X];
+    const yEncQ = encQIndex[Channel.Y];
+    if (yEncQ !== undefined && yEncQ.field && contains([Type.NOMINAL, Type.ORDINAL], yEncQ.type)) {
+      if (xEncQ !== undefined) {
+        if (schema.cardinality(yEncQ) > DEFAULT_QUERY_CONFIG.xAxisOnTopForHighYCardinalityWithoutColumn.maxCardinality) {
+
+          if (xEncQ.axis === undefined) {
+            xEncQ.axis = {};
+          }
+
+          if (xEncQ.axis && !(xEncQ.axis as AxisQuery).orient) {
+            (xEncQ.axis as AxisQuery).orient = DEFAULT_QUERY_CONFIG.xAxisOnTopForHighYCardinalityWithoutColumn.orient;
+          }
+        }
       }
     }
   }

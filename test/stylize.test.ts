@@ -1,3 +1,4 @@
+import {AxisOrient} from 'vega-lite/src/axis';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
@@ -6,8 +7,8 @@ import {schema} from './fixture';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel} from '../src/model';
-import {ScaleQuery} from '../src/query/encoding';
-import {smallBandSizeForHighCardinalityOrFacet, nominalColorScaleForHighCardinality} from '../src/stylize';
+import {AxisQuery, ScaleQuery} from '../src/query/encoding';
+import {smallBandSizeForHighCardinalityOrFacet, nominalColorScaleForHighCardinality, xAxisOnTopForHighYCardinalityWithoutColumn} from '../src/stylize';
 
 import {assert} from 'chai';
 
@@ -185,4 +186,98 @@ describe('stylize', () => {
         assert.deepEqual((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, {name: 'scaleRange', enum: [null]});
     });
   });
+
+  describe('xAxisOnTopForHighYCardinalityWithoutColumn', () => {
+    it('should not orient the x axis on top if there is vertical faceting', () => {
+      let specM = SpecQueryModel.build({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.COLUMN, field: 'A', type: Type.ORDINAL},
+          {channel: Channel.X, field: 'Q', type: Type.NOMINAL, axis: {}},
+          {channel: Channel.Y, field: 'O_100', type: Type.ORDINAL}
+        ]
+      }, schema, DEFAULT_QUERY_CONFIG);
+
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
+    });
+
+    it('should not orient the x axis on top if the orient has already been set', () => {
+      let specM = SpecQueryModel.build({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, axis: {orient: AxisOrient.BOTTOM}},
+          {channel: Channel.Y, field: 'O_100', type: Type.ORDINAL}
+        ]
+      }, schema, DEFAULT_QUERY_CONFIG);
+
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, AxisOrient.BOTTOM);
+    });
+
+    it('should not orient the x axis on top if axis is set to false', () => {
+      let specM = SpecQueryModel.build({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, axis: false},
+          {channel: Channel.Y, field: 'O_100', type: Type.ORDINAL}
+        ]
+      }, schema, DEFAULT_QUERY_CONFIG);
+
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
+    });
+
+    it('should not orient the x axis on top if the Y channel\'s type is not NOMINAL or ORDINAL', () => {
+      let specM = SpecQueryModel.build({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, axis: {}},
+          {channel: Channel.Y, field: 'Q2', type: Type.QUANTITATIVE}
+        ]
+      }, schema, DEFAULT_QUERY_CONFIG);
+
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
+    });
+
+    it('should not orient the x axis on top if there is no Y channel', () => {
+      let specM = SpecQueryModel.build({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q2', type: Type.QUANTITATIVE, axis: {}},
+        ]
+      }, schema, DEFAULT_QUERY_CONFIG);
+
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
+    });
+
+    it('should not orient the x axis on top if the cardinality of the Y channel is not sufficiently high', () => {
+      let specM = SpecQueryModel.build({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, axis: {}},
+          {channel: Channel.Y, field: 'O', type: Type.ORDINAL}
+        ]
+      }, schema, DEFAULT_QUERY_CONFIG);
+
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
+    });
+
+    it('should orient the x axis on top if there is no vertical faceting and the cardinality of the Y channel is sufficiently high', () => {
+      let specM = SpecQueryModel.build({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, field: 'O_100', type: Type.ORDINAL}
+        ]
+      }, schema, DEFAULT_QUERY_CONFIG);
+
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      assert.equal((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, AxisOrient.TOP);
+    });
+  });
 });
+
