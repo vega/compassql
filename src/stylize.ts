@@ -1,3 +1,4 @@
+import {AxisOrient} from 'vega-lite/src/axis';
 import {Channel} from 'vega-lite/src/channel';
 import {ScaleType} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
@@ -9,17 +10,18 @@ import {Schema} from './schema';
 import {contains, Dict} from './util';
 
 export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryConfig): SpecQueryModel[] {
+  let encQIndex: Dict<EncodingQuery> = {};
   answerSet = answerSet.map(function(specM) {
     if (opt.smallBandSizeForHighCardinalityOrFacet) {
-      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
+      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, encQIndex);
      }
 
     if (opt.nominalColorScaleForHighCardinality) {
-      specM = nominalColorScaleForHighCardinality(specM, schema);
+      specM = nominalColorScaleForHighCardinality(specM, schema, encQIndex);
     }
 
     if (opt.xAxisOnTopForHighYCardinalityWithoutColumn) {
-      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, encQIndex);
     }
     return specM;
   });
@@ -27,9 +29,7 @@ export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryC
   return answerSet;
 }
 
-let encQIndex: Dict<EncodingQuery> = {};
-
-export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, schema: Schema): SpecQueryModel {
+export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, schema: Schema, encQIndex: Dict<EncodingQuery>): SpecQueryModel {
  [Channel.ROW, Channel.Y, Channel.COLUMN, Channel.X].forEach((channel) => {
         encQIndex[channel] = specM.getEncodingQueryByChannel(channel);
       });
@@ -81,7 +81,7 @@ export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, sc
   return specM;
 }
 
-export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schema: Schema): SpecQueryModel {
+export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schema: Schema, encQIndex: Dict<EncodingQuery>): SpecQueryModel {
   encQIndex[Channel.COLOR] = specM.getEncodingQueryByChannel(Channel.COLOR);
 
   const colorEncQ = encQIndex[Channel.COLOR];
@@ -102,15 +102,15 @@ export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schem
   return specM;
 }
 
-export function xAxisOnTopForHighYCardinalityWithoutColumn(specM: SpecQueryModel, schema: Schema): SpecQueryModel {
- [Channel.COLUMN, Channel.X, Channel.Y].forEach((channel) => {
+export function xAxisOnTopForHighYCardinalityWithoutColumn(specM: SpecQueryModel, schema: Schema, encQIndex: Dict<EncodingQuery>): SpecQueryModel {
+  [Channel.COLUMN, Channel.X, Channel.Y].forEach((channel) => {
         encQIndex[channel] = specM.getEncodingQueryByChannel(channel);
       });
 
   if (encQIndex[Channel.COLUMN] === undefined) {
     const xEncQ = encQIndex[Channel.X];
     const yEncQ = encQIndex[Channel.Y];
-    if (yEncQ !== undefined && yEncQ.field && contains([Type.NOMINAL, Type.ORDINAL], yEncQ.type)) {
+    if (yEncQ !== undefined && yEncQ.field && scaleType(yEncQ) === ScaleType.ORDINAL) {
       if (xEncQ !== undefined) {
         if (schema.cardinality(yEncQ) > DEFAULT_QUERY_CONFIG.xAxisOnTopForHighYCardinalityWithoutColumn.maxCardinality) {
 
@@ -119,7 +119,7 @@ export function xAxisOnTopForHighYCardinalityWithoutColumn(specM: SpecQueryModel
           }
 
           if (xEncQ.axis && !(xEncQ.axis as AxisQuery).orient) {
-            (xEncQ.axis as AxisQuery).orient = DEFAULT_QUERY_CONFIG.xAxisOnTopForHighYCardinalityWithoutColumn.orient;
+            (xEncQ.axis as AxisQuery).orient = AxisOrient.TOP;
           }
         }
       }

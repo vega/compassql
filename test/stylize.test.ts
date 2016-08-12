@@ -22,7 +22,7 @@ describe('stylize', () => {
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
+      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {});
       assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, undefined);
     });
 
@@ -34,7 +34,7 @@ describe('stylize', () => {
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
+      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {});
       assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 21);
     });
 
@@ -46,7 +46,7 @@ describe('stylize', () => {
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
+      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {});
       assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 12);
     });
 
@@ -59,7 +59,7 @@ describe('stylize', () => {
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
+      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {});
       assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 21);
     });
 
@@ -72,7 +72,7 @@ describe('stylize', () => {
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
+      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {});
       assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 12);
     });
 
@@ -84,7 +84,7 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
+        specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {});
         assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, undefined);
     });
 
@@ -96,7 +96,7 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
+        specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {});
         assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 12);
     });
 
@@ -108,7 +108,7 @@ describe('stylize', () => {
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
+      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {});
       assert.deepEqual((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, {name: 'scaleBandSize', enum: [17, 21]});
     });
   });
@@ -122,7 +122,7 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = nominalColorScaleForHighCardinality(specM, schema);
+        specM = nominalColorScaleForHighCardinality(specM, schema, {});
         assert.deepEqual((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, undefined);
     });
 
@@ -134,7 +134,7 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = nominalColorScaleForHighCardinality(specM, schema);
+        specM = nominalColorScaleForHighCardinality(specM, schema, {});
         assert.deepEqual((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, [10, 20]);
     });
 
@@ -146,7 +146,7 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = nominalColorScaleForHighCardinality(specM, schema);
+        specM = nominalColorScaleForHighCardinality(specM, schema, {});
         assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, 'category20');
     });
 
@@ -158,7 +158,7 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = nominalColorScaleForHighCardinality(specM, schema);
+        specM = nominalColorScaleForHighCardinality(specM, schema, {});
         assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, undefined);
     });
 
@@ -170,7 +170,7 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = nominalColorScaleForHighCardinality(specM, schema);
+        specM = nominalColorScaleForHighCardinality(specM, schema, {});
         assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, 'category20');
     });
 
@@ -182,13 +182,13 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = nominalColorScaleForHighCardinality(specM, schema);
+        specM = nominalColorScaleForHighCardinality(specM, schema, {});
         assert.deepEqual((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, {name: 'scaleRange', enum: [null]});
     });
   });
 
   describe('xAxisOnTopForHighYCardinalityWithoutColumn', () => {
-    it('should not orient the x axis on top if there is vertical faceting', () => {
+    it('should not orient the x axis on top if there is column channel', () => {
       let specM = SpecQueryModel.build({
         mark: Mark.POINT,
         encodings: [
@@ -198,7 +198,7 @@ describe('stylize', () => {
         ]
       }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {});
       assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
     });
 
@@ -211,7 +211,7 @@ describe('stylize', () => {
         ]
       }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {});
       assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, AxisOrient.BOTTOM);
     });
 
@@ -224,7 +224,7 @@ describe('stylize', () => {
         ]
       }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {});
       assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
     });
 
@@ -237,7 +237,7 @@ describe('stylize', () => {
         ]
       }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {});
       assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
     });
 
@@ -249,7 +249,7 @@ describe('stylize', () => {
         ]
       }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {});
       assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
     });
 
@@ -262,11 +262,11 @@ describe('stylize', () => {
         ]
       }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {});
       assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
     });
 
-    it('should orient the x axis on top if there is no vertical faceting and the cardinality of the Y channel is sufficiently high', () => {
+    it('should orient the x axis on top if there is no column channel and the cardinality of the Y channel is sufficiently high', () => {
       let specM = SpecQueryModel.build({
         mark: Mark.POINT,
         encodings: [
@@ -275,7 +275,7 @@ describe('stylize', () => {
         ]
       }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema);
+      specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {});
       assert.equal((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, AxisOrient.TOP);
     });
   });
