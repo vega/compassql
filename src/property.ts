@@ -59,7 +59,7 @@ export enum Property {
   AXIS_GRIDCOLOR = 'axisGridColor' as any,
   AXIS_GRIDDASH = 'axisGridDash' as any,
   AXIS_GRIDOPACITY = 'axisGridOpacity' as any,
-  AXIS_GRIDWIDTH = 'axisGridWiddth' as any,
+  AXIS_GRIDWIDTH = 'axisGridWidth' as any,
 
   // Axis Properties
   AXIS_LABELS = 'axisLabels' as any,
@@ -231,7 +231,6 @@ export const ENCODING_PROPERTIES = [
   Property.AXIS_TITLEMAXLENGTH,
   Property.AXIS_TITLEOFFSET,
   Property.AXIS_VALUES
-
 ];
 
 export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [

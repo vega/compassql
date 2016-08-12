@@ -9,7 +9,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
-import {ScaleQuery} from '../src/query/encoding';
+import {AxisQuery, ScaleQuery} from '../src/query/encoding';
 import {SHORT_ENUM_SPEC} from '../src/enumspec';
 import {extend, some} from '../src/util';
 
@@ -207,6 +207,26 @@ describe('generate', function () {
           );
         });
       });
+    });
+  });
+
+  describe('axis-layer', () => {
+    it('should enumerate default axisLayers', () => {
+      const specQ = {
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: Channel.X,
+            field: 'Q',
+            type: Type.QUANTITATIVE,
+            axis: {layer: SHORT_ENUM_SPEC}
+          }
+        ]
+      };
+      const answerSet = generate(specQ, schema);
+      assert.equal(answerSet.length, 2);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).axis as AxisQuery).layer, 'front');
+      assert.equal((answerSet[1].getEncodingQueryByIndex(0).axis as AxisQuery).layer, 'back');
     });
   });
 
