@@ -1,4 +1,5 @@
 import {AggregateOp} from 'vega-lite/src/aggregate';
+import {AxisOrient} from 'vega-lite/src/axis';
 import {Channel} from 'vega-lite/src/channel';
 import {ScaleType} from 'vega-lite/src/scale';
 import {SortOrder, SortField} from 'vega-lite/src/sort';
@@ -28,7 +29,56 @@ export interface EncodingQuery {
   type?: Type | EnumSpec<Type> | ShortEnumSpec;
   // TODO: value
 
-  // TODO: axisQuery, legendQuery
+  // TODO: legendQuery
+  axis?: boolean | AxisQuery | ShortEnumSpec;
+}
+
+export interface AxisQuery extends EnumSpec<boolean> {
+  // General Axis Properties
+  axisColor?: string | EnumSpec<string> | ShortEnumSpec;
+  axisWidth?: number | EnumSpec<number> | ShortEnumSpec;
+  layer?: string | EnumSpec<string> | ShortEnumSpec;
+  offset?: number | EnumSpec<number> | ShortEnumSpec;
+  orient?: AxisOrient | EnumSpec<AxisOrient> | ShortEnumSpec;
+
+  // Axis_Grid Properties
+  grid?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+  gridColor?: string | EnumSpec<string> | ShortEnumSpec;
+  gridDash?: number[] | EnumSpec<number[]> | ShortEnumSpec;
+  gridOpacity?: number | EnumSpec<number> | ShortEnumSpec;
+  gridWidth?: number | EnumSpec<number> | ShortEnumSpec;
+
+  // Axis_Label Properties
+  labels?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+  format?: string | EnumSpec<string> | ShortEnumSpec;
+  labelAngle?: number | EnumSpec<number> | ShortEnumSpec;
+  labelMaxLength?: number | EnumSpec<number> | ShortEnumSpec;
+  shortTimeLabels?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+
+  // Axis_Tick Properties
+  subdivide?: number | EnumSpec<number> | ShortEnumSpec;
+  ticks?: number | EnumSpec<number> | ShortEnumSpec;
+  tickColor?: string | EnumSpec<string> | ShortEnumSpec;
+  tickLabelColor?: string | EnumSpec<string> | ShortEnumSpec;
+  tickLabelFont?: string | EnumSpec<string> | ShortEnumSpec;
+  ticklabelFontSize?: number | EnumSpec<number> | ShortEnumSpec;
+  tickPadding?: number | EnumSpec<number> | ShortEnumSpec;
+  tickSize?: number | EnumSpec<number> | ShortEnumSpec;
+  tickSizeMajor?: number | EnumSpec<number> | ShortEnumSpec;
+  tickSizeMinor?: number | EnumSpec<number> | ShortEnumSpec;
+  tickSizeEnd?: number | EnumSpec<number> | ShortEnumSpec;
+  tickWidth?: number | EnumSpec<number> | ShortEnumSpec;
+  values?: number[] | EnumSpec<number[]> | ShortEnumSpec;
+
+  // Axis_Title Properties
+  title?: string | EnumSpec<string> | ShortEnumSpec;
+  titleColor?: string | EnumSpec<string> | ShortEnumSpec;
+  titleFont?: string | EnumSpec<string> | ShortEnumSpec;
+  titleFontWeight?: string | EnumSpec<string> | ShortEnumSpec;
+  titleFontSize?: number | EnumSpec<number> | ShortEnumSpec;
+  titleOffset?: number | EnumSpec<number> | ShortEnumSpec;
+  titleMaxLength?: number | EnumSpec<number> | ShortEnumSpec;
+  characterWidth?: number | EnumSpec<number> | ShortEnumSpec;
 }
 
 export interface BinQuery extends EnumSpec<boolean> {

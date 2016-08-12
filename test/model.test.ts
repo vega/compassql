@@ -1,6 +1,7 @@
 import {assert} from 'chai';
 
 import {AggregateOp} from 'vega-lite/src/aggregate';
+import {AxisOrient} from 'vega-lite/src/axis';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {SortOrder} from 'vega-lite/src/sort';
@@ -264,7 +265,12 @@ describe('SpecQueryModel', () => {
         transform: {filter: 'datum.A===1'},
         mark: Mark.BAR,
         encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+          {
+            channel: Channel.X,
+            field: 'A',
+            type: Type.QUANTITATIVE,
+            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}
+          }
         ]
       });
 
@@ -274,7 +280,7 @@ describe('SpecQueryModel', () => {
         transform: {filter: 'datum.A===1'},
         mark: Mark.BAR,
         encoding: {
-          x: {field: 'A', type: Type.QUANTITATIVE}
+          x: {field: 'A', type: Type.QUANTITATIVE, axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}}
         },
         config: DEFAULT_SPEC_CONFIG
       });
