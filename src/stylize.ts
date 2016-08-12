@@ -104,8 +104,8 @@ export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schem
 
 export function xAxisOnTopForHighYCardinalityWithoutColumn(specM: SpecQueryModel, schema: Schema, encQIndex: Dict<EncodingQuery>, opt: QueryConfig): SpecQueryModel {
   [Channel.COLUMN, Channel.X, Channel.Y].forEach((channel) => {
-        encQIndex[channel] = specM.getEncodingQueryByChannel(channel);
-      });
+    encQIndex[channel] = specM.getEncodingQueryByChannel(channel);
+  });
 
   if (encQIndex[Channel.COLUMN] === undefined) {
     const xEncQ = encQIndex[Channel.X];
