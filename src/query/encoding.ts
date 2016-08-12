@@ -5,7 +5,7 @@ import {SortOrder, SortField} from 'vega-lite/src/sort';
 import {defaultScaleType, TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-import {EnumSpec, isEnumSpec, ShortEnumSpec} from '../enumspec';
+import {EnumSpec, isEnumSpec, ShortEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 import {contains} from '../util';
 
 export type Field = string;
@@ -68,13 +68,14 @@ export function isMeasure(encQ: EncodingQuery) {
  *  @returns {undefined} If the scale type was not specified and Type (or TimeUnit if applicable) is an EnumSpec, there is no clear scale type
  */
 
-export function scaleType(scaleType: ScaleType | EnumSpec<ScaleType> | ShortEnumSpec,
-    timeUnit: TimeUnit | EnumSpec<TimeUnit> | ShortEnumSpec,
-    type: Type | EnumSpec<Type> | ShortEnumSpec) {
-  if (scaleType !== undefined) {
-    return scaleType;
-  }
+export function scaleType(encQ: EncodingQuery) {
+  const scale: ScaleQuery = encQ.scale === true || encQ.scale === SHORT_ENUM_SPEC ? {} : encQ.scale;
+  const type = encQ.type;
+  const timeUnit = encQ.timeUnit;
 
+  if (scale && scale.type !== undefined) {
+    return scale.type;
+  }
   if (isEnumSpec(type)) {
     return undefined;
   }

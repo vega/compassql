@@ -46,7 +46,7 @@ export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, sc
 
       // We do not want to assign a bandSize if scale is set to false
       // and we only apply this if the scale is (or can be) an ordinal scale.
-      if (yEncQ.scale && contains([ScaleType.ORDINAL, undefined], scaleType((yEncQ.scale as ScaleQuery).type, yEncQ.timeUnit, yEncQ.type))) {
+      if (yEncQ.scale && contains([ScaleType.ORDINAL, undefined], scaleType(yEncQ))) {
         if (!(yEncQ.scale as ScaleQuery).bandSize) {
           (yEncQ.scale as ScaleQuery).bandSize = 12;
         }
@@ -66,7 +66,7 @@ export function smallBandSizeForHighCardinalityOrFacet(specM: SpecQueryModel, sc
 
       // We do not want to assign a bandSize if scale is set to false
       // and we only apply this if the scale is (or can be) an ordinal scale.
-      if (xEncQ.scale && contains([ScaleType.ORDINAL, undefined], scaleType((xEncQ.scale as ScaleQuery).type, xEncQ.timeUnit, xEncQ.type))) {
+      if (xEncQ.scale && contains([ScaleType.ORDINAL, undefined], scaleType(xEncQ))) {
         if (!(xEncQ.scale as ScaleQuery).bandSize) {
           (xEncQ.scale as ScaleQuery).bandSize = 12;
         }

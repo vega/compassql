@@ -168,11 +168,12 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
          //  to scale type is EnumSpec. If scale type is an EnumSpec, we do not yet know
          //  what the scale type is, and thus can ignore the constraint.
 
-        if ((scale.type === undefined && isEnumSpec(encQ.type)) || isEnumSpec(scale.type)) {
+        const sType = scaleType(encQ);
+
+        if (sType === undefined) {
+          // If still ambiguous, doesn't check the constraint
           return true;
         }
-
-        const sType = scaleType(scale.type, encQ.timeUnit, encQ.type);
 
         for (let scaleProp in scale) {
           if (SUPPORTED_SCALE_PROPERTY_INDEX[scaleProp]) {
@@ -267,7 +268,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.scale) {
         const type = encQ.type;
-        const sType = scaleType((encQ.scale as ScaleQuery).type, encQ.timeUnit, type);
+        const sType = scaleType(encQ);
 
         if (contains([Type.ORDINAL, Type.NOMINAL], type)) {
             return contains([ScaleType.ORDINAL, undefined], sType);
