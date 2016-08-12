@@ -95,7 +95,7 @@ export function scaleType(scaleType: ScaleType | EnumSpec<ScaleType> | ShortEnum
       return ScaleType.TIME;
     }
   } else {
-    throw new Error();
+    throw new Error('Unsupported type: ' + type + ' in scaleType');
   }
 }
 
