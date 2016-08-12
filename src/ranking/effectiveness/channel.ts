@@ -9,7 +9,7 @@ import {Dict, extend, forEach, keys} from '../../util';
 import {Schema} from '../../schema';
 import {FeatureScore} from '../ranking';
 import {getExtendedType, getFeatureScore} from './effectiveness';
-import {BIN_Q, TIMEUNIT_T, Q, N, O, T} from './type';
+import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, ExtendedType} from './type';
 
 /**
  * Field Type (with Bin and TimeUnit) and Channel Score (Cleveland / Mackinlay based)
@@ -33,14 +33,14 @@ export namespace TypeChannelScore {
       detail: -3
     };
 
-    [Q, BIN_Q, T, TIMEUNIT_T, O].forEach((type) => {
+    [Q, BIN_Q, T, TIMEUNIT_T, TIMEUNIT_O, O].forEach((type) => {
       keys(ORDERED_TYPE_CHANNEL_SCORE).forEach((channel) => {
         SCORE[featurize(type, channel)] = ORDERED_TYPE_CHANNEL_SCORE[channel];
       });
     });
 
     // Penalize row/column for bin quantitative / timeUnit_temporal / O less
-    [BIN_Q ,TIMEUNIT_T, O].forEach((type) => {
+    [BIN_Q ,TIMEUNIT_T, TIMEUNIT_O, O].forEach((type) => {
       [Channel.ROW, Channel.COLUMN].forEach((channel) => {
         SCORE[featurize(type, channel)] += 0.15;
       });
@@ -67,7 +67,7 @@ export namespace TypeChannelScore {
     return SCORE;
   }
 
-  export function featurize(type, channel) {
+  export function featurize(type: ExtendedType, channel) {
     return type + '_' + channel;
   }
 
@@ -115,6 +115,9 @@ export namespace PreferredAxisScore {
       opt: 'preferredTemporalAxis'
     },{
       feature: TIMEUNIT_T,
+      opt: 'preferredTemporalAxis'
+    },{
+      feature: TIMEUNIT_O,
       opt: 'preferredTemporalAxis'
     },{
       feature: O,

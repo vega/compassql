@@ -8,7 +8,7 @@ import {Schema} from '../../schema';
 
 import {FeatureScore} from '../ranking';
 import {getExtendedType, getFeatureScore} from './effectiveness';
-import {BIN_Q, TIMEUNIT_T, Q, N, O, T, NONE} from './type';
+import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, NONE} from './type';
 
 export namespace MarkScore {
   export const MARK_SCORE = 'markScore';
@@ -19,8 +19,8 @@ export namespace MarkScore {
 
   export function init() {
     const MEASURES = [Q, T];
-    const DIMENSIONS = [BIN_Q, TIMEUNIT_T, O, N];
-    const DIMENSIONS_OR_NONE = DIMENSIONS.concat([NONE]);
+    const DISCRETE = [BIN_Q, TIMEUNIT_O, O, N];
+    const DISCRETE_OR_NONE = DISCRETE.concat([NONE]);
 
     let SCORE = {} as Dict<number>;
     // QxQ
@@ -31,6 +31,7 @@ export namespace MarkScore {
           point: 0,
           text: -0.2,
           tick: -0.5,
+          rect: -1,
           bar: -2,
           line: -2,
           area: -2,
@@ -62,8 +63,8 @@ export namespace MarkScore {
     // DxQ, QxD
     MEASURES.forEach((xType) => {
 
-      // has occlusion
-      DIMENSIONS_OR_NONE.forEach((yType) => {
+      // HAS OCCLUSION
+      DISCRETE_OR_NONE.forEach((yType) => {
         const occludedDimensionMeasureMark = {
           tick: 0,
           point: -0.2,
@@ -81,7 +82,28 @@ export namespace MarkScore {
           SCORE[feature2] = score;
         });
       });
-      // no occlusion
+
+      [TIMEUNIT_T].forEach((yType) => {
+        const occludedDimensionMeasureMark = {
+          // For Time Dimension with time scale, tick is not good
+          point: 0,
+          text: -0.5,
+          tick: -1,
+          bar: -2,
+          line: -2,
+          area: -2,
+          rule: -2.5
+        };
+        forEach(occludedDimensionMeasureMark, (score, mark) => {
+          const feature = featurize(xType, yType, true, mark);
+          SCORE[feature] = score;
+          // also do the inverse
+          const feature2 = featurize(yType, xType, true, mark);
+          SCORE[feature2] = score;
+        });
+      });
+
+      // NO OCCLUSION
       [NONE, N, O].forEach((yType) => {
         const noOccludedQxN = {
           bar: 0,
@@ -126,7 +148,9 @@ export namespace MarkScore {
         });
       });
 
-      [TIMEUNIT_T].forEach((yType) => {
+      [TIMEUNIT_T, TIMEUNIT_O].forEach((yType) => {
+        // For aggregate / surely no occlusion plot, Temporal with time or ordinal
+        // are not that different.
         const noOccludedQxBinQ = {
           line: 0,
           area: -0.1,
@@ -148,9 +172,67 @@ export namespace MarkScore {
       });
     });
 
+    [TIMEUNIT_T].forEach((xType) => {
+      [TIMEUNIT_T].forEach((yType) => {
+        // has occlusion
+        const ttMark = {
+          point: 0,
+          rect: -0.1, // assuming rect will be small
+          text: -0.5,
+          tick: -1,
+          bar: -2,
+          line: -2,
+          area: -2,
+          rule: -2.5
+        };
+        // No difference between has occlusion and no occlusion
+        // as most of the time, it will be the occluded case.
+        forEach(ttMark, (score, mark) => {
+          const feature = featurize(xType, yType, true, mark);
+          SCORE[feature] = score;
+        });
+        forEach(ttMark, (score, mark) => {
+          const feature = featurize(xType, yType, false, mark);
+          SCORE[feature] = score;
+        });
+      });
+
+      DISCRETE_OR_NONE.forEach((yType) => {
+        // has occlusion
+        const tdMark = {
+          tick: 0,
+          point: -0.2,
+          text: -0.5,
+          rect: -1,
+          bar: -2,
+          line: -2,
+          area: -2,
+          rule: -2.5
+        };
+        // No difference between has occlusion and no occlusion
+        // as most of the time, it will be the occluded case.
+        forEach(tdMark, (score, mark) => {
+          const feature = featurize(xType, yType, true, mark);
+          SCORE[feature] = score;
+        });
+        forEach(tdMark, (score, mark) => {
+          const feature = featurize(yType, xType, true, mark);
+          SCORE[feature] = score;
+        });
+        forEach(tdMark, (score, mark) => {
+          const feature = featurize(xType, yType, false, mark);
+          SCORE[feature] = score;
+        });
+        forEach(tdMark, (score, mark) => {
+          const feature = featurize(yType, xType, false, mark);
+          SCORE[feature] = score;
+        });
+      });
+    });
+
     // DxD
-    DIMENSIONS_OR_NONE.forEach((xType) => {
-      DIMENSIONS_OR_NONE.forEach((yType) => {
+    DISCRETE_OR_NONE.forEach((xType) => {
+      DISCRETE_OR_NONE.forEach((yType) => {
         // has occlusion
         const ddMark = {
           point: 0,
@@ -182,10 +264,10 @@ export namespace MarkScore {
       mark = Mark.POINT;
     }
     const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
-    const xType = xEncQ ? getExtendedType(xEncQ) : '-';
+    const xType = xEncQ ? getExtendedType(xEncQ) : NONE;
 
     const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
-    const yType = yEncQ ? getExtendedType(yEncQ) : '-';
+    const yType = yEncQ ? getExtendedType(yEncQ) : NONE;
 
     const isOccluded = !specM.isAggregate(); // FIXME
 

@@ -1,6 +1,6 @@
 import {X, Y, SIZE, COLOR, OPACITY, TEXT, ROW, COLUMN, SHAPE, DETAIL} from 'vega-lite/src/channel';
 
-import {BIN_Q, TIMEUNIT_T, Q, N, O, T} from '../../../src/ranking/effectiveness/type';
+import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T} from '../../../src/ranking/effectiveness/type';
 import {TypeChannelScore, PreferredAxisScore, PreferredFacetScore, DimensionScore} from '../../../src/ranking/effectiveness/channel';
 import {nestedMap} from '../../../src/util';
 import {RuleSet, testRuleSet} from '../rule';
@@ -17,7 +17,7 @@ export const TYPE_CHANNEL_RULESET: RuleSet<string> = {
         })
       };
     }),
-    [BIN_Q, TIMEUNIT_T, O].map((type) => {
+    [BIN_Q, TIMEUNIT_T, TIMEUNIT_O, O].map((type) => {
       const order = [[X, Y], SIZE, COLOR, [ROW, COLUMN], OPACITY, SHAPE, DETAIL];
       return {
         name: type + '',
@@ -48,7 +48,7 @@ describe('typeChannelScore', () => {
 export const PREFERRED_AXIS_RULESET: RuleSet<string> = {
   name: 'preferredAxisScore (bin, temporal)',
   rules: [].concat(
-    [BIN_Q, TIMEUNIT_T, T].map((type) => {
+    [BIN_Q, TIMEUNIT_T, TIMEUNIT_O, T].map((type) => {
       return {
         name: type + '',
         items: nestedMap([X, Y], (channel) => {
