@@ -43,7 +43,7 @@ describe('generate', function () {
         const specQ = {
           mark: Mark.POINT,
           encodings: [
-            {aggregate: {name: 'aggregate', values: [undefined, AggregateOp.MEAN]}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+            {aggregate: {name: 'aggregate', enum: [undefined, AggregateOp.MEAN]}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
           ],
         };
         const CONFIG_WITH_OMIT_AGGREGATE = extend({}, DEFAULT_QUERY_CONFIG, {omitAggregate: true});
@@ -60,7 +60,7 @@ describe('generate', function () {
         const specQ = {
           mark: Mark.POINT,
           encodings: [
-            {aggregate: {name:'aggregate', values: [undefined, AggregateOp.MEAN]}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+            {aggregate: {name:'aggregate', enum: [undefined, AggregateOp.MEAN]}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
           ]
         };
         const CONFIG_WITH_OMIT_RAW = extend({}, DEFAULT_QUERY_CONFIG, {omitRaw: true});
@@ -219,7 +219,7 @@ describe('generate', function () {
             channel: Channel.X,
             scale: {
               bandSize: 10,
-              type: {values: [undefined, ScaleType.LOG, ScaleType.TIME, ScaleType.ORDINAL]}
+              type: {enum: [undefined, ScaleType.LOG, ScaleType.TIME, ScaleType.ORDINAL]}
             },
             field: 'Q',
             type: Type.NOMINAL
@@ -243,7 +243,7 @@ describe('generate', function () {
             scale: {
               clamp: true,
               exponent: [1,2],
-              type: {values: [undefined, ScaleType.LINEAR, ScaleType.LOG, ScaleType.ORDINAL,
+              type: {enum: [undefined, ScaleType.LINEAR, ScaleType.LOG, ScaleType.ORDINAL,
                               ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.SQRT,
                               ScaleType.TIME, ScaleType.UTC]}
             },
@@ -269,7 +269,7 @@ describe('generate', function () {
             scale: {
               nice: true,
               round: true,
-              type: {values: [undefined, ScaleType.LINEAR, ScaleType.LOG, ScaleType.ORDINAL,
+              type: {enum: [undefined, ScaleType.LINEAR, ScaleType.LOG, ScaleType.ORDINAL,
                               ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.SQRT,
                               ScaleType.TIME, ScaleType.UTC]}
             },
@@ -296,7 +296,7 @@ describe('generate', function () {
             channel: Channel.X,
             scale: {
               zero: true,
-              type: {values: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
+              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -317,7 +317,7 @@ describe('generate', function () {
             channel: Channel.X,
             scale: {
               zero: true,
-              type: {values: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
+              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -339,7 +339,7 @@ describe('generate', function () {
             channel: Channel.X,
             scale: {
               zero: true,
-              type: {values: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
+              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -366,7 +366,7 @@ describe('generate', function () {
             channel: Channel.X,
             scale: {
               zero: true,
-              type: {values: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
+              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -387,8 +387,8 @@ describe('generate', function () {
           {
             channel: Channel.X,
             scale: {
-              values: [true, false],
-              type: {values: [undefined, ScaleType.LOG, ScaleType.UTC]}
+              enum: [true, false],
+              type: {enum: [undefined, ScaleType.LOG, ScaleType.UTC]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -409,7 +409,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [undefined, ScaleType.LOG, ScaleType.UTC]}},
+            scale: {type: {enum: [undefined, ScaleType.LOG, ScaleType.UTC]}},
             field: 'Q',
             type: Type.QUANTITATIVE
           }
@@ -428,7 +428,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined, ScaleType.LOG]}},
+            scale: {type: {enum: [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined, ScaleType.LOG]}},
             field: 'T',
             type: Type.TEMPORAL
           }
@@ -448,7 +448,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined, ScaleType.LOG]}},
+            scale: {type: {enum: [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined, ScaleType.LOG]}},
             field: 'T',
             type: Type.TEMPORAL,
             timeUnit: TimeUnit.MINUTES
@@ -470,7 +470,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [ScaleType.ORDINAL, undefined, ScaleType.LOG]}},
+            scale: {type: {enum: [ScaleType.ORDINAL, undefined, ScaleType.LOG]}},
             field: 'O',
             type: Type.ORDINAL,
             timeUnit: TimeUnit.MINUTES
@@ -490,7 +490,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [ScaleType.ORDINAL, ScaleType.QUANTILE, undefined, ScaleType.LOG]}},
+            scale: {type: {enum: [ScaleType.ORDINAL, ScaleType.QUANTILE, undefined, ScaleType.LOG]}},
             field: 'O',
             type: Type.ORDINAL
           }
@@ -509,7 +509,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {values: [undefined, ScaleType.LOG]}},
+            scale: {type: {enum: [undefined, ScaleType.LOG]}},
             field: 'N',
             type: Type.NOMINAL
           }
@@ -530,7 +530,7 @@ describe('generate', function () {
           encodings: [
             {
               channel: Channel.X,
-              bin: {maxbins: {values: [10, 20, 30]}},
+              bin: {maxbins: {enum: [10, 20, 30]}},
               field: 'Q',
               type: Type.QUANTITATIVE
             }
@@ -551,8 +551,8 @@ describe('generate', function () {
             {
               channel: Channel.X,
               bin: {
-                values: [true, false],
-                maxbins: {values: [10, 20, 30]}
+                enum: [true, false],
+                maxbins: {enum: [10, 20, 30]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -608,7 +608,7 @@ describe('generate', function () {
         mark: Mark.POINT,
         encodings: [
           {
-            channel: {values: [Channel.X, Channel.SIZE, Channel.COLOR]},
+            channel: {enum: [Channel.X, Channel.SIZE, Channel.COLOR]},
             field: 'Q',
             type: Type.QUANTITATIVE
           }

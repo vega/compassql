@@ -24,7 +24,7 @@ ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema,
     const markEnumSpec = specM.getMark() as EnumSpec<Mark>;
 
     // enumerate the value
-    markEnumSpec.values.forEach((mark) => {
+    markEnumSpec.enum.forEach((mark) => {
       specM.setMark(mark);
       // Check spec constraint
       const violatedSpecConstraint = checkSpec(Property.MARK, enumSpecIndex.mark, specM, schema, opt);
@@ -86,7 +86,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
           ) { // TODO: encQ.excluded
           enumerate(jobIndex + 1);
         } else {
-          enumSpec.values.forEach((propVal) => {
+          enumSpec.enum.forEach((propVal) => {
             if (propVal === null) {
               // our duplicate() method use JSON.stringify, parse and thus can accidentally
               // convert undefined in an array into null

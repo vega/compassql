@@ -91,7 +91,7 @@ describe('stylize', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.BAR,
             encodings: [
-              {channel: Channel.Y, field: 'O_100', scale: {name: 'scale', values: [true, false]}, type: Type.ORDINAL}
+              {channel: Channel.Y, field: 'O_100', scale: {name: 'scale', enum: [true, false]}, type: Type.ORDINAL}
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
@@ -103,12 +103,12 @@ describe('stylize', () => {
       let specM = SpecQueryModel.build({
           mark: Mark.BAR,
           encodings: [
-            {channel: Channel.Y, field: 'O_100', scale: {bandSize: {name: 'scaleBandSize', values: [17, 21]}}, type: Type.ORDINAL}
+            {channel: Channel.Y, field: 'O_100', scale: {bandSize: {name: 'scaleBandSize', enum: [17, 21]}}, type: Type.ORDINAL}
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = smallBandSizeForHighCardinalityOrFacet(specM, schema);
-      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, {name: 'scaleBandSize', values: [17, 21]});
+      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, {name: 'scaleBandSize', enum: [17, 21]});
     });
   });
 
@@ -165,7 +165,7 @@ describe('stylize', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.POINT,
             encodings: [
-              {channel: Channel.COLOR, field: 'N20', scale: {name: 'scale', values: [true, false]}, type: Type.NOMINAL}
+              {channel: Channel.COLOR, field: 'N20', scale: {name: 'scale', enum: [true, false]}, type: Type.NOMINAL}
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
@@ -177,12 +177,12 @@ describe('stylize', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.POINT,
             encodings: [
-              {channel: Channel.COLOR, field: 'N20', scale: {range: {name: 'scaleRange', values: [null]}}, type: Type.NOMINAL}
+              {channel: Channel.COLOR, field: 'N20', scale: {range: {name: 'scaleRange', enum: [null]}}, type: Type.NOMINAL}
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
         specM = nominalColorScaleForHighCardinality(specM, schema);
-        assert.deepEqual((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, {name: 'scaleRange', values: [null]});
+        assert.deepEqual((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, {name: 'scaleRange', enum: [null]});
     });
   });
 });

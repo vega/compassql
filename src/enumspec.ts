@@ -10,7 +10,7 @@ export const SHORT_ENUM_SPEC = ShortEnumSpec.ENUMSPEC;
 
 export interface EnumSpec<T> {
   name?: string;
-  values?: T[];
+  enum?: T[];
 }
 
 export interface ExtendedEnumSpec<T> extends EnumSpec<T> {
@@ -18,12 +18,12 @@ export interface ExtendedEnumSpec<T> extends EnumSpec<T> {
 }
 
 export function isEnumSpec(prop: any) {
-  return prop === SHORT_ENUM_SPEC || (prop !== undefined && (!!prop.values || !!prop.name) && !isArray(prop));
+  return prop === SHORT_ENUM_SPEC || (prop !== undefined && (!!prop.enum || !!prop.name) && !isArray(prop));
 }
 
 export function initEnumSpec(prop: any, defaultName: string, defaultEnumValues: any[]): ExtendedEnumSpec<any> {
   return extend({}, {
       name: defaultName,
-      values: defaultEnumValues
+      enum: defaultEnumValues
     }, prop === SHORT_ENUM_SPEC ? {} : prop);
 }

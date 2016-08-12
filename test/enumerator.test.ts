@@ -25,7 +25,7 @@ describe('enumerator', () => {
   describe('mark', () => {
     it('should correctly enumerate marks', () => {
       const specM = buildSpecQueryModel({
-        mark: {values: [Mark.POINT, Mark.TICK]},
+        mark: {enum: [Mark.POINT, Mark.TICK]},
         encodings: [
           {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
           {channel: Channel.Y, field: 'O', type: Type.ORDINAL}
@@ -41,7 +41,7 @@ describe('enumerator', () => {
 
     it('should not enumerate invalid mark', () => {
       const specM = buildSpecQueryModel({
-        mark: {values: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA]},
+        mark: {enum: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA]},
         encodings: [
           {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
           {channel: Channel.SHAPE, field: 'O', type: Type.ORDINAL}
@@ -62,7 +62,7 @@ describe('enumerator', () => {
           mark: Mark.POINT,
           encodings: [
             {
-              channel: {values: [Channel.X, Channel.Y]},
+              channel: {enum: [Channel.X, Channel.Y]},
               field: 'Q',
               type: Type.QUANTITATIVE
             }
@@ -82,7 +82,7 @@ describe('enumerator', () => {
           mark: Mark.BAR,
           encodings: [
             {
-              channel: {values: [Channel.X, Channel.SHAPE]},
+              channel: {enum: [Channel.X, Channel.SHAPE]},
               field: 'Q',
               type: Type.QUANTITATIVE
             }
@@ -104,7 +104,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              aggregate: {values: [AggregateOp.MEAN, AggregateOp.MEDIAN, undefined]},
+              aggregate: {enum: [AggregateOp.MEAN, AggregateOp.MEDIAN, undefined]},
               field: 'Q',
               type: Type.QUANTITATIVE
             }
@@ -125,7 +125,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              aggregate: {values: [AggregateOp.MEAN, AggregateOp.MEDIAN, undefined]},
+              aggregate: {enum: [AggregateOp.MEAN, AggregateOp.MEDIAN, undefined]},
               field: 'N',
               type: Type.NOMINAL
             }
@@ -147,7 +147,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               bin: {
-                values: [true, false],
+                enum: [true, false],
                 maxbins: 10
               },
               field: 'Q',
@@ -170,7 +170,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               bin: {
-                values: [true, false]
+                enum: [true, false]
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -194,7 +194,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               bin: {
-                maxbins: {values: [5, 10, 20]}
+                maxbins: {enum: [5, 10, 20]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -219,7 +219,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                values: [true, false],
+                enum: [true, false],
                 type: ScaleType.LOG
               },
               field: 'Q',
@@ -242,7 +242,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                values: [true, false]
+                enum: [true, false]
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -266,7 +266,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                clamp: {values: [true, false, undefined]}
+                clamp: {enum: [true, false, undefined]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -291,7 +291,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                domain: {values: [undefined, ['cats', 'dogs'], ['chickens', 'pigs']]}
+                domain: {enum: [undefined, ['cats', 'dogs'], ['chickens', 'pigs']]}
               },
               field: 'N',
               type: Type.NOMINAL
@@ -314,7 +314,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                domain: {values: [undefined, [1,3], [5,7]]}
+                domain: {enum: [undefined, [1,3], [5,7]]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -339,7 +339,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                exponent: {values: [0.5, 1, 2, undefined]},
+                exponent: {enum: [0.5, 1, 2, undefined]},
                 type: ScaleType.LOG
               },
               field: 'Q',
@@ -367,7 +367,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                nice: {values: [undefined, true, false]}
+                nice: {enum: [undefined, true, false]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -389,7 +389,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                range: {values: [undefined, ['cats', 'dogs'], ['chickens', 'pigs']]}
+                range: {enum: [undefined, ['cats', 'dogs'], ['chickens', 'pigs']]}
               },
               field: 'N',
               type: Type.NOMINAL
@@ -412,7 +412,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                range: {values: [undefined, [1,3], [5,7]]}
+                range: {enum: [undefined, [1,3], [5,7]]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -437,7 +437,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                round: {values: [true, false, undefined]}
+                round: {enum: [true, false, undefined]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -462,7 +462,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                type: {values: [undefined, ScaleType.LOG, ScaleType.POW, ScaleType.ORDINAL]}
+                type: {enum: [undefined, ScaleType.LOG, ScaleType.POW, ScaleType.ORDINAL]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -487,7 +487,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               scale: {
-                useRawDomain: {values: [true, false, undefined]}
+                useRawDomain: {enum: [true, false, undefined]}
               },
               field: 'Q',
               type: Type.QUANTITATIVE
@@ -512,7 +512,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               field: 'Q',
-              timeUnit: {values: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR, undefined]},
+              timeUnit: {enum: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR, undefined]},
               type: Type.TEMPORAL
             }
           ]
@@ -534,7 +534,7 @@ describe('enumerator', () => {
             {
               channel: Channel.X,
               field: 'Q',
-              timeUnit: {values: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR, undefined]},
+              timeUnit: {enum: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR, undefined]},
               type: Type.QUANTITATIVE
             }
           ]
@@ -554,7 +554,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              field: {values: ['Q', 'Q1', 'Q2', 'O', 'N', 'T']},
+              field: {enum: ['Q', 'Q1', 'Q2', 'O', 'N', 'T']},
               type: Type.QUANTITATIVE
             }
           ]
@@ -574,7 +574,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              field: {values: ['T', 'Q', 'O', 'N']},
+              field: {enum: ['T', 'Q', 'O', 'N']},
               type: Type.TEMPORAL
             }
           ]
@@ -592,7 +592,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              field: {values: ['O', 'O_10', 'O_20', 'O_100', 'Q', 'T', 'N']},
+              field: {enum: ['O', 'O_10', 'O_20', 'O_100', 'Q', 'T', 'N']},
               type: Type.ORDINAL
             }
           ]
@@ -613,7 +613,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              field: {values: ['N', 'N20', 'Q', 'O', 'T']},
+              field: {enum: ['N', 'N20', 'Q', 'O', 'T']},
               type: Type.NOMINAL
             }
           ]
@@ -632,7 +632,7 @@ describe('enumerator', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, field: 'Q', type:  {values: [Type.QUANTITATIVE, Type.NOMINAL, Type.ORDINAL, Type.TEMPORAL]}},
+            {channel: Channel.X, field: 'Q', type:  {enum: [Type.QUANTITATIVE, Type.NOMINAL, Type.ORDINAL, Type.TEMPORAL]}},
           ]
         });
         const noTypeMatchesSchema = extend({}, DEFAULT_QUERY_CONFIG, {typeMatchesSchemaType: false});
@@ -649,7 +649,7 @@ describe('enumerator', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, field: 'Q', type:  {values: [Type.QUANTITATIVE, Type.NOMINAL, Type.ORDINAL, Type.TEMPORAL]}},
+            {channel: Channel.X, field: 'Q', type:  {enum: [Type.QUANTITATIVE, Type.NOMINAL, Type.ORDINAL, Type.TEMPORAL]}},
           ]
         });
         const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
@@ -663,7 +663,7 @@ describe('enumerator', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, field: 'O', type: {values: [Type.ORDINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.NOMINAL]}}
+            {channel: Channel.X, field: 'O', type: {enum: [Type.ORDINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.NOMINAL]}}
           ]
         });
         const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
@@ -677,7 +677,7 @@ describe('enumerator', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, field: 'T', type: {values:[Type.TEMPORAL, Type.ORDINAL, Type.QUANTITATIVE, Type.NOMINAL]}}
+            {channel: Channel.X, field: 'T', type: {enum:[Type.TEMPORAL, Type.ORDINAL, Type.QUANTITATIVE, Type.NOMINAL]}}
           ]
         });
         const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
@@ -691,7 +691,7 @@ describe('enumerator', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, field: 'N', type: {values: [Type.NOMINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.ORDINAL]}}
+            {channel: Channel.X, field: 'N', type: {enum: [Type.NOMINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.ORDINAL]}}
           ]
         });
         const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);

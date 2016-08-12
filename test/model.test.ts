@@ -44,21 +44,21 @@ describe('SpecQueryModel', () => {
       const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
       assert.deepEqual(enumSpecIndex.mark, {
         name: 'm',
-        values: DEFAULT_QUERY_CONFIG.marks
+        enum: DEFAULT_QUERY_CONFIG.marks
       });
     });
 
     it('should have mark enumSpecIndex if mark is an EnumSpec.', () => {
       const specQ: SpecQuery = {
         mark: {
-          values: [Mark.BAR]
+          enum: [Mark.BAR]
         },
         encodings: []
       };
       const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
       assert.deepEqual(enumSpecIndex.mark, {
         name: 'm',
-        values: [Mark.BAR]
+        enum: [Mark.BAR]
       });
     });
 
@@ -116,7 +116,7 @@ describe('SpecQueryModel', () => {
           ['A', 'B'] :
           getDefaultEnumValues(prop, schema, DEFAULT_QUERY_CONFIG);
         specQ.encodings[0][prop] = {
-          values: enumValues
+          enum: enumValues
         };
 
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
@@ -154,7 +154,7 @@ describe('SpecQueryModel', () => {
         let specQ = duplicate(templateSpecQ);
         specQ.encodings[0][parent] = {};
         specQ.encodings[0][parent][child] = {
-          values: getDefaultEnumValues(prop, schema, DEFAULT_QUERY_CONFIG)
+          enum: getDefaultEnumValues(prop, schema, DEFAULT_QUERY_CONFIG)
         };
 
         const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
@@ -407,7 +407,7 @@ describe('SpecQueryModel', () => {
 
     it('should return null if the query is incompleted', () => {
       const specM = buildSpecQueryModel({
-        mark: {values: [Mark.BAR, Mark.POINT]},
+        mark: {enum: [Mark.BAR, Mark.POINT]},
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ],

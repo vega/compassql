@@ -8,7 +8,7 @@ describe('enumspec', () => {
     it('should return true for an enum spec with name and values', () => {
       assert(isEnumSpec({
         name: 'a',
-        values: [1,2,3]
+        enum: [1,2,3]
       }));
     });
 
@@ -20,7 +20,7 @@ describe('enumspec', () => {
 
     it('should return true for an enum spec with values', () => {
       assert(isEnumSpec({
-        values: [1,2,3]
+        enum: [1,2,3]
       }));
     });
 
@@ -50,13 +50,13 @@ describe('enumspec', () => {
       const mark = initEnumSpec(SHORT_ENUM_SPEC, 'm', [Mark.POINT]);
       assert.deepEqual(mark, {
         name: 'm',
-        values: [Mark.POINT]
+        enum: [Mark.POINT]
       });
     });
 
     it('should return full enumSpec with other properties preserved', () => {
-      const binQuery = initEnumSpec({values: [true, false], maxbins: 30}, 'b1', [true, false]);
-      assert.deepEqual(binQuery.values, [true, false]);
+      const binQuery = initEnumSpec({enum: [true, false], maxbins: 30}, 'b1', [true, false]);
+      assert.deepEqual(binQuery.enum, [true, false]);
       assert.equal(binQuery['maxbins'], 30);
       assert.equal(binQuery.name, 'b1');
     });

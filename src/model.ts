@@ -226,11 +226,11 @@ export class SpecQueryModel {
       const countEncQ: EncodingQuery = {
         channel: {
           name: getDefaultName(Property.CHANNEL) + specQ.encodings.length,
-          values: getDefaultEnumValues(Property.CHANNEL, schema, opt)
+          enum: getDefaultEnumValues(Property.CHANNEL, schema, opt)
         },
         autoCount: {
           name: getDefaultName(Property.AUTOCOUNT) + specQ.encodings.length,
-          values: [false, true]
+          enum: [false, true]
         },
         type: Type.QUANTITATIVE
       };
@@ -313,7 +313,7 @@ export class SpecQueryModel {
     } else if (hasNestedProperty(prop) && value === true) {
       encQ[prop] = extend({},
         encQ[prop], // copy all existing properties
-        {values: undefined, name: undefined} // except name and values to it no longer an enumSpec
+        {enum: undefined, name: undefined} // except name and values to it no longer an enumSpec
       );
     } else { // encoding property (non-nested)
       encQ[prop] = value;

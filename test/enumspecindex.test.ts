@@ -8,20 +8,20 @@ describe('enumspecindex', () => {
   describe('isEmpty', () => {
     it('should return false if encoding property is set', () => {
       let enumSpecIndex = new EnumSpecIndex()
-        .setEncodingProperty(0, Property.SCALE, {name: 'scale', values: [true, false]});
+        .setEncodingProperty(0, Property.SCALE, {name: 'scale', enum: [true, false]});
       assert.equal(enumSpecIndex.isEmpty(), false);
     });
 
     it('should return false if mark is set', () => {
       let enumSpecIndex = new EnumSpecIndex()
-        .setMark({name: 'mark', values: [Mark.POINT, Mark.BAR, Mark.LINE]});
+        .setMark({name: 'mark', enum: [Mark.POINT, Mark.BAR, Mark.LINE]});
       assert.equal(enumSpecIndex.isEmpty(), false);
     });
 
     it('should return false if mark and encoding property are set', () => {
       let enumSpecIndex = new EnumSpecIndex()
-        .setEncodingProperty(0, Property.SCALE, {name: 'scale', values: [true, false]})
-        .setMark({name: 'mark', values: [Mark.POINT, Mark.BAR, Mark.LINE]});
+        .setEncodingProperty(0, Property.SCALE, {name: 'scale', enum: [true, false]})
+        .setMark({name: 'mark', enum: [Mark.POINT, Mark.BAR, Mark.LINE]});
       assert.equal(enumSpecIndex.isEmpty(), false);
     });
 
@@ -34,7 +34,7 @@ describe('enumspecindex', () => {
   describe('hasProperty', () => {
     it('should return true if encodingIndicesByProperty contains a specified encoding property', () => {
       let enumSpecIndex = new EnumSpecIndex()
-        .setEncodingProperty(0, Property.SCALE, {name: 'scale', values: [true, false]});
+        .setEncodingProperty(0, Property.SCALE, {name: 'scale', enum: [true, false]});
       assert.equal(enumSpecIndex.hasProperty(Property.SCALE), true);
     });
 
@@ -45,7 +45,7 @@ describe('enumspecindex', () => {
 
     it('should return true if enumSpecIndex contains Property.MARK when Property.MARK is specified', () => {
       let enumSpecIndex = new EnumSpecIndex()
-        .setMark({name: 'mark', values: [Mark.POINT, Mark.BAR, Mark.LINE]});
+        .setMark({name: 'mark', enum: [Mark.POINT, Mark.BAR, Mark.LINE]});
       assert.equal(enumSpecIndex.hasProperty(Property.MARK), true);
     });
 
