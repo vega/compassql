@@ -21,12 +21,14 @@ const fixtures: FieldSchema[] = [{
   field: 'T',
   type: Type.TEMPORAL,
   primitiveType: PrimitiveType.DATE,
-  stats: {distinct: 100} as any // HACK so that we don't have to define all summary properties
+  stats: {distinct: 100} as any, // HACK so that we don't have to define all summary properties
+  timeStats: {year: {distinct: 5}, month: {distinct: 12}, day: {distinct: 5}} as any
 },{
   field: 'T1',
   type: Type.TEMPORAL,
   primitiveType: PrimitiveType.DATE,
-  stats: {distinct: 100} as any // HACK so that we don't have to define all summary properties
+  stats: {distinct: 100} as any, // HACK so that we don't have to define all summary properties
+  timeStats: {year: {distinct: 5}, month: {distinct: 12}, day: {distinct: 5}} as any
 },{
   field: 'O',
   type: Type.ORDINAL,

@@ -511,7 +511,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              field: 'Q',
+              field: 'T',
               timeUnit: {enum: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR, undefined]},
               type: Type.TEMPORAL
             }

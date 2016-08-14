@@ -161,6 +161,7 @@ export interface QueryConfig {
   maxCardinalityForCategoricalColor?: number;
   maxCardinalityForFacet?: number;
   maxCardinalityForShape?: number;
+  timeUnitShouldShowVariation?: boolean;
   typeMatchesSchemaType?: boolean;
 
   // STYLIZE
@@ -184,7 +185,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   marks: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK], // Mark.TEXT
   channels: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT
   aggregates: [undefined, AggregateOp.MEAN],
-  timeUnits: [undefined, TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.DATE], // TODO: include hours and minutes
+  timeUnits: [undefined, TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.DATE, TimeUnit.MINUTES, TimeUnit.SECONDS],
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
   maxBinsList: [5, 10, 20],
@@ -270,6 +271,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   maxCardinalityForCategoricalColor: 20,
   maxCardinalityForFacet: 10,
   maxCardinalityForShape: 6,
+  timeUnitShouldShowVariation: true,
   typeMatchesSchemaType: true,
 
   // STYLIZE

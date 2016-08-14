@@ -155,6 +155,18 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       return true;
     }
   },{
+    name: 'timeUnitShouldShowVariation',
+    description: 'A particular time unit should be applied only if they produce unique values.',
+    properties: [Property.TIMEUNIT, Property.TYPE],
+    allowEnumSpecForProperties: false,
+    strict: false,
+    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+      if (encQ.timeUnit && encQ.type === Type.TEMPORAL) {
+        return schema.cardinality(encQ, false) > 1;
+      }
+      return true;
+    }
+  },{
     name: 'scalePropertiesSupportedByScaleType',
     description: 'Scale properties must be supported by correct scale type',
     properties: SCALE_PROPERTIES.concat([Property.SCALE, Property.TYPE]),

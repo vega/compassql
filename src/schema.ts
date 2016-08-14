@@ -32,6 +32,7 @@ export class Schema {
       var primitiveType: PrimitiveType = types[field] as any;
       var distinct: number = summary.distinct;
       var type: Type;
+
       if (primitiveType === PrimitiveType.NUMBER) {
         type = Type.QUANTITATIVE;
       } else if (primitiveType === PrimitiveType.INTEGER) {
