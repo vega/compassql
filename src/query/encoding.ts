@@ -29,8 +29,8 @@ export interface EncodingQuery {
   type?: Type | EnumSpec<Type> | ShortEnumSpec;
   // TODO: value
 
-  // TODO: legendQuery
   axis?: boolean | AxisQuery | ShortEnumSpec;
+  legend?: boolean | LegendQuery | ShortEnumSpec;
 }
 
 export interface AxisQuery extends EnumSpec<boolean> {
@@ -83,6 +83,35 @@ export interface AxisQuery extends EnumSpec<boolean> {
 
 export interface BinQuery extends EnumSpec<boolean> {
   maxbins?: number | EnumSpec<number> | ShortEnumSpec;
+}
+
+export interface LegendQuery extends EnumSpec<boolean> {
+  // General Legend Properties
+  orient?: string | EnumSpec<string> | ShortEnumSpec;
+  offset?: number | EnumSpec<number> | ShortEnumSpec;
+  values?: any[] | EnumSpec<any[]> | ShortEnumSpec;
+
+  // Legend_Label Properties
+  format?: string | EnumSpec<string> | ShortEnumSpec;
+  labelAlign?: string | EnumSpec<string> | ShortEnumSpec;
+  labelBaseline?:string | EnumSpec<string> | ShortEnumSpec;
+  labelColor?: string | EnumSpec<string> | ShortEnumSpec;
+  labelFont?: string | EnumSpec<string> | ShortEnumSpec;
+  labelFontSize?: number | EnumSpec<number> | ShortEnumSpec;
+  shortTimeLabels?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+
+  // Legend_Symbol Properties
+  symbolColor?: string | EnumSpec<string> | ShortEnumSpec;
+  symbolShape?: string | EnumSpec<string> | ShortEnumSpec;
+  symbolSize?: number | EnumSpec<number> | ShortEnumSpec;
+  symbolStrokeWidth?: number | EnumSpec<number> | ShortEnumSpec;
+
+  // Legend_Title Properties
+  title?: string | EnumSpec<string> | ShortEnumSpec;
+  titleColor?: string | EnumSpec<string> | ShortEnumSpec;
+  titleFont?: string | EnumSpec<string> | ShortEnumSpec;
+  titleFontSize?: number | EnumSpec<number> | ShortEnumSpec;
+  titleFontWeight?: string | EnumSpec<string> | ShortEnumSpec;
 }
 
 export interface ScaleQuery extends EnumSpec<boolean> {

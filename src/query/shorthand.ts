@@ -189,8 +189,8 @@ export function fieldDef(encQ: EncodingQuery,
   }
 
   // Scale
-  // TODO: axis, legend
-  for (const nestedPropParent of [Property.AXIS, Property.SCALE, Property.SORT]) {
+  // TODO: legend
+  for (const nestedPropParent of [Property.AXIS, Property.LEGEND, Property.SCALE, Property.SORT]) {
     if (include[nestedPropParent]) {
       if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
         // `sort` can be a string (ascending/descending).

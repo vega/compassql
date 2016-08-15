@@ -104,6 +104,42 @@ export interface QueryConfig {
 
   axisCharacterWidths?: number[];
 
+  legendOrients?: string[];
+
+  legendOffsets?: number[];
+
+  legendValuesList?: any[];
+
+  legendFormats?: string[];
+
+  legendLabelAligns?: string[];
+
+  legendLabelBaselines?: string[];
+
+  legendLabelColors?: string[];
+
+  legendLabelFonts?: string[];
+
+  legendLabelFontSizes?: number[];
+
+  legendSymbolColors?: string[];
+
+  legendSymbolShapes?: string[];
+
+  legendSymbolSizes?: number[];
+
+  legendSymbolStrokeWidths?: number[];
+
+  legendTitles?: string[];
+
+  legendTitleColors?: string[];
+
+  legendTitleFonts?: string[];
+
+  legendTitleFontSizes?: number[];
+
+  legendTitleFontWeights?: string[];
+
   // TODO: Come back and implement correctly when designing sort enumeration.
   sorts?: SortOrder[];
 
@@ -226,6 +262,25 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   axisTitleOffsets: [undefined],
   axisTitleMaxLengths: [undefined],
   axisCharacterWidths: [undefined],
+
+  legendOrients: [undefined],
+  legendOffsets: [undefined],
+  legendValuesList: [undefined],
+  legendFormats: [undefined],
+  legendLabelAligns: [undefined],
+  legendLabelBaselines: [undefined],
+  legendLabelColors: [undefined],
+  legendLabelFonts: [undefined],
+  legendLabelFontSizes: [undefined],
+  legendSymbolColors: [undefined],
+  legendSymbolShapes: [undefined],
+  legendSymbolSizes: [undefined],
+  legendSymbolStrokeWidths:[undefined],
+  legendTitles: [undefined],
+  legendTitleColors: [undefined],
+  legendTitleFonts: [undefined],
+  legendTitleFontSizes: [undefined],
+  legendTitleFontWeights: [undefined],
 
   // TODO: Come back and implement correctly when designing sort enumeration.
   sorts: [SortOrder.ASCENDING, SortOrder.DESCENDING],

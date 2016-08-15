@@ -302,6 +302,21 @@ describe('query/shorthand', () => {
       assert.equal(str, 'point|x:a,q,axis={"orient":"top","shortTimeLabels":true,"ticks":5,"title":"test x channel"}');
     });
 
+    it('should return correct fieldDefShorthand string for legend with orient, labelAlign, symbolSize, and title', () => {
+      const str = specShorthand({
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: Channel.COLOR,
+            field: 'a',
+            type: Type.NOMINAL,
+            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}
+          }
+        ]
+      });
+      assert.equal(str, 'point|color:a,n,legend={"orient":"right","labelAlign":"left","symbolSize":12,"title":"test title"}');
+    });
+
     it('should return correct fieldDefShorthand string for scale with a string[] domain', () => {
       const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.NOMINAL, scale: {domain: ['cats', 'dogs']}
