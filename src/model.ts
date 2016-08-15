@@ -600,10 +600,9 @@ export class SpecQueryModel {
         }
       }
 
-      if (encQ.bin && isObject(encQ.bin) && keys(encQ.bin).length === 0) {
-        // If bin has not parameter, return bin=true rather than bin={}
-        // as it is more standard.
-        encQ.bin = true;
+      if (fieldDef.bin === false) {
+        // exclude bin false
+        delete fieldDef.bin;
       }
 
       encoding[encQ.channel as Channel] = fieldDef;
