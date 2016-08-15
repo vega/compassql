@@ -17,7 +17,7 @@ import {GroupBy} from './query/groupby';
 import {spec as specShorthand} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
-import {Dict, duplicate, extend, keys, isObject} from './util';
+import {Dict, duplicate, extend} from './util';
 
 export function getDefaultName(prop: Property) {
   switch (prop) {
