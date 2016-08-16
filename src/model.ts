@@ -138,7 +138,7 @@ export function getDefaultName(prop: Property) {
     case Property.AXIS_CHARACTERWIDTH:
       return 'ax-cw';
     case Property.LEGEND:
-      return 'leg';
+      return 'l';
     case Property.LEGEND_ORIENT:
       return 'l-or';
     case Property.LEGEND_OFFSET:
