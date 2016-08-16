@@ -94,12 +94,12 @@ export class Schema {
     for (let fieldSchema of fieldSchemas) {
       if (fieldSchema.type === Type.QUANTITATIVE) {
         for (let maxbins of opt.maxBinsList) {
-          fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
+          fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats, false);
         }
       } else if (fieldSchema.type === Type.TEMPORAL) {
         for (let unit of opt.timeUnits) {
           if (unit !== undefined) {
-            fieldSchema.timeStats[unit] = timeSummary(unit, fieldSchema.stats);
+            fieldSchema.timeStats[unit] = timeSummary(unit, fieldSchema.stats, false);
           }
         }
       }
@@ -137,7 +137,7 @@ export class Schema {
   /** @return cardinality of the field associated with encQ, null if it doesn't exist.
    *  @param augmentTimeUnitDomain - TimeUnit field domains will not be augmented if explicitly set to false.
    */
-  public cardinality(encQ: EncodingQuery, augmentTimeUnitDomain: boolean = true) {
+  public cardinality(encQ: EncodingQuery, augmentTimeUnitDomain: boolean = true, excludeInvalid: boolean = false) {
     const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
     if (encQ.aggregate || encQ.autoCount) {
       return 1;
@@ -155,7 +155,7 @@ export class Schema {
       const maxbins: any = bin.maxbins;
       if (!fieldSchema.binStats[maxbins]) {
         // need to calculate
-        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
+        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats, false);
       }
       return fieldSchema.binStats[maxbins].distinct;
     } else if (encQ.timeUnit) {
@@ -174,11 +174,14 @@ export class Schema {
       }
       // if the cardinality for the timeUnit is not cached, calculate it
       if (!fieldSchema.timeStats[encQ.timeUnit as string]) {
-        fieldSchema.timeStats[encQ.timeUnit as string] = timeSummary(encQ.timeUnit as TimeUnit, fieldSchema.stats);
+        fieldSchema.timeStats[encQ.timeUnit as string] = timeSummary(encQ.timeUnit as TimeUnit, fieldSchema.stats, excludeInvalid);
+      } else if (excludeInvalid) {
+        // we have it cached, but we have to make sure it excludes invalid values
+        return distinctExcluding(fieldSchema.timeStats[encQ.timeUnit as string], ['Invalid Date']);
       }
       return fieldSchema.timeStats[encQ.timeUnit as string].distinct;
     } else {
-      return fieldSchema ? fieldSchema.stats.distinct : null;
+      return fieldSchema ? (excludeInvalid ? distinctExcluding(fieldSchema.stats, ['null', 'NaN']) : fieldSchema.stats.distinct) : null;
     }
   }
 
@@ -210,7 +213,7 @@ export class Schema {
 /**
  * @return a summary of the binning scheme determined from the given max number of bins
  */
-function binSummary(maxbins: number, summary: Summary): Summary {
+function binSummary(maxbins: number, summary: Summary, excludeInvalid: boolean): Summary {
   const bin = dlBin({
     min: summary.min,
     max: summary.max,
@@ -219,7 +222,7 @@ function binSummary(maxbins: number, summary: Summary): Summary {
 
   // start with summary, pre-binning
   const result = extend({}, summary);
-  result.unique = binUnique(bin, summary.unique);
+  result.unique = binUnique(bin, summary.unique, excludeInvalid);
   result.distinct = (bin.stop - bin.start) / bin.step;
   result.min = bin.start;
   result.max = bin.stop;
@@ -228,14 +231,17 @@ function binSummary(maxbins: number, summary: Summary): Summary {
 }
 
 /** @return a modified version of the passed summary with unique and distinct set according to the timeunit */
-function timeSummary(timeunit: TimeUnit, summary: Summary): Summary {
+function timeSummary(timeunit: TimeUnit, summary: Summary, excludeInvalid: boolean): Summary {
   const result = extend({}, summary);
 
   var unique: {[value: string]: number} = {};
   keys(summary.unique).forEach(function(dateString) {
-    let date: Date = new Date(dateString);
-    let key: string = ((timeunit === TimeUnit.DAY) ? date.getDay() : convert(timeunit, new Date(dateString))).toString();
-    unique[key] = unique[key] ? unique[key] + summary.unique[dateString] : summary.unique[dateString];
+    // only add key to unique if excludeInvalid is not set or if it is NOT undefined, null, or NaN
+    if (!excludeInvalid || (dateString && dateString !== 'null' && dateString !== 'NaN')) {
+      let date: Date = new Date(dateString);
+      let key: string = ((timeunit === TimeUnit.DAY) ? date.getDay() : convert(timeunit, date)).toString();
+      unique[key] = unique[key] ? unique[key] + summary.unique[dateString] : summary.unique[dateString];
+    }
   });
 
   result.unique = unique;
@@ -247,17 +253,31 @@ function timeSummary(timeunit: TimeUnit, summary: Summary): Summary {
 /**
  * @return a new unique object based off of the old unique count and a binning scheme
  */
-function binUnique(bin, oldUnique) {
+function binUnique(bin, oldUnique, excludeInvalid: boolean) {
   const newUnique = {};
   for (var value in oldUnique) {
     let bucket: number = bin.value(Number(value)) as number;
-    if (!newUnique[bucket]) {
-      newUnique[bucket] = oldUnique[value];
-    } else {
-      newUnique[bucket] += oldUnique[value];
+    if (!excludeInvalid || (bucket !== null && bucket === bucket)) {
+      if (!newUnique[bucket]) {
+        newUnique[bucket] = oldUnique[value];
+      } else {
+        newUnique[bucket] += oldUnique[value];
+      }
     }
   }
   return newUnique;
+}
+
+// returns the number of distinct values not including values in list
+function distinctExcluding(stats: Summary, list: string[]): number {
+  var values = keys(stats.unique);
+  var distinct = values.length;
+  list.forEach(function(key) {
+    if (contains(values, key)) {
+      distinct--;
+    }
+  });
+  return distinct;
 }
 
 export enum PrimitiveType {
