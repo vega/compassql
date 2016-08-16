@@ -35,7 +35,7 @@ export function value(v: any, replace: Replacer): any {
 
 export const INCLUDE_ALL: Dict<boolean> =
   // TODO: remove manual STACK, FILTER, CALCULATE concat once we really support enumerating it.
-  DEFAULT_PROPERTY_PRECEDENCE.concat([Property.STACK, Property.FILTER, Property.CALCULATE, Property.FILTERINVALID])
+  DEFAULT_PROPERTY_PRECEDENCE.concat([Property.CALCULATE, Property.FILTER, Property.FILTERINVALID, Property.STACK])
     .reduce((m, prop) => {
       m[prop] = true;
       return m;
