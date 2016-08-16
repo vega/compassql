@@ -181,14 +181,14 @@ export class Schema {
       }
 
       if (excludeInvalid) {
-        return timeStats[unit].distinct - invalidCount(timeStats[unit].unique, ['Invalid Date', 'null']);
+        return timeStats[unit].distinct - invalidCount(timeStats[unit].unique, ['Invalid Date', null]);
       } else {
         return timeStats[unit].distinct;
       }
     } else {
       if (fieldSchema) {
         if (excludeInvalid) {
-          return fieldSchema.stats.distinct - invalidCount(fieldSchema.stats.unique, ['NaN', 'null']);
+          return fieldSchema.stats.distinct - invalidCount(fieldSchema.stats.unique, [NaN, null]);
         } else {
           return fieldSchema.stats.distinct;
         }
