@@ -180,14 +180,14 @@ export class Schema {
       }
 
       if (excludeInvalid) {
-        return timeStats[unit].distinct - invalidCount(timeStats[unit].unique, ['Invalid Date', null]);
+        return timeStats[unit].distinct - invalidCount(timeStats[unit].unique, ['Invalid Date', 'null']);
       } else {
         return timeStats[unit].distinct;
       }
     } else {
       if (fieldSchema) {
         if (excludeInvalid) {
-          return fieldSchema.stats.distinct - invalidCount(fieldSchema.stats.unique, ['null', 'NaN']);
+          return fieldSchema.stats.distinct - invalidCount(fieldSchema.stats.unique, ['NaN', 'null']);
         } else {
           return fieldSchema.stats.distinct;
         }
@@ -277,12 +277,8 @@ function binUnique(bin, oldUnique, excludeInvalid: boolean) {
   const newUnique = {};
   for (var value in oldUnique) {
     let bucket: number = bin.value(Number(value)) as number;
-    if (!excludeInvalid || (bucket !== null && bucket === bucket)) {
-      if (!newUnique[bucket]) {
-        newUnique[bucket] = oldUnique[value];
-      } else {
-        newUnique[bucket] += oldUnique[value];
-      }
+    if (!excludeInvalid || (bucket !== null && !isNaN(bucket))) {
+      newUnique[bucket] = (newUnique[bucket] || 0) + oldUnique[value];
     }
   }
   return newUnique;
@@ -290,13 +286,9 @@ function binUnique(bin, oldUnique, excludeInvalid: boolean) {
 
 /** @return the number of items in list that occur as keys of unique */
 function invalidCount(unique: {}, list: string[]) {
-  var count = 0;
-  list.forEach(function(item) {
-    if (unique[item]) {
-      count++;
-    }
-  });
-  return count;
+  return list.reduce(function(prev, cur) {
+    return unique[cur] ? prev + 1 : prev;
+  }, 0);
 }
 
 export enum PrimitiveType {
