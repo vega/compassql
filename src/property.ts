@@ -754,7 +754,6 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
   }
 
   // TODO: other bin parameters
-  // TODO: legend
 ];
 
 const NESTED_ENCODING_INDEX: Dict<NestedEncodingProperty> =
