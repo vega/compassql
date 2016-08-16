@@ -1,11 +1,12 @@
 import {expression} from 'vega-lite/src/filter';
 import {Filter} from 'vega-lite/src/filter';
 import {Formula} from 'vega-lite/src/transform';
+import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {Type} from 'vega-lite/src/type';
 import {isString} from 'datalib/src/util';
 
 import {EncodingQuery} from './encoding';
-import {SpecQuery, stack} from './spec';
+import {SpecQuery, stack, fromSpec} from './spec';
 import {isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 
 import {getNestedEncodingPropertyChildren, Property, DEFAULT_PROPERTY_PRECEDENCE} from '../property';
@@ -34,11 +35,19 @@ export function value(v: any, replace: Replacer): any {
 
 export const INCLUDE_ALL: Dict<boolean> =
   // TODO: remove manual STACK, FILTER, CALCULATE concat once we really support enumerating it.
-  DEFAULT_PROPERTY_PRECEDENCE.concat([Property.STACK, Property.FILTER, Property.CALCULATE])
+  DEFAULT_PROPERTY_PRECEDENCE.concat([Property.CALCULATE, Property.FILTER, Property.FILTERINVALID, Property.STACK])
     .reduce((m, prop) => {
       m[prop] = true;
       return m;
     }, {} as Dict<boolean>);
+
+
+export function vlSpec(vlspec: ExtendedUnitSpec,
+    include: Dict<boolean> = INCLUDE_ALL,
+    replace: Dict<Replacer> = {}) {
+  const specQ = fromSpec(vlspec);
+  return spec(specQ);
+}
 
 /**
  * Returns a shorthand for a spec query
@@ -66,6 +75,12 @@ export function spec(specQ: SpecQuery,
     if (include[Property.FILTER]) {
       if (specQ.transform.filter !== undefined) {
         parts.push('filter:' + filter(specQ.transform.filter));
+      }
+    }
+
+    if (include[Property.FILTERINVALID]) {
+      if (specQ.transform.filterInvalid !== undefined) {
+        parts.push('filterInvalid:' + specQ.transform.filterInvalid);
       }
     }
   }

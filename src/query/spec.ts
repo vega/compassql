@@ -29,7 +29,7 @@ export interface SpecQuery {
  * @param {ExtendedUnitSpec} spec
  * @returns
  */
-export function fromSpec(spec: ExtendedUnitSpec) {
+export function fromSpec(spec: ExtendedUnitSpec): SpecQuery {
   return extend(
     spec.data ? { data: spec.data} : {},
     spec.transform ? { transform: spec.transform } : {},
