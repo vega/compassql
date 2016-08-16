@@ -172,16 +172,26 @@ export class Schema {
           case TimeUnit.MILLISECONDS: return 1000;
         }
       }
+      var unit = encQ.timeUnit as string;
+      var timeStats = fieldSchema.timeStats;
       // if the cardinality for the timeUnit is not cached, calculate it
-      if (!fieldSchema.timeStats[encQ.timeUnit as string]) {
-        fieldSchema.timeStats[encQ.timeUnit as string] = timeSummary(encQ.timeUnit as TimeUnit, fieldSchema.stats, excludeInvalid);
+      if (!timeStats[unit]) {
+        timeStats[unit] = timeSummary(encQ.timeUnit as TimeUnit, fieldSchema.stats, excludeInvalid);
       } else if (excludeInvalid) {
         // we have it cached, but we have to make sure it excludes invalid values
-        return distinctExcluding(fieldSchema.timeStats[encQ.timeUnit as string], ['Invalid Date']);
+        return timeStats[unit].distinct - invalidCount(timeStats[unit].unique, ['Invalid Date']);
       }
-      return fieldSchema.timeStats[encQ.timeUnit as string].distinct;
+      return timeStats[unit].distinct;
     } else {
-      return fieldSchema ? (excludeInvalid ? distinctExcluding(fieldSchema.stats, ['null', 'NaN']) : fieldSchema.stats.distinct) : null;
+      if (fieldSchema) {
+        if (excludeInvalid) {
+          return fieldSchema.stats.distinct - invalidCount(fieldSchema.stats.unique, ['null', 'NaN']);
+        } else {
+          return fieldSchema.stats.distinct;
+        }
+      } else {
+        return null;
+      }
     }
   }
 
@@ -268,16 +278,15 @@ function binUnique(bin, oldUnique, excludeInvalid: boolean) {
   return newUnique;
 }
 
-// returns the number of distinct values not including values in list
-function distinctExcluding(stats: Summary, list: string[]): number {
-  var values = keys(stats.unique);
-  var distinct = values.length;
-  list.forEach(function(key) {
-    if (contains(values, key)) {
-      distinct--;
+/** @return the number of items in list that occur as keys of unique */
+function invalidCount(unique: {}, list: string[]) {
+  var count = 0;
+  list.forEach(function(item) {
+    if (unique[item]) {
+      count++;
     }
   });
-  return distinct;
+  return count;
 }
 
 export enum PrimitiveType {
