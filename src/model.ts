@@ -694,19 +694,19 @@ export class SpecQueryModel {
 
         // otherwise, assign the proper to the field def
         if (encQ[prop] !== undefined) {
-          if (prop === Property.AXIS && !isEnumSpec(encQ.channel)) {
+          if (prop === Property.AXIS) {
             if (CHANNEL_SUPPORTS_AXIS[encQ.channel as Channel]) {
               fieldDef[Property.AXIS] = encQ[Property.AXIS];
             }
-          } else if (prop === Property.LEGEND && !isEnumSpec(encQ.channel)) {
+          } else if (prop === Property.LEGEND) {
             if (CHANNEL_SUPPORTS_LEGEND[encQ.channel as Channel]) {
               fieldDef[Property.LEGEND] = encQ[Property.LEGEND];
             }
-          } else if (prop === Property.SCALE && !isEnumSpec(encQ.channel)) {
+          } else if (prop === Property.SCALE) {
             if (CHANNEL_SUPPORTS_SCALE[encQ.channel as Channel]) {
               fieldDef[Property.SCALE] = encQ[Property.SCALE];
             }
-          } else if (prop === Property.SORT && !isEnumSpec(encQ.channel)) {
+          } else if (prop === Property.SORT) {
             if (CHANNEL_SUPPORTS_SORT[encQ.channel as Channel]) {
               fieldDef[Property.SORT] = encQ[Property.SORT];
             }
