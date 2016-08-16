@@ -51,7 +51,7 @@ export function vlSpec(vlspec: ExtendedUnitSpec,
 }
 
 export const CHANNEL_SUPPORTS_AXIS: Dict<boolean> =
-  [Channel.X, Channel.Y]
+  [Channel.X, Channel.Y, Channel.ROW, Channel.COLUMN]
     .reduce((m, channel) => {
       m[channel] = true;
       return m;
@@ -65,7 +65,7 @@ export const CHANNEL_SUPPORTS_LEGEND: Dict<boolean> =
     }, {} as Dict<boolean>);
 
 export const CHANNEL_SUPPORTS_SCALE: Dict<boolean> =
-  [Channel.X, Channel.Y, Channel.COLOR, Channel.OPACITY, Channel.OPACITY, Channel.SIZE, Channel.SHAPE]
+  [Channel.X, Channel.Y, Channel.COLOR, Channel.OPACITY, Channel.OPACITY, Channel.ROW, Channel.COLUMN, Channel.SIZE, Channel.SHAPE]
     .reduce((m, channel) => {
       m[channel] = true;
       return m;
