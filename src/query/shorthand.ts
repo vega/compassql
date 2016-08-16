@@ -232,8 +232,6 @@ export function fieldDef(encQ: EncodingQuery,
     }
   }
 
-  // Scale
-  // TODO: legend
   for (const nestedPropParent of [Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND]) {
     if ((nestedPropParent === Property.AXIS) && !isEnumSpec(encQ.channel) && !CHANNEL_SUPPORTS_AXIS[encQ.channel as Channel]) {
       continue;
