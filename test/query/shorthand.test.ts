@@ -118,9 +118,9 @@ describe('query/shorthand', () => {
         encodings: [
           {channel: Channel.X, field: 'b2', type: Type.QUANTITATIVE}
         ],
-        transform: {filter: 'datum["b2"] > 60', calculate: [{field: 'b2', expr: '3*datum["b2"]'}]}
+        transform: {filter: 'datum["b2"] > 60', calculate: [{field: 'b2', expr: '3*datum["b2"]'}], filterInvalid: false}
       });
-      assert.equal(str, 'point|calculate:{b2:3*datum["b2"]}|filter:datum["b2"] > 60|x:b2,q');
+      assert.equal(str, 'point|calculate:{b2:3*datum["b2"]}|filter:datum["b2"] > 60|filterInvalid:false|x:b2,q');
     });
 
     it('should return correct spec string for a specific specQuery with an empty transform', () => {

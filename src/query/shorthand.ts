@@ -35,7 +35,7 @@ export function value(v: any, replace: Replacer): any {
 
 export const INCLUDE_ALL: Dict<boolean> =
   // TODO: remove manual STACK, FILTER, CALCULATE concat once we really support enumerating it.
-  DEFAULT_PROPERTY_PRECEDENCE.concat([Property.STACK, Property.FILTER, Property.CALCULATE])
+  DEFAULT_PROPERTY_PRECEDENCE.concat([Property.STACK, Property.FILTER, Property.CALCULATE, Property.FILTERINVALID])
     .reduce((m, prop) => {
       m[prop] = true;
       return m;
@@ -75,6 +75,12 @@ export function spec(specQ: SpecQuery,
     if (include[Property.FILTER]) {
       if (specQ.transform.filter !== undefined) {
         parts.push('filter:' + filter(specQ.transform.filter));
+      }
+    }
+
+    if (include[Property.FILTERINVALID]) {
+      if (specQ.transform.filterInvalid !== undefined) {
+        parts.push('filterInvalid:' + specQ.transform.filterInvalid);
       }
     }
   }

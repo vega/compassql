@@ -10,6 +10,8 @@ export enum Property {
   CALCULATE = 'calculate' as any,
   // TODO: Sub-properties for calculate
 
+  FILTERINVALID = 'filterInvalid' as any,
+
   // Layout
   STACK = 'stack' as any,
   // TODO: sub parts of stack
@@ -109,6 +111,7 @@ export function hasNestedProperty(prop: Property) {
     case Property.MARK:
     case Property.FILTER:
     case Property.CALCULATE:
+    case Property.FILTERINVALID:
     case Property.STACK:
     case Property.CHANNEL:
     case Property.AGGREGATE:
@@ -243,6 +246,8 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   // TODO: Add filter and remove it from INCLUDE_ALL in shorthand
 
   // TODO: Add calculate and remove it from INCLUDE_ALL in shorthand
+
+  // TODO: Add filterInvalid and remove it from INCLUDE_ALL in shorthand
 
   // Field Transform
   Property.BIN,
