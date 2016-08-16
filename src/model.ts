@@ -90,13 +90,13 @@ export function getDefaultName(prop: Property) {
     case Property.AXIS_FORMAT:
       return 'ax-f';
     case Property.AXIS_LABELANGLE:
-      return 'ax-labang';
+      return 'ax-laba';
     case Property.AXIS_LABELMAXLENGTH:
-      return 'ax-lablml';
+      return 'ax-labm';
     case Property.AXIS_SHORTTIMELABELS:
       return 'ax-stl';
     case Property.AXIS_SUBDIVIDE:
-      return 'ax-s';
+      return 'ax-sub';
     case Property.AXIS_TICKS:
       return 'ax-t';
     case Property.AXIS_TICKCOLOR:
@@ -122,19 +122,19 @@ export function getDefaultName(prop: Property) {
     case Property.AXIS_VALUES:
       return 'ax-v';
     case Property.AXIS_TITLE:
-      return 'ax-tit';
+      return 'ax-ti';
     case Property.AXIS_TITLECOLOR:
-      return 'ax-titc';
+      return 'ax-tic';
     case Property.AXIS_TITLEFONT:
-      return 'ax-titf';
+      return 'ax-tif';
     case Property.AXIS_TITLEFONTSIZE:
-      return 'ax-titfs';
+      return 'ax-tifs';
     case Property.AXIS_TITLEFONTWEIGHT:
-      return 'ax-titfw';
+      return 'ax-tifw';
     case Property.AXIS_TITLEOFFSET:
-      return 'ax-tito';
+      return 'ax-tio';
     case Property.AXIS_TITLEMAXLENGTH:
-      return 'ax-titml';
+      return 'ax-timl';
     case Property.AXIS_CHARACTERWIDTH:
       return 'ax-cw';
     case Property.LEGEND:
@@ -144,39 +144,39 @@ export function getDefaultName(prop: Property) {
     case Property.LEGEND_OFFSET:
       return 'l-of';
     case Property.LEGEND_VALUES:
-      return 'l-val';
+      return 'l-v';
     case Property.LEGEND_FORMAT:
       return 'l-f';
     case Property.LEGEND_LABELALIGN:
-      return 'l-labal';
+      return 'l-la';
     case Property.LEGEND_LABELBASELINE:
-      return 'l-labbas';
+      return 'l-lb';
     case Property.LEGEND_LABELCOLOR:
-      return 'l-labcol';
+      return 'l-lc';
     case Property.LEGEND_LABELFONT:
-      return 'l-labf';
+      return 'l-lf';
     case Property.LEGEND_LABELFONTSIZE:
-      return 'l-labfs';
+      return 'l-lfs';
     case Property.LEGEND_SHORTTIMELABELS:
       return 'l-stl';
     case Property.LEGEND_SYMBOLCOLOR:
-      return 'l-symcol';
+      return 'l-syc';
     case Property.LEGEND_SYMBOLSHAPE:
-      return 'l-symsh';
+      return 'l-sysh';
     case Property.LEGEND_SYMBOLSIZE:
-      return 'l-symsize';
+      return 'l-sysi';
     case Property.LEGEND_SYMBOLSTROKEWIDTH:
-      return 'l-symstrwid';
+      return 'l-sysw';
     case Property.LEGEND_TITLE:
-      return 'l-tit';
+      return 'l-ti';
     case Property.LEGEND_TITLECOLOR:
-      return 'l-titcol';
+      return 'l-tic';
     case Property.LEGEND_TITLEFONT:
-      return 'l-titf';
+      return 'l-tif';
     case Property.LEGEND_TITLEFONTSIZE:
-      return 'l-titfs';
+      return 'l-tifs';
     case Property.LEGEND_TITLEFONTWEIGHT:
-      return 'l-titfw';
+      return 'l-tifw';
     case Property.TIMEUNIT:
       return 'tu';
     case Property.FIELD:
