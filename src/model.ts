@@ -17,7 +17,7 @@ import {GroupBy} from './query/groupby';
 import {spec as specShorthand} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
-import {Dict, duplicate, extend, keys, isObject} from './util';
+import {Dict, duplicate, extend} from './util';
 
 export function getDefaultName(prop: Property) {
   switch (prop) {
@@ -600,10 +600,9 @@ export class SpecQueryModel {
         }
       }
 
-      if (encQ.bin && isObject(encQ.bin) && keys(encQ.bin).length === 0) {
-        // If bin has not parameter, return bin=true rather than bin={}
-        // as it is more standard.
-        encQ.bin = true;
+      if (fieldDef.bin === false) {
+        // exclude bin false
+        delete fieldDef.bin;
       }
 
       encoding[encQ.channel as Channel] = fieldDef;

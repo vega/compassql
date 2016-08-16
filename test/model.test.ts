@@ -286,12 +286,12 @@ describe('SpecQueryModel', () => {
       });
     });
 
-    it('should return a spec with bin=true if the bin has no parameter.', () => {
+    it('should return a spec with no bin if the bin=false.', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{A: 1}]},
         mark: Mark.BAR,
         encodings: [
-          {channel: Channel.X, bin: true, field: 'A', type: Type.QUANTITATIVE}
+          {channel: Channel.X, bin: false, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
 
@@ -300,7 +300,7 @@ describe('SpecQueryModel', () => {
         data: {values: [{A: 1}]},
         mark: Mark.BAR,
         encoding: {
-          x: {bin: true, field: 'A', type: Type.QUANTITATIVE}
+          x: {field: 'A', type: Type.QUANTITATIVE}
         },
         config: DEFAULT_SPEC_CONFIG
       });
