@@ -137,7 +137,7 @@ export class Schema {
   /** @return cardinality of the field associated with encQ, null if it doesn't exist.
    *  @param augmentTimeUnitDomain - TimeUnit field domains will not be augmented if explicitly set to false.
    */
-  public cardinality(encQ: EncodingQuery, augmentTimeUnitDomain: boolean = true) {
+  public cardinality(encQ: EncodingQuery, augmentTimeUnitDomain: boolean = true, excludeInvalid: boolean = false) {
     const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
     if (encQ.aggregate || encQ.autoCount) {
       return 1;
@@ -157,6 +157,7 @@ export class Schema {
         // need to calculate
         fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
       }
+      // don't need to worry about excludeInvalid here because invalid values don't affect linearly binned field's cardinality
       return fieldSchema.binStats[maxbins].distinct;
     } else if (encQ.timeUnit) {
       if (augmentTimeUnitDomain) {
@@ -172,13 +173,28 @@ export class Schema {
           case TimeUnit.MILLISECONDS: return 1000;
         }
       }
+      var unit = encQ.timeUnit as string;
+      var timeStats = fieldSchema.timeStats;
       // if the cardinality for the timeUnit is not cached, calculate it
-      if (!fieldSchema.timeStats[encQ.timeUnit as string]) {
-        fieldSchema.timeStats[encQ.timeUnit as string] = timeSummary(encQ.timeUnit as TimeUnit, fieldSchema.stats);
+      if (!timeStats[unit]) {
+        timeStats[unit] = timeSummary(encQ.timeUnit as TimeUnit, fieldSchema.stats);
       }
-      return fieldSchema.timeStats[encQ.timeUnit as string].distinct;
+
+      if (excludeInvalid) {
+        return timeStats[unit].distinct - invalidCount(timeStats[unit].unique, ['Invalid Date', null]);
+      } else {
+        return timeStats[unit].distinct;
+      }
     } else {
-      return fieldSchema ? fieldSchema.stats.distinct : null;
+      if (fieldSchema) {
+        if (excludeInvalid) {
+          return fieldSchema.stats.distinct - invalidCount(fieldSchema.stats.unique, [NaN, null]);
+        } else {
+          return fieldSchema.stats.distinct;
+        }
+      } else {
+        return null;
+      }
     }
   }
 
@@ -227,15 +243,26 @@ function binSummary(maxbins: number, summary: Summary): Summary {
   return result;
 }
 
-/** @return a modified version of the passed summary with unique and distinct set according to the timeunit */
+/** @return a modified version of the passed summary with unique and distinct set according to the timeunit.
+ *  Maps 'null' (string) keys to the null value and invalid dates to 'Invalid Date' in the unique dictionary.
+ */
 function timeSummary(timeunit: TimeUnit, summary: Summary): Summary {
   const result = extend({}, summary);
 
   var unique: {[value: string]: number} = {};
   keys(summary.unique).forEach(function(dateString) {
-    let date: Date = new Date(dateString);
-    let key: string = ((timeunit === TimeUnit.DAY) ? date.getDay() : convert(timeunit, new Date(dateString))).toString();
-    unique[key] = unique[key] ? unique[key] + summary.unique[dateString] : summary.unique[dateString];
+    // don't convert null value because the Date constructor will actually convert it to a date
+    let date: Date = (dateString === 'null') ? null : new Date(dateString);
+    // at this point, `date` is either the null value, a valid Date object, or "Invalid Date" which is a Date
+    let key: string;
+    if (date === null) {
+      key = null;
+    } else if (isNaN(date.getTime())) {
+      key = 'Invalid Date';
+    } else {
+      key = ((timeunit === TimeUnit.DAY) ? date.getDay() : convert(timeunit, date)).toString();
+    }
+    unique[key] = (unique[key] || 0) + summary.unique[dateString];
   });
 
   result.unique = unique;
@@ -250,14 +277,24 @@ function timeSummary(timeunit: TimeUnit, summary: Summary): Summary {
 function binUnique(bin, oldUnique) {
   const newUnique = {};
   for (var value in oldUnique) {
-    let bucket: number = bin.value(Number(value)) as number;
-    if (!newUnique[bucket]) {
-      newUnique[bucket] = oldUnique[value];
+    let bucket: number;
+    if (value === null) {
+      bucket = null;
+    } else if (isNaN(Number(value))) {
+      bucket = NaN;
     } else {
-      newUnique[bucket] += oldUnique[value];
+      bucket = bin.value(Number(value)) as number;
     }
+    newUnique[bucket] = (newUnique[bucket] || 0) + oldUnique[value];
   }
   return newUnique;
+}
+
+/** @return the number of items in list that occur as keys of unique */
+function invalidCount(unique: {}, list: any[]) {
+  return list.reduce(function(prev, cur) {
+    return unique[cur] ? prev + 1 : prev;
+  }, 0);
 }
 
 export enum PrimitiveType {

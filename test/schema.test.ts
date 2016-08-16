@@ -340,6 +340,79 @@ describe('schema', () => {
       assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATE);
       assert.equal(cardinality, 3);
     });
+
+    it('should correctly compute cardinality for TEMPORAL data when the excludeValid flag is specified', () => {
+      let cardinalityData = [
+        {a: 'June 1, 2000 00:00:00'},
+        {a: 'June 1, 2000 00:00:00'},
+        {a: null}, // maps to null
+        {a: null},
+        {a: NaN}, // maps to 'Invalid Date'
+        {a: NaN}
+      ];
+      let cardinalitySchema = Schema.build(cardinalityData);
+      let cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'year'
+      }, true, true);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATE);
+      assert.equal(cardinality, 1);
+      cardinality = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'year'
+      }, true, false);
+      assert.equal(cardinality, 3);
+    });
+
+    it('should correctly compute cardinality for QUANTITATIVE data when the excludeValid flag is specified', () => {
+      let cardinalityData = [
+        {a: 1},
+        {a: 1},
+        {a: null},
+        {a: null},
+        {a: NaN},
+        {a: NaN}
+      ];
+      let cardinalitySchema = Schema.build(cardinalityData);
+      let cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+      }, true, true);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.INTEGER);
+      assert.equal(cardinality, 1);
+      cardinality = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+      }, true, false);
+      assert.equal(cardinality, 3);
+    });
+
+    it('should correctly compute cardinality for QUANTITATIVE binned data when the excludeValid flag is specified', () => {
+      let cardinalityData = [
+        {a: 0},
+        {a: 10},
+        {a: null},
+        {a: null},
+        {a: NaN},
+        {a: NaN}
+      ];
+      let cardinalitySchema = Schema.build(cardinalityData);
+      let cardinality: number = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        bin: true
+      }, true, true);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.INTEGER);
+      assert.equal(cardinality, 10);
+      cardinality = cardinalitySchema.cardinality({
+        field: 'a',
+        channel: Channel.X,
+        bin: true
+      }, true, false);
+      assert.equal(cardinality, 10); // invalid values shouldn't affect cardinality for linear-binned fields
+    });
   });
 
   describe('stats', () => {
