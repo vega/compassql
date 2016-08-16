@@ -291,7 +291,7 @@ function binUnique(bin, oldUnique) {
 }
 
 /** @return the number of items in list that occur as keys of unique */
-function invalidCount(unique: {}, list: string[]) {
+function invalidCount(unique: {}, list: any[]) {
   return list.reduce(function(prev, cur) {
     return unique[cur] ? prev + 1 : prev;
   }, 0);
