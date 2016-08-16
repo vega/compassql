@@ -234,7 +234,7 @@ function binSummary(maxbins: number, summary: Summary, excludeInvalid: boolean):
 
   // start with summary, pre-binning
   const result = extend({}, summary);
-  result.unique = binUnique(bin, summary.unique, excludeInvalid);
+  result.unique = binUnique(bin, summary.unique);
   result.distinct = (bin.stop - bin.start) / bin.step;
   result.min = bin.start;
   result.max = bin.stop;
@@ -273,13 +273,18 @@ function timeSummary(timeunit: TimeUnit, summary: Summary): Summary {
 /**
  * @return a new unique object based off of the old unique count and a binning scheme
  */
-function binUnique(bin, oldUnique, excludeInvalid: boolean) {
+function binUnique(bin, oldUnique) {
   const newUnique = {};
   for (var value in oldUnique) {
-    let bucket: number = bin.value(Number(value)) as number;
-    if (!excludeInvalid || (bucket !== null && !isNaN(bucket))) {
-      newUnique[bucket] = (newUnique[bucket] || 0) + oldUnique[value];
+    let bucket: number;
+    if (value === null) {
+      bucket = null;
+    } else if (isNaN(Number(value))) {
+      bucket = NaN;
+    } else {
+      bucket = bin.value(Number(value)) as number;
     }
+    newUnique[bucket] = (newUnique[bucket] || 0) + oldUnique[value];
   }
   return newUnique;
 }
