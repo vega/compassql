@@ -345,9 +345,9 @@ describe('schema', () => {
       let cardinalityData = [
         {a: 'June 1, 2000 00:00:00'},
         {a: 'June 1, 2000 00:00:00'},
+        {a: null}, // maps to null
         {a: null},
-        {a: null},
-        {a: NaN},
+        {a: NaN}, // maps to 'Invalid Date'
         {a: NaN}
       ];
       let cardinalitySchema = Schema.build(cardinalityData);
@@ -363,7 +363,7 @@ describe('schema', () => {
         channel: Channel.X,
         timeUnit: 'year'
       }, true, false);
-      assert.equal(cardinality, 2); // null and NaN will map to the same "Invalid Date" value
+      assert.equal(cardinality, 3);
     });
 
     it('should correctly compute cardinality for QUANTITATIVE data when the excludeValid flag is specified', () => {

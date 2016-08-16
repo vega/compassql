@@ -99,7 +99,7 @@ export class Schema {
       } else if (fieldSchema.type === Type.TEMPORAL) {
         for (let unit of opt.timeUnits) {
           if (unit !== undefined) {
-            fieldSchema.timeStats[unit] = timeSummary(unit, fieldSchema.stats, false);
+            fieldSchema.timeStats[unit] = timeSummary(unit, fieldSchema.stats);
           }
         }
       }
@@ -176,12 +176,14 @@ export class Schema {
       var timeStats = fieldSchema.timeStats;
       // if the cardinality for the timeUnit is not cached, calculate it
       if (!timeStats[unit]) {
-        timeStats[unit] = timeSummary(encQ.timeUnit as TimeUnit, fieldSchema.stats, excludeInvalid);
-      } else if (excludeInvalid) {
-        // we have it cached, but we have to make sure it excludes invalid values
-        return timeStats[unit].distinct - invalidCount(timeStats[unit].unique, ['Invalid Date']);
+        timeStats[unit] = timeSummary(encQ.timeUnit as TimeUnit, fieldSchema.stats);
       }
-      return timeStats[unit].distinct;
+
+      if (excludeInvalid) {
+        return timeStats[unit].distinct - invalidCount(timeStats[unit].unique, ['Invalid Date', null]);
+      } else {
+        return timeStats[unit].distinct;
+      }
     } else {
       if (fieldSchema) {
         if (excludeInvalid) {
@@ -240,18 +242,26 @@ function binSummary(maxbins: number, summary: Summary, excludeInvalid: boolean):
   return result;
 }
 
-/** @return a modified version of the passed summary with unique and distinct set according to the timeunit */
-function timeSummary(timeunit: TimeUnit, summary: Summary, excludeInvalid: boolean): Summary {
+/** @return a modified version of the passed summary with unique and distinct set according to the timeunit.
+ *  Maps 'null' (string) keys to the null value and invalid dates to 'Invalid Date' in the unique dictionary.
+ */
+function timeSummary(timeunit: TimeUnit, summary: Summary): Summary {
   const result = extend({}, summary);
 
   var unique: {[value: string]: number} = {};
   keys(summary.unique).forEach(function(dateString) {
-    // only add key to unique if excludeInvalid is not set or if it is NOT undefined, null, or NaN
-    if (!excludeInvalid || (dateString && dateString !== 'null' && dateString !== 'NaN')) {
-      let date: Date = new Date(dateString);
-      let key: string = ((timeunit === TimeUnit.DAY) ? date.getDay() : convert(timeunit, date)).toString();
-      unique[key] = unique[key] ? unique[key] + summary.unique[dateString] : summary.unique[dateString];
+    // don't convert null value because the Date constructor will actually convert it to a date
+    let date: Date = (dateString === 'null') ? null : new Date(dateString);
+    // at this point, `date` is either the null value, a valid Date object, or "Invalid Date" which is a Date
+    let key: string;
+    if (date === null) {
+      key = null;
+    } else if (isNaN(date.getTime())) {
+      key = 'Invalid Date';
+    } else {
+      key = ((timeunit === TimeUnit.DAY) ? date.getDay() : convert(timeunit, date)).toString();
     }
+    unique[key] = (unique[key] || 0) + summary.unique[dateString];
   });
 
   result.unique = unique;
