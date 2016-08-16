@@ -1,3 +1,4 @@
+import {Channel} from 'vega-lite/src/channel';
 import {expression} from 'vega-lite/src/filter';
 import {Filter} from 'vega-lite/src/filter';
 import {Formula} from 'vega-lite/src/transform';
@@ -48,6 +49,34 @@ export function vlSpec(vlspec: ExtendedUnitSpec,
   const specQ = fromSpec(vlspec);
   return spec(specQ);
 }
+
+export const CHANNEL_SUPPORTS_AXIS: Dict<boolean> =
+  [Channel.X, Channel.Y]
+    .reduce((m, channel) => {
+      m[channel] = true;
+      return m;
+    }, {} as Dict<boolean>);
+
+export const CHANNEL_SUPPORTS_LEGEND: Dict<boolean> =
+  [Channel.COLOR, Channel.OPACITY, Channel.SIZE, Channel.SHAPE]
+    .reduce((m, channel) => {
+      m[channel] = true;
+      return m;
+    }, {} as Dict<boolean>);
+
+export const CHANNEL_SUPPORTS_SCALE: Dict<boolean> =
+  [Channel.X, Channel.Y, Channel.COLOR, Channel.OPACITY, Channel.OPACITY, Channel.SIZE, Channel.SHAPE]
+    .reduce((m, channel) => {
+      m[channel] = true;
+      return m;
+    }, {} as Dict<boolean>);
+
+export const CHANNEL_SUPPORTS_SORT: Dict<boolean> =
+  [Channel.X, Channel.Y, Channel.PATH, Channel.ORDER]
+    .reduce((m, channel) => {
+      m[channel] = true;
+      return m;
+    }, {} as Dict<boolean>);
 
 /**
  * Returns a shorthand for a spec query
@@ -204,9 +233,21 @@ export function fieldDef(encQ: EncodingQuery,
   }
 
   // Scale
-  // TODO(#226):
-  // write toSpec() and toShorthand() in a way that prevents outputting inapplicable scale, sort, axis / legend
-  for (const nestedPropParent of [Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND]) {
+  // TODO: legend
+  for (const nestedPropParent of [Property.AXIS, Property.LEGEND, Property.SCALE, Property.SORT]) {
+    if ((nestedPropParent === Property.AXIS) && !isEnumSpec(encQ.channel) && !CHANNEL_SUPPORTS_AXIS[encQ.channel as Channel]) {
+      continue;
+    }
+    if ((nestedPropParent === Property.LEGEND) && !isEnumSpec(encQ.channel) && !CHANNEL_SUPPORTS_LEGEND[encQ.channel as Channel]) {
+      continue;
+    }
+    if ((nestedPropParent === Property.SCALE) && !isEnumSpec(encQ.channel) && !CHANNEL_SUPPORTS_SCALE[encQ.channel as Channel]) {
+      continue;
+    }
+    if ((nestedPropParent === Property.SORT) && !isEnumSpec(encQ.channel) && !CHANNEL_SUPPORTS_SORT[encQ.channel as Channel]) {
+      continue;
+    }
+
     if (include[nestedPropParent]) {
       if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
         // `sort` can be a string (ascending/descending).

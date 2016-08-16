@@ -14,7 +14,7 @@ import {EnumSpecIndex} from './enumspecindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
 import {GroupBy} from './query/groupby';
-import {spec as specShorthand} from './query/shorthand';
+import {spec as specShorthand, CHANNEL_SUPPORTS_AXIS, CHANNEL_SUPPORTS_LEGEND, CHANNEL_SUPPORTS_SCALE, CHANNEL_SUPPORTS_SORT} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
@@ -694,7 +694,25 @@ export class SpecQueryModel {
 
         // otherwise, assign the proper to the field def
         if (encQ[prop] !== undefined) {
-          fieldDef[prop] = encQ[prop];
+          if (prop === Property.AXIS && !isEnumSpec(encQ.channel)) {
+            if (CHANNEL_SUPPORTS_AXIS[encQ.channel as Channel]) {
+              fieldDef[Property.AXIS] = encQ[Property.AXIS];
+            }
+          } else if (prop === Property.LEGEND && !isEnumSpec(encQ.channel)) {
+            if (CHANNEL_SUPPORTS_LEGEND[encQ.channel as Channel]) {
+              fieldDef[Property.LEGEND] = encQ[Property.LEGEND];
+            }
+          } else if (prop === Property.SCALE && !isEnumSpec(encQ.channel)) {
+            if (CHANNEL_SUPPORTS_SCALE[encQ.channel as Channel]) {
+              fieldDef[Property.SCALE] = encQ[Property.SCALE];
+            }
+          } else if (prop === Property.SORT && !isEnumSpec(encQ.channel)) {
+            if (CHANNEL_SUPPORTS_SORT[encQ.channel as Channel]) {
+              fieldDef[Property.SORT] = encQ[Property.SORT];
+            }
+          } else {
+            fieldDef[prop] = encQ[prop];
+          }
         }
       }
 
