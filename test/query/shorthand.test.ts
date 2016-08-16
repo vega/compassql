@@ -8,13 +8,31 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
-import {spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, filter as filterShorthand, calculate as calculateShorthand, INCLUDE_ALL, getReplacer} from '../../src/query/shorthand';
+import {vlSpec, spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, filter as filterShorthand, calculate as calculateShorthand, INCLUDE_ALL, getReplacer} from '../../src/query/shorthand';
 import {extend} from '../../src/util';
 import {REPLACE_BLANK_FIELDS} from '../../src/query/groupby';
 
 import {assert} from 'chai';
 
 describe('query/shorthand', () => {
+  describe('vlSpec', () => {
+    it('should return a proper short hand string for a vega-lite spec', () => {
+      assert.equal(vlSpec({
+        transform: {
+          filter: 'datum.x === 5',
+          calculate: [{
+            field: 'x2',
+            expr: 'datum.x*2'
+          }]
+        },
+        mark: Mark.POINT,
+        encoding: {
+          x: {field: 'x', type: Type.QUANTITATIVE}
+        }
+      }), 'point|calculate:{x2:datum.x*2}|filter:datum.x === 5|x:x,q');
+    });
+  });
+
   describe('spec', () => {
     it('should return correct spec string for specific specQuery', () => {
       const str = specShorthand({

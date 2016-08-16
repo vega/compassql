@@ -1,11 +1,12 @@
 import {expression} from 'vega-lite/src/filter';
 import {Filter} from 'vega-lite/src/filter';
 import {Formula} from 'vega-lite/src/transform';
+import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {Type} from 'vega-lite/src/type';
 import {isString} from 'datalib/src/util';
 
 import {EncodingQuery} from './encoding';
-import {SpecQuery, stack} from './spec';
+import {SpecQuery, stack, fromSpec} from './spec';
 import {isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 
 import {getNestedEncodingPropertyChildren, Property, DEFAULT_PROPERTY_PRECEDENCE} from '../property';
@@ -39,6 +40,14 @@ export const INCLUDE_ALL: Dict<boolean> =
       m[prop] = true;
       return m;
     }, {} as Dict<boolean>);
+
+
+export function vlSpec(vlspec: ExtendedUnitSpec,
+    include: Dict<boolean> = INCLUDE_ALL,
+    replace: Dict<Replacer> = {}) {
+  const specQ = fromSpec(vlspec);
+  return spec(specQ);
+}
 
 /**
  * Returns a shorthand for a spec query
