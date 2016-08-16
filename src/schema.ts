@@ -94,7 +94,7 @@ export class Schema {
     for (let fieldSchema of fieldSchemas) {
       if (fieldSchema.type === Type.QUANTITATIVE) {
         for (let maxbins of opt.maxBinsList) {
-          fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats, false);
+          fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
         }
       } else if (fieldSchema.type === Type.TEMPORAL) {
         for (let unit of opt.timeUnits) {
@@ -155,8 +155,9 @@ export class Schema {
       const maxbins: any = bin.maxbins;
       if (!fieldSchema.binStats[maxbins]) {
         // need to calculate
-        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats, excludeInvalid);
+        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
       }
+      // don't need to worry about excludeInvalid here because invalid values don't affect linearly binned field's cardinality
       return fieldSchema.binStats[maxbins].distinct;
     } else if (encQ.timeUnit) {
       if (augmentTimeUnitDomain) {
@@ -225,7 +226,7 @@ export class Schema {
 /**
  * @return a summary of the binning scheme determined from the given max number of bins
  */
-function binSummary(maxbins: number, summary: Summary, excludeInvalid: boolean): Summary {
+function binSummary(maxbins: number, summary: Summary): Summary {
   const bin = dlBin({
     min: summary.min,
     max: summary.max,
