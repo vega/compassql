@@ -96,8 +96,34 @@ export enum Property {
   AXIS_CHARACTERWIDTH = 'axisCharacterWidth' as any,
 
   // - Legend
-  LEGEND = 'legend' as any
-  // TODO: LEGEND_*
+  LEGEND = 'legend' as any,
+
+  // General Legend Properties
+  LEGEND_ORIENT = 'legendOrient' as any,
+  LEGEND_OFFSET = 'legendOffset' as any,
+  LEGEND_VALUES = 'legendValues' as any,
+
+  // Legend_Label Properties
+  LEGEND_FORMAT = 'legendFormat' as any,
+  LEGEND_LABELALIGN = 'legendLabelAlign' as any,
+  LEGEND_LABELBASELINE = 'legendLabelBaseline' as any,
+  LEGEND_LABELCOLOR = 'legendLabelColor' as any,
+  LEGEND_LABELFONT = 'legendLabelFont' as any,
+  LEGEND_LABELFONTSIZE = 'legendLabelFontSize' as any,
+  LEGEND_SHORTTIMELABELS = 'legendShortTimeLabels' as any,
+
+  // Legend_Symbol Properties
+  LEGEND_SYMBOLCOLOR = 'legendSymbolColor' as any,
+  LEGEND_SYMBOLSHAPE = 'legendSymbolShape' as any,
+  LEGEND_SYMBOLSIZE = 'legendSymbolSize' as any,
+  LEGEND_SYMBOLSTROKEWIDTH = 'legendSymbolStrokeWidth' as any,
+
+  // Legend_Title Properties
+  LEGEND_TITLE = 'legendTitle' as any,
+  LEGEND_TITLECOLOR = 'legendTitleColor' as any,
+  LEGEND_TITLEFONT = 'legendTitleFont' as any,
+  LEGEND_TITLEFONTSIZE = 'legendTitleFontSize' as any,
+  LEGEND_TITLEFONTWEIGHT = 'legendTitleFontWeight' as any
 }
 
 export function hasNestedProperty(prop: Property) {
@@ -106,7 +132,7 @@ export function hasNestedProperty(prop: Property) {
     case Property.SCALE:
     case Property.SORT:
     case Property.AXIS:
-      // TODO: LEGEND
+    case Property.LEGEND:
       return true;
     case Property.MARK:
     case Property.FILTER:
@@ -166,6 +192,25 @@ export function hasNestedProperty(prop: Property) {
     case Property.AXIS_CHARACTERWIDTH:
     case Property.AXIS_TITLEMAXLENGTH:
     case Property.AXIS_TITLEOFFSET:
+    case Property.LEGEND_ORIENT:
+    case Property.LEGEND_OFFSET:
+    case Property.LEGEND_VALUES:
+    case Property.LEGEND_FORMAT:
+    case Property.LEGEND_LABELALIGN:
+    case Property.LEGEND_LABELBASELINE:
+    case Property.LEGEND_LABELCOLOR:
+    case Property.LEGEND_LABELFONT:
+    case Property.LEGEND_LABELFONTSIZE:
+    case Property.LEGEND_SHORTTIMELABELS:
+    case Property.LEGEND_SYMBOLCOLOR:
+    case Property.LEGEND_SYMBOLSHAPE:
+    case Property.LEGEND_SYMBOLSIZE:
+    case Property.LEGEND_SYMBOLSTROKEWIDTH:
+    case Property.LEGEND_TITLE:
+    case Property.LEGEND_TITLECOLOR:
+    case Property.LEGEND_TITLEFONT:
+    case Property.LEGEND_TITLEFONTSIZE:
+    case Property.LEGEND_TITLEFONTWEIGHT:
       return false;
   }
   /* istanbul ignore next */
@@ -233,7 +278,28 @@ export const ENCODING_PROPERTIES = [
   Property.AXIS_TITLEFONTWEIGHT,
   Property.AXIS_TITLEMAXLENGTH,
   Property.AXIS_TITLEOFFSET,
-  Property.AXIS_VALUES
+  Property.AXIS_VALUES,
+
+  Property.LEGEND,
+  Property.LEGEND_ORIENT,
+  Property.LEGEND_OFFSET,
+  Property.LEGEND_VALUES,
+  Property.LEGEND_FORMAT,
+  Property.LEGEND_LABELALIGN,
+  Property.LEGEND_LABELBASELINE,
+  Property.LEGEND_LABELCOLOR,
+  Property.LEGEND_LABELFONT,
+  Property.LEGEND_LABELFONTSIZE,
+  Property.LEGEND_SHORTTIMELABELS,
+  Property.LEGEND_SYMBOLCOLOR,
+  Property.LEGEND_SYMBOLSHAPE,
+  Property.LEGEND_SYMBOLSIZE,
+  Property.LEGEND_SYMBOLSTROKEWIDTH,
+  Property.LEGEND_TITLE,
+  Property.LEGEND_TITLECOLOR,
+  Property.LEGEND_TITLEFONT,
+  Property.LEGEND_TITLEFONTSIZE,
+  Property.LEGEND_TITLEFONTWEIGHT
 ];
 
 export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
@@ -268,6 +334,7 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   Property.MARK,
   Property.SCALE,
   Property.AXIS,
+  Property.LEGEND,
 
   // Nested Encoding Property
 
@@ -319,7 +386,28 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   Property.AXIS_TITLEFONTWEIGHT,
   Property.AXIS_TITLEMAXLENGTH,
   Property.AXIS_TITLEOFFSET,
-  Property.AXIS_VALUES
+  Property.AXIS_VALUES,
+
+  // - Legend
+  Property.LEGEND_ORIENT,
+  Property.LEGEND_OFFSET,
+  Property.LEGEND_VALUES,
+  Property.LEGEND_FORMAT,
+  Property.LEGEND_LABELALIGN,
+  Property.LEGEND_LABELBASELINE,
+  Property.LEGEND_LABELCOLOR,
+  Property.LEGEND_LABELFONT,
+  Property.LEGEND_LABELFONTSIZE,
+  Property.LEGEND_SHORTTIMELABELS,
+  Property.LEGEND_SYMBOLCOLOR,
+  Property.LEGEND_SYMBOLSHAPE,
+  Property.LEGEND_SYMBOLSIZE,
+  Property.LEGEND_SYMBOLSTROKEWIDTH,
+  Property.LEGEND_TITLE,
+  Property.LEGEND_TITLECOLOR,
+  Property.LEGEND_TITLEFONT,
+  Property.LEGEND_TITLEFONTSIZE,
+  Property.LEGEND_TITLEFONTWEIGHT
 ];
 
 export interface NestedEncodingProperty {
@@ -578,10 +666,99 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
     property: Property.AXIS_TITLEOFFSET,
     parent: 'axis',
     child: 'titleOffset'
+  },
+  {
+    property: Property.LEGEND_ORIENT,
+    parent: 'legend',
+    child: 'orient'
+  },
+  {
+    property: Property.LEGEND_OFFSET,
+    parent: 'legend',
+    child: 'offset',
+  },
+  {
+    property: Property.LEGEND_VALUES,
+    parent: 'legend',
+    child: 'values'
+  },
+  {
+    property: Property.LEGEND_FORMAT,
+    parent: 'legend',
+    child: 'format'
+  },
+  {
+    property: Property.LEGEND_LABELALIGN,
+    parent: 'legend',
+    child: 'labelAlign'
+  },
+  {
+    property: Property.LEGEND_LABELBASELINE,
+    parent: 'legend',
+    child: 'labelBaseline'
+  },
+  {
+    property: Property.LEGEND_LABELFONT,
+    parent: 'legend',
+    child: 'labelFont'
+  },
+  {
+    property: Property.LEGEND_LABELFONTSIZE,
+    parent: 'legend',
+    child: 'labelFontSize'
+  },
+  {
+    property: Property.LEGEND_SHORTTIMELABELS,
+    parent: 'legend',
+    child: 'shortTimeLabels'
+  },
+  {
+    property: Property.LEGEND_SYMBOLCOLOR,
+    parent: 'legend',
+    child: 'symbolColor'
+  },
+  {
+    property: Property.LEGEND_SYMBOLSHAPE,
+    parent: 'legend',
+    child: 'symbolShape'
+  },
+  {
+    property: Property.LEGEND_SYMBOLSIZE,
+    parent: 'legend',
+    child: 'symbolSize'
+  },
+  {
+    property: Property.LEGEND_SYMBOLSTROKEWIDTH,
+    parent: 'legend',
+    child: 'symbolStrokeWidth'
+  },
+  {
+    property: Property.LEGEND_TITLE,
+    parent: 'legend',
+    child: 'title'
+  },
+  {
+    property: Property.LEGEND_TITLECOLOR,
+    parent: 'legend',
+    child: 'titleColor'
+  },
+  {
+    property: Property.LEGEND_TITLEFONT,
+    parent: 'legend',
+    child: 'titleFont'
+  },
+  {
+    property: Property.LEGEND_TITLEFONTSIZE,
+    parent: 'legend',
+    child: 'titleFontSize'
+  },
+  {
+    property: Property.LEGEND_TITLEFONTWEIGHT,
+    parent: 'legend',
+    child: 'titleFontWeight'
   }
 
   // TODO: other bin parameters
-  // TODO: axis, legend
 ];
 
 const NESTED_ENCODING_INDEX: Dict<NestedEncodingProperty> =

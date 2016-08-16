@@ -220,9 +220,14 @@ describe('query/spec', () => {
           x: {
             field: 'x',
             type: Type.QUANTITATIVE,
-            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}
+            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'},
           },
-          y: {field: 'x', type: Type.QUANTITATIVE, scale: null}
+          y: {
+            field: 'x', type: Type.QUANTITATIVE, scale: null
+          },
+          color: {
+            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}
+          }
         },
         config: {}
       });
@@ -232,7 +237,8 @@ describe('query/spec', () => {
         mark: Mark.POINT,
         encodings: [
           {channel: 'x', field: 'x', type: Type.QUANTITATIVE, axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
-          {channel: 'y', field: 'x', type: Type.QUANTITATIVE, scale: false}
+          {channel: 'y', field: 'x', type: Type.QUANTITATIVE, scale: false},
+          {channel: 'color', legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}}
         ],
         config: {}
       });

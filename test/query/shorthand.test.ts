@@ -306,7 +306,7 @@ describe('query/shorthand', () => {
       const str = fieldDefShorthand({
         axis: {orient: AxisOrient.TOP}, bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
       });
-      assert.equal(str, 'bin(a,q,maxbins=20,axis={"orient":"top"},scale={"type":"log"},sort={"field":"a","op":"mean","order":"descending"})');
+      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"},sort={"field":"a","op":"mean","order":"descending"},axis={"orient":"top"})');
     });
 
     it('should return correct fieldDefShorthand string for axis with orient, shortTimeLabels, ticks, and title', () => {
@@ -322,6 +322,21 @@ describe('query/shorthand', () => {
         ]
       });
       assert.equal(str, 'point|x:a,q,axis={"orient":"top","shortTimeLabels":true,"ticks":5,"title":"test x channel"}');
+    });
+
+    it('should return correct fieldDefShorthand string for legend with orient, labelAlign, symbolSize, and title', () => {
+      const str = specShorthand({
+        mark: Mark.POINT,
+        encodings: [
+          {
+            channel: Channel.COLOR,
+            field: 'a',
+            type: Type.NOMINAL,
+            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}
+          }
+        ]
+      });
+      assert.equal(str, 'point|color:a,n,legend={"orient":"right","labelAlign":"left","symbolSize":12,"title":"test title"}');
     });
 
     it('should return correct fieldDefShorthand string for scale with a string[] domain', () => {
