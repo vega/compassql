@@ -263,7 +263,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   axisTitleMaxLengths: [undefined],
   axisCharacterWidths: [undefined],
 
-  legendOrients: [undefined],
+  legendOrients: ['left', 'right'],
   legendOffsets: [undefined],
   legendValuesList: [undefined],
   legendFormats: [undefined],

@@ -140,43 +140,43 @@ export function getDefaultName(prop: Property) {
     case Property.LEGEND:
       return 'leg';
     case Property.LEGEND_ORIENT:
-      return 'leg-or';
+      return 'l-or';
     case Property.LEGEND_OFFSET:
-      return 'leg-of';
+      return 'l-of';
     case Property.LEGEND_VALUES:
-      return 'leg-val';
+      return 'l-val';
     case Property.LEGEND_FORMAT:
-      return 'leg-f';
+      return 'l-f';
     case Property.LEGEND_LABELALIGN:
-      return 'leg-labal';
+      return 'l-labal';
     case Property.LEGEND_LABELBASELINE:
-      return 'leg-labbas';
+      return 'l-labbas';
     case Property.LEGEND_LABELCOLOR:
-      return 'leg-labcol';
+      return 'l-labcol';
     case Property.LEGEND_LABELFONT:
-      return 'leg-labf';
+      return 'l-labf';
     case Property.LEGEND_LABELFONTSIZE:
-      return 'leg-labfs';
+      return 'l-labfs';
     case Property.LEGEND_SHORTTIMELABELS:
-      return 'leg-stl';
+      return 'l-stl';
     case Property.LEGEND_SYMBOLCOLOR:
-      return 'leg-symcol';
+      return 'l-symcol';
     case Property.LEGEND_SYMBOLSHAPE:
-      return 'leg-symsh';
+      return 'l-symsh';
     case Property.LEGEND_SYMBOLSIZE:
-      return 'leg-symsize';
+      return 'l-symsize';
     case Property.LEGEND_SYMBOLSTROKEWIDTH:
-      return 'leg-symstrwid';
+      return 'l-symstrwid';
     case Property.LEGEND_TITLE:
-      return 'leg-tit';
+      return 'l-tit';
     case Property.LEGEND_TITLECOLOR:
-      return 'leg-titcol';
+      return 'l-titcol';
     case Property.LEGEND_TITLEFONT:
-      return 'leg-titf';
+      return 'l-titf';
     case Property.LEGEND_TITLEFONTSIZE:
-      return 'leg-titfs';
+      return 'l-titfs';
     case Property.LEGEND_TITLEFONTWEIGHT:
-      return 'leg-titfw';
+      return 'l-titfw';
     case Property.TIMEUNIT:
       return 'tu';
     case Property.FIELD:
