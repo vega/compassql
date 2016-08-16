@@ -155,7 +155,7 @@ export class Schema {
       const maxbins: any = bin.maxbins;
       if (!fieldSchema.binStats[maxbins]) {
         // need to calculate
-        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats, false);
+        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats, excludeInvalid);
       }
       return fieldSchema.binStats[maxbins].distinct;
     } else if (encQ.timeUnit) {
