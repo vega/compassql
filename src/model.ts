@@ -683,7 +683,9 @@ export class SpecQueryModel {
       if (isEnumSpec(encQ.channel)) return null;
 
       // assemble other property into a field def.
-      const PROPERTIES = [Property.AGGREGATE, Property.AXIS, Property.BIN, Property.LEGEND, Property.SORT, Property.SCALE, Property.TIMEUNIT, Property.FIELD, Property.TYPE];
+      const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND];
+      // TODO(#226):
+      // write toSpec() and toShorthand() in a way that prevents outputting inapplicable scale, sort, axis / legend
       for (let j = 0; j < PROPERTIES.length; j++) {
         const prop = PROPERTIES[j];
 

@@ -284,7 +284,7 @@ describe('query/shorthand', () => {
       const str = fieldDefShorthand({
         axis: {orient: AxisOrient.TOP}, bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
       });
-      assert.equal(str, 'bin(a,q,maxbins=20,axis={"orient":"top"},scale={"type":"log"},sort={"field":"a","op":"mean","order":"descending"})');
+      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"},sort={"field":"a","op":"mean","order":"descending"},axis={"orient":"top"})');
     });
 
     it('should return correct fieldDefShorthand string for axis with orient, shortTimeLabels, ticks, and title', () => {
