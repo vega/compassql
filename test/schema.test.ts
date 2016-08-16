@@ -65,6 +65,21 @@ describe('schema', () => {
       assert.equal(schema.type('d'), Type.TEMPORAL);
     });
 
+    it('should infer quantitative type for integers when cardinality is much less than the total but distinct is high', () => {
+      const numberData = [];
+      // add enough non-distinct data to make the field nominal
+      var total = 1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1;
+      for (let i = 0; i < total * DEFAULT_QUERY_CONFIG.numberOrdinalLimit; i++) {
+        numberData.push({a: 1});
+      }
+      // add enough distinct data to go over numberOrdinalLimit
+      for (let i = 0; i < DEFAULT_QUERY_CONFIG.numberOrdinalLimit + 1; i++) {
+        numberData.push({a: i});
+      }
+      const numberSchema = Schema.build(numberData);
+      assert.equal(numberSchema.type('a'), Type.QUANTITATIVE);
+    });
+
     it('should infer nominal type for integers when cardinality is much less than the total', () => {
       const numberData = [];
       // add enough non-distinct data to make the field nominal

@@ -35,6 +35,9 @@ export interface QueryConfig {
   /** Default ratio for number fields to be considered ordinal */
   numberOrdinalProportion?: number;
 
+  /** Default cutoff for not applying the numberOrdinalProportion inference */
+  numberOrdinalLimit?: number;
+
   /** Default maxbins to enumerate */
   maxBinsList?: number[];
 
@@ -295,6 +298,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   scaleTypes: [undefined, ScaleType.LOG],
 
   numberOrdinalProportion: .05,
+  numberOrdinalLimit: 50,
 
   // CONSTRAINTS
   // Spec Constraints -- See description inside src/constraints/spec.ts
