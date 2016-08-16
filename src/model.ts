@@ -90,13 +90,13 @@ export function getDefaultName(prop: Property) {
     case Property.AXIS_FORMAT:
       return 'ax-f';
     case Property.AXIS_LABELANGLE:
-      return 'ax-labang';
+      return 'ax-laba';
     case Property.AXIS_LABELMAXLENGTH:
-      return 'ax-lablml';
+      return 'ax-labm';
     case Property.AXIS_SHORTTIMELABELS:
       return 'ax-stl';
     case Property.AXIS_SUBDIVIDE:
-      return 'ax-s';
+      return 'ax-sub';
     case Property.AXIS_TICKS:
       return 'ax-t';
     case Property.AXIS_TICKCOLOR:
@@ -122,21 +122,61 @@ export function getDefaultName(prop: Property) {
     case Property.AXIS_VALUES:
       return 'ax-v';
     case Property.AXIS_TITLE:
-      return 'ax-tit';
+      return 'ax-ti';
     case Property.AXIS_TITLECOLOR:
-      return 'ax-titc';
+      return 'ax-tic';
     case Property.AXIS_TITLEFONT:
-      return 'ax-titf';
+      return 'ax-tif';
     case Property.AXIS_TITLEFONTSIZE:
-      return 'ax-titfs';
+      return 'ax-tifs';
     case Property.AXIS_TITLEFONTWEIGHT:
-      return 'ax-titfw';
+      return 'ax-tifw';
     case Property.AXIS_TITLEOFFSET:
-      return 'ax-tito';
+      return 'ax-tio';
     case Property.AXIS_TITLEMAXLENGTH:
-      return 'ax-titml';
+      return 'ax-timl';
     case Property.AXIS_CHARACTERWIDTH:
       return 'ax-cw';
+    case Property.LEGEND:
+      return 'l';
+    case Property.LEGEND_ORIENT:
+      return 'l-or';
+    case Property.LEGEND_OFFSET:
+      return 'l-of';
+    case Property.LEGEND_VALUES:
+      return 'l-v';
+    case Property.LEGEND_FORMAT:
+      return 'l-f';
+    case Property.LEGEND_LABELALIGN:
+      return 'l-la';
+    case Property.LEGEND_LABELBASELINE:
+      return 'l-lb';
+    case Property.LEGEND_LABELCOLOR:
+      return 'l-lc';
+    case Property.LEGEND_LABELFONT:
+      return 'l-lf';
+    case Property.LEGEND_LABELFONTSIZE:
+      return 'l-lfs';
+    case Property.LEGEND_SHORTTIMELABELS:
+      return 'l-stl';
+    case Property.LEGEND_SYMBOLCOLOR:
+      return 'l-syc';
+    case Property.LEGEND_SYMBOLSHAPE:
+      return 'l-sysh';
+    case Property.LEGEND_SYMBOLSIZE:
+      return 'l-sysi';
+    case Property.LEGEND_SYMBOLSTROKEWIDTH:
+      return 'l-sysw';
+    case Property.LEGEND_TITLE:
+      return 'l-ti';
+    case Property.LEGEND_TITLECOLOR:
+      return 'l-tic';
+    case Property.LEGEND_TITLEFONT:
+      return 'l-tif';
+    case Property.LEGEND_TITLEFONTSIZE:
+      return 'l-tifs';
+    case Property.LEGEND_TITLEFONTWEIGHT:
+      return 'l-tifw';
     case Property.TIMEUNIT:
       return 'tu';
     case Property.FIELD:
@@ -160,6 +200,8 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     case Property.AXIS_LABELS:
     case Property.AXIS_SHORTTIMELABELS:
     case Property.BIN:
+    case Property.LEGEND:
+    case Property.LEGEND_SHORTTIMELABELS:
     case Property.SCALE:
     case Property.SCALE_CLAMP:
     case Property.SCALE_NICE:
@@ -282,6 +324,60 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
 
     case Property.MARK:
       return opt.marks;
+
+    case Property.LEGEND_ORIENT:
+      return opt.legendOrients;
+
+    case Property.LEGEND_OFFSET:
+      return opt.legendOffsets;
+
+    case Property.LEGEND_VALUES:
+      return opt.legendValuesList;
+
+    case Property.LEGEND_FORMAT:
+      return opt.legendFormats;
+
+    case Property.LEGEND_LABELALIGN:
+      return opt.legendLabelAligns;
+
+    case Property.LEGEND_LABELBASELINE:
+      return opt.legendLabelBaselines;
+
+    case Property.LEGEND_LABELCOLOR:
+      return opt.legendLabelColors;
+
+    case Property.LEGEND_LABELFONT:
+      return opt.legendLabelFonts;
+
+    case Property.LEGEND_LABELFONTSIZE:
+      return opt.legendLabelFontSizes;
+
+    case Property.LEGEND_SYMBOLCOLOR:
+      return opt.legendSymbolColors;
+
+    case Property.LEGEND_SYMBOLSHAPE:
+      return opt.legendSymbolShapes;
+
+    case Property.LEGEND_SYMBOLSIZE:
+      return opt.legendSymbolSizes;
+
+    case Property.LEGEND_SYMBOLSTROKEWIDTH:
+      return opt.legendSymbolStrokeWidths;
+
+    case Property.LEGEND_TITLE:
+      return opt.legendTitles;
+
+    case Property.LEGEND_TITLECOLOR:
+      return opt.legendTitleColors;
+
+    case Property.LEGEND_TITLEFONT:
+      return opt.legendTitleFonts;
+
+    case Property.LEGEND_TITLEFONTSIZE:
+      return opt.legendTitleFontSizes;
+
+    case Property.LEGEND_TITLEFONTWEIGHT:
+      return opt.legendTitleFontWeights;
 
     case Property.SORT:
       return opt.sorts;
@@ -587,7 +683,9 @@ export class SpecQueryModel {
       if (isEnumSpec(encQ.channel)) return null;
 
       // assemble other property into a field def.
-      const PROPERTIES = [Property.AGGREGATE, Property.AXIS, Property.BIN, Property.SORT, Property.SCALE, Property.TIMEUNIT, Property.FIELD, Property.TYPE];
+      const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND];
+      // TODO(#226):
+      // write toSpec() and toShorthand() in a way that prevents outputting inapplicable scale, sort, axis / legend
       for (let j = 0; j < PROPERTIES.length; j++) {
         const prop = PROPERTIES[j];
 

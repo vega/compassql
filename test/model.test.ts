@@ -269,7 +269,13 @@ describe('SpecQueryModel', () => {
             channel: Channel.X,
             field: 'A',
             type: Type.QUANTITATIVE,
-            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}
+            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'},
+          },
+          {
+            channel: Channel.COLOR,
+            field: 'B',
+            type: Type.QUANTITATIVE,
+            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'},
           }
         ]
       });
@@ -280,7 +286,8 @@ describe('SpecQueryModel', () => {
         transform: {filter: 'datum.A===1'},
         mark: Mark.BAR,
         encoding: {
-          x: {field: 'A', type: Type.QUANTITATIVE, axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}}
+          x: {field: 'A', type: Type.QUANTITATIVE, axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
+          color: {field: 'B', type: Type.QUANTITATIVE, legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}}
         },
         config: DEFAULT_SPEC_CONFIG
       });
