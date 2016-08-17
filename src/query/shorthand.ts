@@ -50,33 +50,58 @@ export function vlSpec(vlspec: ExtendedUnitSpec,
   return spec(specQ);
 }
 
-export const CHANNEL_SUPPORTS_AXIS: Dict<boolean> =
+const CHANNEL_SUPPORTS_AXIS: Dict<boolean> =
   [Channel.X, Channel.Y, Channel.ROW, Channel.COLUMN]
     .reduce((m, channel) => {
       m[channel] = true;
       return m;
     }, {} as Dict<boolean>);
 
-export const CHANNEL_SUPPORTS_LEGEND: Dict<boolean> =
+const CHANNEL_SUPPORTS_LEGEND: Dict<boolean> =
   [Channel.COLOR, Channel.OPACITY, Channel.SIZE, Channel.SHAPE]
     .reduce((m, channel) => {
       m[channel] = true;
       return m;
     }, {} as Dict<boolean>);
 
-export const CHANNEL_SUPPORTS_SCALE: Dict<boolean> =
+const CHANNEL_SUPPORTS_SCALE: Dict<boolean> =
   [Channel.X, Channel.Y, Channel.COLOR, Channel.OPACITY, Channel.OPACITY, Channel.ROW, Channel.COLUMN, Channel.SIZE, Channel.SHAPE]
     .reduce((m, channel) => {
       m[channel] = true;
       return m;
     }, {} as Dict<boolean>);
 
-export const CHANNEL_SUPPORTS_SORT: Dict<boolean> =
+const CHANNEL_SUPPORTS_SORT: Dict<boolean> =
   [Channel.X, Channel.Y, Channel.PATH, Channel.ORDER]
     .reduce((m, channel) => {
       m[channel] = true;
       return m;
     }, {} as Dict<boolean>);
+
+export const CHANNEL_SUPPORTS_PROPERTY =
+  [Channel.COLOR, Channel.COLUMN, Channel.DETAIL, Channel.LABEL, Channel.OPACITY, Channel.ORDER, Channel.PATH,
+   Channel.ROW, Channel.SHAPE, Channel.SIZE, Channel.TEXT, Channel.X, Channel.X2, Channel.Y, Channel.Y2]
+    .reduce((m, channel) => {
+      let n: Dict<boolean> = {};
+      if (CHANNEL_SUPPORTS_AXIS[channel]) {
+        n[Property.AXIS] = true;
+        m[channel] = n;
+      }
+      if (CHANNEL_SUPPORTS_LEGEND[channel]) {
+        n[Property.LEGEND] = true;
+        m[channel] = n;
+      }
+      if (CHANNEL_SUPPORTS_SORT[channel]) {
+        n[Property.SORT] = true;
+        m[channel] = n;
+      }
+      if (CHANNEL_SUPPORTS_SCALE[channel]) {
+        n[Property.SCALE] = true;
+        m[channel] = n;
+      }
+
+      return m;
+    }, {} as Dict<Dict<boolean>>);
 
 /**
  * Returns a shorthand for a spec query
@@ -233,16 +258,7 @@ export function fieldDef(encQ: EncodingQuery,
   }
 
   for (const nestedPropParent of [Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND]) {
-    if ((nestedPropParent === Property.AXIS) && !isEnumSpec(encQ.channel) && !CHANNEL_SUPPORTS_AXIS[encQ.channel as Channel]) {
-      continue;
-    }
-    if ((nestedPropParent === Property.LEGEND) && !isEnumSpec(encQ.channel) && !CHANNEL_SUPPORTS_LEGEND[encQ.channel as Channel]) {
-      continue;
-    }
-    if ((nestedPropParent === Property.SCALE) && !isEnumSpec(encQ.channel) && !CHANNEL_SUPPORTS_SCALE[encQ.channel as Channel]) {
-      continue;
-    }
-    if ((nestedPropParent === Property.SORT) && !isEnumSpec(encQ.channel) && !CHANNEL_SUPPORTS_SORT[encQ.channel as Channel]) {
+    if (!isEnumSpec(encQ.channel) && !CHANNEL_SUPPORTS_PROPERTY[encQ.channel as Channel][nestedPropParent]) {
       continue;
     }
 
