@@ -14,10 +14,10 @@ import {EnumSpecIndex} from './enumspecindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
 import {GroupBy} from './query/groupby';
-import {spec as specShorthand, CHANNEL_SUPPORTS_PROPERTY} from './query/shorthand';
+import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
-import {Dict, duplicate, extend} from './util';
+import {contains, Dict, duplicate, extend} from './util';
 
 export function getDefaultName(prop: Property) {
   switch (prop) {
@@ -695,11 +695,11 @@ export class SpecQueryModel {
         // otherwise, assign the proper to the field def
         if (encQ[prop] !== undefined) {
 
-          if (prop === Property.AXIS || prop === Property.LEGEND || prop === Property.SCALE || prop === Property.SORT) {
-            if (!isEnumSpec(encQ.channel) && CHANNEL_SUPPORTS_PROPERTY[encQ.channel as Channel][prop]) {
-              fieldDef[prop] = encQ[prop];
-            }
-          } else {
+          // We only output axis, legend, scale, or sort that have correct supporting channel
+          let propNeedsToCheckChannel: boolean = contains([Property.AXIS, Property.LEGEND, Property.SCALE, Property.SORT], prop);
+
+          if ((propNeedsToCheckChannel && !isEnumSpec(encQ.channel) && PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel]) ||
+              !propNeedsToCheckChannel) {
             fieldDef[prop] = encQ[prop];
           }
         }

@@ -50,58 +50,12 @@ export function vlSpec(vlspec: ExtendedUnitSpec,
   return spec(specQ);
 }
 
-const CHANNEL_SUPPORTS_AXIS: Dict<boolean> =
-  [Channel.X, Channel.Y, Channel.ROW, Channel.COLUMN]
-    .reduce((m, channel) => {
-      m[channel] = true;
-      return m;
-    }, {} as Dict<boolean>);
-
-const CHANNEL_SUPPORTS_LEGEND: Dict<boolean> =
-  [Channel.COLOR, Channel.OPACITY, Channel.SIZE, Channel.SHAPE]
-    .reduce((m, channel) => {
-      m[channel] = true;
-      return m;
-    }, {} as Dict<boolean>);
-
-const CHANNEL_SUPPORTS_SCALE: Dict<boolean> =
-  [Channel.X, Channel.Y, Channel.COLOR, Channel.OPACITY, Channel.OPACITY, Channel.ROW, Channel.COLUMN, Channel.SIZE, Channel.SHAPE]
-    .reduce((m, channel) => {
-      m[channel] = true;
-      return m;
-    }, {} as Dict<boolean>);
-
-const CHANNEL_SUPPORTS_SORT: Dict<boolean> =
-  [Channel.X, Channel.Y, Channel.PATH, Channel.ORDER]
-    .reduce((m, channel) => {
-      m[channel] = true;
-      return m;
-    }, {} as Dict<boolean>);
-
-export const CHANNEL_SUPPORTS_PROPERTY =
-  [Channel.COLOR, Channel.COLUMN, Channel.DETAIL, Channel.LABEL, Channel.OPACITY, Channel.ORDER, Channel.PATH,
-   Channel.ROW, Channel.SHAPE, Channel.SIZE, Channel.TEXT, Channel.X, Channel.X2, Channel.Y, Channel.Y2]
-    .reduce((m, channel) => {
-      let n: Dict<boolean> = {};
-      if (CHANNEL_SUPPORTS_AXIS[channel]) {
-        n[Property.AXIS] = true;
-        m[channel] = n;
-      }
-      if (CHANNEL_SUPPORTS_LEGEND[channel]) {
-        n[Property.LEGEND] = true;
-        m[channel] = n;
-      }
-      if (CHANNEL_SUPPORTS_SORT[channel]) {
-        n[Property.SORT] = true;
-        m[channel] = n;
-      }
-      if (CHANNEL_SUPPORTS_SCALE[channel]) {
-        n[Property.SCALE] = true;
-        m[channel] = n;
-      }
-
-      return m;
-    }, {} as Dict<Dict<boolean>>);
+export const PROPERTY_SUPPORTED_CHANNELS = {
+  axis: {x: true, y: true, row: true, column: true},
+  legend: {color: true, opacity: true, size: true, shape: true},
+  scale: {x: true, y: true, color: true, opacity: true, row: true, column: true, size: true, shape: true},
+  sort: {x: true, y: true, path: true, order: true}
+};
 
 /**
  * Returns a shorthand for a spec query
@@ -258,7 +212,7 @@ export function fieldDef(encQ: EncodingQuery,
   }
 
   for (const nestedPropParent of [Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND]) {
-    if (!isEnumSpec(encQ.channel) && !CHANNEL_SUPPORTS_PROPERTY[encQ.channel as Channel][nestedPropParent]) {
+    if (!isEnumSpec(encQ.channel) && !PROPERTY_SUPPORTED_CHANNELS[nestedPropParent][encQ.channel as Channel]) {
       continue;
     }
 
