@@ -19,6 +19,46 @@ const CONFIG_WITH_AUTO_ADD_COUNT = extend({}, DEFAULT_QUERY_CONFIG, {autoAddCoun
 
 describe('generate', function () {
   describe('1D', () => {
+    describe('Q with mark=?, channel=size', () => {
+      it('should enumerate mark=point and generate a point plot', () => {
+        const query = {
+          mark: '?',
+          encodings: [{
+            channel: Channel.SIZE,
+            field: 'A',
+            type: Type.QUANTITATIVE
+          }]
+        };
+        const answerSet = generate(query, schema);
+        assert.equal(answerSet.length, 1);
+        assert.equal(answerSet[0].getMark(), Mark.POINT);
+      });
+    });
+
+    describe('Q with mark=?, channel=?', () => {
+      it('should enumerate tick or point mark with x or y channel', () => {
+        const query = {
+          mark: '?',
+          encodings: [{
+            channel: '?',
+            field: 'A',
+            type: Type.QUANTITATIVE
+          }]
+        };
+        const answerSet = generate(query, schema);
+        assert.equal(answerSet.length, 4);
+
+        assert.equal(answerSet[0].getMark(), Mark.POINT);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
+        assert.equal(answerSet[1].getMark(), Mark.TICK);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).channel, Channel.X);
+        assert.equal(answerSet[2].getMark(), Mark.POINT);
+        assert.equal(answerSet[2].getEncodingQueryByIndex(0).channel, Channel.Y);
+        assert.equal(answerSet[3].getMark(), Mark.TICK);
+        assert.equal(answerSet[3].getEncodingQueryByIndex(0).channel, Channel.Y);
+      });
+    });
+
     describe('Q with aggregate=?, bin=?', () => {
       it('should enumerate raw, bin, aggregate', () => {
         const query = {

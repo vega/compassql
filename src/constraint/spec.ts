@@ -219,11 +219,13 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           return specM.channelUsed(Channel.TEXT);
         case Mark.BAR:
         case Mark.CIRCLE:
-        case Mark.POINT:
         case Mark.SQUARE:
         case Mark.TICK:
         case Mark.RULE:
           return specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
+        case Mark.POINT:
+          return isEnumSpec(specM.enumSpecIndex.mark) ? true :
+            specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
       }
       /* istanbul ignore next */
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
