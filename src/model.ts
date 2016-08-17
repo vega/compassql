@@ -695,9 +695,10 @@ export class SpecQueryModel {
         // otherwise, assign the proper to the field def
         if (encQ[prop] !== undefined) {
 
-          // We only output axis, legend, scale, or sort that have correct supporting channel
+          // axis, legend, scale, and sort only support certain channels
           let propNeedsToCheckChannel: boolean = contains([Property.AXIS, Property.LEGEND, Property.SCALE, Property.SORT], prop);
 
+          // We only output axis, legend, scale, or sort that have correct supporting channel
           if ((propNeedsToCheckChannel && !isEnumSpec(encQ.channel) && PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel]) ||
               !propNeedsToCheckChannel) {
             fieldDef[prop] = encQ[prop];
