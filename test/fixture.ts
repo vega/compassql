@@ -21,7 +21,10 @@ const fixtures: FieldSchema[] = [{
   field: 'T',
   type: Type.TEMPORAL,
   primitiveType: PrimitiveType.DATE,
-  stats: {distinct: 100} as any, // HACK so that we don't have to define all summary properties
+  stats: {
+    distinct: 100,
+    unique: {'2000/1/1': 1, '2000/1/2': 1}
+  } as any, // HACK so that we don't have to define all summary properties
   timeStats: {
     year: {
       distinct: 2,

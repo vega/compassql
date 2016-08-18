@@ -162,7 +162,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     strict: false,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.timeUnit && encQ.type === Type.TEMPORAL) {
-        return schema.cardinality(encQ, false, true) > 1;
+        return schema.timeUnitHasVariation(encQ);
       }
       return true;
     }
