@@ -155,14 +155,14 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       return true;
     }
   },{
-    name: 'timeUnitShouldShowVariation',
+    name: 'timeUnitShouldHaveVariation',
     description: 'A particular time unit should be applied only if they produce unique values.',
     properties: [Property.TIMEUNIT, Property.TYPE],
     allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
       if (encQ.timeUnit && encQ.type === Type.TEMPORAL) {
-        return schema.cardinality(encQ, false, true) > 1;
+        return schema.timeUnitHasVariation(encQ);
       }
       return true;
     }

@@ -1,7 +1,7 @@
 import {Type} from 'vega-lite/src/type';
 import {Channel} from 'vega-lite/src/channel';
 import {autoMaxBins} from 'vega-lite/src/bin';
-import {TimeUnit, convert} from 'vega-lite/src/timeunit';
+import {TimeUnit, containsTimeUnit, convert, SINGLE_TIMEUNITS} from 'vega-lite/src/timeunit';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 import * as dlBin from 'datalib/src/bins/bins';
@@ -196,6 +196,39 @@ export class Schema {
         return null;
       }
     }
+  }
+
+  /**
+   * Given an EncodingQuery with a timeUnit, returns true if the date field
+   * has multiple distinct values for all parts of the timeUnit. Returns undefined
+   * if the timeUnit is undefined.
+   * i.e.
+   * ('yearmonth', [Jan 1 2000, Feb 2 2000] returns false)
+   * ('yearmonth', [Jan 1 2000, Feb 2 2001] returns true)
+   */
+  public timeUnitHasVariation(encQ: EncodingQuery): boolean {
+    if (!encQ.timeUnit) {
+      return;
+    }
+
+    // if there is no variation in `date`, there should not be variation in `day`
+    if (encQ.timeUnit === TimeUnit.DAY) {
+      const dateEncQ: EncodingQuery = extend({}, encQ, {timeUnit: TimeUnit.DATE});
+      if (this.cardinality(dateEncQ, false, true) <= 1) {
+        return false;
+      }
+    }
+
+    let fullTimeUnit = encQ.timeUnit;
+    for (let singleUnit of SINGLE_TIMEUNITS) {
+      if (containsTimeUnit(fullTimeUnit as TimeUnit, singleUnit)) {
+        encQ.timeUnit = singleUnit;
+        if (this.cardinality(encQ, false, true) <= 1) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   public domain(encQ: EncodingQuery): any[] {

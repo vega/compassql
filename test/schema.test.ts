@@ -430,6 +430,56 @@ describe('schema', () => {
     });
   });
 
+  describe('timeUnitHasVariation', () => {
+    it('should return true when all parts of a specified multi-timeUnit have at least 2 distinct values', () => {
+      const variationData = [
+        {a: 'Jan 1, 2000'},
+        {a: 'Feb 1, 2001'}
+      ];
+      const variationSchema = Schema.build(variationData);
+      assert.isTrue(variationSchema.timeUnitHasVariation({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'yearmonth'
+      }));
+    });
+
+    it('should return false when at least 1 part of a multi-part timeUnit does not have at least 2 distinct values', () => {
+      const variationData = [
+        {a: 'Jan 1, 2000'},
+        {a: 'Jan 1, 2001'}
+      ];
+      const variationSchema = Schema.build(variationData);
+      assert.isFalse(variationSchema.timeUnitHasVariation({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'yearmonth'
+      }));
+    });
+
+    it('should return false when date has no variation but day does have variation and the `day` unit is used', () => {
+      const variationData = [
+        {a: 'Jan 1, 2000'}, // saturday
+        {a: 'Feb 1, 2000'}  // tuesday
+      ];
+      const variationSchema = Schema.build(variationData);
+      assert.isFalse(variationSchema.timeUnitHasVariation({
+        field: 'a',
+        channel: Channel.X,
+        timeUnit: 'day'
+      }));
+    });
+
+    it('should return undefined when timeUnit is undefined', () => {
+      const variationData = [];
+      const variationSchema = Schema.build(variationData);
+      assert.isUndefined(variationSchema.timeUnitHasVariation({
+        field: 'a',
+        channel: Channel.X
+      }));
+    });
+  });
+
   describe('stats', () => {
     it('should return null for an EncodingQuery whose field does not exist in the schema', () => {
       const summary: Summary = schema.stats({field: 'foo', channel: Channel.X});
