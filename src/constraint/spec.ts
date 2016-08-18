@@ -224,7 +224,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         case Mark.RULE:
           return specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
         case Mark.POINT:
-          return !!specM.enumSpecIndex.mark ||
+          return !!specM.enumSpecIndex.mark || // This allows a point plot to generate if x or y aren't used but mark was ?
                  specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
       }
       /* istanbul ignore next */
