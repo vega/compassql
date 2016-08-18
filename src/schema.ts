@@ -208,8 +208,7 @@ export class Schema {
   public timeUnitHasVariation(encQ: EncodingQuery): boolean {
     // if there is no variation in `date`, there should not be variation in `day`
     if (encQ.timeUnit === TimeUnit.DAY) {
-      const dateEncQ: EncodingQuery = extend({}, encQ);
-      dateEncQ.timeUnit = TimeUnit.DATE;
+      const dateEncQ: EncodingQuery = extend({}, encQ, {timeUnit: TimeUnit.DATE});
       if (this.cardinality(dateEncQ, false, true) <= 1) {
         return false;
       }

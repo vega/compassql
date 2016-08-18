@@ -155,7 +155,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       return true;
     }
   },{
-    name: 'timeUnitShouldShowVariation',
+    name: 'timeUnitShouldHaveVariation',
     description: 'A particular time unit should be applied only if they produce unique values.',
     properties: [Property.TIMEUNIT, Property.TYPE],
     allowEnumSpecForProperties: false,

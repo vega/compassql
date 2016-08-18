@@ -200,7 +200,7 @@ export interface QueryConfig {
   maxCardinalityForCategoricalColor?: number;
   maxCardinalityForFacet?: number;
   maxCardinalityForShape?: number;
-  timeUnitShouldShowVariation?: boolean;
+  timeUnitShouldHaveVariation?: boolean;
   typeMatchesSchemaType?: boolean;
 
   // STYLIZE
@@ -330,7 +330,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   maxCardinalityForCategoricalColor: 20,
   maxCardinalityForFacet: 10,
   maxCardinalityForShape: 6,
-  timeUnitShouldShowVariation: true,
+  timeUnitShouldHaveVariation: true,
   typeMatchesSchemaType: true,
 
   // STYLIZE
