@@ -224,8 +224,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         case Mark.RULE:
           return specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
         case Mark.POINT:
-          return isEnumSpec(specM.enumSpecIndex.mark) ? true :
-            specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
+          return !!specM.enumSpecIndex.mark ||
+                 specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
       }
       /* istanbul ignore next */
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
@@ -380,6 +380,11 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      if (specM.enumSpecIndex.hasProperty(Property.CHANNEL) &&
+        !(specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y))) {
+        return true;
+      }
+
       return some(NONSPATIAL_CHANNELS, (channel) => specM.channelUsed(channel)) ?
         // if non-positional channels are used, then both x and y must be used.
         specM.channelUsed(Channel.X) && specM.channelUsed(Channel.Y) :

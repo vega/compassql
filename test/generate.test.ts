@@ -46,7 +46,7 @@ describe('generate', function () {
           }]
         };
         const answerSet = generate(query, schema);
-        assert.equal(answerSet.length, 4);
+        assert.equal(answerSet.length, 6);
 
         assert.equal(answerSet[0].getMark(), Mark.POINT);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
@@ -56,6 +56,10 @@ describe('generate', function () {
         assert.equal(answerSet[2].getEncodingQueryByIndex(0).channel, Channel.Y);
         assert.equal(answerSet[3].getMark(), Mark.TICK);
         assert.equal(answerSet[3].getEncodingQueryByIndex(0).channel, Channel.Y);
+        assert.equal(answerSet[4].getEncodingQueryByIndex(0).channel, Channel.SIZE);
+        assert.equal(answerSet[4].getMark(), Mark.POINT);
+        assert.equal(answerSet[5].getEncodingQueryByIndex(0).channel, Channel.COLOR);
+        assert.equal(answerSet[5].getMark(), Mark.POINT);
       });
     });
 
