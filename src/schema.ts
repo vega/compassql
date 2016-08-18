@@ -199,13 +199,18 @@ export class Schema {
   }
 
   /**
-   * Given an EncodingQuery with a timeUnit, returns true if the number of
-   * dates that are completely distinct in all parts of the timeUnit is greater than 1.
+   * Given an EncodingQuery with a timeUnit, returns true if the date field
+   * has multiple distinct values for all parts of the timeUnit. Returns undefined
+   * if the timeUnit is undefined.
    * i.e.
    * ('yearmonth', [Jan 1 2000, Feb 2 2000] returns false)
    * ('yearmonth', [Jan 1 2000, Feb 2 2001] returns true)
    */
   public timeUnitHasVariation(encQ: EncodingQuery): boolean {
+    if (!encQ.timeUnit) {
+      return;
+    }
+
     // if there is no variation in `date`, there should not be variation in `day`
     if (encQ.timeUnit === TimeUnit.DAY) {
       const dateEncQ: EncodingQuery = extend({}, encQ, {timeUnit: TimeUnit.DATE});

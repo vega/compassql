@@ -469,6 +469,15 @@ describe('schema', () => {
         timeUnit: 'day'
       }));
     });
+
+    it('should return undefined when timeUnit is undefined', () => {
+      const variationData = [];
+      const variationSchema = Schema.build(variationData);
+      assert.isUndefined(variationSchema.timeUnitHasVariation({
+        field: 'a',
+        channel: Channel.X
+      }));
+    });
   });
 
   describe('stats', () => {
