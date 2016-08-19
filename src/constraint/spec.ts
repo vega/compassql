@@ -225,7 +225,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           return specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
         case Mark.POINT:
           // This allows generating a point plot if channel was not an enum spec.
-          return !specM.enumSpecIndex.hasProperty(Property.CHANNEL) || 
+          return !specM.enumSpecIndex.hasProperty(Property.CHANNEL) ||
                  specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
       }
       /* istanbul ignore next */
