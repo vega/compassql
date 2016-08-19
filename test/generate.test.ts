@@ -68,7 +68,7 @@ describe('generate', function () {
     });
 
     describe('Q with mark=?, channel=column, bin', () => {
-      it.only('should generate point marks', () => {
+      it('should generate point marks', () => {
         const query = {
           mark: '?',
           encodings: [{
