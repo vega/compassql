@@ -328,7 +328,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
   // Encoding Constraints -- See description inside src/constraints/encoding.ts
   maxCardinalityForCategoricalColor: 20,
-  maxCardinalityForFacet: 10,
+  maxCardinalityForFacet: 20,
   maxCardinalityForShape: 6,
   timeUnitShouldHaveVariation: true,
   typeMatchesSchemaType: true,
