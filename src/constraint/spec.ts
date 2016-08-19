@@ -224,7 +224,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         case Mark.RULE:
           return specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
         case Mark.POINT:
-          return !!specM.enumSpecIndex.mark || // This allows a point plot to generate if x or y aren't used but mark was ?
+          return !specM.enumSpecIndex.hasProperty(Property.CHANNEL) || // This allows a point plot to generate if channel was enumspec
                  specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
       }
       /* istanbul ignore next */
@@ -380,10 +380,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      if (specM.enumSpecIndex.hasProperty(Property.CHANNEL) &&
-        !(specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y))) {
-        return true;
-      }
 
       return some(NONSPATIAL_CHANNELS, (channel) => specM.channelUsed(channel)) ?
         // if non-positional channels are used, then both x and y must be used.
