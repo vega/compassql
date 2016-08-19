@@ -219,11 +219,14 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           return specM.channelUsed(Channel.TEXT);
         case Mark.BAR:
         case Mark.CIRCLE:
-        case Mark.POINT:
         case Mark.SQUARE:
         case Mark.TICK:
         case Mark.RULE:
           return specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
+        case Mark.POINT:
+          // This allows generating a point plot if channel was not an enum spec.
+          return !specM.enumSpecIndex.hasProperty(Property.CHANNEL) ||
+                 specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
       }
       /* istanbul ignore next */
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
@@ -378,6 +381,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+
       return some(NONSPATIAL_CHANNELS, (channel) => specM.channelUsed(channel)) ?
         // if non-positional channels are used, then both x and y must be used.
         specM.channelUsed(Channel.X) && specM.channelUsed(Channel.Y) :

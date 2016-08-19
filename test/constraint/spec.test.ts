@@ -284,7 +284,7 @@ describe('constraints/spec', () => {
 
     it('should return false for bar/circle/point/square/tick/rule with neither x nor y', () => {
       [Channel.COLOR, Channel.SHAPE].forEach((channel) => {
-        [Mark.BAR, Mark.CIRCLE, Mark.POINT, Mark.SQUARE, Mark.TEXT, Mark.RULE].forEach((mark) => {
+        [Mark.BAR, Mark.CIRCLE, Mark.SQUARE, Mark.TEXT, Mark.RULE].forEach((mark) => {
           const specM = buildSpecQueryModel({
             mark: mark,
             encodings: [
@@ -293,6 +293,18 @@ describe('constraints/spec', () => {
           });
           assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
+      });
+    });
+
+    it('should return true for point with neither x nor y', () => {
+      [Channel.COLOR, Channel.SHAPE].forEach((channel) => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: channel, field: 'N', type: Type.NOMINAL}
+          ]
+        });
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
 
