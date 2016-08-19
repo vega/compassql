@@ -70,12 +70,12 @@ export interface Query {
   spec: SpecQuery;
   nest?: Nest[];
   groupBy?: GroupBy;
-  orderBy?: string;
-  chooseBy?: string;
+  orderBy?: string | string[];
+  chooseBy?: string | string[];
   config?: QueryConfig;
 }
 
 export interface Nest {
   groupBy: GroupBy;
-  orderGroupBy?: string;
+  orderGroupBy?: string | string[];
 }

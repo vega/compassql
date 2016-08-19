@@ -85,18 +85,38 @@ function getScore(model: SpecQueryModel, rankingName: string, schema: Schema, op
   return score;
 }
 
-export function comparator(name: string, schema: Schema, opt: QueryConfig) {
+export function comparator(name: string | string[], schema: Schema, opt: QueryConfig) {
   return (m1: SpecQueryModel, m2: SpecQueryModel) => {
-    return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
+    if (name instanceof Array) {
+      return getScoreDifference(name, m1, m2, schema, opt);
+
+    } else {
+      return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
+    }
   };
 }
 
-export function groupComparator(name: string, schema: Schema, opt: QueryConfig) {
+export function groupComparator(name: string | string[], schema: Schema, opt: QueryConfig) {
   return (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup) => {
     const m1 = g1.getTopSpecQueryModel();
     const m2 = g2.getTopSpecQueryModel();
-    return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
+    if (name instanceof Array) {
+      return getScoreDifference(name, m1, m2, schema, opt);
+    } else {
+      return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
+    }
   };
+}
+
+function getScoreDifference(name: string[], m1: SpecQueryModel, m2: SpecQueryModel, schema, opt): number {
+    let scoreDifference = getScore(m2, name[0], schema, opt).score - getScore(m1, name[0], schema, opt).score;
+    for (let i = 1; i < name.length; i++) {
+      if (scoreDifference !== 0) {
+        break;
+      }
+      scoreDifference = getScore(m2, name[i], schema, opt).score - getScore(m1, name[i], schema, opt).score;
+    }
+    return scoreDifference;
 }
 
 export const EFFECTIVENESS = 'effectiveness';

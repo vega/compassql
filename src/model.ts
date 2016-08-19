@@ -753,10 +753,10 @@ export class SpecQueryModelGroup {
   private _path: string;
   private _items: (SpecQueryModel | SpecQueryModelGroup)[];
   private _groupBy: GroupBy;
-  private _orderGroupBy: string;
+  private _orderGroupBy: string | string[];
 
   constructor(name: string = '', path: string = '', items: (SpecQueryModel | SpecQueryModelGroup)[] = [],
-              groupBy: GroupBy = undefined, orderGroupBy: string = undefined) {
+              groupBy: GroupBy = undefined, orderGroupBy: string | string[] = undefined) {
     this._name = name;
     this._path = path;
     this._items = items;
@@ -793,7 +793,7 @@ export class SpecQueryModelGroup {
     return this._orderGroupBy;
   }
 
-  public set orderGroupBy(orderGroupBy: string) {
+  public set orderGroupBy(orderGroupBy: string | string[]) {
     this._orderGroupBy = orderGroupBy;
   }
 }
