@@ -1,3 +1,4 @@
+import {Channel} from 'vega-lite/src/channel';
 import {expression} from 'vega-lite/src/filter';
 import {Filter} from 'vega-lite/src/filter';
 import {Formula} from 'vega-lite/src/transform';
@@ -48,6 +49,13 @@ export function vlSpec(vlspec: ExtendedUnitSpec,
   const specQ = fromSpec(vlspec);
   return spec(specQ);
 }
+
+export const PROPERTY_SUPPORTED_CHANNELS = {
+  axis: {x: true, y: true, row: true, column: true},
+  legend: {color: true, opacity: true, size: true, shape: true},
+  scale: {x: true, y: true, color: true, opacity: true, row: true, column: true, size: true, shape: true},
+  sort: {x: true, y: true, path: true, order: true}
+};
 
 /**
  * Returns a shorthand for a spec query
@@ -203,10 +211,11 @@ export function fieldDef(encQ: EncodingQuery,
     }
   }
 
-  // Scale
-  // TODO(#226):
-  // write toSpec() and toShorthand() in a way that prevents outputting inapplicable scale, sort, axis / legend
   for (const nestedPropParent of [Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND]) {
+    if (!isEnumSpec(encQ.channel) && !PROPERTY_SUPPORTED_CHANNELS[nestedPropParent][encQ.channel as Channel]) {
+      continue;
+    }
+
     if (include[nestedPropParent]) {
       if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
         // `sort` can be a string (ascending/descending).
