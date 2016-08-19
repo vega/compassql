@@ -36,22 +36,7 @@ describe('generate', function () {
     });
 
     describe('Q with mark=point, channel=?', () => {
-      it('should only enumerate channel x and channel y with omitNonPositionalOverPositionalChannels turned off', () => {
-        const query = {
-          mark: Mark.POINT,
-          encodings: [{
-            channel: '?',
-            field: 'A',
-            type: Type.QUANTITATIVE
-          }]
-        };
-        const answerSet = generate(query, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOverPositionalChannels: false}));
-        assert.equal(answerSet.length, 2);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).channel, Channel.Y);
-      });
-
-      it('should only enumerate channel x and y with omitNonPositionalOverPositionalChannels turned on', () => {
+      it('should only enumerate channel x and y', () => {
         const query = {
           mark: Mark.POINT,
           encodings: [{
@@ -61,6 +46,21 @@ describe('generate', function () {
           }]
         };
         const answerSet = generate(query, schema);
+        assert.equal(answerSet.length, 2);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).channel, Channel.Y);
+      });
+
+      it('should only enumerate channel x and channel y even if omitNonPositionalOverPositionalChannels turned off', () => {
+        const query = {
+          mark: Mark.POINT,
+          encodings: [{
+            channel: '?',
+            field: 'A',
+            type: Type.QUANTITATIVE
+          }]
+        };
+        const answerSet = generate(query, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOverPositionalChannels: false}));
         assert.equal(answerSet.length, 2);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).channel, Channel.Y);
