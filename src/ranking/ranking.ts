@@ -89,7 +89,6 @@ export function comparator(name: string | string[], schema: Schema, opt: QueryCo
   return (m1: SpecQueryModel, m2: SpecQueryModel) => {
     if (name instanceof Array) {
       return getScoreDifference(name, m1, m2, schema, opt);
-
     } else {
       return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
     }
