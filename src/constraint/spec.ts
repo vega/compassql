@@ -534,22 +534,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'omitNonSumStack',
-    description: 'Stacked plot should use summative aggregation such as sum, count, or distinct',
-    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
-    allowEnumSpecForProperties: false,
-    strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      const stack = specM.stack();
-      if (stack) {
-        const measureEncQ = specM.getEncodingQueryByChannel(stack.fieldChannel);
-        return contains(SUM_OPS, measureEncQ.aggregate) || !!measureEncQ.autoCount;
-      }
-      return true;
-    }
-  },
-  {
-    name: 'omitStackWithNonLinearScaleType',
+    name: 'omitNonLinearScaleTypeWithStack',
     description: 'Stacked plot should only use linear scale',
     properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, Property.SCALE_TYPE],
     allowEnumSpecForProperties: false,
@@ -564,6 +549,21 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
             }
           }
         }
+      }
+      return true;
+    }
+  },
+  {
+    name: 'omitNonSumStack',
+    description: 'Stacked plot should use summative aggregation such as sum, count, or distinct',
+    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
+    allowEnumSpecForProperties: false,
+    strict: false,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const stack = specM.stack();
+      if (stack) {
+        const measureEncQ = specM.getEncodingQueryByChannel(stack.fieldChannel);
+        return contains(SUM_OPS, measureEncQ.aggregate) || !!measureEncQ.autoCount;
       }
       return true;
     }
