@@ -295,7 +295,7 @@ describe('constraints/encoding', () => {
 
     it('should return false for nominal field that has high cardinality', () => {
       [Channel.ROW, Channel.COLUMN].forEach((channel) => {
-        ['O_20', 'O_100'].forEach((field) => {
+        ['O_100'].forEach((field) => {
           const encQ: EncodingQuery = {
             channel: channel,
             field: field,
