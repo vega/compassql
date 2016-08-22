@@ -549,6 +549,26 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
+    name: 'omitStackWithNonLinearScaleType',
+    description: 'Stacked plot should only use linear scale',
+    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, Property.SCALE_TYPE],
+    allowEnumSpecForProperties: false,
+    strict: true,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const stack = specM.stack();
+      if (stack) {
+        for (let encQ of specM.getEncodings()) {
+          if (!!encQ.aggregate || encQ.autoCount === true) {
+            if (scaleType(encQ) !== ScaleType.LINEAR) {
+              return false;
+            }
+          }
+        }
+      }
+      return true;
+    }
+  },
+  {
     name: 'omitTableWithOcclusionIfAutoAddCount',
     description: 'Plots without aggregation or autocount where x and y are both dimensions should be omitted if autoAddCount is enabled as they often lead to occlusion',
     properties: [Property.CHANNEL, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
