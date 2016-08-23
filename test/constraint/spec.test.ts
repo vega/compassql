@@ -793,6 +793,20 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
+    it('should return true if color uses a non-linear scale when it is mapped to a non-X or non-Y channel that is aggregate', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.SUM},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+          {channel: Channel.COLUMN, field: 'C', type: Type.NOMINAL, aggregate: AggregateOp.ARGMAX},
+          {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL, scale: {type: ScaleType.ORDINAL}},
+          {channel: Channel.DETAIL, field: 'A', type: Type.NOMINAL}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
     it('should return true for non-stack', () => {
       [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
         const specM = buildSpecQueryModel({
