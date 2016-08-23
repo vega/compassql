@@ -108,14 +108,13 @@ export function groupComparator(name: string | string[], schema: Schema, opt: Qu
 }
 
 function getScoreDifference(name: string[], m1: SpecQueryModel, m2: SpecQueryModel, schema, opt): number {
-    let scoreDifference = getScore(m2, name[0], schema, opt).score - getScore(m1, name[0], schema, opt).score;
-    for (let i = 1; i < name.length; i++) {
-      if (scoreDifference !== 0) {
-        break;
-      }
-      scoreDifference = getScore(m2, name[i], schema, opt).score - getScore(m1, name[i], schema, opt).score;
+  for (let i = 0; i < name.length; i++) {
+    let scoreDifference = getScore(m2, name[i], schema, opt).score - getScore(m1, name[i], schema, opt).score;
+    if (scoreDifference !== 0) {
+      return scoreDifference;
     }
-    return scoreDifference;
+  }
+  return 0;
 }
 
 export const EFFECTIVENESS = 'effectiveness';
