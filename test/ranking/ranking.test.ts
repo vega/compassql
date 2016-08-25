@@ -36,7 +36,7 @@ describe('ranking', () => {
   });
 
   describe('comparatorFactory', () => {
-    it('should return a score difference when passed an orderBy array', () => {
+    it('should create a comparator that returns a score difference when passed an orderBy array', () => {
       const specQ: SpecQuery = {
         mark: SHORT_ENUM_SPEC,
         encodings: [
@@ -61,7 +61,7 @@ describe('ranking', () => {
       assert.isNumber(comparator(answerSet[1], answerSet[4]));
     });
 
-    it('should return a score difference when passed an orderBy string', () => {
+    it('should create a comparator that returns a score difference when passed an orderBy string', () => {
       const specQ: SpecQuery = {
         mark: SHORT_ENUM_SPEC,
         encodings: [
