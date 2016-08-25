@@ -116,8 +116,14 @@ export class Schema {
     }, {});
   }
 
+  /** @return a list of the field names. */
   public fields() {
     return this.fieldSchemas.map((fieldSchema) => fieldSchema.field);
+  }
+
+  /** @return a list of FieldSchemas */
+  public getFieldSchemas() {
+    return this.fieldSchemas;
   }
 
   /**
