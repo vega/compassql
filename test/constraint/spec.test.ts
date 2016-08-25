@@ -799,8 +799,7 @@ describe('constraints/spec', () => {
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.SUM},
           {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
-          {channel: Channel.COLUMN, field: 'C', type: Type.NOMINAL, aggregate: AggregateOp.ARGMAX},
-          {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL, scale: {type: ScaleType.ORDINAL}},
+          {channel: Channel.COLOR, field: 'C', type: Type.QUANTITATIVE, scale: {type: ScaleType.POW}},
           {channel: Channel.DETAIL, field: 'A', type: Type.NOMINAL}
         ]
       });
