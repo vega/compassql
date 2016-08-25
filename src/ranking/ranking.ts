@@ -75,7 +75,7 @@ export function rank(group: SpecQueryModelGroup, query: Query, schema: Schema, l
   return group;
 }
 
-function getScore(model: SpecQueryModel, rankingName: string, schema: Schema, opt: QueryConfig) {
+export function getScore(model: SpecQueryModel, rankingName: string, schema: Schema, opt: QueryConfig) {
   if (model.getRankingScore(rankingName) !== undefined) {
     return model.getRankingScore(rankingName);
   }
