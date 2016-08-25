@@ -4,8 +4,12 @@ import {Type} from 'vega-lite/src/type';
 
 import {schema} from '../fixture';
 
+import {DEFAULT_QUERY_CONFIG} from '../../src/config';
+import {SHORT_ENUM_SPEC} from '../../src/enumspec';
+import {generate} from '../../src/generate';
 import {SpecQueryModelGroup} from '../../src/model';
-import {rank} from '../../src/ranking/ranking';
+import {SpecQuery} from '../../src/query/spec';
+import {rank, comparator} from '../../src/ranking/ranking';
 
 import {assert} from 'chai';
 
@@ -28,6 +32,58 @@ describe('ranking', () => {
         0
       );
       assert.deepEqual(group.items, []);
+    });
+  });
+
+  describe('comparator', () => {
+    it('should return a score difference when passed an orderBy array', () => {
+      const specQ: SpecQuery = {
+        mark: SHORT_ENUM_SPEC,
+        encodings: [
+          {
+            channel: SHORT_ENUM_SPEC,
+            bin: SHORT_ENUM_SPEC,
+            aggregate: SHORT_ENUM_SPEC,
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          },
+          {
+            channel: SHORT_ENUM_SPEC,
+            bin: SHORT_ENUM_SPEC,
+            aggregate: SHORT_ENUM_SPEC,
+            field: 'Q1',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+      const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
+      const testComparator = comparator(['aggregationQuality', 'effectiveness'], schema, DEFAULT_QUERY_CONFIG);
+      assert.isNumber(testComparator(answerSet[1], answerSet[4]));
+    });
+
+    it('should return a score difference when passed an orderBy string', () => {
+      const specQ: SpecQuery = {
+        mark: SHORT_ENUM_SPEC,
+        encodings: [
+          {
+            channel: SHORT_ENUM_SPEC,
+            bin: SHORT_ENUM_SPEC,
+            aggregate: SHORT_ENUM_SPEC,
+            field: 'Q',
+            type: Type.QUANTITATIVE
+          },
+          {
+            channel: SHORT_ENUM_SPEC,
+            bin: SHORT_ENUM_SPEC,
+            aggregate: SHORT_ENUM_SPEC,
+            field: 'Q1',
+            type: Type.QUANTITATIVE
+          }
+        ]
+      };
+      const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
+      const testComparator = comparator('aggregationQuality', schema, DEFAULT_QUERY_CONFIG);
+      assert.isNumber(testComparator(answerSet[1], answerSet[4]));
     });
   });
 });
