@@ -123,18 +123,18 @@ describe('query/query', () => {
     });
 
     describe('rank', () => {
-      const q: Query = {
-        spec: {
-          mark: '?',
-          encodings: [
-            {channel: '?', bin: '?', aggregate: '?', field: 'Q', type: Type.QUANTITATIVE},
-            {channel: '?', bin: '?', aggregate: '?', field: 'Q1', type: Type.QUANTITATIVE}
-          ]
-        },
-       orderBy: ['aggregationQuality', 'effectiveness']
-      };
-
       it('should return a sorted SpecQueryModelGroup when passed a query with orderBy array', () => {
+        const q: Query = {
+          spec: {
+            mark: '?',
+            encodings: [
+              {channel: '?', bin: '?', aggregate: '?', field: 'Q', type: Type.QUANTITATIVE},
+              {channel: '?', bin: '?', aggregate: '?', field: 'Q1', type: Type.QUANTITATIVE}
+            ]
+          },
+        orderBy: ['aggregationQuality', 'effectiveness']
+        };
+
         const output = query(q, schema);
         const result = output.result;
 
