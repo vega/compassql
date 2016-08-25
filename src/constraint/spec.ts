@@ -534,6 +534,29 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
+    name: 'omitNonLinearScaleTypeWithStack',
+    description: 'Stacked plot should only use linear scale',
+    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, Property.SCALE_TYPE, Property.TYPE],
+    // TODO: Property.STACK
+    allowEnumSpecForProperties: false,
+    strict: true,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const stack = specM.stack();
+      if (stack) {
+        for (let encQ of specM.getEncodings()) {
+          if ((!!encQ.aggregate || encQ.autoCount === true) &&
+             encQ.type === Type.QUANTITATIVE &&
+             contains([Channel.X, Channel.Y], encQ.channel)) {
+              if (scaleType(encQ) !== ScaleType.LINEAR) {
+                return false;
+            }
+          }
+        }
+      }
+      return true;
+    }
+  },
+  {
     name: 'omitNonSumStack',
     description: 'Stacked plot should use summative aggregation such as sum, count, or distinct',
     properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
