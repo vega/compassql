@@ -9,7 +9,7 @@ import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {generate} from '../../src/generate';
 import {SpecQueryModelGroup} from '../../src/model';
 import {SpecQuery} from '../../src/query/spec';
-import {rank, comparator} from '../../src/ranking/ranking';
+import {rank, comparatorFactory} from '../../src/ranking/ranking';
 
 import {assert} from 'chai';
 
@@ -35,7 +35,7 @@ describe('ranking', () => {
     });
   });
 
-  describe('comparator', () => {
+  describe('comparatorFactory', () => {
     it('should return a score difference when passed an orderBy array', () => {
       const specQ: SpecQuery = {
         mark: SHORT_ENUM_SPEC,
@@ -57,8 +57,8 @@ describe('ranking', () => {
         ]
       };
       const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-      const testComparator = comparator(['aggregationQuality', 'effectiveness'], schema, DEFAULT_QUERY_CONFIG);
-      assert.isNumber(testComparator(answerSet[1], answerSet[4]));
+      const comparator = comparatorFactory(['aggregationQuality', 'effectiveness'], schema, DEFAULT_QUERY_CONFIG);
+      assert.isNumber(comparator(answerSet[1], answerSet[4]));
     });
 
     it('should return a score difference when passed an orderBy string', () => {
@@ -82,8 +82,8 @@ describe('ranking', () => {
         ]
       };
       const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-      const testComparator = comparator('aggregationQuality', schema, DEFAULT_QUERY_CONFIG);
-      assert.isNumber(testComparator(answerSet[1], answerSet[4]));
+      const comparator = comparatorFactory('aggregationQuality', schema, DEFAULT_QUERY_CONFIG);
+      assert.isNumber(comparator(answerSet[1], answerSet[4]));
     });
   });
 });
