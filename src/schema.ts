@@ -11,8 +11,8 @@ import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {contains, extend, keys} from './util';
 
 export class Schema {
-  private fieldSchemas: FieldSchema[];
-  private fieldSchemaIndex: {[field: string]: FieldSchema};
+  private _fieldSchemas: FieldSchema[];
+  private _fieldSchemaIndex: {[field: string]: FieldSchema};
 
   /**
    * Build a Schema object.
@@ -109,36 +109,42 @@ export class Schema {
   }
 
   constructor(fieldSchemas: FieldSchema[]) {
-    this.fieldSchemas = fieldSchemas;
-    this.fieldSchemaIndex = fieldSchemas.reduce((m, fieldSchema: FieldSchema) => {
+    this._fieldSchemas = fieldSchemas;
+    this._fieldSchemaIndex = fieldSchemas.reduce((m, fieldSchema: FieldSchema) => {
       m[fieldSchema.field] = fieldSchema;
       return m;
     }, {});
   }
 
+  /** @return a list of the field names. */
   public fields() {
-    return this.fieldSchemas.map((fieldSchema) => fieldSchema.field);
+    return this._fieldSchemas.map((fieldSchema) => fieldSchema.field);
+  }
+
+  /** @return a list of FieldSchemas */
+  public get fieldSchemas() {
+    return this._fieldSchemas;
   }
 
   /**
    * @return primitive type of the field if exist, otherwise return null
    */
   public primitiveType(field: string) {
-    return this.fieldSchemaIndex[field] ? this.fieldSchemaIndex[field].primitiveType : null;
+    return this._fieldSchemaIndex[field] ? this._fieldSchemaIndex[field].primitiveType : null;
   }
 
   /**
    * @return type of measturement of the field if exist, otherwise return null
    */
   public type(field: string) {
-    return this.fieldSchemaIndex[field] ? this.fieldSchemaIndex[field].type : null;
+    return this._fieldSchemaIndex[field] ? this._fieldSchemaIndex[field].type : null;
   }
 
   /** @return cardinality of the field associated with encQ, null if it doesn't exist.
    *  @param augmentTimeUnitDomain - TimeUnit field domains will not be augmented if explicitly set to false.
    */
   public cardinality(encQ: EncodingQuery, augmentTimeUnitDomain: boolean = true, excludeInvalid: boolean = false) {
-    const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
+    const fieldSchema = this._fieldSchemaIndex[encQ.field as string];
     if (encQ.aggregate || encQ.autoCount) {
       return 1;
     } else if (encQ.bin) {
@@ -233,7 +239,7 @@ export class Schema {
 
   public domain(encQ: EncodingQuery): any[] {
     // TODO: differentiate for field with bin / timeUnit
-    const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
+    const fieldSchema = this._fieldSchemaIndex[encQ.field as string];
     var domain: any[] = keys(fieldSchema.stats.unique);
     if (fieldSchema.type === Type.QUANTITATIVE || fieldSchema.primitiveType === PrimitiveType.DATE) {
       // return [min, max] for quantitative and date data
@@ -251,7 +257,7 @@ export class Schema {
    */
   public stats(encQ: EncodingQuery) {
     // TODO: differentiate for field with bin / timeUnit vs without
-    const fieldSchema = this.fieldSchemaIndex[encQ.field as string];
+    const fieldSchema = this._fieldSchemaIndex[encQ.field as string];
     return fieldSchema ? fieldSchema.stats : null;
   }
 }

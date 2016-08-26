@@ -293,6 +293,62 @@ describe('SpecQueryModel', () => {
       });
     });
 
+    it('should return a Vega-Lite spec that does not output inapplicable legend', () => {
+      const specM = buildSpecQueryModel({
+        data: {values: [{A: 1}]},
+        transform: {filter: 'datum.A===1'},
+        mark: Mark.BAR,
+        encodings: [
+          {
+            channel: Channel.X,
+            field: 'A',
+            type: Type.QUANTITATIVE,
+            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'},
+            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'},
+          }
+        ]
+      });
+
+      const spec = specM.toSpec();
+      assert.deepEqual(spec, {
+        data: {values: [{A: 1}]},
+        transform: {filter: 'datum.A===1'},
+        mark: Mark.BAR,
+        encoding: {
+          x: {field: 'A', type: Type.QUANTITATIVE, axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
+        },
+        config: DEFAULT_SPEC_CONFIG
+      });
+    });
+
+    it('should return a Vega-Lite spec that does not output inapplicable axis', () => {
+      const specM = buildSpecQueryModel({
+        data: {values: [{A: 1}]},
+        transform: {filter: 'datum.A===1'},
+        mark: Mark.BAR,
+        encodings: [
+          {
+            channel: Channel.COLOR,
+            field: 'B',
+            type: Type.QUANTITATIVE,
+            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'},
+            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'},
+          }
+        ]
+      });
+
+      const spec = specM.toSpec();
+      assert.deepEqual(spec, {
+        data: {values: [{A: 1}]},
+        transform: {filter: 'datum.A===1'},
+        mark: Mark.BAR,
+        encoding: {
+          color: {field: 'B', type: Type.QUANTITATIVE, legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}}
+        },
+        config: DEFAULT_SPEC_CONFIG
+      });
+    });
+
     it('should return a spec with no bin if the bin=false.', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{A: 1}]},

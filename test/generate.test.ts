@@ -19,6 +19,96 @@ const CONFIG_WITH_AUTO_ADD_COUNT = extend({}, DEFAULT_QUERY_CONFIG, {autoAddCoun
 
 describe('generate', function () {
   describe('1D', () => {
+    describe('Q with mark=?, channel=size', () => {
+      it('should enumerate mark=point and generate a point plot', () => {
+        const query = {
+          mark: '?',
+          encodings: [{
+            channel: Channel.SIZE,
+            field: 'A',
+            type: Type.QUANTITATIVE
+          }]
+        };
+        const answerSet = generate(query, schema);
+        assert.equal(answerSet.length, 1);
+        assert.equal(answerSet[0].getMark(), Mark.POINT);
+      });
+    });
+
+    describe('Q with mark=point, channel=?', () => {
+      it('should only enumerate channel x and y', () => {
+        const query = {
+          mark: Mark.POINT,
+          encodings: [{
+            channel: '?',
+            field: 'A',
+            type: Type.QUANTITATIVE
+          }]
+        };
+        const answerSet = generate(query, schema);
+        assert.equal(answerSet.length, 2);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).channel, Channel.Y);
+      });
+
+      it('should only enumerate channel x and channel y even if omitNonPositionalOverPositionalChannels turned off', () => {
+        const query = {
+          mark: Mark.POINT,
+          encodings: [{
+            channel: '?',
+            field: 'A',
+            type: Type.QUANTITATIVE
+          }]
+        };
+        const answerSet = generate(query, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOverPositionalChannels: false}));
+        assert.equal(answerSet.length, 2);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).channel, Channel.Y);
+      });
+    });
+
+    describe('Q with mark=?, channel=column, bin', () => {
+      it('should generate point marks', () => {
+        const query = {
+          mark: '?',
+          encodings: [{
+            channel: Channel.COLUMN,
+            field: 'A',
+            type: Type.QUANTITATIVE,
+            bin: {}
+          }]
+        };
+        const answerSet = generate(query, schema);
+        assert.equal(answerSet.length, 1);
+        assert.equal(answerSet[0].getMark(), Mark.POINT);
+      });
+    });
+
+    describe('Q with mark=?, channel=?', () => {
+      it('should enumerate tick or point mark with x or y channel', () => {
+        const query = {
+          mark: '?',
+          encodings: [{
+            channel: '?',
+            field: 'A',
+            type: Type.QUANTITATIVE
+          }]
+        };
+
+        const answerSet = generate(query, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOverPositionalChannels: false}));
+        assert.equal(answerSet.length, 4);
+
+        assert.equal(answerSet[0].getMark(), Mark.POINT);
+        assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
+        assert.equal(answerSet[1].getMark(), Mark.TICK);
+        assert.equal(answerSet[1].getEncodingQueryByIndex(0).channel, Channel.X);
+        assert.equal(answerSet[2].getMark(), Mark.POINT);
+        assert.equal(answerSet[2].getEncodingQueryByIndex(0).channel, Channel.Y);
+        assert.equal(answerSet[3].getMark(), Mark.TICK);
+        assert.equal(answerSet[3].getEncodingQueryByIndex(0).channel, Channel.Y);
+      });
+    });
+
     describe('Q with aggregate=?, bin=?', () => {
       it('should enumerate raw, bin, aggregate', () => {
         const query = {

@@ -14,7 +14,7 @@ import {EnumSpecIndex} from './enumspecindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
 import {GroupBy} from './query/groupby';
-import {spec as specShorthand} from './query/shorthand';
+import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
@@ -694,7 +694,11 @@ export class SpecQueryModel {
 
         // otherwise, assign the proper to the field def
         if (encQ[prop] !== undefined) {
-          fieldDef[prop] = encQ[prop];
+
+          if (!PROPERTY_SUPPORTED_CHANNELS[prop] ||  // all channels support this prop
+            PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel]) {
+            fieldDef[prop] = encQ[prop];
+          }
         }
       }
 

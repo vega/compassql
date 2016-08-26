@@ -219,11 +219,14 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           return specM.channelUsed(Channel.TEXT);
         case Mark.BAR:
         case Mark.CIRCLE:
-        case Mark.POINT:
         case Mark.SQUARE:
         case Mark.TICK:
         case Mark.RULE:
           return specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
+        case Mark.POINT:
+          // This allows generating a point plot if channel was not an enum spec.
+          return !specM.enumSpecIndex.hasProperty(Property.CHANNEL) ||
+                 specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
       }
       /* istanbul ignore next */
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
@@ -378,6 +381,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+
       return some(NONSPATIAL_CHANNELS, (channel) => specM.channelUsed(channel)) ?
         // if non-positional channels are used, then both x and y must be used.
         specM.channelUsed(Channel.X) && specM.channelUsed(Channel.Y) :
@@ -527,6 +531,29 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       }
       /* istanbul ignore next */
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
+    }
+  },
+  {
+    name: 'omitNonLinearScaleTypeWithStack',
+    description: 'Stacked plot should only use linear scale',
+    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, Property.SCALE_TYPE, Property.TYPE],
+    // TODO: Property.STACK
+    allowEnumSpecForProperties: false,
+    strict: true,
+    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+      const stack = specM.stack();
+      if (stack) {
+        for (let encQ of specM.getEncodings()) {
+          if ((!!encQ.aggregate || encQ.autoCount === true) &&
+             encQ.type === Type.QUANTITATIVE &&
+             contains([Channel.X, Channel.Y], encQ.channel)) {
+              if (scaleType(encQ) !== ScaleType.LINEAR) {
+                return false;
+            }
+          }
+        }
+      }
+      return true;
     }
   },
   {

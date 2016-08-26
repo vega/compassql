@@ -284,7 +284,7 @@ describe('constraints/spec', () => {
 
     it('should return false for bar/circle/point/square/tick/rule with neither x nor y', () => {
       [Channel.COLOR, Channel.SHAPE].forEach((channel) => {
-        [Mark.BAR, Mark.CIRCLE, Mark.POINT, Mark.SQUARE, Mark.TEXT, Mark.RULE].forEach((mark) => {
+        [Mark.BAR, Mark.CIRCLE, Mark.SQUARE, Mark.TEXT, Mark.RULE].forEach((mark) => {
           const specM = buildSpecQueryModel({
             mark: mark,
             encodings: [
@@ -293,6 +293,18 @@ describe('constraints/spec', () => {
           });
           assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
+      });
+    });
+
+    it('should return true for point with neither x nor y', () => {
+      [Channel.COLOR, Channel.SHAPE].forEach((channel) => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: channel, field: 'N', type: Type.NOMINAL}
+          ]
+        });
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAllRequiredChannelsForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
 
@@ -750,6 +762,62 @@ describe('constraints/spec', () => {
       });
 
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+  });
+
+  describe('omitNonLinearScaleTypeWithStack', () => {
+    it('should return false for stack with non linear scale type', () => {
+      [ScaleType.LOG, ScaleType.ORDINAL, ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE,
+       ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: scaleType}, aggregate: AggregateOp.SUM},
+            {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+            {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
+          ]
+        });
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      });
+    });
+
+    it('should return true for stack with linear scale type', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: ScaleType.LINEAR}, aggregate: AggregateOp.SUM},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+          {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return true if color uses a non-linear scale when it is mapped to a non-X or non-Y channel that is aggregate', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.SUM},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+          {channel: Channel.COLOR, field: 'C', type: Type.QUANTITATIVE, scale: {type: ScaleType.POW}},
+          {channel: Channel.DETAIL, field: 'A', type: Type.NOMINAL}
+        ]
+      });
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return true for non-stack', () => {
+      [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.X, field: 'A', scale: {type: ScaleType.LOG}, type: Type.QUANTITATIVE},
+            {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+            {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
+          ]
+        });
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      });
     });
   });
 
