@@ -1,3 +1,4 @@
+import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
@@ -33,13 +34,14 @@ describe('ranking', () => {
   });
 
   describe('comparatorFactory', () => {
-    it('should create a comparator that returns a score difference when passed an orderBy array', () => {
+    it.only('should create a comparator that returns a score difference when passed an orderBy array', () => {
       const specM1 = SpecQueryModel.build(
         {
-          mark: Mark.POINT,
+          mark: Mark.LINE,
           encodings: [
-            {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
-            {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE},
+            {channel: Channel.X, field: 'date', type: Type.TEMPORAL},
+            {channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
+            {channel: Channel.COLOR, field: 'symbol', type: Type.NOMINAL}
           ]
         },
         schema,
@@ -48,10 +50,11 @@ describe('ranking', () => {
 
       const specM2 = SpecQueryModel.build(
         {
-          mark: Mark.BAR,
+          mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, field: 'N', type: Type.NOMINAL},
-            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Channel.X, field: 'date', type: Type.TEMPORAL},
+            {channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
+            {channel: Channel.COLOR, field: 'symbol', type: Type.NOMINAL}
           ]
         },
         schema,
@@ -59,10 +62,41 @@ describe('ranking', () => {
       );
 
       const comparator = comparatorFactory(['aggregationQuality', 'effectiveness'], schema, DEFAULT_QUERY_CONFIG);
-      assert.isNumber(comparator(specM1, specM2));
+      assert.isTrue(comparator(specM1, specM2) > 0);
     });
 
-    it('should create a comparator that returns a score difference when passed an orderBy string', () => {
+    it('should create a comparator that returns a score difference when passed an orderBy string of effectiveness', () => {
+      const specM1 = SpecQueryModel.build(
+        {
+          mark: Mark.LINE,
+          encodings: [
+            {channel: Channel.X, field: 'date', type: Type.TEMPORAL},
+            {channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
+            {channel: Channel.COLOR, field: 'symbol', type: Type.NOMINAL}
+          ]
+        },
+        schema,
+        DEFAULT_QUERY_CONFIG
+      );
+
+      const specM2 = SpecQueryModel.build(
+        {
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: 'date', type: Type.TEMPORAL},
+            {channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
+            {channel: Channel.COLOR, field: 'symbol', type: Type.NOMINAL}
+          ]
+        },
+        schema,
+        DEFAULT_QUERY_CONFIG
+      );
+
+      const comparator = comparatorFactory('effectiveness', schema, DEFAULT_QUERY_CONFIG);
+      assert.isTrue(comparator(specM1, specM2) > 0);
+    });
+
+    it('should create a comparator that returns a score difference when passed an orderBy string of aggregationQuality', () => {
       const specM1 = SpecQueryModel.build(
         {
           mark: Mark.POINT,
@@ -77,10 +111,10 @@ describe('ranking', () => {
 
       const specM2 = SpecQueryModel.build(
         {
-          mark: Mark.BAR,
+          mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, field: 'N', type: Type.NOMINAL},
-            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE},
+            {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
+            {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE},
           ]
         },
         schema,
@@ -88,7 +122,7 @@ describe('ranking', () => {
       );
 
       const comparator = comparatorFactory('aggregationQuality', schema, DEFAULT_QUERY_CONFIG);
-      assert.isNumber(comparator(specM1, specM2));
+      assert.isTrue(comparator(specM1, specM2) < 0);
     });
   });
 });
