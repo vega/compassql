@@ -54,7 +54,7 @@ describe('ranking', () => {
         {
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, field: 'date', type: Type.TEMPORAL},
+            {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
             {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
             {channel: Channel.COLOR, field: 'symbol', type: Type.NOMINAL}
           ]
@@ -65,6 +65,37 @@ describe('ranking', () => {
 
       const comparator = comparatorFactory(['aggregationQuality', 'effectiveness'], schema, DEFAULT_QUERY_CONFIG);
       assert.isBelow(comparator(specM1, specM2), 0);
+    });
+
+    it('should create a comparator that returns a value of 0 when the orderBy ranker results in a tie', () => {
+      const specM1 = SpecQueryModel.build(
+        {
+          mark: Mark.LINE,
+          encodings: [
+            {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
+            {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
+            {channel: Channel.COLOR, field: 'symbol', type: Type.NOMINAL}
+          ]
+        },
+        schema,
+        DEFAULT_QUERY_CONFIG
+      );
+
+      const specM2 = SpecQueryModel.build(
+        {
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
+            {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
+            {channel: Channel.COLOR, field: 'symbol', type: Type.NOMINAL}
+          ]
+        },
+        schema,
+        DEFAULT_QUERY_CONFIG
+      );
+
+      const comparator = comparatorFactory('aggregationQuality', schema, DEFAULT_QUERY_CONFIG);
+      assert.equal(comparator(specM1, specM2), 0);
     });
 
     it('should create a comparator that correctly sorts two spec when passed an orderBy string of effectiveness', () => {
@@ -124,7 +155,7 @@ describe('ranking', () => {
       );
 
       const comparator = comparatorFactory('aggregationQuality', schema, DEFAULT_QUERY_CONFIG);
-      assert.isTrue(comparator(specM1, specM2) < 0);
+      assert.isBelow(comparator(specM1, specM2), 0);
     });
   });
 });
