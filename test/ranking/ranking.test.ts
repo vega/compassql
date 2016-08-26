@@ -1,8 +1,8 @@
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
-import {Type} from 'vega-lite/src/type';
 import {TimeUnit} from 'vega-lite/src/timeunit';
+import {Type} from 'vega-lite/src/type';
 
 import {schema} from '../fixture';
 
