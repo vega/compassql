@@ -143,8 +143,13 @@ describe('query/query', () => {
           let currentItem = result.items[i];
 
           assert.isTrue(
-            getScore(previousItem as SpecQueryModel, 'aggregationQuality', schema, DEFAULT_QUERY_CONFIG).score >=
-            getScore(currentItem as SpecQueryModel, 'aggregationQuality', schema, DEFAULT_QUERY_CONFIG).score
+            (getScore(previousItem as SpecQueryModel, 'aggregationQuality', schema, DEFAULT_QUERY_CONFIG).score >=
+            getScore(currentItem as SpecQueryModel, 'aggregationQuality', schema, DEFAULT_QUERY_CONFIG).score) ||
+
+            ((getScore(previousItem as SpecQueryModel, 'aggregationQuality', schema, DEFAULT_QUERY_CONFIG).score ===
+            getScore(currentItem as SpecQueryModel, 'aggregationQuality', schema, DEFAULT_QUERY_CONFIG).score) &&
+            (getScore(previousItem as SpecQueryModel, 'effectiveness', schema, DEFAULT_QUERY_CONFIG).score >=
+            getScore(currentItem as SpecQueryModel, 'effectiveness', schema, DEFAULT_QUERY_CONFIG).score))
           );
         }
       });
