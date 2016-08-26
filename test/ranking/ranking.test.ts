@@ -2,6 +2,7 @@ import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
+import {TimeUnit} from 'vega-lite/src/timeunit';
 
 import {schema} from '../fixture';
 
@@ -34,13 +35,14 @@ describe('ranking', () => {
   });
 
   describe('comparatorFactory', () => {
-    it('should create a comparator that returns a score difference when passed an orderBy array', () => {
+    it('should create a comparator that uses the second ranker of an orderBy array to sort two spec ' +
+       'if the first ranker results in a tie', () => {
       const specM1 = SpecQueryModel.build(
         {
           mark: Mark.LINE,
           encodings: [
-            {channel: Channel.X, field: 'date', type: Type.TEMPORAL},
-            {channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
+            {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
+            {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
             {channel: Channel.COLOR, field: 'symbol', type: Type.NOMINAL}
           ]
         },
@@ -53,7 +55,7 @@ describe('ranking', () => {
           mark: Mark.POINT,
           encodings: [
             {channel: Channel.X, field: 'date', type: Type.TEMPORAL},
-            {channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
+            {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
             {channel: Channel.COLOR, field: 'symbol', type: Type.NOMINAL}
           ]
         },
@@ -62,16 +64,16 @@ describe('ranking', () => {
       );
 
       const comparator = comparatorFactory(['aggregationQuality', 'effectiveness'], schema, DEFAULT_QUERY_CONFIG);
-      assert.isTrue(comparator(specM1, specM2) > 0);
+      assert.isBelow(comparator(specM1, specM2), 0);
     });
 
-    it('should create a comparator that returns a score difference when passed an orderBy string of effectiveness', () => {
+    it('should create a comparator that correctly sorts two spec when passed an orderBy string of effectiveness', () => {
       const specM1 = SpecQueryModel.build(
         {
           mark: Mark.LINE,
           encodings: [
-            {channel: Channel.X, field: 'date', type: Type.TEMPORAL},
-            {channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
+            {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
+            {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
             {channel: Channel.COLOR, field: 'symbol', type: Type.NOMINAL}
           ]
         },
@@ -83,8 +85,8 @@ describe('ranking', () => {
         {
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, field: 'date', type: Type.TEMPORAL},
-            {channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
+            {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
+            {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
             {channel: Channel.COLOR, field: 'symbol', type: Type.NOMINAL}
           ]
         },
@@ -93,10 +95,10 @@ describe('ranking', () => {
       );
 
       const comparator = comparatorFactory('effectiveness', schema, DEFAULT_QUERY_CONFIG);
-      assert.isTrue(comparator(specM1, specM2) > 0);
+      assert.isBelow(comparator(specM1, specM2), 0);
     });
 
-    it('should create a comparator that returns a score difference when passed an orderBy string of aggregationQuality', () => {
+    it('should create a comparator that correctly sorts two spec when passed an orderBy string of aggregationQuality', () => {
       const specM1 = SpecQueryModel.build(
         {
           mark: Mark.POINT,
