@@ -34,7 +34,7 @@ describe('ranking', () => {
   });
 
   describe('comparatorFactory', () => {
-    it.only('should create a comparator that returns a score difference when passed an orderBy array', () => {
+    it('should create a comparator that returns a score difference when passed an orderBy array', () => {
       const specM1 = SpecQueryModel.build(
         {
           mark: Mark.LINE,
