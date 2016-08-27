@@ -123,7 +123,7 @@ describe('query/query', () => {
     });
 
     describe('rank', () => {
-      it('should return a sorted SpecQueryModelGroup when passed a query with orderBy array', () => {
+      it('should sort SpecQueryModelGroup\'s items when passed orderBy is an array', () => {
         const q: Query = {
           spec: {
             mark: '?',
@@ -132,24 +132,27 @@ describe('query/query', () => {
               {channel: '?', bin: '?', aggregate: '?', field: 'Q1', type: Type.QUANTITATIVE}
             ]
           },
-        orderBy: ['aggregationQuality', 'effectiveness']
+          orderBy: ['aggregationQuality', 'effectiveness']
         };
 
         const output = query(q, schema);
         const result = output.result;
 
+        function score(item: any, rankingName: string) {
+          return getScore(item, rankingName, schema, DEFAULT_QUERY_CONFIG);
+        }
+
         for (let i = 1; i < result.items.length; i++) {
-          let previousItem = result.items[i-1];
-          let currentItem = result.items[i];
+          let prev = result.items[i-1];
+          let cur = result.items[i];
+
 
           assert.isTrue(
-            (getScore(previousItem as SpecQueryModel, 'aggregationQuality', schema, DEFAULT_QUERY_CONFIG).score >=
-            getScore(currentItem as SpecQueryModel, 'aggregationQuality', schema, DEFAULT_QUERY_CONFIG).score) ||
-
-            ((getScore(previousItem as SpecQueryModel, 'aggregationQuality', schema, DEFAULT_QUERY_CONFIG).score ===
-            getScore(currentItem as SpecQueryModel, 'aggregationQuality', schema, DEFAULT_QUERY_CONFIG).score) &&
-            (getScore(previousItem as SpecQueryModel, 'effectiveness', schema, DEFAULT_QUERY_CONFIG).score >=
-            getScore(currentItem as SpecQueryModel, 'effectiveness', schema, DEFAULT_QUERY_CONFIG).score))
+            score(prev, 'aggregationQuality') >= score(cur, 'aggregationQuality') ||
+            (
+              score(prev, 'aggregationQuality') === score(cur, 'aggregationQuality') &&
+              score(prev, 'effectiveness') >= score(cur, 'effectiveness')
+            )
           );
         }
       });
