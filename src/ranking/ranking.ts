@@ -55,7 +55,7 @@ export function get(name: string) {
 export function rank(group: SpecQueryModelGroup, query: Query, schema: Schema, level: number) {
   if (!query.nest || level === query.nest.length) {
     if (query.orderBy || query.chooseBy) {
-      group.items.sort(comparator(query.orderBy || query.chooseBy, schema, query.config));
+      group.items.sort(comparatorFactory(query.orderBy || query.chooseBy, schema, query.config));
       if (query.chooseBy) {
         if (group.items.length > 0) {
           // for chooseBy -- only keep the top-item
@@ -69,13 +69,13 @@ export function rank(group: SpecQueryModelGroup, query: Query, schema: Schema, l
       rank(subgroup as SpecQueryModelGroup, query, schema, level + 1);
     });
     if (query.nest[level].orderGroupBy) {
-      group.items.sort(groupComparator(query.nest[level].orderGroupBy, schema, query.config));
+      group.items.sort(groupComparatorFactory(query.nest[level].orderGroupBy, schema, query.config));
     }
   }
   return group;
 }
 
-function getScore(model: SpecQueryModel, rankingName: string, schema: Schema, opt: QueryConfig) {
+export function getScore(model: SpecQueryModel, rankingName: string, schema: Schema, opt: QueryConfig) {
   if (model.getRankingScore(rankingName) !== undefined) {
     return model.getRankingScore(rankingName);
   }
@@ -85,18 +85,36 @@ function getScore(model: SpecQueryModel, rankingName: string, schema: Schema, op
   return score;
 }
 
-export function comparator(name: string, schema: Schema, opt: QueryConfig) {
+export function comparatorFactory(name: string | string[], schema: Schema, opt: QueryConfig) {
   return (m1: SpecQueryModel, m2: SpecQueryModel) => {
-    return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
+    if (name instanceof Array) {
+      return getScoreDifference(name, m1, m2, schema, opt);
+    } else {
+      return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
+    }
   };
 }
 
-export function groupComparator(name: string, schema: Schema, opt: QueryConfig) {
+export function groupComparatorFactory(name: string | string[], schema: Schema, opt: QueryConfig) {
   return (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup) => {
     const m1 = g1.getTopSpecQueryModel();
     const m2 = g2.getTopSpecQueryModel();
-    return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
+    if (name instanceof Array) {
+      return getScoreDifference(name, m1, m2, schema, opt);
+    } else {
+      return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
+    }
   };
+}
+
+function getScoreDifference(name: string[], m1: SpecQueryModel, m2: SpecQueryModel, schema, opt): number {
+  for (let i = 0; i < name.length; i++) {
+    let scoreDifference = getScore(m2, name[i], schema, opt).score - getScore(m1, name[i], schema, opt).score;
+    if (scoreDifference !== 0) {
+      return scoreDifference;
+    }
+  }
+  return 0;
 }
 
 export const EFFECTIVENESS = 'effectiveness';

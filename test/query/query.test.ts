@@ -8,8 +8,9 @@ import {schema} from '../fixture';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {EnumSpec, SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {SpecQueryModel, SpecQueryModelGroup} from '../../src/model';
-import {normalize, query, Query} from '../../src/query/query';
 import {Property} from '../../src/property';
+import {normalize, query, Query} from '../../src/query/query';
+import {getScore} from '../../src/ranking/ranking';
 import {duplicate, extend} from '../../src/util';
 
 describe('query/query', () => {
@@ -118,6 +119,42 @@ describe('query/query', () => {
 
       it('should not cause side effect to the original query object.', () => {
         assert.deepEqual(q, qCopy);
+      });
+    });
+
+    describe('rank', () => {
+      it('should sort SpecQueryModelGroup\'s items when passed orderBy is an array', () => {
+        const q: Query = {
+          spec: {
+            mark: '?',
+            encodings: [
+              {channel: '?', bin: '?', aggregate: '?', field: 'Q', type: Type.QUANTITATIVE},
+              {channel: '?', bin: '?', aggregate: '?', field: 'Q1', type: Type.QUANTITATIVE}
+            ]
+          },
+          orderBy: ['aggregationQuality', 'effectiveness']
+        };
+
+        const output = query(q, schema);
+        const result = output.result;
+
+        function score(item: any, rankingName: string) {
+          return getScore(item, rankingName, schema, DEFAULT_QUERY_CONFIG);
+        }
+
+        for (let i = 1; i < result.items.length; i++) {
+          let prev = result.items[i-1];
+          let cur = result.items[i];
+
+
+          assert.isTrue(
+            score(prev, 'aggregationQuality') >= score(cur, 'aggregationQuality') ||
+            (
+              score(prev, 'aggregationQuality') === score(cur, 'aggregationQuality') &&
+              score(prev, 'effectiveness') >= score(cur, 'effectiveness')
+            )
+          );
+        }
       });
     });
 
