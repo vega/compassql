@@ -14,7 +14,7 @@ import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {SpecQuery} from '../../src/query/spec';
 import {Property} from '../../src/property';
-import {duplicate} from '../../src/util';
+import {duplicate, extend} from '../../src/util';
 
 describe('constraints/spec', () => {
   const schema = new Schema([]);
@@ -22,6 +22,8 @@ describe('constraints/spec', () => {
   function buildSpecQueryModel(specQ: SpecQuery) {
     return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
   }
+
+  var CONSTRAINT_MANUALLY_SPECIFIED_CONFIG = extend({}, DEFAULT_QUERY_CONFIG, {constraintManuallySpecifiedValue: true});
 
   // Make sure all non-strict constraints have their configs.
   SPEC_CONSTRAINTS.forEach((constraint) => {
@@ -750,7 +752,23 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should return false if there are multiple non-positional channels', () => {
+    it('should return false if there are multiple non-positional channels and at least one of them is enumerated', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+          {channel: {enum: [Channel.SHAPE, Channel.SIZE]}, field: 'C', type: Type.NOMINAL},
+          {channel: Channel.COLOR, field: 'D', type: Type.NOMINAL}
+        ]
+      });
+
+      specM.setEncodingProperty(2, Property.CHANNEL, Channel.SHAPE, {enum: [Channel.SHAPE, Channel.SIZE]});
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return true if there are multiple non-positional channels but none of them is enumerated', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
@@ -761,7 +779,37 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return false if there are multiple non-positional channels and we constraintManuallySpecifiedValue', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+          {channel: Channel.SHAPE, field: 'C', type: Type.NOMINAL},
+          {channel: Channel.COLOR, field: 'D', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+    });
+
+    it('should return true if there are multiple non-positional channels but one of them has autoCount === false', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+          {channel: {enum: [Channel.SHAPE, Channel.SIZE]}, field: 'C', type: Type.NOMINAL},
+          {channel: Channel.COLOR, autoCount: false, type: Type.QUANTITATIVE}
+        ]
+      });
+
+      specM.setEncodingProperty(2, Property.CHANNEL, Channel.SHAPE, {enum: [Channel.SHAPE, Channel.SIZE]});
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitMultipleNonPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 

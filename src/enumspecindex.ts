@@ -104,6 +104,10 @@ export class EnumSpecIndex {
     return this;
   }
 
+  public hasEncodingProperty(index: number, prop: Property) {
+    return !!(this._encodings[index] || {})[prop];
+  }
+
   public hasProperty(prop: Property) {
     if (isEncodingProperty(prop)) {
       return !!this.encodingIndicesByProperty[prop];

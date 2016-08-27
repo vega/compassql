@@ -353,19 +353,32 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   },
   {
     name: 'omitMultipleNonPositionalChannels',
-    description: 'Do not use multiple non-positional encoding channel to avoid over-encoding.',
+    description: 'Unless manually specified, do not use multiple non-positional encoding channel to avoid over-encoding.',
     properties: [Property.CHANNEL],
     allowEnumSpecForProperties: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      const encodings = specM.getEncodings();
+      // have to use specM.specQuery.encodings insetad of specM.getEncodings()
+      // since specM.getEncodings() remove encQ with autoCount===false from the array
+      // and thus might shift the index
+      const encodings = specM.specQuery.encodings;
       let nonPositionChannelCount = 0;
+      let hasEnumeratedNonPositionChannel = false;
+
       for (let i = 0; i < encodings.length; i++) {
-        const channel = encodings[i].channel;
+        const encQ = encodings[i];
+        if (encQ.autoCount === false) continue; // ignore skipped encoding
+
+        const channel = encQ.channel;
         if (!isEnumSpec(channel)) {
-          if (channel === Channel.COLOR || channel === Channel.SHAPE || channel === Channel.SIZE) {
+          if (NONSPATIAL_CHANNELS_INDEX[channel as string]) {
             nonPositionChannelCount += 1;
-            if (nonPositionChannelCount > 1) {
+            if (specM.enumSpecIndex.hasEncodingProperty(i, Property.CHANNEL)) {
+              hasEnumeratedNonPositionChannel = true;
+            }
+            if ( nonPositionChannelCount > 1 &&
+                (hasEnumeratedNonPositionChannel || opt.constraintManuallySpecifiedValue)
+              ) {
               return false;
             }
           }

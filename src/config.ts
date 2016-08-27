@@ -170,6 +170,7 @@ export interface QueryConfig {
   autoAddCount?: boolean;
 
   // CONSTRAINTS
+  constraintManuallySpecifiedValue?: boolean;
   // Spec Constraints
 
   hasAppropriateGraphicTypeForMark?: boolean;
@@ -301,6 +302,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   numberOrdinalLimit: 50,
 
   // CONSTRAINTS
+  constraintManuallySpecifiedValue: false,
   // Spec Constraints -- See description inside src/constraints/spec.ts
   autoAddCount: false,
 
