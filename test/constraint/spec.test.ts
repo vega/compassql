@@ -948,7 +948,21 @@ describe('constraints/spec', () => {
       });
     });
 
-    it('should return false if color/shape/size is used when either x or y is not used', () => {
+    it('should return false if color/shape/size is enumerated when either x or y is not used', () => {
+      [Channel.SHAPE, Channel.SIZE, Channel.COLOR].forEach((channel) => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+            {channel: {enum: [Channel.SHAPE, Channel.SIZE, Channel.COLOR]}, field: 'C', type: Type.NOMINAL}
+          ]
+        });
+        specM.setEncodingProperty(1, Property.CHANNEL, channel, {enum: [Channel.SHAPE, Channel.SIZE, Channel.COLOR]});
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      });
+    });
+
+    it('should return false if color/shape/size is manually specified if either x or y is not used and we constraintManuallySpecifiedValue', () => {
       [Channel.SHAPE, Channel.SIZE, Channel.COLOR].forEach((channel) => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
@@ -957,7 +971,20 @@ describe('constraints/spec', () => {
             {channel: channel, field: 'C', type: Type.NOMINAL}
           ]
         });
-        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+      });
+    });
+
+    it('should return true if color/shape/size is manually specified even when either x or y is not used', () => {
+      [Channel.SHAPE, Channel.SIZE, Channel.COLOR].forEach((channel) => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+            {channel: channel, field: 'C', type: Type.NOMINAL}
+          ]
+        });
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
   });

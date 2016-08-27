@@ -16,6 +16,11 @@ import {contains, every, some} from '../util';
 
 import {scaleType, EncodingQuery, isMeasure, ScaleQuery} from '../query/encoding';
 
+const NONSPATIAL_CHANNELS_INDEX = NONSPATIAL_CHANNELS.reduce((m, channel) => {
+  m[channel] = true;
+  return m;
+}, {});
+
 export interface SpecConstraintChecker {
   (specM: SpecQueryModel, schema: Schema, opt: QueryConfig): boolean;
 }
@@ -395,10 +400,33 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
 
-      return some(NONSPATIAL_CHANNELS, (channel) => specM.channelUsed(channel)) ?
-        // if non-positional channels are used, then both x and y must be used.
-        specM.channelUsed(Channel.X) && specM.channelUsed(Channel.Y) :
-        true;
+      const encodings = specM.specQuery.encodings;
+      let hasNonPositionalChannel = false;
+      let hasEnumeratedNonPositionChannel = false;
+      let hasX = false, hasY = false;
+      for (let i = 0; i < encodings.length; i++) {
+        const encQ = encodings[i];
+        if (encQ.autoCount === false) continue; // ignore skipped encoding
+
+        const channel = encQ.channel;
+        if ( NONSPATIAL_CHANNELS_INDEX[channel as string]) {
+          hasNonPositionalChannel = true;
+          if (specM.enumSpecIndex.hasEncodingProperty(i, Property.CHANNEL)) {
+            hasEnumeratedNonPositionChannel = true;
+          }
+        } else if (channel === Channel.X) {
+          hasX = true;
+        } else if (channel === Channel.Y) {
+          hasY = true;
+        }
+      }
+
+      if ( hasEnumeratedNonPositionChannel ||
+          (opt.constraintManuallySpecifiedValue && hasNonPositionalChannel)
+        ) {
+        return hasX && hasY;
+      }
+      return true;
     }
   },
   {
