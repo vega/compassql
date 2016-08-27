@@ -475,8 +475,18 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       if (specM.isAggregate()) {
         return true;
       }
-      return every(specM.getEncodings(), (encQ) => {
-        return encQ.channel !== Channel.DETAIL;
+      return every(specM.specQuery.encodings, (encQ, index) => {
+        if (encQ.autoCount === false) return true; // ignore autoCount field
+
+        if (encQ.channel === Channel.DETAIL) {
+          // Detail channel for raw plot is not good, except when its enumerated
+          // or when it's manually specified but we constraintManuallySpecifiedValue.
+          if (specM.enumSpecIndex.hasEncodingProperty(index, Property.CHANNEL) ||
+              opt.constraintManuallySpecifiedValue) {
+            return false;
+          }
+        }
+        return true;
       });
     }
   },

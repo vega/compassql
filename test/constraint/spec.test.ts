@@ -1142,7 +1142,19 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should return false when raw data has a detail channel', () => {
+    it('should return false when raw data has an enumerated detail channel', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: {enum: [Channel.DETAIL]}, field: 'A', type: Type.NOMINAL}
+        ]
+      });
+      specM.setEncodingProperty(0, Property.CHANNEL, Channel.DETAIL, {enum: [Channel.DETAIL]});
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return true when raw data has a manually specified detail channel', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
@@ -1150,7 +1162,18 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return false when we constraintManuallySpecifiedValue raw data has a manually specified detail channel', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.DETAIL, field: 'A', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawDetail'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
     });
 
     it('should return true if any of the encoding channels contain aggregate', () => {
