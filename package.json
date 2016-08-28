@@ -1,6 +1,6 @@
 {
   "name": "compassql",
-  "version": "0.5.3",
+  "version": "0.6.1",
   "description": "CompassQL visualization query language",
   "main": "compassql.js",
   "directories": {
