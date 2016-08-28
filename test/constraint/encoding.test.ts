@@ -670,20 +670,20 @@ describe('constraints/encoding', () => {
     it('should return false if type does not match schema\'s type', () => {
       [Type.TEMPORAL, Type.QUANTITATIVE, Type.NOMINAL].forEach((type) => {
         encQ.type = type;
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
     it('should return true if string matches schema\'s type ', () => {
       [Type.ORDINAL].forEach((type) => {
         encQ.type = type;
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
     it('should return false if field does not exist', () => {
       const invalidFieldEncQ = {channel: Channel.X, field: 'random', type: Type.NOMINAL};
-      assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(invalidFieldEncQ, schema, undefined, defaultOpt));
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(invalidFieldEncQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
     });
   });
 
@@ -697,20 +697,20 @@ describe('constraints/encoding', () => {
     it('should return false if string is used as quantitative or temporal', () => {
       [Type.TEMPORAL, Type.QUANTITATIVE].forEach((type) => {
         encQ.type = type;
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
     it('should return true if string is used as ordinal or nominal ', () => {
       [Type.NOMINAL, Type.ORDINAL].forEach((type) => {
         encQ.type = type;
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
     it('should return false if field does not exist', () => {
       const invalidFieldEncQ = {channel: Channel.X, field: 'random', type: Type.NOMINAL};
-      assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(invalidFieldEncQ, schema, undefined, defaultOpt));
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(invalidFieldEncQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
     });
   });
 });

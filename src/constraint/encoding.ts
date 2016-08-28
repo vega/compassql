@@ -168,6 +168,11 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     strict: false,
     satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       if (encQ.timeUnit && encQ.type === Type.TEMPORAL) {
+        if (!encEnumSpecIndex.timeUnit && !opt.constraintManuallySpecifiedValue) {
+          // Do not have to check this as this is manually specified by users.
+          return true;
+        }
+
         return schema.timeUnitHasVariation(encQ);
       }
       return true;
@@ -213,6 +218,11 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       const primitiveType = schema.primitiveType(encQ.field as string);
       const type = encQ.type;
 
+      if (!encEnumSpecIndex.field && !encEnumSpecIndex.type && !opt.constraintManuallySpecifiedValue) {
+        // Do not have to check this as this is manually specified by users.
+        return true;
+      }
+
       switch (primitiveType) {
         case PrimitiveType.BOOLEAN:
         case PrimitiveType.STRING:
@@ -237,6 +247,11 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+      if (!encEnumSpecIndex.field && !encEnumSpecIndex.type && !opt.constraintManuallySpecifiedValue) {
+        // Do not have to check this as this is manually specified by users.
+        return true;
+      }
+
       return schema.type(encQ.field as string) === encQ.type;
     }
   },{
@@ -340,7 +355,7 @@ export function checkEncoding(prop: Property, enumSpec: EnumSpec<any>, index: nu
     if (c.strict() || !!opt[c.name()]) {
       // For strict constraint, or enabled non-strict, check the constraints
 
-      const satisfy = c.satisfy(encQ, schema, specM.enumSpecIndex.encodings, opt);
+      const satisfy = c.satisfy(encQ, schema, specM.enumSpecIndex.encodings[index], opt);
       if (!satisfy) {
         let violatedConstraint = '(enc) ' + c.name();
         /* istanbul ignore if */
