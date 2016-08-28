@@ -258,16 +258,26 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if (specM.isAggregate()) {
-        let hasNonFacetDim = false, hasDim = false;
-        specM.getEncodings().forEach((encQ) => {
+        let hasNonFacetDim = false, hasDim = false, hasEnumeratedFacetDim = false;
+        specM.specQuery.encodings.forEach((encQ, index) => {
+          if (encQ.autoCount === false) return; // skip unused field
+
           if (!encQ.aggregate && !encQ.autoCount) { // isDimension
             hasDim = true;
-            if (!contains([Channel.ROW, Channel.COLUMN], encQ.channel)) {
+            if (contains([Channel.ROW, Channel.COLUMN], encQ.channel)) {
+              if (specM.enumSpecIndex.hasEncodingProperty(index, Property.CHANNEL)) {
+                hasEnumeratedFacetDim = true;
+              }
+            } else {
               hasNonFacetDim = true;
             }
           }
         });
-        return !hasDim || hasNonFacetDim;
+        if (hasDim && !hasNonFacetDim) {
+          if (hasEnumeratedFacetDim || opt.constraintManuallySpecifiedValue) {
+            return false;
+          }
+        }
       }
       return true;
     }

@@ -505,7 +505,20 @@ describe('constraints/spec', () => {
   });
 
   describe('omitAggregatePlotWithDimensionOnlyOnFacet', () => {
-    it('should return false if the only dimension is facet', () => {
+    it('should return false if the only dimension is facet and it is enumerated', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: {enum: [Channel.ROW]}, field: 'N', type: Type.NOMINAL}
+        ]
+      });
+      specM.setEncodingProperty(2, Property.CHANNEL, Channel.ROW, {enum: [Channel.ROW]});
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return true if the only dimension is facet and it is specified', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
@@ -514,7 +527,19 @@ describe('constraints/spec', () => {
           {channel: Channel.ROW, field: 'N', type: Type.NOMINAL}
         ]
       });
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return false if the only dimension is facet and it is specified when we constraintManuallySpecifiedValue', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.ROW, field: 'N', type: Type.NOMINAL}
+        ]
+      });
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithDimensionOnlyOnFacet'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
     });
 
     it('should return true if the only dimension is not facet', () => {
