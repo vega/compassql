@@ -631,7 +631,24 @@ describe('constraints/spec', () => {
   });
 
   describe('omitBarTickWithSize', () => {
-    it('should return false if bar/tick use size', () => {
+    it('should return false if bar/tick enumerates size', () => {
+      [Mark.BAR, Mark.TICK].forEach((mark) => {
+        const specM = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+            {channel: {enum: [Channel.SIZE]}, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+          ]
+        });
+
+        specM.setEncodingProperty(2, Property.CHANNEL, Channel.SIZE, {enum: [Channel.SIZE]});
+
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitBarTickWithSize'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      });
+    });
+
+    it('should return true if bar/tick contains manually specified size', () => {
       [Mark.BAR, Mark.TICK].forEach((mark) => {
         const specM = buildSpecQueryModel({
           mark: mark,
@@ -642,7 +659,22 @@ describe('constraints/spec', () => {
           ]
         });
 
-        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitBarTickWithSize'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitBarTickWithSize'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      });
+    });
+
+    it('should return false if bar/tick contains manually specified size and we constraintManuallySpecifiedValue', () => {
+      [Mark.BAR, Mark.TICK].forEach((mark) => {
+        const specM = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+            {channel: Channel.SIZE, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+          ]
+        });
+
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitBarTickWithSize'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 

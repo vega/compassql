@@ -313,7 +313,28 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();
       if (contains([Mark.TICK, Mark.BAR], mark)) {
-        return !specM.channelUsed(Channel.SIZE);
+        if (specM.channelUsed(Channel.SIZE)) {
+          if (opt.constraintManuallySpecifiedValue) {
+            // If size is used and we constraintManuallySpecifiedValue,
+            // then the spec violates this constraint.
+            return false;
+          } else {
+            // Otherwise have to search for the size channel and check if it is enumerated
+            const encodings = specM.specQuery.encodings;
+            for (let i = 0; i < encodings.length ; i++) {
+              const encQ = encodings[i];
+              if (encQ.channel === Channel.SIZE) {
+                if (specM.enumSpecIndex.hasEncodingProperty(i, Property.CHANNEL)) {
+                  // If enumerated, then this is bad
+                  return false;
+                } else {
+                  // If it's manually specified, no need to continue searching, just return.
+                  return true;
+                }
+              }
+            }
+          }
+        }
       }
       return true; // skip
     }
