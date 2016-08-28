@@ -1087,7 +1087,21 @@ describe('constraints/spec', () => {
   });
 
   describe('omitRawContinuousFieldForAggregatePlot', () => {
-    it('should return false if the aggregate plot groups by a raw temporal field', () => {
+    it('should return false if the aggregate plot groups by a raw temporal field with timeUnit enumerated as undefined', () => {
+      const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'C', type: Type.TEMPORAL, timeUnit: {enum: [undefined]}}
+          ]
+        });
+
+      specM.setEncodingProperty(1, Property.TIMEUNIT, undefined, {enum: [undefined]});
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return false if the aggregate plot groups by a raw temporal field with specified timeUnit = undefined', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
@@ -1096,7 +1110,19 @@ describe('constraints/spec', () => {
           ]
         });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return false if the aggregate plot groups by a raw temporal field with specified timeUnit = undefined and we constraintManuallySpecifiedValue', () => {
+      const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'C', type: Type.TEMPORAL}
+          ]
+        });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
     });
 
     it('should return true if the aggregate plot groups by a temporal field with timeUnit', () => {
@@ -1123,7 +1149,7 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should return false if the aggregate plot groups by a raw quantitative field', () => {
+    it('should return true if the aggregate plot groups by a quantitative field that is specified as raw', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
@@ -1131,6 +1157,32 @@ describe('constraints/spec', () => {
             {channel: Channel.Y, field: 'C', type: Type.QUANTITATIVE}
           ]
         });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return false if the aggregate plot groups by a quantitative field that is specified as raw and we constraintManuallySpecifiedValue', () => {
+      const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'C', type: Type.QUANTITATIVE}
+          ]
+        });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+    });
+
+    it('should return false if the aggregate plot groups by a raw quantitative field that is enumerated', () => {
+      const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+            {channel: Channel.Y, aggregate: {enum: [undefined]}, field: 'C', type: Type.QUANTITATIVE}
+          ]
+        });
+
+      specM.setEncodingProperty(1, Property.AGGREGATE, undefined, {enum: [undefined]});
 
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });

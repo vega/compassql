@@ -459,16 +459,40 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
        if (specM.isAggregate()) {
-         return every(specM.getEncodings(), (encQ: EncodingQuery) => {
+         const encodings = specM.specQuery.encodings;
+         for (let i = 0; i < encodings.length; i++) {
+           const encQ = encodings[i];
+
+           if (encQ.autoCount === false) continue; // skip unused encoding
+
+           // TODO: aggregate for ordinal and temporal
+
            if (encQ.type === Type.TEMPORAL) {
              // Temporal fields should have timeUnit or is still an enumSpec
-             return !!encQ.timeUnit;
+             if (!encQ.timeUnit && (
+                  specM.enumSpecIndex.hasEncodingProperty(i, Property.TIMEUNIT) ||
+                  opt.constraintManuallySpecifiedValue
+                )) {
+               return false;
+             }
            }
            if (encQ.type === Type.QUANTITATIVE) {
-             return !!encQ.bin || !!encQ.aggregate || !!encQ.autoCount;
+             if (!encQ.bin && !encQ.aggregate && !encQ.autoCount) {
+               // If Raw Q
+               if (specM.enumSpecIndex.hasEncodingProperty(i, Property.BIN) ||
+                  specM.enumSpecIndex.hasEncodingProperty(i, Property.AGGREGATE) ||
+                  specM.enumSpecIndex.hasEncodingProperty(i, Property.AUTOCOUNT)
+                  ) {
+                 // and it's raw from enumeration
+                 return false;
+               }
+               if (opt.constraintManuallySpecifiedValue) {
+                 // or if we constraintManuallySpecifiedValue
+                 return false;
+               }
+             }
            }
-           return true;
-         });
+         }
        }
        return true;
     }
