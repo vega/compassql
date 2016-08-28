@@ -179,14 +179,13 @@ export interface QueryConfig {
   omitAggregatePlotWithoutDimension?: boolean;
   omitBarLineAreaWithOcclusion?: boolean;
   omitBarTickWithSize?: boolean;
-  omitFacetOverPositionalChannels?: boolean;
   omitMultipleNonPositionalChannels?: boolean;
   omitNonSumStack?: boolean;
   omitRaw?: boolean;
   omitRawContinuousFieldForAggregatePlot?: boolean;
   omitRawWithXYBothOrdinalScaleOrBin?: boolean;
   omitRepeatedField?: boolean;
-  omitNonPositionalOverPositionalChannels?: boolean;
+  omitNonPositionalOrFacetOverPositionalChannels?: boolean;
   omitTableWithOcclusionIfAutoAddCount?: boolean;
   omitVerticalDotPlot?: boolean;
 
@@ -312,13 +311,12 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   omitAggregatePlotWithoutDimension: false,
   omitBarLineAreaWithOcclusion: true,
   omitBarTickWithSize: true,
-  omitFacetOverPositionalChannels: true,
   omitMultipleNonPositionalChannels: true,
   omitNonSumStack: true,
   omitRaw: false,
   omitRawContinuousFieldForAggregatePlot: true,
   omitRepeatedField: true,
-  omitNonPositionalOverPositionalChannels: true,
+  omitNonPositionalOrFacetOverPositionalChannels: true,
   omitTableWithOcclusionIfAutoAddCount: true,
   omitVerticalDotPlot: false,
 

@@ -693,45 +693,6 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('omitFacetOverPositionalChannels', () => {
-    it('should return true if facet is not used', () => {
-      const specM = buildSpecQueryModel({
-        mark: Mark.POINT,
-        encodings: [
-          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
-          {channel: Channel.Y, field: 'B', type: Type.NOMINAL}
-        ]
-      });
-
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
-    });
-
-    it('should return true if facet is used when both x and y are used', () => {
-      const specM = buildSpecQueryModel({
-        mark: Mark.POINT,
-        encodings: [
-          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
-          {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
-          {channel: Channel.ROW, field: 'C', type: Type.NOMINAL}
-        ]
-      });
-
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
-    });
-
-    it('should return true if facet is used when x or y is not used', () => {
-      const specM = buildSpecQueryModel({
-        mark: Mark.POINT,
-        encodings: [
-          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
-          {channel: Channel.ROW, field: 'C', type: Type.NOMINAL}
-        ]
-      });
-
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitFacetOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
-    });
-  });
-
   describe('omitBarAreaForLogScale', () => {
     it('should return false if either x or y channel of bar or area mark is log scale', () => {
       const specM = buildSpecQueryModel({
@@ -965,7 +926,19 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('omitNonPositionalOverPositionalChannels', () => {
+  describe('omitNonPositionalOrFacetOverPositionalChannels', () => {
+    it('should return true if only x and y are used', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonPositionalOrFacetOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
     it('should return true if color/shape/size is used when both x and y are used', () => {
       [Channel.SHAPE, Channel.SIZE, Channel.COLOR].forEach((channel) => {
         const specM = buildSpecQueryModel({
@@ -976,7 +949,7 @@ describe('constraints/spec', () => {
             {channel: channel, field: 'C', type: Type.NOMINAL}
           ]
         });
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonPositionalOrFacetOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
 
@@ -990,7 +963,7 @@ describe('constraints/spec', () => {
           ]
         });
         specM.setEncodingProperty(1, Property.CHANNEL, channel, {enum: [Channel.SHAPE, Channel.SIZE, Channel.COLOR]});
-        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOrFacetOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
 
@@ -1003,7 +976,7 @@ describe('constraints/spec', () => {
             {channel: channel, field: 'C', type: Type.NOMINAL}
           ]
         });
-        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOrFacetOverPositionalChannels'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
@@ -1016,8 +989,58 @@ describe('constraints/spec', () => {
             {channel: channel, field: 'C', type: Type.NOMINAL}
           ]
         });
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonPositionalOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonPositionalOrFacetOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
+    });
+
+    it('should return true if facet is used when both x and y are used', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+          {channel: Channel.ROW, field: 'C', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonPositionalOrFacetOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return true if facet is specified when x or y is not used', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.ROW, field: 'C', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonPositionalOrFacetOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return false if facet is specified when x or y is not used and we constraintManuallySpecifiedValue', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.ROW, field: 'C', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOrFacetOverPositionalChannels'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+    });
+
+    it('should return false if facet is enumerated when x or y is not used', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: {enum: [Channel.ROW]}, field: 'C', type: Type.NOMINAL}
+        ]
+      });
+
+      specM.setEncodingProperty(1, Property.CHANNEL, Channel.ROW, {enum: [Channel.ROW]});
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonPositionalOrFacetOverPositionalChannels'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
   });
 

@@ -340,19 +340,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'omitFacetOverPositionalChannels',
-    description: 'Do not use non-positional channels unless all positional channels are used',
-    properties: [Property.CHANNEL],
-    allowEnumSpecForProperties: false,
-    strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      return specM.channelUsed(Channel.ROW) || specM.channelUsed(Channel.COLUMN) ?
-        // if non-positional channels are used, then both x and y must be used.
-        specM.channelUsed(Channel.X) && specM.channelUsed(Channel.Y) :
-        true;
-    }
-  },
-  {
     name: 'omitBarAreaForLogScale',
     description: 'Do not use bar and area mark for x and y\'s log scale',
     properties: [Property.MARK, Property.CHANNEL, Property.SCALE, Property.SCALE_TYPE, Property.TYPE],
@@ -414,36 +401,36 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'omitNonPositionalOverPositionalChannels',
+    name: 'omitNonPositionalOrFacetOverPositionalChannels',
     description: 'Do not use non-positional channels unless all positional channels are used',
     properties: [Property.CHANNEL],
     allowEnumSpecForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-
       const encodings = specM.specQuery.encodings;
-      let hasNonPositionalChannel = false;
-      let hasEnumeratedNonPositionChannel = false;
+      let hasNonPositionalChannelOrFacet = false;
+      let hasEnumeratedNonPositionOrFacetChannel = false;
       let hasX = false, hasY = false;
       for (let i = 0; i < encodings.length; i++) {
         const encQ = encodings[i];
         if (encQ.autoCount === false) continue; // ignore skipped encoding
 
         const channel = encQ.channel;
-        if ( NONSPATIAL_CHANNELS_INDEX[channel as string]) {
-          hasNonPositionalChannel = true;
-          if (specM.enumSpecIndex.hasEncodingProperty(i, Property.CHANNEL)) {
-            hasEnumeratedNonPositionChannel = true;
-          }
-        } else if (channel === Channel.X) {
+        if (channel === Channel.X) {
           hasX = true;
         } else if (channel === Channel.Y) {
           hasY = true;
+        } else if (!isEnumSpec(channel)) {
+          // All non positional channel / Facet
+          hasNonPositionalChannelOrFacet = true;
+          if (specM.enumSpecIndex.hasEncodingProperty(i, Property.CHANNEL)) {
+            hasEnumeratedNonPositionOrFacetChannel = true;
+          }
         }
       }
 
-      if ( hasEnumeratedNonPositionChannel ||
-          (opt.constraintManuallySpecifiedValue && hasNonPositionalChannel)
+      if ( hasEnumeratedNonPositionOrFacetChannel ||
+          (opt.constraintManuallySpecifiedValue && hasNonPositionalChannelOrFacet)
         ) {
         return hasX && hasY;
       }

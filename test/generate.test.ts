@@ -51,7 +51,7 @@ describe('generate', function () {
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).channel, Channel.Y);
       });
 
-      it('should only enumerate channel x and channel y even if omitNonPositionalOverPositionalChannels turned off', () => {
+      it('should only enumerate channel x and channel y even if omitNonPositionalOrFacetOverPositionalChannels turned off', () => {
         const query = {
           mark: Mark.POINT,
           encodings: [{
@@ -60,7 +60,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOverPositionalChannels: false}));
+        const answerSet = generate(query, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOrFacetOverPositionalChannels: false}));
         assert.equal(answerSet.length, 2);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).channel, Channel.Y);
@@ -95,7 +95,7 @@ describe('generate', function () {
           }]
         };
 
-        const answerSet = generate(query, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOverPositionalChannels: false}));
+        const answerSet = generate(query, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOrFacetOverPositionalChannels: false}));
         assert.equal(answerSet.length, 4);
 
         assert.equal(answerSet[0].getMark(), Mark.POINT);

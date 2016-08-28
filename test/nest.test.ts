@@ -689,7 +689,7 @@ describe('nest', () => {
             }]
           },
           nest: [{groupBy: groupBy}],
-          config: extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOverPositionalChannels: false})
+          config: extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOrFacetOverPositionalChannels: false})
         };
 
         const answerSet = generate(query.spec, schema, query.config);
