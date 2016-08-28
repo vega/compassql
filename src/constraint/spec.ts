@@ -109,7 +109,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   },
   {
     name: 'alwaysIncludeZeroInScaleWithBarMark',
-    description: 'Do not reccommend bar mark if scale does not start at zero',
+    description: 'Do not recommend bar mark if scale does not start at zero',
     properties: [Property.MARK, Property.SCALE, Property.SCALE_ZERO, Property.CHANNEL, Property.TYPE],
     allowEnumSpecForProperties: false,
     strict: true,
@@ -122,6 +122,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           if ( (encQ.channel === Channel.X || encQ.channel === Channel.Y) &&
                (encQ.type === Type.QUANTITATIVE) &&
                (encQ.scale && (encQ.scale as ScaleQuery).zero === false)) {
+            // TODO: zero shouldn't be manually specified
             return false;
           }
         }
@@ -290,6 +291,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     strict: false,
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
       if (specM.isAggregate()) {
+        // TODO relax
         return some(specM.getEncodings(), (encQ: EncodingQuery) => {
           if (isDimension(encQ)) {
             return true;
@@ -359,6 +361,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       const mark = specM.getMark();
       const encodings = specM.getEncodings();
 
+      // TODO: mark or scale type should be enumerated
       if (mark === Mark.AREA || mark === Mark.BAR) {
         for (let encQ of encodings) {
           if((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale) {
