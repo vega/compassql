@@ -8,6 +8,7 @@ import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
 import {getNestedEncodingProperty, Property, SCALE_PROPERTIES, SUPPORTED_SCALE_PROPERTY_INDEX} from '../property';
 import {isEnumSpec, EnumSpec} from '../enumspec';
+import {EncodingEnumSpecIndex} from '../enumspecindex';
 import {PrimitiveType, Schema} from '../schema';
 import {contains, every} from '../util';
 
@@ -19,7 +20,7 @@ import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery} from '../q
 
 /** A method for satisfying whether the provided encoding query satisfy the constraint. */
 export interface EncodingConstraintChecker {
-  (encQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean;
+  (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig): boolean;
 }
 
 export class EncodingConstraintModel extends AbstractConstraintModel {
@@ -51,7 +52,7 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
     });
   }
 
-  public satisfy(encQ: EncodingQuery, schema: Schema, opt: QueryConfig): boolean {
+  public satisfy(encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig): boolean {
     // TODO: Re-order logic to optimize the "allowEnumSpecForProperties" check
     if (!this.constraint.allowEnumSpecForProperties) {
       // TODO: extract as a method and do unit test
@@ -60,7 +61,7 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
         return true;
       }
     }
-    return (this.constraint as EncodingConstraint).satisfy(encQ, schema, opt);
+    return (this.constraint as EncodingConstraint).satisfy(encQ, schema, encEnumSpecIndex, opt);
   }
 }
 
@@ -77,7 +78,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.AGGREGATE],
     allowEnumSpecForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       if (encQ.aggregate) {
         return encQ.type !== Type.ORDINAL && encQ.type !== Type.NOMINAL;
       }
@@ -91,7 +92,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.BIN],
     allowEnumSpecForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       if (encQ.bin) {
         // If binned, the type must be quantitative
         return encQ.type === Type.QUANTITATIVE;
@@ -104,7 +105,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.CHANNEL, Property.TYPE, Property.BIN, Property.TIMEUNIT],
     allowEnumSpecForProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       if (isEnumSpec(encQ.channel)) return true; // not ready for checking yet!
 
       const supportedRole = getSupportedRole(encQ.channel as Channel);
@@ -121,7 +122,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.SCALE, Property.SCALE_ZERO, Property.BIN],
     allowEnumSpecForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       if (encQ.bin && encQ.scale) {
         if ((encQ.scale as ScaleQuery).zero === true) {
           return false;
@@ -135,7 +136,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN],
     allowEnumSpecForProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       const numFn = (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate ? 1 : 0) +
         (!isEnumSpec(encQ.autoCount) && !!encQ.autoCount ? 1 : 0) +
         (!isEnumSpec(encQ.bin) && !!encQ.bin ? 1 : 0) +
@@ -148,7 +149,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.TIMEUNIT],
     allowEnumSpecForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       if (encQ.timeUnit && encQ.type !== Type.TEMPORAL) {
         return false;
       }
@@ -160,7 +161,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TIMEUNIT, Property.TYPE],
     allowEnumSpecForProperties: false,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       if (encQ.timeUnit && encQ.type === Type.TEMPORAL) {
         return schema.timeUnitHasVariation(encQ);
       }
@@ -172,7 +173,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: SCALE_PROPERTIES.concat([Property.SCALE, Property.TYPE]),
     allowEnumSpecForProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       if (encQ.scale) {
         const scale: ScaleQuery = encQ.scale as ScaleQuery;
 
@@ -203,7 +204,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.FIELD, Property.TYPE],
     allowEnumSpecForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       const primitiveType = schema.primitiveType(encQ.field as string);
       const type = encQ.type;
 
@@ -230,7 +231,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.FIELD, Property.TYPE],
     allowEnumSpecForProperties: false,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       return schema.type(encQ.field as string) === encQ.type;
     }
   },{
@@ -239,7 +240,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.CHANNEL, Property.FIELD],
     allowEnumSpecForProperties: false,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       // TODO: missing case where ordinal / temporal use categorical color
       // (once we do so, need to add Property.BIN, Property.TIMEUNIT)
       if (encQ.channel === Channel.COLOR && encQ.type === Type.NOMINAL) {
@@ -253,7 +254,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
     allowEnumSpecForProperties: false,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       if (encQ.channel === Channel.ROW || encQ.channel === Channel.COLUMN) {
         return schema.cardinality(encQ) <= opt.maxCardinalityForFacet;
       }
@@ -265,7 +266,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
     allowEnumSpecForProperties: false,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       if (encQ.channel === Channel.SHAPE) {
         return schema.cardinality(encQ) <= opt.maxCardinalityForShape;
       }
@@ -277,7 +278,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.SCALE, Property.SCALE_TYPE, Property.TIMEUNIT, Property.BIN],
     allowEnumSpecForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       if (encQ.scale) {
         const type = encQ.type;
         const sType = scaleType(encQ);
@@ -334,7 +335,7 @@ export function checkEncoding(prop: Property, enumSpec: EnumSpec<any>, index: nu
     if (c.strict() || !!opt[c.name()]) {
       // For strict constraint, or enabled non-strict, check the constraints
 
-      const satisfy = c.satisfy(encQ, schema, opt);
+      const satisfy = c.satisfy(encQ, schema, specM.enumSpecIndex.encodings, opt);
       if (!satisfy) {
         let violatedConstraint = '(enc) ' + c.name();
         /* istanbul ignore if */
