@@ -108,6 +108,11 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       if (isEnumSpec(encQ.channel)) return true; // not ready for checking yet!
 
+      if (!encEnumSpecIndex.channel && !opt.constraintManuallySpecifiedValue) {
+        // Do not have to check this as this is manually specified by users.
+        return true;
+      }
+
       const supportedRole = getSupportedRole(encQ.channel as Channel);
       if (isDimension(encQ)) {
         return supportedRole.dimension;
