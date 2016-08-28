@@ -23,7 +23,7 @@ describe('constraints/spec', () => {
     return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
   }
 
-  var CONSTRAINT_MANUALLY_SPECIFIED_CONFIG = extend({}, DEFAULT_QUERY_CONFIG, {constraintManuallySpecifiedValue: true});
+  const CONSTRAINT_MANUALLY_SPECIFIED_CONFIG = extend({}, DEFAULT_QUERY_CONFIG, {constraintManuallySpecifiedValue: true});
 
   // Make sure all non-strict constraints have their configs.
   SPEC_CONSTRAINTS.forEach((constraint) => {
