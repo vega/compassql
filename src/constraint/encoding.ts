@@ -1,3 +1,4 @@
+import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel, getSupportedRole} from 'vega-lite/src/channel';
 import {ScaleType} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
@@ -84,6 +85,19 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       }
       // TODO: some aggregate function are actually supported by ordinal
       return true; // no aggregate is okay with any type.
+    }
+  // TODO: minCardinalityForBin
+  },{
+    name: 'asteriskFieldWithCountOnly',
+    description: 'Field="*" should be disallowed except aggregate="count"',
+    properties: [Property.FIELD, Property.AGGREGATE],
+    allowEnumSpecForProperties: false,
+    strict: true,
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+      if (encQ.field === '*') {
+        return encQ.aggregate === AggregateOp.COUNT;
+      }
+      return true;
     }
   // TODO: minCardinalityForBin
   },{

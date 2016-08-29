@@ -108,6 +108,26 @@ describe('constraints/encoding', () => {
     });
   });
 
+  describe('asteriskFieldWithCountOnly', () => {
+    it('should return true for field=* and aggregate=COUNT', () => {
+      assert.isTrue(
+        ENCODING_CONSTRAINT_INDEX['asteriskFieldWithCountOnly'].satisfy(
+          { channel: Channel.X, aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE },
+          schema, {}, defaultOpt
+        )
+      );
+    });
+
+    it('should return false for field=* without aggregate=COUNT', () => {
+      assert.isFalse(
+        ENCODING_CONSTRAINT_INDEX['asteriskFieldWithCountOnly'].satisfy(
+          { channel: Channel.X, field: '*', type: Type.QUANTITATIVE },
+          schema, {}, defaultOpt
+        )
+      );
+    });
+  });
+
   describe('binAppliedForQuantitative', () => {
     let encQ: EncodingQuery = {
       channel: Channel.X,
