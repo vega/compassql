@@ -19,6 +19,17 @@ export function isExtendedGroupBy(g: Property | ExtendedGroupBy): g is ExtendedG
 
 export type GroupBy = string | Array<Property | ExtendedGroupBy>;
 
+export function parse(groupBy: Array<Property | ExtendedGroupBy>, include: Dict<boolean>, replaceIndex: Dict<Dict<string>>) {
+  groupBy.forEach((grpBy: Property | ExtendedGroupBy) => {
+    if (isExtendedGroupBy(grpBy)) {
+      include[grpBy.property] = true;
+      replaceIndex[grpBy.property] = grpBy.replace;
+    } else {
+      include[grpBy] = true;
+    }
+  });
+}
+
 export function toString(groupBy: GroupBy): string {
   if (isArray(groupBy)) {
     return groupBy.map((g: Property | ExtendedGroupBy) => {

@@ -3,12 +3,11 @@ import {isArray} from 'datalib/src/util';
 
 import {EnumSpec, isEnumSpec, SHORT_ENUM_SPEC} from './enumspec';
 import {SpecQueryModel, SpecQueryModelGroup} from './model';
-import {Property} from './property';
-import {Dict, duplicate, keys} from './util';
+import {Dict, duplicate} from './util';
 
-import {ExtendedGroupBy, isExtendedGroupBy} from './query/groupby';
+import {parse as parseGroupBy} from './query/groupby';
 import {Query} from './query/query';
-import {fieldDef as fieldDefShorthand, spec as specShorthand, Replacer, getReplacer} from './query/shorthand';
+import {fieldDef as fieldDefShorthand, spec as specShorthand, Replacer, getReplacerIndex} from './query/shorthand';
 import {stack} from './query/spec';
 
 
@@ -53,19 +52,8 @@ export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModel
 
       const groupBy = query.nest[l].groupBy;
       if (isArray(groupBy)) {
-        groupBy.forEach((grpBy: Property | ExtendedGroupBy) => {
-          if (isExtendedGroupBy(grpBy)) {
-            includes[l][grpBy.property] = true;
-            replaces[l][grpBy.property] = grpBy.replace;
-          } else {
-            includes[l][grpBy] = true;
-          }
-        });
-        const replaceFnIndex = keys(replaces[l]).reduce((fnIndex, prop: string) => {
-          fnIndex[prop] = getReplacer(replaces[l][prop]);
-          return fnIndex;
-        }, {});
-        replacers.push(replaceFnIndex);
+        parseGroupBy(groupBy, includes[l], replaces[l]);
+        replacers.push(getReplacerIndex(replaces[l]));
       }
     }
 

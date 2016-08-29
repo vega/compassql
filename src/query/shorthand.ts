@@ -15,6 +15,13 @@ import {Dict, extend, keys} from '../util';
 
 export type Replacer = (s: string) => string;
 
+export function getReplacerIndex(replaceIndex: Dict<Dict<string>>): Dict<Replacer> {
+  return keys(replaceIndex).reduce((fnIndex, prop: string) => {
+    fnIndex[prop] = getReplacer(replaceIndex[prop]);
+    return fnIndex;
+  }, {});
+}
+
 export function getReplacer(replace: Dict<string>): Replacer {
   return (s: string) => {
     if (replace[s] !== undefined) {
