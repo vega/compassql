@@ -13,8 +13,8 @@ import {EnumSpec, SHORT_ENUM_SPEC, initEnumSpec, isEnumSpec} from './enumspec';
 import {EnumSpecIndex} from './enumspecindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
-import {GroupBy} from './query/groupby';
-import {spec as specShorthand, Replacer, INCLUDE_ALL, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
+import {GroupBy, ExtendedGroupBy, parse as parseGroupBy} from './query/groupby';
+import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS, getReplacerIndex} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
@@ -659,9 +659,13 @@ export class SpecQueryModel {
     return isAggregate(this._spec);
   }
 
-  public toShorthand(include: Dict<boolean> = INCLUDE_ALL,
-    replace: Dict<Replacer> = {}): string {
-    return specShorthand(this._spec, include, replace);
+  public toShorthand(groupBy?: (Property | ExtendedGroupBy)[]): string {
+    if (groupBy) {
+      let include: Dict<boolean> = {}, replace: Dict<Dict<string>> = {};
+      parseGroupBy(groupBy, include, replace);
+      return specShorthand(this._spec, include, getReplacerIndex(replace));
+    }
+    return specShorthand(this._spec);
   }
 
   private _encoding(): Encoding {
