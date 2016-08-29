@@ -126,6 +126,10 @@ export class Schema {
     return this._fieldSchemas;
   }
 
+  public fieldSchema(field: string) {
+    return this._fieldSchemaIndex[field];
+  }
+
   /**
    * @return primitive type of the field if exist, otherwise return null
    */
