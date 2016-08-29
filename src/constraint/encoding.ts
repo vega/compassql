@@ -229,6 +229,10 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     allowEnumSpecForProperties: false,
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+      if (encQ.field === '*') {
+        return true;
+      }
+
       const primitiveType = schema.primitiveType(encQ.field as string);
       const type = encQ.type;
 
@@ -264,6 +268,10 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       if (!encEnumSpecIndex.field && !encEnumSpecIndex.type && !opt.constraintManuallySpecifiedValue) {
         // Do not have to check this as this is manually specified by users.
         return true;
+      }
+
+      if (encQ.field === '*') {
+        return encQ.type === Type.QUANTITATIVE;
       }
 
       return schema.type(encQ.field as string) === encQ.type;

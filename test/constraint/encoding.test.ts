@@ -705,6 +705,28 @@ describe('constraints/encoding', () => {
       const invalidFieldEncQ = {channel: Channel.X, field: 'random', type: Type.NOMINAL};
       assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(invalidFieldEncQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
     });
+
+    it('should return false if field="*" has non-quantitative type', () => {
+      [Type.TEMPORAL, Type.ORDINAL, Type.NOMINAL].forEach((type) => {
+        const countEncQ: EncodingQuery = {
+          channel: Channel.X,
+          aggregate: AggregateOp.COUNT,
+          field: '*',
+          type: type
+        };
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(countEncQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+      });
+    });
+
+    it('should return true if field="*" has quantitative type', () => {
+      const countEncQ: EncodingQuery = {
+        channel: Channel.X,
+        aggregate: AggregateOp.COUNT,
+        field: '*',
+        type: Type.QUANTITATIVE
+      };
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(countEncQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+    });
   });
 
   describe('typeMatchesPrimitiveType', () => {
@@ -731,6 +753,18 @@ describe('constraints/encoding', () => {
     it('should return false if field does not exist', () => {
       const invalidFieldEncQ = {channel: Channel.X, field: 'random', type: Type.NOMINAL};
       assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(invalidFieldEncQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+    });
+
+    it('should return true if field="*" has non-quantitative type', () => {
+      [Type.TEMPORAL, Type.ORDINAL, Type.NOMINAL, Type.QUANTITATIVE].forEach((type) => {
+        const countEncQ: EncodingQuery = {
+          channel: Channel.X,
+          aggregate: AggregateOp.COUNT,
+          field: '*',
+          type: type
+        };
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(countEncQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+      });
     });
   });
 });
