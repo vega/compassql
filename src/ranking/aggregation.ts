@@ -38,7 +38,14 @@ function aggregationQualityFeature (specM: SpecQueryModel, schema: Schema, opt: 
     }
 
     if (some(encodings, isDimension)) {
-      if (some(encodings, (encQ: EncodingQuery) => encQ.aggregate === AggregateOp.COUNT)) {
+      var hasCount = some(encodings, (encQ: EncodingQuery) => {
+        return encQ.aggregate === AggregateOp.COUNT || encQ.autoCount === true;
+      });
+      var hasBin = some(encodings, (encQ: EncodingQuery) => {
+        return !!encQ.bin;
+      });
+
+      if (hasCount) {
         // If there is count, we might add additional count field, making it a little less simple
         // then when we just apply aggregate to Q field
         return {
@@ -46,12 +53,20 @@ function aggregationQualityFeature (specM: SpecQueryModel, schema: Schema, opt: 
           score: 0.8,
           feature: 'Aggregate with count'
         };
+      } else if (hasBin) {
+        // This is not as good as binning all the Q and show heatmap
+        return {
+          type: name,
+          score: 0.7,
+          feature: 'Aggregate with bin but without count'
+        };
+      } else {
+        return {
+          type: name,
+          score: 0.9,
+          feature: 'Aggregate without count and without bin'
+        };
       }
-      return {
-        type: name,
-        score: 0.9,
-        feature: 'Aggregate without count'
-      };
     }
     // no dimension -- often not very useful
     return {

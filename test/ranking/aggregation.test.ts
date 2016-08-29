@@ -62,15 +62,16 @@ describe('ranking/aggregation', () => {
             'NxQ', 'TxQ', 'QxQ', 'NxT', 'year_TxQ',
             'TxT1', 'Txyear_T1' // TODO: possibly move these two to the next tier
           ],
-          ['N x mean_Q', 'year_T x mean_Q', 'bin_Q x mean_Q1'],
+          ['N x mean_Q', 'year_T x mean_Q'],
           [
             'N x N x count_*', 'N x year_T x count_*', 'N x bin_Q x count_*',
             'year_T x year_T1 x count_*', 'year_T x bin_Q x count_*',
             'bin_Q x bin_Q1 x count_*'
           ],
+          ['bin_Q x mean_Q1'],
           ['mean_Q x mean_Q'],
           ['NxN', 'N x year_T', 'N x bin_Q', 'year_T x year_T1', 'year_T x bin_Q', 'bin_Q x bin_Q1'],
-          ['T x mean_Q', 'Q x mean_Q']
+          ['T x mean_Q', 'Q x mean_Q'] // FIXME this is not necessarily bad depending on the data distribution
         ]
       }]
     };
