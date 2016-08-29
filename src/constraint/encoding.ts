@@ -94,10 +94,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     allowEnumSpecForProperties: false,
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
-      if (encQ.field === '*') {
-        return encQ.aggregate === AggregateOp.COUNT;
-      }
-      return true;
+      return (encQ.field === '*') === (encQ.aggregate === AggregateOp.COUNT);
     }
   // TODO: minCardinalityForBin
   },{

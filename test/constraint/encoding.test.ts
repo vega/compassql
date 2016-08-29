@@ -126,6 +126,15 @@ describe('constraints/encoding', () => {
         )
       );
     });
+
+    it('should return false for aggregate=COUNT without field=*', () => {
+      assert.isFalse(
+        ENCODING_CONSTRAINT_INDEX['asteriskFieldWithCountOnly'].satisfy(
+          { channel: Channel.X, aggregate: AggregateOp.COUNT, field: 'haha', type: Type.QUANTITATIVE },
+          schema, {}, defaultOpt
+        )
+      );
+    });
   });
 
   describe('binAppliedForQuantitative', () => {
