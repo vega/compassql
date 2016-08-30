@@ -253,7 +253,13 @@ export class Schema {
       // coerce non-quantitative numerical data into number type
       domain = domain.map(x => +x);
     }
-    return domain.sort();
+    if (fieldSchema.primitiveType === PrimitiveType.INTEGER || fieldSchema.primitiveType === PrimitiveType.NUMBER) {
+      return domain.sort(function(a, b) {
+        return a - b;
+      });
+    } else {
+      return domain.sort();
+    }
   }
 
   /**
