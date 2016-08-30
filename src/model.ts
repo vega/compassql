@@ -422,7 +422,10 @@ export class SpecQueryModel {
   /** channel => EncodingQuery */
   private _channelCount: Dict<number>;
   private _enumSpecIndex: EnumSpecIndex;
-  private _enumSpecAssignment: Dict<any>;
+
+  /** Mapping from enum spec name to assigned value */
+  private _assignedValueIndex: Dict<any>;
+
   private _schema: Schema;
   private _opt: QueryConfig;
 
@@ -529,7 +532,7 @@ export class SpecQueryModel {
     }, {} as Dict<number>);
 
     this._enumSpecIndex = enumSpecIndex;
-    this._enumSpecAssignment = enumSpecAssignment;
+    this._assignedValueIndex = enumSpecAssignment;
     this._opt = opt;
     this._schema = schema;
   }
@@ -547,17 +550,17 @@ export class SpecQueryModel {
   }
 
   public duplicate(): SpecQueryModel {
-    return new SpecQueryModel(duplicate(this._spec), this._enumSpecIndex, this._schema, this._opt, duplicate(this._enumSpecAssignment));
+    return new SpecQueryModel(duplicate(this._spec), this._enumSpecIndex, this._schema, this._opt, duplicate(this._assignedValueIndex));
   }
 
   public setMark(mark: Mark) {
     const name = (this._spec.mark as EnumSpec<Mark>).name;
-    this._enumSpecAssignment[name] = this._spec.mark = mark;
+    this._assignedValueIndex[name] = this._spec.mark = mark;
   }
 
   public resetMark() {
     const enumSpec = this._spec.mark = this._enumSpecIndex.mark;
-    delete this._enumSpecAssignment[enumSpec.name];
+    delete this._assignedValueIndex[enumSpec.name];
   }
 
   public getMark() {
@@ -592,7 +595,7 @@ export class SpecQueryModel {
       encQ[prop] = value;
     }
 
-    this._enumSpecAssignment[enumSpec.name] = value;
+    this._assignedValueIndex[enumSpec.name] = value;
 
     if (prop === Property.CHANNEL) {
       // If there is a new channel, make sure it exists and add it to the count.
@@ -615,7 +618,11 @@ export class SpecQueryModel {
     }
 
     // add remove value that is reset from the assignment map
-    delete this._enumSpecAssignment[enumSpec.name];
+    delete this._assignedValueIndex[enumSpec.name];
+  }
+
+  public getAssignedValue(enumSpecName: string) {
+    return this._assignedValueIndex[enumSpecName];
   }
 
   public channelUsed(channel: Channel) {
