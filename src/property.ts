@@ -22,6 +22,7 @@ export enum Property {
   AUTOCOUNT = 'autoCount' as any,
   BIN = 'bin' as any,
   BIN_MAXBINS = 'binMaxBins' as any,
+  HAS_FN = 'hasFn' as any,
   TIMEUNIT = 'timeUnit' as any,
   FIELD = 'field' as any,
   TYPE = 'type' as any,

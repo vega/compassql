@@ -277,7 +277,56 @@ describe('constraints/encoding', () => {
         assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
+  });
 
+  describe('hasFn', () => {
+    it('should return true if encQ has hasFn = false', () => {
+      const encQ: EncodingQuery = {
+        channel: Channel.COLOR,
+        field: 'Q',
+        type: Type.QUANTITATIVE
+      };
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, {}, defaultOpt));
+    });
+
+    it('should return false if encQ has hasFn = true and has no function', () => {
+      const encQ: EncodingQuery = {
+        channel: Channel.COLOR,
+        field: 'Q',
+        type: Type.QUANTITATIVE
+      };
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, {}, defaultOpt));
+    });
+
+    it('should return true if encQ has hasFn = true and has aggregate', () => {
+      const encQ: EncodingQuery = {
+        channel: Channel.COLOR,
+        aggregate: AggregateOp.MEAN,
+        field: 'Q',
+        type: Type.QUANTITATIVE
+      };
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, {}, defaultOpt));
+    });
+
+    it('should return true if encQ has hasFn = true and has bin', () => {
+      const encQ: EncodingQuery = {
+        channel: Channel.COLOR,
+        bin: true,
+        field: 'Q',
+        type: Type.QUANTITATIVE
+      };
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, {}, defaultOpt));
+    });
+
+    it('should return true if encQ has hasFn = true and has timeUnit', () => {
+      const encQ: EncodingQuery = {
+        channel: Channel.COLOR,
+        timeUnit: TimeUnit.HOURS,
+        field: 'T',
+        type: Type.TEMPORAL
+      };
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, {}, defaultOpt));
+    });
   });
 
   describe('maxCardinalityForCategoricalColor', () => {

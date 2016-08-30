@@ -20,6 +20,11 @@ export interface EncodingQuery {
   autoCount?: boolean | EnumSpec<boolean> | ShortEnumSpec;
   timeUnit?: TimeUnit | EnumSpec<TimeUnit> | ShortEnumSpec;
 
+  /**
+   * Special flag for enforcing that the field should have either timeUnit, bin, or aggregate
+   */
+  hasFn?: boolean;
+
   bin?: boolean | BinQuery | ShortEnumSpec;
   scale?: boolean | ScaleQuery | ShortEnumSpec;
 

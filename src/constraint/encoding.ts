@@ -133,6 +133,18 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       return true;
     }
   },{
+    name: 'hasFn',
+    description: 'A field with as hasFn flag should have one of aggregate, timeUnit, or bin.',
+    properties: [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT],
+    allowEnumSpecForProperties: true,
+    strict: true,
+    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+      if (encQ.hasFn) {
+        return encQ.aggregate || encQ.bin || encQ.timeUnit;
+      }
+      return true;
+    }
+  },{
     name: 'omitScaleZeroWithBinnedField',
     description: 'Do not use scale zero with binned field',
     properties: [Property.SCALE, Property.SCALE_ZERO, Property.BIN],
