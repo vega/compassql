@@ -245,21 +245,21 @@ export class Schema {
     // TODO: differentiate for field with bin / timeUnit
     const fieldSchema = this._fieldSchemaIndex[encQ.field as string];
     var domain: any[] = keys(fieldSchema.stats.unique);
-    if (fieldSchema.type === Type.QUANTITATIVE || fieldSchema.primitiveType === PrimitiveType.DATE) {
-      // return [min, max] for quantitative and date data
+    if (fieldSchema.type === Type.QUANTITATIVE) {
+      // return [min, max], coerced into number types
+      return [+fieldSchema.stats.min, +fieldSchema.stats.max];
+    } else if (fieldSchema.primitiveType === PrimitiveType.DATE) {
+      // return [min, max] dates
       domain = [fieldSchema.stats.min, fieldSchema.stats.max];
     } else if (fieldSchema.primitiveType === PrimitiveType.INTEGER ||
         fieldSchema.primitiveType === PrimitiveType.NUMBER) {
       // coerce non-quantitative numerical data into number type
       domain = domain.map(x => +x);
-    }
-    if (fieldSchema.primitiveType === PrimitiveType.INTEGER || fieldSchema.primitiveType === PrimitiveType.NUMBER) {
       return domain.sort(function(a, b) {
         return a - b;
       });
-    } else {
-      return domain.sort();
     }
+    return domain.sort();
   }
 
   /**
