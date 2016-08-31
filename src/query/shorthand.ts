@@ -229,7 +229,7 @@ export function fieldDef(encQ: EncodingQuery,
         if (isString(encQ[nestedPropParent])) {
           props.push({
             key: nestedPropParent + '',
-            value: encQ[nestedPropParent]
+            value: JSON.stringify(encQ[nestedPropParent])
           });
         } else {
           const nestedProps = getNestedEncodingPropertyChildren(nestedPropParent);
