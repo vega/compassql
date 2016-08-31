@@ -8,7 +8,7 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
-import {vlSpec, spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, filter as filterShorthand, calculate as calculateShorthand, INCLUDE_ALL, getReplacer} from '../../src/query/shorthand';
+import {vlSpec, spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, calculate as calculateShorthand, INCLUDE_ALL, getReplacer} from '../../src/query/shorthand';
 import {extend} from '../../src/util';
 import {REPLACE_BLANK_FIELDS} from '../../src/query/groupby';
 
@@ -29,7 +29,7 @@ describe('query/shorthand', () => {
         encoding: {
           x: {field: 'x', type: Type.QUANTITATIVE}
         }
-      }), 'point|calculate:{x2:datum.x*2}|filter:datum.x === 5|x:x,q');
+      }), 'point|calculate:{x2:datum.x*2}|filter:"datum.x === 5"|x:x,q');
     });
   });
 
@@ -124,7 +124,23 @@ describe('query/shorthand', () => {
           {channel: Channel.X, field: 'b2', type: Type.QUANTITATIVE}
         ]
       });
-      assert.equal(str, 'point|calculate:{b2:3*datum["b2"]}|filter:datum["b2"] > 60|filterInvalid:false|x:b2,q');
+      assert.equal(str, 'point|calculate:{b2:3*datum["b2"]}|filter:"datum[\\"b2\\"] > 60"|filterInvalid:false|x:b2,q');
+    });
+
+    it('should return correct spec string for a specific specQuery with transform filter and calculate', () => {
+      const str = specShorthand({
+        transform: {
+          filter: [
+            {field: 'color', equal: 'red'}, 'datum["b2"] > 60', {field: 'color', oneOf: ['red', 'yellow']}, {field: 'x', range: [0,5]}
+          ],
+          filterInvalid: false
+        },
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'b2', type: Type.QUANTITATIVE}
+        ]
+      });
+      assert.equal(str, 'point|filter:[{"field":"color","equal":"red"},"datum[\\"b2\\"] > 60",{"field":"color","oneOf":["red","yellow"]},{"field":"x","range":[0,5]}]|filterInvalid:false|x:b2,q');
     });
 
     it('should return correct spec string for a specific specQuery with an empty transform', () => {
@@ -136,30 +152,6 @@ describe('query/shorthand', () => {
         ]
       });
       assert.equal(str, 'point|x:a,q');
-    });
-  });
-
-  describe('filter', () => {
-    it('should return a correct filter string when passed a vega expression string', () => {
-      const str = filterShorthand('datum["b2"] > 60');
-      assert.equal(str, 'datum["b2"] > 60');
-    });
-
-    it('should return a correct filter string when passed a Filter Object', () => {
-      const str = filterShorthand({field: 'x', range: [null, 5]});
-      assert.equal(str, 'datum["x"] <= 5');
-    });
-
-    it('should return a correct filter string when passed a string array', () => {
-      const str = filterShorthand(['datum["b2"] > 60', 'datum["b2"] < 65']);
-      assert.equal(str, '(datum["b2"] > 60) && (datum["b2"] < 65)');
-    });
-
-    it('should return a correct filter string when passed an array of FilterObjects', () => {
-      const str = filterShorthand([
-        {field: 'color', equal: 'red'}, {field: 'color', oneOf: ['red', 'yellow']}, {field: 'x', range: [0,5]}
-      ]);
-      assert.equal(str, '(datum["color"]==="red") && (indexof(["red","yellow"], datum["color"]) !== -1) && (inrange(datum["x"], 0, 5))');
     });
   });
 

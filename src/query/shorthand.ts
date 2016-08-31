@@ -1,6 +1,4 @@
 import {Channel} from 'vega-lite/src/channel';
-import {expression} from 'vega-lite/src/filter';
-import {Filter} from 'vega-lite/src/filter';
 import {Formula} from 'vega-lite/src/transform';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {Type} from 'vega-lite/src/type';
@@ -89,7 +87,7 @@ export function spec(specQ: SpecQuery,
 
     if (include[Property.FILTER]) {
       if (specQ.transform.filter !== undefined) {
-        parts.push('filter:' + filter(specQ.transform.filter));
+        parts.push('filter:' + JSON.stringify(specQ.transform.filter));
       }
     }
 
@@ -136,17 +134,6 @@ export function spec(specQ: SpecQuery,
   );
 
   return parts.join('|');
-}
-
-export function filter(_filter: string | Filter | (string | Filter)[]): string {
-  if (_filter instanceof Array) {
-    const filters = _filter.map(filter);
-    return filters.length > 1 ? '(' + filters.join(') && (') + ')' : filters[0];
-  } else if (typeof _filter === 'string') {
-    return _filter;
-  } else { // FilterObj
-    return expression(_filter);
-  }
 }
 
 export function calculate(formulaArr: Formula[]): string {
