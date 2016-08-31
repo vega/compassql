@@ -140,7 +140,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     strict: true,
     satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
       if (encQ.hasFn) {
-        return encQ.aggregate || encQ.bin || encQ.timeUnit;
+        return !!encQ.aggregate || !!encQ.bin || !!encQ.timeUnit;
       }
       return true;
     }

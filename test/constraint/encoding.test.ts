@@ -280,7 +280,7 @@ describe('constraints/encoding', () => {
   });
 
   describe('hasFn', () => {
-    it('should return true if encQ has hasFn = false', () => {
+    it('should return true if encQ has no hasFn', () => {
       const encQ: EncodingQuery = {
         channel: Channel.COLOR,
         field: 'Q',
@@ -291,6 +291,7 @@ describe('constraints/encoding', () => {
 
     it('should return false if encQ has hasFn = true and has no function', () => {
       const encQ: EncodingQuery = {
+        hasFn: true,
         channel: Channel.COLOR,
         field: 'Q',
         type: Type.QUANTITATIVE
@@ -300,6 +301,7 @@ describe('constraints/encoding', () => {
 
     it('should return true if encQ has hasFn = true and has aggregate', () => {
       const encQ: EncodingQuery = {
+        hasFn: true,
         channel: Channel.COLOR,
         aggregate: AggregateOp.MEAN,
         field: 'Q',
@@ -310,6 +312,7 @@ describe('constraints/encoding', () => {
 
     it('should return true if encQ has hasFn = true and has bin', () => {
       const encQ: EncodingQuery = {
+        hasFn: true,
         channel: Channel.COLOR,
         bin: true,
         field: 'Q',
@@ -320,6 +323,7 @@ describe('constraints/encoding', () => {
 
     it('should return true if encQ has hasFn = true and has timeUnit', () => {
       const encQ: EncodingQuery = {
+        hasFn: true,
         channel: Channel.COLOR,
         timeUnit: TimeUnit.HOURS,
         field: 'T',
