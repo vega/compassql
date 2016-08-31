@@ -147,7 +147,7 @@ describe('query/shorthand', () => {
 
     it('should return a correct filter string when passed a Filter Object', () => {
       const str = filterShorthand({field: 'x', range: [null, 5]});
-      assert.equal(str, 'datum["x"] <= 5');
+      assert.equal(str, '{"field":"x","range":[null,5]}');
     });
 
     it('should return a correct filter string when passed a string array', () => {
@@ -159,7 +159,14 @@ describe('query/shorthand', () => {
       const str = filterShorthand([
         {field: 'color', equal: 'red'}, {field: 'color', oneOf: ['red', 'yellow']}, {field: 'x', range: [0,5]}
       ]);
-      assert.equal(str, '(datum["color"]==="red") && (indexof(["red","yellow"], datum["color"]) !== -1) && (inrange(datum["x"], 0, 5))');
+      assert.equal(str, '({"field":"color","equal":"red"}) && ({"field":"color","oneOf":["red","yellow"]}) && ({"field":"x","range":[0,5]})');
+    });
+
+    it('should return a correct filter string when passed an array with a single FilterObject', () => {
+      const str = filterShorthand([
+        {field: 'color', equal: 'red'}
+      ]);
+      assert.equal(str, '{"field":"color","equal":"red"}');
     });
   });
 

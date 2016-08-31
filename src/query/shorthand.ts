@@ -1,5 +1,4 @@
 import {Channel} from 'vega-lite/src/channel';
-import {expression} from 'vega-lite/src/filter';
 import {Filter} from 'vega-lite/src/filter';
 import {Formula} from 'vega-lite/src/transform';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
@@ -145,7 +144,7 @@ export function filter(_filter: string | Filter | (string | Filter)[]): string {
   } else if (typeof _filter === 'string') {
     return _filter;
   } else { // FilterObj
-    return expression(_filter);
+    return JSON.stringify(_filter);
   }
 }
 
