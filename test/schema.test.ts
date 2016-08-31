@@ -535,8 +535,8 @@ describe('schema', () => {
     it('should return a date array containing correctly translated date types', () => {
       var domain: Date[] = domainSchema.domain({field: 'e', channel: Channel.X});
       assert.equal(domain.length, 2);
-      assert.equal(domain[0].getTime(), new Date('7/14/2016').getTime());
-      assert.equal(domain[1].getTime(), new Date('6/14/2016').getTime());
+      assert.equal(domain[0].getTime(), new Date('6/14/2016').getTime());
+      assert.equal(domain[1].getTime(), new Date('7/14/2016').getTime());
     });
   });
 

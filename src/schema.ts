@@ -250,7 +250,7 @@ export class Schema {
       return [+fieldSchema.stats.min, +fieldSchema.stats.max];
     } else if (fieldSchema.primitiveType === PrimitiveType.DATE) {
       // return [min, max] dates
-      domain = [fieldSchema.stats.min, fieldSchema.stats.max];
+      return [fieldSchema.stats.min, fieldSchema.stats.max];
     } else if (fieldSchema.primitiveType === PrimitiveType.INTEGER ||
         fieldSchema.primitiveType === PrimitiveType.NUMBER) {
       // coerce non-quantitative numerical data into number type
