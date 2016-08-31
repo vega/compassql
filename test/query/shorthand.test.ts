@@ -269,7 +269,7 @@ describe('query/shorthand', () => {
       const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: SortOrder.ASCENDING
       });
-      assert.equal(str, 'a,q,sort=ascending');
+      assert.equal(str, 'a,q,sort="ascending"');
     });
 
     it('should return correct fieldDefShorthand string for sort field definition object', () => {
