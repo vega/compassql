@@ -31,6 +31,7 @@ export function getReplacer(replace: Dict<string>): Replacer {
 
 export function value(v: any, replacer: Replacer): any {
   if (isEnumSpec(v)) {
+    // Return the enum array if it's a full enum spec, or just return SHORT_ENUM_SPEC for short ones.
     return v.enum || SHORT_ENUM_SPEC;
   }
   if (replacer) {
