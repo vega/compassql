@@ -11,14 +11,13 @@ import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX, SpecConstraintModel} from '../../src/constraint/spec';
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {SpecQueryModel} from '../../src/model';
-import {Schema} from '../../src/schema';
 import {SpecQuery} from '../../src/query/spec';
 import {Property} from '../../src/property';
 import {duplicate, extend} from '../../src/util';
 
-describe('constraints/spec', () => {
-  const schema = new Schema([]);
+import {schema} from '../fixture';
 
+describe('constraints/spec', () => {
   function buildSpecQueryModel(specQ: SpecQuery) {
     return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
   }
@@ -1111,105 +1110,119 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('omitRawContinuousFieldForAggregatePlot', () => {
+  describe('maxCardinalityForRawContinuousFieldInAggregatePlot', () => {
     it('should return false if the aggregate plot groups by a raw temporal field with timeUnit enumerated as undefined', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
-            {channel: Channel.Y, field: 'C', type: Type.TEMPORAL, timeUnit: {enum: [undefined]}}
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'T', type: Type.TEMPORAL, timeUnit: {enum: [undefined]}}
           ]
         });
 
       specM.setEncodingProperty(1, Property.TIMEUNIT, undefined, {enum: [undefined]});
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['maxCardinalityForRawContinuousFieldInAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return false if the aggregate plot groups by a raw temporal field with specified timeUnit = undefined', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
-            {channel: Channel.Y, field: 'C', type: Type.TEMPORAL}
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'T', type: Type.TEMPORAL}
           ]
         });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['maxCardinalityForRawContinuousFieldInAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return false if the aggregate plot groups by a raw temporal field with specified timeUnit = undefined and we constraintManuallySpecifiedValue', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
-            {channel: Channel.Y, field: 'C', type: Type.TEMPORAL}
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'N', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'T', type: Type.TEMPORAL}
           ]
         });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['maxCardinalityForRawContinuousFieldInAggregatePlot'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
     });
 
     it('should return true if the aggregate plot groups by a temporal field with timeUnit', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
-          {channel: Channel.Y, timeUnit: TimeUnit.MONTH, field: 'C', type: Type.TEMPORAL}
+          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'N', type: Type.NOMINAL},
+          {channel: Channel.Y, timeUnit: TimeUnit.MONTH, field: 'T', type: Type.TEMPORAL}
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['maxCardinalityForRawContinuousFieldInAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if the aggregate plot groups by a temporal field with timeUnit as enumSpec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
-          {channel: Channel.Y, timeUnit: {enum: [TimeUnit.MONTH, undefined]}, field: 'C', type: Type.TEMPORAL}
+          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'N', type: Type.NOMINAL},
+          {channel: Channel.Y, timeUnit: {enum: [TimeUnit.MONTH, undefined]}, field: 'T', type: Type.TEMPORAL}
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['maxCardinalityForRawContinuousFieldInAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if the aggregate plot groups by a quantitative field that is specified as raw', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
-            {channel: Channel.Y, field: 'C', type: Type.QUANTITATIVE}
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'N', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE}
           ]
         });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['maxCardinalityForRawContinuousFieldInAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return false if the aggregate plot groups by a quantitative field that is specified as raw and we constraintManuallySpecifiedValue', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
-            {channel: Channel.Y, field: 'C', type: Type.QUANTITATIVE}
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'M', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE}
           ]
         });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['maxCardinalityForRawContinuousFieldInAggregatePlot'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
     });
 
     it('should return false if the aggregate plot groups by a raw quantitative field that is enumerated', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
-            {channel: Channel.Y, aggregate: {enum: [undefined]}, field: 'C', type: Type.QUANTITATIVE}
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Channel.Y, aggregate: {enum: [undefined]}, field: 'Q1', type: Type.QUANTITATIVE}
           ]
         });
 
       specM.setEncodingProperty(1, Property.AGGREGATE, undefined, {enum: [undefined]});
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['maxCardinalityForRawContinuousFieldInAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return true if the aggregate plot groups by a raw quantitative field that is enumerated but have lower cardinality', () => {
+      const specM = buildSpecQueryModel({
+          mark: Mark.POINT,
+          encodings: [
+            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Channel.Y, aggregate: {enum: [undefined]}, field: 'Q10', type: Type.QUANTITATIVE}
+          ]
+        });
+
+      specM.setEncodingProperty(1, Property.AGGREGATE, undefined, {enum: [undefined]});
+
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['maxCardinalityForRawContinuousFieldInAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if the aggregate plot groups by a binned quantitative field', () => {
@@ -1217,11 +1230,11 @@ describe('constraints/spec', () => {
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
-          {channel: Channel.Y, bin: true, field: 'C', type: Type.QUANTITATIVE}
+          {channel: Channel.Y, bin: true, field: 'Q', type: Type.QUANTITATIVE}
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['maxCardinalityForRawContinuousFieldInAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if the aggregate plot groups by a quantitative field with bin as enumSpec', () => {
@@ -1229,22 +1242,22 @@ describe('constraints/spec', () => {
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
-          {channel: Channel.Y, bin: {enum: [true, false]}, field: 'C', type: Type.QUANTITATIVE}
+          {channel: Channel.Y, bin: {enum: [true, false]}, field: 'Q', type: Type.QUANTITATIVE}
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['maxCardinalityForRawContinuousFieldInAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true for a plot with only aggregated quantitative field.', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.QUANTITATIVE}
+          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.QUANTITATIVE}
         ]
       });
 
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['maxCardinalityForRawContinuousFieldInAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true for any raw plot', () => {
@@ -1252,12 +1265,12 @@ describe('constraints/spec', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, field: 'A', type: Type.NOMINAL},
-            {channel: Channel.Y, timeUnit: timeUnit, field: 'C', type: Type.TEMPORAL}
+            {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+            {channel: Channel.Y, timeUnit: timeUnit, field: 'T', type: Type.TEMPORAL}
           ]
         });
 
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['maxCardinalityForRawContinuousFieldInAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
   });

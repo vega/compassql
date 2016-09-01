@@ -464,8 +464,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'omitRawContinuousFieldForAggregatePlot',
-    description: 'Aggregate plot should not use raw continuous field as group by values. ' +
+    name: 'maxCardinalityForRawContinuousFieldInAggregatePlot',
+    description: 'Aggregate plot should not use raw continuous field as group by values if it has cardinality beyond certain threshold. ' +
       '(Quantitative should be binned. Temporal should have time unit.)',
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN, Property.TYPE],
     allowEnumSpecForProperties: true,
@@ -486,7 +486,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
                   specM.enumSpecIndex.hasEncodingProperty(i, Property.TIMEUNIT) ||
                   opt.constraintManuallySpecifiedValue
                 )) {
-               return false;
+
+               return schema.cardinality(encQ) <= opt.maxCardinalityForRawContinuousFieldInAggregatePlot;
              }
            }
            if (encQ.type === Type.QUANTITATIVE) {
@@ -497,11 +498,11 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
                   specM.enumSpecIndex.hasEncodingProperty(i, Property.AUTOCOUNT)
                   ) {
                  // and it's raw from enumeration
-                 return false;
+                 return schema.cardinality(encQ) <= opt.maxCardinalityForRawContinuousFieldInAggregatePlot;
                }
                if (opt.constraintManuallySpecifiedValue) {
                  // or if we constraintManuallySpecifiedValue
-                 return false;
+                 return schema.cardinality(encQ) <= opt.maxCardinalityForRawContinuousFieldInAggregatePlot;
                }
              }
            }
