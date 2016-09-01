@@ -8,7 +8,7 @@ import * as dlBin from 'datalib/src/bins/bins';
 
 import {BinQuery, EncodingQuery} from './query/encoding';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
-import {contains, extend, keys} from './util';
+import {cmp, contains, extend, keys} from './util';
 
 export class Schema {
   private _fieldSchemas: FieldSchema[];
@@ -255,11 +255,14 @@ export class Schema {
         fieldSchema.primitiveType === PrimitiveType.NUMBER) {
       // coerce non-quantitative numerical data into number type
       domain = domain.map(x => +x);
-      return domain.sort(function(a, b) {
-        return a - b;
-      });
+      return domain.sort(cmp);
     }
-    return domain.sort();
+
+    return domain.map((x) => {
+      // Convert 'null' to null as it is encoded similarly in datalib.
+      // This is wrong when it is a string 'null' but that rarely happens.
+      return x==='null' ? null : x;
+    }).sort(cmp);
   }
 
   /**

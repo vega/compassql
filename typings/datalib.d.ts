@@ -4,6 +4,7 @@ declare module 'datalib/src/import/load' {
 }
 
 declare module 'datalib/src/util' {
+  export function cmp(a, b): number;
   export function keys(a): Array<string>;
   export function extend(a, b, ...rest);
   export function duplicate<T>(a: T): T;
