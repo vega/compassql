@@ -211,7 +211,6 @@ describe('query/shorthand', () => {
       assert.equal(str, '?:a,q');
     });
 
-
     it('should return correct encoding string for bin with maxbins as enum spec and channel as enum spec', () => {
       const str = encodingShorthand({bin: {maxbins: {enum: [10, 20]}}, channel: {enum: [Channel.X, Channel.Y]}, field: 'a', type: Type.QUANTITATIVE});
       assert.equal(str, '?["x","y"]:bin(a,q,maxbins=?[10,20])');
