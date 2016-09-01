@@ -109,7 +109,7 @@ describe('query/shorthand', () => {
         ]
       });
 
-      assert.equal(str, '?["point","tick"]|?["x","y"]:?{"aggregate":"?","bin":"?"}(?["blah1","blah2"],?["nominal","ordinal"])');
+      assert.equal(str, '?["point","tick"]|?["x","y"]:?{"aggregate":"?","bin":"?"}(?["field1","field2"],?["nominal","ordinal"])');
     });
 
     it('should return correct spec string for ambiguous specQuery', () => {
