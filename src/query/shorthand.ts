@@ -12,7 +12,7 @@ import {TransformQuery} from './transform';
 
 import {isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 import {getNestedEncodingPropertyChildren, Property, DEFAULT_PROPERTY_PRECEDENCE} from '../property';
-import {Dict, extend, keys} from '../util';
+import {Dict, extend, keys, isArray} from '../util';
 
 export type Replacer = (s: string) => string;
 
@@ -409,12 +409,15 @@ export namespace shorthandParser {
     // Aggregate, Bin, TimeUnit as enum spec case
     if (fieldDefShorthand[0] === '?') {
       let closingBraceIndex = getClosingBraceIndex(1, fieldDefShorthand);
-      let enumFnString = fieldDefShorthand.substring(2, closingBraceIndex);
-      let enumFnValuePairs = enumFnString.split(',');
 
-      for (let enumFnValuePair of enumFnValuePairs) {
-        let fnValue = enumFnValuePair.split(':');
-        encQ[JSON.parse(fnValue[0])] = JSON.parse(fnValue[1]);
+      let fnEnumIndex = JSON.parse(fieldDefShorthand.substring(1, closingBraceIndex + 1));
+
+      for (let encodingProperty in fnEnumIndex) {
+        if (isArray(fnEnumIndex[encodingProperty])) {
+          encQ[encodingProperty] = {enum: fnEnumIndex[encodingProperty]};
+        } else {
+          encQ[encodingProperty] = fnEnumIndex[encodingProperty];
+        }
       }
 
       return rawFieldDef(encQ,

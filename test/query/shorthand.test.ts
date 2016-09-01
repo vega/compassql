@@ -56,7 +56,7 @@ describe('query/shorthand', () => {
     });
 
     it('should correctly parse an ambiguous shorthand with aggregate and bin as enum spec', () => {
-      let specQ = parse('?|?:?{"aggregate":"?","bin":"?"}(?,?)');
+      let specQ = parse('?|?:?{"aggregate":"?","bin":"?","hasFn":true}(?,?)');
 
       assert.equal(specQ.mark, '?');
       assert.deepEqual(specQ.encodings[0], {
@@ -64,6 +64,21 @@ describe('query/shorthand', () => {
         bin: '?',
         channel: '?',
         field: '?',
+        hasFn: true,
+        type: '?'
+      });
+    });
+
+    it('should correctly parse an ambiguous shorthand with aggregate and bin as enum spec', () => {
+      let specQ = parse('?|?:?{"aggregate":["max","min"],"bin":[false,true],"hasFn":true}(?,?)');
+
+      assert.equal(specQ.mark, '?');
+      assert.deepEqual(specQ.encodings[0], {
+        aggregate: {enum: ['max', 'min']},
+        bin: {enum: [false, true]},
+        channel: '?',
+        field: '?',
+        hasFn: true,
         type: '?'
       });
     });
