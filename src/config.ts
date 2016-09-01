@@ -297,8 +297,8 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   scaleRanges: [undefined],
   scaleTypes: [undefined, ScaleType.LOG],
 
-  numberOrdinalProportion: 0,
-  numberOrdinalLimit: 0,
+  numberOrdinalProportion: .05,
+  numberOrdinalLimit: 50,
 
   // CONSTRAINTS
   constraintManuallySpecifiedValue: false,
