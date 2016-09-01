@@ -174,7 +174,7 @@ export function fieldDef(encQ: EncodingQuery,
     include: Dict<boolean> = INCLUDE_ALL,
     replace: Dict<Replacer> = {}): string {
 
-  let fn = null;
+  let fn = null, fnEnumIndex = null;
 
   /** Encoding properties e.g., Scale, Axis, Legend */
   const props: {key: string, value: boolean | Object}[] = [];
@@ -190,6 +190,8 @@ export function fieldDef(encQ: EncodingQuery,
   } else if (include[Property.BIN] && encQ.bin && !isEnumSpec(encQ.bin)) {
     fn = 'bin';
 
+    // TODO(https://github.com/uwdata/compassql/issues/97):
+    // extract this as a method that support other bin properties
     if (include[Property.BIN_MAXBINS] && encQ.bin['maxbins']) {
       props.push({
         key: 'maxbins',
@@ -200,7 +202,21 @@ export function fieldDef(encQ: EncodingQuery,
     for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
       if (include[prop] && encQ[prop] && isEnumSpec(encQ[prop])) {
         fn = SHORT_ENUM_SPEC + '';
-        break;
+
+        // assign fnEnumIndex[prop] = array of enum values or just "?" if it is SHORT_ENUM_SPEC
+        fnEnumIndex = fnEnumIndex || {};
+        fnEnumIndex[prop] = encQ[prop].enum || encQ[prop];
+
+        if (prop === Property.BIN) {
+          // TODO(https://github.com/uwdata/compassql/issues/97):
+          // extract this as a method that support other bin properties
+          if (include[Property.BIN_MAXBINS] && encQ.bin['maxbins']) {
+            props.push({
+              key: 'maxbins',
+              value: value(encQ.bin['maxbins'], replace[Property.BIN_MAXBINS])
+            });
+          }
+        }
       }
     }
   }
@@ -253,5 +269,8 @@ export function fieldDef(encQ: EncodingQuery,
   }
   // encoding properties
   fieldAndParams += props.map((p) => ',' + p.key + '=' + p.value).join('');
-  return (fn ? fn + '(' + fieldAndParams + ')' : fieldAndParams);
+  if (fn) {
+    return fn + (fnEnumIndex ? JSON.stringify(fnEnumIndex) : '') + '(' + fieldAndParams + ')';
+  }
+  return fieldAndParams;
 }

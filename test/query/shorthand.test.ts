@@ -101,15 +101,14 @@ describe('query/shorthand', () => {
       assert.equal(str, 'a');
     });
 
-
     it('should return correct spec string for ambiguous specQuery', () => {
       const str = specShorthand({
         mark: SHORT_ENUM_SPEC,
         encodings: [
-          {channel: SHORT_ENUM_SPEC, field: SHORT_ENUM_SPEC, type: SHORT_ENUM_SPEC, aggregate: SHORT_ENUM_SPEC}
+          {channel: SHORT_ENUM_SPEC, field: SHORT_ENUM_SPEC, type: SHORT_ENUM_SPEC, aggregate: SHORT_ENUM_SPEC, bin: SHORT_ENUM_SPEC}
         ]
       });
-      assert.equal(str, '?|?:?(?,?)');
+      assert.equal(str, '?|?:?{"aggregate":"?","bin":"?"}(?,?)');
     });
 
     it('should return correct spec string for a specific specQuery with transform filter and calculate', () => {
@@ -236,12 +235,30 @@ describe('query/shorthand', () => {
        assert.equal(str, 'a,q');
     });
 
-    it('should return correct fieldDefShorthand string for ambiguous aggregate field', () => {
+    it('should return correct fieldDefShorthand string for ambiguous aggregate/bin field', () => {
        const str = fieldDefShorthand({
-         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, aggregate: SHORT_ENUM_SPEC
+         channel: Channel.X,
+         field: 'a',
+         type: Type.QUANTITATIVE,
+         aggregate: SHORT_ENUM_SPEC,
+         bin: SHORT_ENUM_SPEC
        });
-       assert.equal(str, '?(a,q)');
+       assert.equal(str, '?{"aggregate":"?","bin":"?"}(a,q)');
     });
+
+
+    it('should return correct fieldDefShorthand string for ambiguous aggregate/bin field', () => {
+       const str = fieldDefShorthand({
+         channel: Channel.X,
+         field: 'a',
+         type: Type.QUANTITATIVE,
+         aggregate: {name: 'a1', enum:[AggregateOp.MAX, AggregateOp.MIN]},
+         bin: {enum:[false, true], maxbins:20}
+       });
+       assert.equal(str, '?{"aggregate":["max","min"],"bin":[false,true]}(a,q,maxbins=20)');
+    });
+
+
 
     it('should return correct fieldDefShorthand string for timeunit field', () => {
       const str = fieldDefShorthand({
@@ -254,7 +271,7 @@ describe('query/shorthand', () => {
       const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, timeUnit: SHORT_ENUM_SPEC
         });
-      assert.equal(str, '?(a,q)');
+      assert.equal(str, '?{"timeUnit":"?"}(a,q)');
     });
 
     it('should return correct fieldDefShorthand string for sort with ascending', () => {
@@ -496,7 +513,7 @@ describe('query/shorthand', () => {
        const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: SHORT_ENUM_SPEC
        });
-       assert.equal(str, '?(a,q)');
+       assert.equal(str, '?{"bin":"?"}(a,q)');
     });
 
     it('should return correct fieldDefShorthand string for ambiguous field', () => {
@@ -517,7 +534,7 @@ describe('query/shorthand', () => {
        const str = fieldDefShorthand({
          channel: Channel.X, autoCount: SHORT_ENUM_SPEC
        });
-       assert.equal(str, '?(*,q)');
+       assert.equal(str, '?{"autoCount":"?"}(*,q)');
     });
 
     it('should return correct fieldDefShorthand string for ambiguous type', () => {
