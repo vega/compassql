@@ -8,9 +8,11 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {SHORT_ENUM_SPEC} from '../../src/enumspec';
-import {vlSpec, spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, calculate as calculateShorthand, INCLUDE_ALL, getReplacer} from '../../src/query/shorthand';
+import {parse, splitWithTail, shorthandParser, vlSpec, spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, calculate as calculateShorthand, INCLUDE_ALL, getReplacer} from '../../src/query/shorthand';
 import {extend} from '../../src/util';
 import {REPLACE_BLANK_FIELDS} from '../../src/query/groupby';
+import {EncodingQuery} from '../../src/query/encoding';
+import {SpecQuery} from '../../src/query/spec';
 
 import {assert} from 'chai';
 
@@ -30,6 +32,144 @@ describe('query/shorthand', () => {
           x: {field: 'x', type: Type.QUANTITATIVE}
         }
       }), 'point|calculate:{x2:datum.x*2}|filter:"datum.x === 5"|x:x,q');
+    });
+  });
+
+  describe('parse', () => {
+    it('should correctly parse a shorthand string', () => {
+      let specQ = parse(
+        'point|calculate:{b2:3*datum["b2"]}|filter:"datum[\\"b2\\"] > 60"|filterInvalid:false|x:b2,q|y:bin(balance,q)'
+      );
+
+      assert.deepEqual(specQ, {
+        transform: {
+          calculate: [{field: 'b2', expr: '3*datum["b2"]'}],
+          filter: 'datum["b2"] > 60',
+          filterInvalid: false
+        },
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'b2', type: Type.QUANTITATIVE},
+          {bin: {}, channel: Channel.Y, field: 'balance', type: Type.QUANTITATIVE}
+        ]
+      });
+    });
+
+    it('should correctly parse an ambiguous shorthand with aggregate and bin as enum spec', () => {
+      let specQ = parse('?|?:?{"aggregate":"?","bin":"?"}(?,?)');
+
+      assert.equal(specQ.mark, '?');
+      assert.deepEqual(specQ.encodings[0], {
+        aggregate: '?',
+        bin: '?',
+        channel: '?',
+        field: '?',
+        type: '?'
+      });
+    });
+  });
+
+  describe('shorthandParser', () => {
+    describe('encoding', () => {
+      it('should correctly parse an encoding query given a channel and fieldDefShorthand', () => {
+        let specQ: SpecQuery = {mark: Mark.POINT, encodings: []} as SpecQuery;
+
+        shorthandParser.encoding(
+          specQ,
+          'x',
+          'bin(a,q,maxbins=20,scale={"type":"ordinal"})'
+        );
+
+        assert.deepEqual(specQ.encodings[0], {
+          bin: {maxbins: 20},
+          channel: Channel.X,
+          field: 'a',
+          type: Type.QUANTITATIVE,
+          scale: {type: ScaleType.ORDINAL},
+        });
+      });
+    });
+
+    describe('fn', () => {
+      it('should correctly parse an encoding query given a fieldDefShorthand with aggregation function', () => {
+        let encQ: EncodingQuery = {} as EncodingQuery;
+        shorthandParser.fn(encQ, 'sum(horsepower,q)');
+        assert.deepEqual(encQ, {aggregate: AggregateOp.SUM, field: 'horsepower', type: Type.QUANTITATIVE});
+      });
+
+      it('should correctly parse an encoding query given a fieldDefShorthand with count function', () => {
+        let encQ: EncodingQuery = {} as EncodingQuery;
+        shorthandParser.fn(encQ, 'count(*,q)');
+        assert.deepEqual(encQ,{aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE});
+      });
+
+      it('should correctly parse an encoding query given a fieldDefShorthand with timeunit function', () => {
+        let encQ: EncodingQuery = {} as EncodingQuery;
+        shorthandParser.fn(encQ, 'hours(a,t)');
+        assert.deepEqual(encQ, {field: 'a', timeUnit: TimeUnit.HOURS, type: Type.TEMPORAL});
+      });
+
+      it('should correctly parse an encoding query given a fieldDefShorthand with bin function', () => {
+        let encQ: EncodingQuery = {} as EncodingQuery;
+        shorthandParser.fn(encQ, 'bin(a,q,maxbins=20)');
+        assert.deepEqual(encQ, {
+          bin: {maxbins: 20},
+          field: 'a',
+          type: Type.QUANTITATIVE,
+        });
+      });
+    });
+
+    describe('rawFieldDef', () => {
+      it('should correctly parse an encoding query from fieldDef parts', () => {
+        let encQ = shorthandParser.rawFieldDef({} as EncodingQuery,
+          splitWithTail('a,q,scale={"domain":[1,2],"exponent":3,"type":"pow"},axis={"orient":"top"}', ',', 2)
+        );
+        assert.deepEqual(encQ, {axis: {orient: AxisOrient.TOP}, field: 'a', scale: {domain: [1, 2], exponent: 3, type: ScaleType.POW}, type: Type.QUANTITATIVE});
+      });
+
+      it('should correctly parse an encoding query from fieldDef parts', () => {
+        let encQ = shorthandParser.rawFieldDef({} as EncodingQuery,
+          splitWithTail('a,n,sort={"field":"a","op":"mean","order":"descending"}', ',', 2)
+        );
+        assert.deepEqual(encQ, {field: 'a', sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}, type: Type.NOMINAL});
+      });
+    });
+
+    describe('calculate', () => {
+      it('should correctly parse calculate from shorthand', () => {
+        let specQ: SpecQuery = {} as SpecQuery;
+        // FIXME(https://github.com/uwdata/compassql/issues/260)
+        let shorthandPart = 'calculate:{x2:datum.x*2},{x3:datum.x*3}';
+        let splitPartValue = splitWithTail(shorthandPart, ':', 1)[1];
+
+        shorthandParser.calculate(specQ, splitPartValue);
+        assert.deepEqual(specQ.transform.calculate, [{field: 'x2', expr: 'datum.x*2'}, {field: 'x3', expr: 'datum.x*3'}]);
+      });
+    });
+
+    describe('filter', () => {
+      it('should correctly parse filter from shorthand', () => {
+        let specQ: SpecQuery = {} as SpecQuery;
+        let shorthandPart = 'filter:[{"field":"color","equal":"red"},"datum[\\"b2\\"] > 60",{"field":"color","oneOf":["red","yellow"]},{"field":"x","range":[0,5]}]';
+        let splitPartValue = splitWithTail(shorthandPart, ':', 1)[1];
+
+        shorthandParser.filter(specQ, splitPartValue);
+        assert.deepEqual(specQ.transform.filter, [
+          {field: 'color', equal: 'red'}, 'datum["b2"] > 60', {field: 'color', oneOf: ['red', 'yellow']}, {field: 'x', range: [0,5]}
+        ]);
+      });
+    });
+
+    describe('filterInvalid', () => {
+      it('should correctly parse filterInvalid from shorthand', () => {
+        let specQ: SpecQuery = {} as SpecQuery;
+        let shorthandPart = 'filterInvalid:false';
+        let splitPartValue = splitWithTail(shorthandPart, ':', 1)[1];
+
+        shorthandParser.filterInvalid(specQ, splitPartValue);
+        assert.deepEqual(specQ.transform.filterInvalid, false);
+      });
     });
   });
 
@@ -271,9 +411,9 @@ describe('query/shorthand', () => {
 
     it('should return correct fieldDefShorthand string for timeunit field', () => {
       const str = fieldDefShorthand({
-        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, timeUnit: TimeUnit.HOURS
+        channel: Channel.X, field: 'a', type: Type.TEMPORAL, timeUnit: TimeUnit.HOURS
         });
-      assert.equal(str, 'hours(a,q)');
+      assert.equal(str, 'hours(a,t)');
     });
 
     it('should return correct fieldDefShorthand string for ambiguous timeunit field', () => {
@@ -297,34 +437,19 @@ describe('query/shorthand', () => {
       assert.equal(str, 'a,q,sort={"field":"a","op":"mean","order":"descending"}');
     });
 
-    it('should return correct fieldDefShorthand string for bin with sort field definition object', () => {
-      const str = fieldDefShorthand({
-        bin: true, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
-      });
-      assert.equal(str, 'bin(a,q,sort={"field":"a","op":"mean","order":"descending"})');
-    });
-
-    it('should return correct fieldDefShorthand string for bin with maxbins and sort field definition object', () => {
-      const str = fieldDefShorthand({
-        bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
-      });
-      assert.equal(str, 'bin(a,q,maxbins=20,sort={"field":"a","op":"mean","order":"descending"})');
-    });
-
     it('should return correct fieldDefShorthand string for bin with maxbins, scale with scaleType ' +
        'and sort field definition object', () => {
       const str = fieldDefShorthand({
-        bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
+        bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}
       });
-      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"},sort={"field":"a","op":"mean","order":"descending"})');
+      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"})');
     });
 
-    it('should return correct fieldDefShorthand string for bin with maxbins, axis with orient, scale with scaleType ' +
-       'and sort field definition object', () => {
+    it('should return correct fieldDefShorthand string for bin with maxbins, axis with orient, scale with scaleType ', () => {
       const str = fieldDefShorthand({
-        axis: {orient: AxisOrient.TOP}, bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
+        axis: {orient: AxisOrient.TOP}, bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}
       });
-      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"},sort={"field":"a","op":"mean","order":"descending"},axis={"orient":"top"})');
+      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"},axis={"orient":"top"})');
     });
 
     it('should return correct fieldDefShorthand string for axis with orient, shortTimeLabels, ticks, and title', () => {
@@ -432,16 +557,16 @@ describe('query/shorthand', () => {
        assert.equal(str, 'bin(a,q,maxbins=20)');
     });
 
-    it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType log', () => {
+    it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType ordinal', () => {
       const str = fieldDefShorthand({
-        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}, scale: {type: ScaleType.LOG}
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}, scale: {type: ScaleType.ORDINAL}
       });
-      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"})');
+      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"ordinal"})');
     });
 
-    it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType log when only field, bin, and type are included', () => {
+    it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType ordinal when only field, bin, and type are included', () => {
       const str = fieldDefShorthand({
-        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}, scale: {type: ScaleType.LOG}
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}, scale: {type: ScaleType.ORDINAL}
       }, {field: true, bin: true, type: true});
       assert.equal(str, 'bin(a,q)');
     });
