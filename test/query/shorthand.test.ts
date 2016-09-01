@@ -246,19 +246,28 @@ describe('query/shorthand', () => {
        assert.equal(str, '?{"aggregate":"?","bin":"?"}(a,q)');
     });
 
+    it('should return correct fieldDefShorthand string for ambiguous aggregate/bin field', () => {
+       const str = fieldDefShorthand({
+         channel: Channel.X,
+         field: 'a',
+         type: Type.QUANTITATIVE,
+         aggregate: {name: 'a1', enum: [AggregateOp.MAX, AggregateOp.MIN]},
+         bin: {enum:[false, true], maxbins:20}
+       });
+       assert.equal(str, '?{"aggregate":["max","min"],"bin":[false,true]}(a,q,maxbins=20)');
+    });
 
     it('should return correct fieldDefShorthand string for ambiguous aggregate/bin field', () => {
        const str = fieldDefShorthand({
          channel: Channel.X,
          field: 'a',
          type: Type.QUANTITATIVE,
-         aggregate: {name: 'a1', enum:[AggregateOp.MAX, AggregateOp.MIN]},
-         bin: {enum:[false, true], maxbins:20}
+         aggregate: {name: 'a1', enum: [undefined, AggregateOp.MIN]},
+         bin: {enum:[false, true], maxbins:20},
+         hasFn: true
        });
-       assert.equal(str, '?{"aggregate":["max","min"],"bin":[false,true]}(a,q,maxbins=20)');
+       assert.equal(str, '?{"aggregate":[null,"min"],"bin":[false,true],"hasFn":true}(a,q,maxbins=20)');
     });
-
-
 
     it('should return correct fieldDefShorthand string for timeunit field', () => {
       const str = fieldDefShorthand({

@@ -219,6 +219,9 @@ export function fieldDef(encQ: EncodingQuery,
         }
       }
     }
+    if (fnEnumIndex && encQ.hasFn) {
+      fnEnumIndex.hasFn = true;
+    }
   }
 
   for (const nestedPropParent of [Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND]) {
