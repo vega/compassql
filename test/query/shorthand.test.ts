@@ -105,7 +105,13 @@ describe('query/shorthand', () => {
       const str = specShorthand({
         mark: {enum: [Mark.POINT, Mark.TICK]},
         encodings: [
-          {channel: {name: 'c1', enum: [Channel.X, Channel.Y]}, field: {enum: ['field1', 'field2']}, type: {enum: [Type.NOMINAL, Type.ORDINAL]}, aggregate: SHORT_ENUM_SPEC, bin: SHORT_ENUM_SPEC}
+          {
+            channel: {name: 'c1', enum: [Channel.X, Channel.Y]},
+            field: {enum: ['field1', 'field2']},
+            type: {enum: [Type.NOMINAL, Type.ORDINAL]},
+            aggregate: SHORT_ENUM_SPEC,
+            bin: SHORT_ENUM_SPEC
+          }
         ]
       });
 
