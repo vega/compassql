@@ -32,7 +32,11 @@ export function getReplacer(replace: Dict<string>): Replacer {
 export function value(v: any, replacer: Replacer): any {
   if (isEnumSpec(v)) {
     // Return the enum array if it's a full enum spec, or just return SHORT_ENUM_SPEC for short ones.
-    return v.enum || SHORT_ENUM_SPEC;
+    if (v.enum) {
+      return SHORT_ENUM_SPEC + JSON.stringify(v.enum);
+    } else {
+      return SHORT_ENUM_SPEC;
+    }
   }
   if (replacer) {
     return replacer(v);
@@ -276,8 +280,12 @@ export function fieldDef(encQ: EncodingQuery,
   let fieldAndParams = include[Property.FIELD] ? value(encQ.field || '*', replacer[Property.FIELD]) : '...';
   // type
   if (include[Property.TYPE]) {
-    const typeShort = ((encQ.type || Type.QUANTITATIVE)+'').substr(0,1);
-    fieldAndParams += ',' + value(typeShort, replacer[Property.TYPE]);
+    if (isEnumSpec(encQ.type)) {
+      fieldAndParams += ',' + value(encQ.type, replacer[Property.TYPE]);
+    } else {
+      const typeShort = ((encQ.type || Type.QUANTITATIVE)+'').substr(0,1);
+      fieldAndParams += ',' + value(typeShort, replacer[Property.TYPE]);
+    }
   }
   // encoding properties
   fieldAndParams += props.map((p) => ',' + p.key + '=' + p.value).join('');

@@ -101,6 +101,17 @@ describe('query/shorthand', () => {
       assert.equal(str, 'a');
     });
 
+    it('should return correct spec string for ambiguous channel, field, and type', () => {
+      const str = specShorthand({
+        mark: SHORT_ENUM_SPEC,
+        encodings: [
+          {channel: {name: 'c1', enum: [Channel.X, Channel.Y]}, field: {enum: ['blah1', 'blah2']}, type: {enum: [Type.NOMINAL, Type.ORDINAL]}, aggregate: SHORT_ENUM_SPEC, bin: SHORT_ENUM_SPEC}
+        ]
+      });
+
+      assert.equal(str, '?|?["x","y"]:?{"aggregate":"?","bin":"?"}(?["blah1","blah2"],?["nominal","ordinal"])');
+    });
+
     it('should return correct spec string for ambiguous specQuery', () => {
       const str = specShorthand({
         mark: SHORT_ENUM_SPEC,
@@ -193,6 +204,17 @@ describe('query/shorthand', () => {
     it('should return correct encoding string for raw field', () => {
        const str = encodingShorthand({channel: Channel.X, field: 'a', type: Type.QUANTITATIVE});
        assert.equal(str, 'x:a,q');
+    });
+
+    it('should return correct encoding string for channel as short enum spec', () => {
+      const str = encodingShorthand({channel: '?', field: 'a', type: Type.QUANTITATIVE});
+      assert.equal(str, '?:a,q');
+    });
+
+
+    it('should return correct encoding string for bin with maxbins as enum spec and channel as enum spec', () => {
+      const str = encodingShorthand({bin: {maxbins: {enum: [10, 20]}}, channel: {enum: [Channel.X, Channel.Y]}, field: 'a', type: Type.QUANTITATIVE});
+      assert.equal(str, '?["x","y"]:bin(a,q,maxbins=?[10,20])');
     });
 
     it('should return correct encoding string for raw field when channel is not included', () => {
