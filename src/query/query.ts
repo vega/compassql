@@ -8,7 +8,7 @@ import {generate} from '../generate';
 import {nest} from '../nest';
 import {rank} from '../ranking/ranking';
 import {Schema} from '../schema';
-import {duplicate, extend} from '../util';
+import {isArray, duplicate, extend} from '../util';
 
 export import encoding = require('./encoding');
 export import groupBy = require('./groupby');
@@ -45,7 +45,23 @@ export function normalize(q: Query): Query {
     };
 
     if (q.orderBy) {
-      nest.orderGroupBy = q.orderBy;
+      if (typeof q.orderBy === 'string') {
+        q.orderBy = {fn: q.orderBy as string};
+        nest.orderGroupBy = q.orderBy;
+
+      } else if (isArray(q.orderBy) && typeof q.orderBy[0] === 'string') {
+        let orderGroupBy: SortByFieldOrder[] = [];
+
+        for (let fn of q.orderBy as string[]) {
+          orderGroupBy.push({fn: fn});
+        }
+
+        q.orderBy = orderGroupBy;
+        nest.orderGroupBy = orderGroupBy;
+
+      } else {
+        nest.orderGroupBy = q.orderBy;
+      }
     }
 
     let normalizedQ: Query = {
@@ -66,16 +82,20 @@ export function normalize(q: Query): Query {
   return duplicate(q); // We will cause side effect to q.spec in SpecQueryModel.build
 }
 
+export interface SortByFieldOrder {
+  fn: string;
+}
+
 export interface Query {
   spec: SpecQuery;
   nest?: Nest[];
   groupBy?: GroupBy;
-  orderBy?: string | string[];
+  orderBy?: string | string[] | SortByFieldOrder | SortByFieldOrder[];
   chooseBy?: string | string[];
   config?: QueryConfig;
 }
 
 export interface Nest {
   groupBy: GroupBy;
-  orderGroupBy?: string | string[];
+  orderGroupBy?: string | string[] | SortByFieldOrder | SortByFieldOrder[];
 }

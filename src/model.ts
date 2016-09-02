@@ -11,9 +11,10 @@ import {QueryConfig} from './config';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
 import {EnumSpec, SHORT_ENUM_SPEC, initEnumSpec, isEnumSpec} from './enumspec';
 import {EnumSpecIndex} from './enumspecindex';
-import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
 import {GroupBy, ExtendedGroupBy, parse as parseGroupBy} from './query/groupby';
+import {SortByFieldOrder} from './query/query';
+import {SpecQuery, isAggregate, stack} from './query/spec';
 import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS, getReplacerIndex} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
@@ -765,7 +766,7 @@ export class SpecQueryModelGroup {
   private _path: string;
   private _items: (SpecQueryModel | SpecQueryModelGroup)[];
   private _groupBy: GroupBy;
-  private _orderGroupBy: string | string[];
+  private _orderGroupBy: string | string[] | SortByFieldOrder | SortByFieldOrder[];
 
   constructor(name: string = '', path: string = '', items: (SpecQueryModel | SpecQueryModelGroup)[] = [],
               groupBy: GroupBy = undefined, orderGroupBy: string | string[] = undefined) {
@@ -805,7 +806,7 @@ export class SpecQueryModelGroup {
     return this._orderGroupBy;
   }
 
-  public set orderGroupBy(orderGroupBy: string | string[]) {
+  public set orderGroupBy(orderGroupBy: string | string[] | SortByFieldOrder | SortByFieldOrder[]) {
     this._orderGroupBy = orderGroupBy;
   }
 }
