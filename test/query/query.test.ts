@@ -199,7 +199,7 @@ describe('query/query', () => {
         },
         nest: [{
           groupBy: 'fieldTransform',
-          orderGroupBy: 'effectiveness'
+          orderGroupBy: {fn: 'effectiveness'}
         }],
         chooseBy: 'effectiveness'
       });

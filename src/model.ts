@@ -11,9 +11,10 @@ import {QueryConfig} from './config';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
 import {EnumSpec, SHORT_ENUM_SPEC, initEnumSpec, isEnumSpec} from './enumspec';
 import {EnumSpecIndex} from './enumspecindex';
-import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
 import {GroupBy, ExtendedGroupBy, parse as parseGroupBy} from './query/groupby';
+import {SortByFieldOrder} from './query/query';
+import {SpecQuery, isAggregate, stack} from './query/spec';
 import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS, getReplacerIndex} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
@@ -422,7 +423,10 @@ export class SpecQueryModel {
   /** channel => EncodingQuery */
   private _channelCount: Dict<number>;
   private _enumSpecIndex: EnumSpecIndex;
-  private _enumSpecAssignment: Dict<any>;
+
+  /** Mapping from enum spec name to assigned value */
+  private _assignedValueIndex: Dict<any>;
+
   private _schema: Schema;
   private _opt: QueryConfig;
 
@@ -529,7 +533,7 @@ export class SpecQueryModel {
     }, {} as Dict<number>);
 
     this._enumSpecIndex = enumSpecIndex;
-    this._enumSpecAssignment = enumSpecAssignment;
+    this._assignedValueIndex = enumSpecAssignment;
     this._opt = opt;
     this._schema = schema;
   }
@@ -547,17 +551,17 @@ export class SpecQueryModel {
   }
 
   public duplicate(): SpecQueryModel {
-    return new SpecQueryModel(duplicate(this._spec), this._enumSpecIndex, this._schema, this._opt, duplicate(this._enumSpecAssignment));
+    return new SpecQueryModel(duplicate(this._spec), this._enumSpecIndex, this._schema, this._opt, duplicate(this._assignedValueIndex));
   }
 
   public setMark(mark: Mark) {
     const name = (this._spec.mark as EnumSpec<Mark>).name;
-    this._enumSpecAssignment[name] = this._spec.mark = mark;
+    this._assignedValueIndex[name] = this._spec.mark = mark;
   }
 
   public resetMark() {
     const enumSpec = this._spec.mark = this._enumSpecIndex.mark;
-    delete this._enumSpecAssignment[enumSpec.name];
+    delete this._assignedValueIndex[enumSpec.name];
   }
 
   public getMark() {
@@ -592,7 +596,7 @@ export class SpecQueryModel {
       encQ[prop] = value;
     }
 
-    this._enumSpecAssignment[enumSpec.name] = value;
+    this._assignedValueIndex[enumSpec.name] = value;
 
     if (prop === Property.CHANNEL) {
       // If there is a new channel, make sure it exists and add it to the count.
@@ -615,7 +619,11 @@ export class SpecQueryModel {
     }
 
     // add remove value that is reset from the assignment map
-    delete this._enumSpecAssignment[enumSpec.name];
+    delete this._assignedValueIndex[enumSpec.name];
+  }
+
+  public getAssignedValue(enumSpecName: string) {
+    return this._assignedValueIndex[enumSpecName];
   }
 
   public channelUsed(channel: Channel) {
@@ -758,7 +766,7 @@ export class SpecQueryModelGroup {
   private _path: string;
   private _items: (SpecQueryModel | SpecQueryModelGroup)[];
   private _groupBy: GroupBy;
-  private _orderGroupBy: string | string[];
+  private _orderGroupBy: string | string[] | SortByFieldOrder | SortByFieldOrder[];
 
   constructor(name: string = '', path: string = '', items: (SpecQueryModel | SpecQueryModelGroup)[] = [],
               groupBy: GroupBy = undefined, orderGroupBy: string | string[] = undefined) {
@@ -798,7 +806,7 @@ export class SpecQueryModelGroup {
     return this._orderGroupBy;
   }
 
-  public set orderGroupBy(orderGroupBy: string | string[]) {
+  public set orderGroupBy(orderGroupBy: string | string[] | SortByFieldOrder | SortByFieldOrder[]) {
     this._orderGroupBy = orderGroupBy;
   }
 }

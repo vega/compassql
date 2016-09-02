@@ -90,6 +90,9 @@ export class Schema {
       }
     });
 
+    // Add index for sorting
+    fieldSchemas.forEach((fieldSchema, index) => fieldSchema.index = index);
+
     // calculate preset bins for quantitative and temporal data
     for (let fieldSchema of fieldSchemas) {
       if (fieldSchema.type === Type.QUANTITATIVE) {
@@ -366,4 +369,5 @@ export interface FieldSchema {
   binStats?: {[key: string]: Summary};
   timeStats?: {[timeUnit: string]: Summary};
   title?: string;
+  index?: number;
 }
