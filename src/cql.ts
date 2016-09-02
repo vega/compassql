@@ -2,6 +2,7 @@ export const version = '__VERSION__';
 
 import {extend} from './util';
 
+export import config = require('./config');
 export import constraint = require('./constraint/constraint');
 
 export import enumerate = require('./enumerator');
