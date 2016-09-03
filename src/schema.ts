@@ -8,7 +8,7 @@ import * as dlBin from 'datalib/src/bins/bins';
 
 import {BinQuery, EncodingQuery} from './query/encoding';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
-import {cmp, contains, extend, keys} from './util';
+import {cmp, extend, keys} from './util';
 
 export class Schema {
   private _fieldSchemas: FieldSchema[];
