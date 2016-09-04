@@ -9,6 +9,13 @@ export const name = 'fieldOrder';
 
 export function score(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): RankingScore {
   const fieldEnumSpecIndices = specM.enumSpecIndex.encodingIndicesByProperty[Property.FIELD];
+  if (!fieldEnumSpecIndices) {
+    return {
+      score: 0,
+      features: []
+    };
+  }
+
   const encodings = specM.specQuery.encodings;
   const numFields = schema.fieldSchemas.length;
 
