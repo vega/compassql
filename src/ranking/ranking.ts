@@ -6,6 +6,7 @@ import {Schema} from '../schema';
 
 export import effectiveness = require('./effectiveness/effectiveness');
 export import aggregation = require('./aggregation');
+export import fieldOrder = require('./fieldOrder');
 
 export interface RankingScore {
   score: number;
@@ -121,3 +122,4 @@ export const EFFECTIVENESS = 'effectiveness';
 register(EFFECTIVENESS, effectiveness.default);
 
 register(aggregation.name, aggregation.score);
+register(fieldOrder.name, fieldOrder.score);
