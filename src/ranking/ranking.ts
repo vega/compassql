@@ -6,7 +6,7 @@ import {Schema} from '../schema';
 
 export import effectiveness = require('./effectiveness/effectiveness');
 export import aggregation = require('./aggregation');
-export import fieldOrder = require('./fieldOrder');
+export import fieldOrder = require('./fieldorder');
 
 export interface RankingScore {
   score: number;
