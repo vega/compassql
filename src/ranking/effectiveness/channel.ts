@@ -23,12 +23,12 @@ export namespace TypeChannelScore {
     const ORDERED_TYPE_CHANNEL_SCORE = {
       x: 0,
       y: 0,
-      size: -0.55,  // TODO: penalize ordinal
-      color: -0.6,
-      opacity: -0.75,
-      text: -0.775, // FIXME revise
-      row: -0.8,
-      column: -0.8,
+      size: -0.575,  // TODO: penalize ordinal
+      color: -0.725,
+      opacity: -0.85,
+      text: -0.875, // FIXME revise
+      row: -0.9,
+      column: -0.9,
       shape: -2.5,
       detail: -3
     };
