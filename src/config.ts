@@ -182,7 +182,7 @@ export interface QueryConfig {
   omitMultipleNonPositionalChannels?: boolean;
   omitNonSumStack?: boolean;
   omitRaw?: boolean;
-  maxCardinalityForRawContinuousFieldInAggregatePlot?: number;
+  omitRawContinuousFieldForAggregatePlot?: boolean;
   omitRawWithXYBothOrdinalScaleOrBin?: boolean;
   omitRepeatedField?: boolean;
   omitNonPositionalOrFacetOverPositionalChannels?: boolean;
@@ -315,7 +315,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   omitMultipleNonPositionalChannels: true,
   omitNonSumStack: true,
   omitRaw: false,
-  maxCardinalityForRawContinuousFieldInAggregatePlot: 20,
+  omitRawContinuousFieldForAggregatePlot: true,
   omitRepeatedField: true,
   omitNonPositionalOrFacetOverPositionalChannels: true,
   omitTableWithOcclusionIfAutoAddCount: true,
