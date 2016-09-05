@@ -130,8 +130,7 @@ export function spec(specQ: SpecQuery,
     }
   }
 
-  parts.push(
-    specQ.encodings.reduce((encQs, encQ) => {
+  const encodings = specQ.encodings.reduce((encQs, encQ) => {
         // Exclude encoding mapping with autoCount=false as they are basically disabled.
         if (encQ.autoCount !== false) {
           const str = encoding(encQ, include, replace);
@@ -142,8 +141,11 @@ export function spec(specQ: SpecQuery,
         return encQs;
       }, [])
       .sort() // sort at the end to ignore order
-      .join('|')
-  );
+      .join('|');
+
+  if (encodings) {
+    parts.push(encodings);
+  }
 
   return parts.join('|');
 }
