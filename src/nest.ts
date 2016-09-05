@@ -1,11 +1,11 @@
 import {Channel} from 'vega-lite/src/channel';
 import {isArray} from 'datalib/src/util';
 
-import {EnumSpec, isEnumSpec, SHORT_ENUM_SPEC} from './enumspec';
 import {SpecQueryModel, SpecQueryModelGroup} from './model';
+import {Property} from './property';
 import {Dict, duplicate} from './util';
 
-import {parse as parseGroupBy} from './query/groupby';
+import {parse as parseGroupBy, ExtendedGroupBy} from './query/groupby';
 import {Query} from './query/query';
 import {fieldDef as fieldDefShorthand, spec as specShorthand, Replacer} from './query/shorthand';
 import {stack} from './query/spec';
@@ -86,48 +86,40 @@ export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModel
   }
 }
 
+const PARSED_GROUP_BY_FIELD = parseGroupBy([Property.FIELD], {}, {});
 
 registerKeyFn(FIELD, (specM: SpecQueryModel) => {
-  return specM.getEncodings().map((encQ) => { return encQ.field; })
-              .filter((field) => field && field !== '*')
-              .sort()
-              .join('|');
+  return specShorthand(specM.specQuery,
+    PARSED_GROUP_BY_FIELD.include,
+    PARSED_GROUP_BY_FIELD.replacer
+  );
 });
+
+const GROUP_BY_FIELD_TRANSFORM = [
+  Property.FIELD, Property.TYPE,
+  Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.STACK
+];
+const PARSED_GROUP_BY_FIELD_TRANSFORM = parseGroupBy(GROUP_BY_FIELD_TRANSFORM, {}, {});
 
 registerKeyFn(FIELD_TRANSFORM, (specM: SpecQueryModel) => {
-  return specM.getEncodings().map((encQ) => fieldDefShorthand(encQ))
-              .sort()
-              .join('|');
+  return specShorthand(specM.specQuery,
+    PARSED_GROUP_BY_FIELD_TRANSFORM.include,
+    PARSED_GROUP_BY_FIELD_TRANSFORM.replacer
+  );
 });
 
-function channelType(channel: Channel | EnumSpec<Channel>) {
-  if (isEnumSpec(channel)) {
-    return SHORT_ENUM_SPEC + '';
+const GROUP_BY_ENCODING = (GROUP_BY_FIELD_TRANSFORM as Array<Property | ExtendedGroupBy>).concat([
+  {
+    property: Property.CHANNEL,
+    replace: {
+      'x': 'xy', 'y': 'xy',
+      'color': 'style', 'size': 'style', 'shape': 'style', 'opacity': 'style',
+      'row': 'facet', 'column': 'facet'
+    }
   }
-  const c = channel as Channel;
-  switch (c) {
-    case Channel.X:
-    case Channel.Y:
-      return 'xy';
-    case Channel.ROW:
-    case Channel.COLUMN:
-      return 'facet';
-    case Channel.COLOR:
-    case Channel.SIZE:
-    case Channel.SHAPE:
-    case Channel.OPACITY:
-      return 'non-xy';
-    case Channel.TEXT:
-    case Channel.DETAIL:
-    case Channel.PATH:
-    case Channel.ORDER:
-      return c + '';
-    /* istanbul ignore next */
-    default:
-      console.warn('channel type not implemented for ' + c);
-      return c + '';
-  }
-}
+]);
+const PARSED_GROUP_BY_ENCODING = parseGroupBy(GROUP_BY_ENCODING, {}, {});
+
 
 function stringifyStack(specM: SpecQueryModel) {
   const _stack = stack(specM.specQuery);
@@ -135,14 +127,10 @@ function stringifyStack(specM: SpecQueryModel) {
 }
 
 registerKeyFn(ENCODING, (specM: SpecQueryModel) => {
-  // mark does not matter
-  return stringifyStack(specM)  +
-    specM.getEncodings().map((encQ) => {
-      const fieldDef = fieldDefShorthand(encQ);
-      return channelType(encQ.channel) + ':' + fieldDef;
-    })
-    .sort()
-    .join('|');
+  return specShorthand(specM.specQuery,
+    PARSED_GROUP_BY_ENCODING.include,
+    PARSED_GROUP_BY_ENCODING.replacer
+  );
 });
 
 registerKeyFn(TRANSPOSE, (specM: SpecQueryModel) => {
