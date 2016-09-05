@@ -130,21 +130,23 @@ export function spec(specQ: SpecQuery,
     }
   }
 
-  const encodings = specQ.encodings.reduce((encQs, encQ) => {
-        // Exclude encoding mapping with autoCount=false as they are basically disabled.
-        if (encQ.autoCount !== false) {
-          const str = encoding(encQ, include, replace);
-          if (str) { // only add if the shorthand isn't an empty string.
-            encQs.push(str);
+  if (specQ.encodings) {
+    const encodings = specQ.encodings.reduce((encQs, encQ) => {
+          // Exclude encoding mapping with autoCount=false as they are basically disabled.
+          if (encQ.autoCount !== false) {
+            const str = encoding(encQ, include, replace);
+            if (str) { // only add if the shorthand isn't an empty string.
+              encQs.push(str);
+            }
           }
-        }
-        return encQs;
-      }, [])
-      .sort() // sort at the end to ignore order
-      .join('|');
+          return encQs;
+        }, [])
+        .sort() // sort at the end to ignore order
+        .join('|');
 
-  if (encodings) {
-    parts.push(encodings);
+    if (encodings) {
+      parts.push(encodings);
+    }
   }
 
   return parts.join('|');
