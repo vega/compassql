@@ -225,7 +225,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   marks: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK], // Mark.TEXT
   channels: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT
   aggregates: [undefined, AggregateOp.MEAN],
-  timeUnits: [undefined, TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.DATE, TimeUnit.MINUTES, TimeUnit.SECONDS],
+  timeUnits: [undefined, TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.MINUTES, TimeUnit.SECONDS],
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
   maxBinsList: [5, 10, 20],
