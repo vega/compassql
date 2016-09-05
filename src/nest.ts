@@ -7,7 +7,7 @@ import {Dict, duplicate} from './util';
 
 import {parse as parseGroupBy} from './query/groupby';
 import {Query} from './query/query';
-import {fieldDef as fieldDefShorthand, spec as specShorthand, Replacer, getReplacerIndex} from './query/shorthand';
+import {fieldDef as fieldDefShorthand, spec as specShorthand, Replacer} from './query/shorthand';
 import {stack} from './query/spec';
 
 
@@ -52,8 +52,8 @@ export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModel
 
       const groupBy = query.nest[l].groupBy;
       if (isArray(groupBy)) {
-        parseGroupBy(groupBy, includes[l], replaces[l]);
-        replacers.push(getReplacerIndex(replaces[l]));
+        var parsedGroupBy = parseGroupBy(groupBy, includes[l], replaces[l]);
+        replacers.push(parsedGroupBy.replacer);
       }
     }
 

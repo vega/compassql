@@ -1,5 +1,6 @@
 import {isArray, isObject} from 'datalib/src/util';
 
+import {getReplacerIndex} from './shorthand';
 import {Property} from '../property';
 import {Dict,keys} from '../util';
 
@@ -28,6 +29,12 @@ export function parse(groupBy: Array<Property | ExtendedGroupBy>, include: Dict<
       include[grpBy] = true;
     }
   });
+
+  return {
+    include: include,
+    replaceIndex: replaceIndex,
+    replacer: getReplacerIndex(replaceIndex)
+  };
 }
 
 export function toString(groupBy: GroupBy): string {

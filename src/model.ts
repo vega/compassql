@@ -14,7 +14,7 @@ import {EnumSpecIndex} from './enumspecindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
 import {GroupBy, ExtendedGroupBy, parse as parseGroupBy} from './query/groupby';
-import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS, getReplacerIndex} from './query/shorthand';
+import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
@@ -662,8 +662,8 @@ export class SpecQueryModel {
   public toShorthand(groupBy?: (Property | ExtendedGroupBy)[]): string {
     if (groupBy) {
       let include: Dict<boolean> = {}, replace: Dict<Dict<string>> = {};
-      parseGroupBy(groupBy, include, replace);
-      return specShorthand(this._spec, include, getReplacerIndex(replace));
+      const parsedGroupBy = parseGroupBy(groupBy, include, replace);
+      return specShorthand(this._spec, include, parsedGroupBy.replacer);
     }
     return specShorthand(this._spec);
   }
