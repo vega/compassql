@@ -86,7 +86,9 @@ export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModel
   }
 }
 
-const PARSED_GROUP_BY_FIELD = parseGroupBy([Property.FIELD], {}, {});
+// TODO: move this to groupBy, rename properly, and export
+const GROUP_BY_FIELD = [Property.FIELD];
+const PARSED_GROUP_BY_FIELD = parseGroupBy(GROUP_BY_FIELD, {}, {});
 
 registerKeyFn(FIELD, (specM: SpecQueryModel) => {
   return specShorthand(specM.specQuery,
@@ -95,6 +97,7 @@ registerKeyFn(FIELD, (specM: SpecQueryModel) => {
   );
 });
 
+// TODO: move this to groupBy, rename properly, and export
 const GROUP_BY_FIELD_TRANSFORM = [
   Property.FIELD, Property.TYPE,
   Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.STACK
@@ -108,6 +111,7 @@ registerKeyFn(FIELD_TRANSFORM, (specM: SpecQueryModel) => {
   );
 });
 
+// TODO: move this to groupBy, rename properly, and export
 const GROUP_BY_ENCODING = (GROUP_BY_FIELD_TRANSFORM as Array<Property | ExtendedGroupBy>).concat([
   {
     property: Property.CHANNEL,
@@ -133,6 +137,7 @@ registerKeyFn(ENCODING, (specM: SpecQueryModel) => {
   );
 });
 
+// TODO: rename, provide similar format
 registerKeyFn(TRANSPOSE, (specM: SpecQueryModel) => {
   return specM.getMark() + '|' +
     stringifyStack(specM) +
