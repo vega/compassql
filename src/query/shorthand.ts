@@ -302,22 +302,44 @@ export function parse(shorthand: string): SpecQuery {
     const splitPartValue = splitPart[1];
 
     if (CHANNEL_INDEX[splitPartKey] || splitPartKey === '?') {
-      shorthandParser.encoding(specQ, splitPartKey, splitPartValue);
+      const encQ = shorthandParser.encoding(splitPartKey, splitPartValue);
+      specQ.encodings.push(encQ);
       continue;
     }
 
     if (splitPartKey === 'calculate') {
-      shorthandParser.calculate(specQ, splitPartValue);
+      let transformQ: TransformQuery = specQ.transform || {};
+
+      let calculate = [];
+      let formulas = splitPartValue.split(',');
+
+      for (let formulaString of formulas) {
+        let formula: Formula = {} as Formula;
+        // FIXME(https://github.com/uwdata/compassql/issues/260)
+        // Calculate shorthand should be in the form of `calculate: {field1:expr1, field2: expr2}
+        // This parser will need to be updated accordingly in the future
+        let formulaParts = formulaString.split(':');
+        formula.field = formulaParts[0].substr(1);
+        formula.expr = formulaParts[1].slice(0, -1);
+        calculate.push(formula);
+      }
+
+      transformQ.calculate = calculate;
+      specQ.transform = transformQ;
       continue;
     }
 
     if (splitPartKey === 'filter') {
-      shorthandParser.filter(specQ, splitPartValue);
+      let transformQ: TransformQuery = specQ.transform || {};
+      transformQ.filter = JSON.parse(splitPartValue);
+      specQ.transform = transformQ;
       continue;
     }
 
     if (splitPartKey === 'filterInvalid') {
-      shorthandParser.filterInvalid(specQ, splitPartValue);
+      let transformQ: TransformQuery = specQ.transform || {};
+      transformQ.filterInvalid = JSON.parse(splitPartValue);
+      specQ.transform = transformQ;
       continue;
     }
   }
@@ -332,15 +354,35 @@ export function parse(shorthand: string): SpecQuery {
  * @param number The value used to determine how many times the string is split
  */
 export function splitWithTail(str: string, delim: string, count: number) {
-  let parts = str.split(delim);
-  let tail = parts.slice(count).join(delim);
-  let result = parts.slice(0, count);
-  result.push(tail);
+  let result = [];
+  let lastIndex = 0;
+
+  for (let i = 0; i < count; i++) {
+    let indexOfDelim = str.indexOf(delim, lastIndex);
+
+    if (indexOfDelim !== -1) {
+      result.push(str.substring(lastIndex, indexOfDelim));
+      lastIndex = indexOfDelim + 1;
+    } else {
+      break;
+    }
+  }
+
+  result.push(str.substr(lastIndex));
+
+  // If the specified count is greater than the number of delimiters that exist in the string,
+  // an empty string will be pushed count minus number of delimiter occurence times.
+  if (result.length !== count + 1) {
+    while (result.length !== count + 1) {
+      result.push('');
+    }
+  }
+
   return result;
 }
 
 export namespace shorthandParser {
-  export function encoding(specQ: SpecQuery, channel: string, fieldDefShorthand: string) {
+  export function encoding(channel: string, fieldDefShorthand: string): EncodingQuery {
     let encQ: EncodingQuery = {channel: channel};
 
     if (fieldDefShorthand.indexOf('(') !== -1) {
@@ -349,7 +391,7 @@ export namespace shorthandParser {
       encQ = rawFieldDef(encQ, splitWithTail(fieldDefShorthand, ',', 2));
     }
 
-    specQ.encodings.push(encQ);
+    return encQ;
   }
 
   export function rawFieldDef(encQ: EncodingQuery, fieldDefPart: string[]): EncodingQuery {
@@ -383,6 +425,7 @@ export namespace shorthandParser {
             )
           );
 
+          // TODO(https://github.com/uwdata/compassql/issues/97): Make this generalized for other bin properties.
           if (nestedPropertyParent === 'maxbins') {
             encQ.bin['maxbins'] = parsedValue;
           } else {
@@ -415,13 +458,13 @@ export namespace shorthandParser {
       for (let encodingProperty in fnEnumIndex) {
         if (isArray(fnEnumIndex[encodingProperty])) {
           encQ[encodingProperty] = {enum: fnEnumIndex[encodingProperty]};
-        } else {
+        } else { // Definitely a `SHORT_ENUM_SPEC`
           encQ[encodingProperty] = fnEnumIndex[encodingProperty];
         }
       }
 
       return rawFieldDef(encQ,
-        splitWithTail(fieldDefShorthand.substring(closingBraceIndex + 2, fieldDefShorthand.length), ',', 2)
+        splitWithTail(fieldDefShorthand.substring(closingBraceIndex + 2, fieldDefShorthand.length - 1), ',', 2)
       );
     } else {
       let func = fieldDefShorthand.substring(0, fieldDefShorthand.indexOf('('));
@@ -429,58 +472,15 @@ export namespace shorthandParser {
       let insideFnParts = splitWithTail(insideFn, ',', 2);
 
       if (AGGREGATE_OP_INDEX[func]) {
-        return aggregate(encQ, func, insideFnParts);
+        encQ.aggregate = func;
+        return rawFieldDef(encQ, insideFnParts);
       } else if (MULTI_TIMEUNIT_INDEX[func] || SINGLE_TIMEUNIT_INDEX[func]) {
-        return timeUnit(encQ, func, insideFnParts);
+        encQ.timeUnit = func;
+        return rawFieldDef(encQ, insideFnParts);
       } else if (func === 'bin') {
-        return bin(encQ, func, insideFnParts);
+        encQ.bin = {};
+        return rawFieldDef(encQ, insideFnParts);
       }
     }
-  }
-
-  export function aggregate(encQ: EncodingQuery, aggregate: string, insideFnParts: string[]): EncodingQuery {
-    encQ.aggregate = aggregate;
-    return rawFieldDef(encQ, insideFnParts);
-  }
-
-  export function timeUnit(encQ: EncodingQuery, timeUnit: string, insideFnParts: string[]): EncodingQuery {
-    encQ.timeUnit = timeUnit;
-    return rawFieldDef(encQ, insideFnParts);
-  }
-
-  export function bin(encQ: EncodingQuery, bin: string, insideFnParts: string[]): EncodingQuery {
-    encQ.bin = {};
-    return rawFieldDef(encQ, insideFnParts);
-  }
-
-  export function calculate(specQ: SpecQuery, splitPartValue: string) {
-    let transformQ: TransformQuery = specQ.transform || {};
-
-    let calculate = [];
-    let formulas = splitPartValue.split(',');
-
-    for (let formulaString of formulas) {
-      let formula: Formula = {} as Formula;
-      // FIXME(https://github.com/uwdata/compassql/issues/260)
-      let formulaParts = formulaString.split(':');
-      formula.field = formulaParts[0].substr(1);
-      formula.expr = formulaParts[1].slice(0, -1);
-      calculate.push(formula);
-    }
-
-    transformQ.calculate = calculate;
-    specQ.transform = transformQ;
-  }
-
-  export function filter(specQ: SpecQuery, splitPartValue: string) {
-    let transformQ: TransformQuery = specQ.transform || {};
-    transformQ.filter = JSON.parse(splitPartValue);
-    specQ.transform = transformQ;
-  }
-
-  export function filterInvalid(specQ: SpecQuery, invalid: string) {
-    let transformQ: TransformQuery = specQ.transform || {};
-    transformQ.filterInvalid = JSON.parse(invalid);
-    specQ.transform = transformQ;
   }
 }

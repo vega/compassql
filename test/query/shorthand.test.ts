@@ -35,9 +35,21 @@ describe('query/shorthand', () => {
     });
   });
 
+  describe('splitWithTail', () => {
+    it('should correctly split a string', () => {
+      let result = splitWithTail('012-345-678-9', '-', 2);
+      assert.deepEqual(result, ['012', '345', '678-9']);
+    });
+
+    it('should correctly split a string when `count` is greater than the number of delimiters in the string', () => {
+      let result = splitWithTail('012-345', '-', 3);
+      assert.deepEqual(result, ['012', '345', '', '']);
+    });
+  });
+
   describe('parse', () => {
     it('should correctly parse a shorthand string', () => {
-      let specQ = parse(
+      let specQ: SpecQuery = parse(
         'point|calculate:{b2:3*datum["b2"]}|filter:"datum[\\"b2\\"] > 60"|filterInvalid:false|x:b2,q|y:bin(balance,q)'
       );
 
@@ -56,7 +68,7 @@ describe('query/shorthand', () => {
     });
 
     it('should correctly parse an ambiguous shorthand with aggregate and bin as enum spec', () => {
-      let specQ = parse('?|?:?{"aggregate":"?","bin":"?","hasFn":true}(?,?)');
+      let specQ: SpecQuery = parse('?|?:?{"aggregate":"?","bin":"?","hasFn":true}(?,?)');
 
       assert.equal(specQ.mark, '?');
       assert.deepEqual(specQ.encodings[0], {
@@ -70,7 +82,7 @@ describe('query/shorthand', () => {
     });
 
     it('should correctly parse an ambiguous shorthand with aggregate and bin as enum spec', () => {
-      let specQ = parse('?|?:?{"aggregate":["max","min"],"bin":[false,true],"hasFn":true}(?,?)');
+      let specQ: SpecQuery = parse('?|?:?{"aggregate":["max","min"],"bin":[false,true],"hasFn":true}(?,?)');
 
       assert.equal(specQ.mark, '?');
       assert.deepEqual(specQ.encodings[0], {
@@ -87,15 +99,14 @@ describe('query/shorthand', () => {
   describe('shorthandParser', () => {
     describe('encoding', () => {
       it('should correctly parse an encoding query given a channel and fieldDefShorthand', () => {
-        let specQ: SpecQuery = {mark: Mark.POINT, encodings: []} as SpecQuery;
+        let encQ: EncodingQuery = {} as EncodingQuery;
 
-        shorthandParser.encoding(
-          specQ,
+        encQ = shorthandParser.encoding(
           'x',
           'bin(a,q,maxbins=20,scale={"type":"linear"})'
         );
 
-        assert.deepEqual(specQ.encodings[0], {
+        assert.deepEqual(encQ, {
           bin: {maxbins: 20},
           channel: Channel.X,
           field: 'a',
@@ -148,42 +159,6 @@ describe('query/shorthand', () => {
           splitWithTail('a,n,sort={"field":"a","op":"mean","order":"descending"}', ',', 2)
         );
         assert.deepEqual(encQ, {field: 'a', sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}, type: Type.NOMINAL});
-      });
-    });
-
-    describe('calculate', () => {
-      it('should correctly parse calculate from shorthand', () => {
-        let specQ: SpecQuery = {} as SpecQuery;
-        // FIXME(https://github.com/uwdata/compassql/issues/260)
-        let shorthandPart = 'calculate:{x2:datum.x*2},{x3:datum.x*3}';
-        let splitPartValue = splitWithTail(shorthandPart, ':', 1)[1];
-
-        shorthandParser.calculate(specQ, splitPartValue);
-        assert.deepEqual(specQ.transform.calculate, [{field: 'x2', expr: 'datum.x*2'}, {field: 'x3', expr: 'datum.x*3'}]);
-      });
-    });
-
-    describe('filter', () => {
-      it('should correctly parse filter from shorthand', () => {
-        let specQ: SpecQuery = {} as SpecQuery;
-        let shorthandPart = 'filter:[{"field":"color","equal":"red"},"datum[\\"b2\\"] > 60",{"field":"color","oneOf":["red","yellow"]},{"field":"x","range":[0,5]}]';
-        let splitPartValue = splitWithTail(shorthandPart, ':', 1)[1];
-
-        shorthandParser.filter(specQ, splitPartValue);
-        assert.deepEqual(specQ.transform.filter, [
-          {field: 'color', equal: 'red'}, 'datum[\"b2\"] > 60', {field: 'color', oneOf: ['red', 'yellow']}, {field: 'x', range: [0,5]}
-        ]);
-      });
-    });
-
-    describe('filterInvalid', () => {
-      it('should correctly parse filterInvalid from shorthand', () => {
-        let specQ: SpecQuery = {} as SpecQuery;
-        let shorthandPart = 'filterInvalid:false';
-        let splitPartValue = splitWithTail(shorthandPart, ':', 1)[1];
-
-        shorthandParser.filterInvalid(specQ, splitPartValue);
-        assert.deepEqual(specQ.transform.filterInvalid, false);
       });
     });
   });
