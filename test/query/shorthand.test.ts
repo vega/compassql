@@ -31,7 +31,7 @@ describe('query/shorthand', () => {
         encoding: {
           x: {field: 'x', type: Type.QUANTITATIVE}
         }
-      }), 'point|calculate:{x2:datum.x*2}|filter:"datum.x === 5"|x:x,q');
+      }), 'point|calculate:{"x2":"datum.x*2"}|filter:"datum.x === 5"|x:x,q');
     });
   });
 
@@ -253,7 +253,7 @@ describe('query/shorthand', () => {
           {channel: Channel.X, field: 'b2', type: Type.QUANTITATIVE}
         ]
       });
-      assert.equal(str, 'point|calculate:{b2:3*datum["b2"]}|filter:"datum[\\"b2\\"] > 60"|filterInvalid:false|x:b2,q');
+      assert.equal(str, 'point|calculate:{"b2":"3*datum[\\"b2\\"]"}|filter:"datum[\\"b2\\"] > 60"|filterInvalid:false|x:b2,q');
     });
 
     it('should return correct spec string for a specific specQuery with transform filter and calculate', () => {
@@ -289,7 +289,7 @@ describe('query/shorthand', () => {
       const str = calculateShorthand([
         {field: 'b2', expr: '2*datum["b"]'}, {field: 'a', expr:'3*datum["a"]'}
       ]);
-      assert.equal(str, '{b2:2*datum["b"],a:3*datum["a"]}');
+      assert.equal(str, '{"b2":"2*datum[\\"b\\"]","a":"3*datum[\\"a\\"]"}');
     });
   });
 
