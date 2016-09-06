@@ -330,16 +330,13 @@ export function parse(shorthand: string): SpecQuery {
 
     if (splitPartKey === 'calculate') {
       let transformQ: TransformQuery = specQ.transform || {};
-      let calculate = [];
-      let formulas = splitPartValue
-                      .substring(1, splitPartValue.length - 1)
-                      .split(',');
+      let calculate: Formula[] = [];
+      let fieldAndExpr = JSON.parse(splitPartValue);
 
-      for (let formulaString of formulas) {
+      for (let field in fieldAndExpr) {
         let formula: Formula = {} as Formula;
-        let formulaParts = formulaString.split(':');
-        formula.field = formulaParts[0];
-        formula.expr = formulaParts[1];
+        formula['field'] = field;
+        formula['expr'] = fieldAndExpr[field];
         calculate.push(formula);
       }
 

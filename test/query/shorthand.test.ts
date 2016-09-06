@@ -50,7 +50,7 @@ describe('query/shorthand', () => {
   describe('parse', () => {
     it('should correctly parse a shorthand string with calculate, filter, and filterInvalid', () => {
       let specQ: SpecQuery = parse(
-        'point|calculate:{b2:3*datum["b2"],a3:3*datum["a3"]}|filter:"datum[\\"b2\\"] > 60"|filterInvalid:false|x:b2,q|y:bin(balance,q)'
+        'point|calculate:{"b2":"3*datum[\\"b2\\"]","a3":"3*datum[\\"a3\\"]"}|filter:"datum[\\"b2\\"] > 60"|filterInvalid:false|x:b2,q|y:bin(balance,q)'
       );
 
       assert.deepEqual(specQ, {
