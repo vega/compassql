@@ -6,6 +6,7 @@ import {Schema} from '../schema';
 
 export import effectiveness = require('./effectiveness/effectiveness');
 export import aggregation = require('./aggregation');
+export import fieldOrder = require('./fieldorder');
 
 export interface RankingScore {
   score: number;
@@ -75,22 +76,12 @@ export function rank(group: SpecQueryModelGroup, query: Query, schema: Schema, l
   return group;
 }
 
-export function getScore(model: SpecQueryModel, rankingName: string, schema: Schema, opt: QueryConfig) {
-  if (model.getRankingScore(rankingName) !== undefined) {
-    return model.getRankingScore(rankingName);
-  }
-  const fn = get(rankingName);
-  const score = fn(model, schema, opt);
-  model.setRankingScore(rankingName, score);
-  return score;
-}
-
 export function comparatorFactory(name: string | string[], schema: Schema, opt: QueryConfig) {
   return (m1: SpecQueryModel, m2: SpecQueryModel) => {
     if (name instanceof Array) {
       return getScoreDifference(name, m1, m2, schema, opt);
     } else {
-      return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
+      return getScoreDifference([name], m1, m2, schema, opt);
     }
   };
 }
@@ -102,7 +93,7 @@ export function groupComparatorFactory(name: string | string[], schema: Schema, 
     if (name instanceof Array) {
       return getScoreDifference(name, m1, m2, schema, opt);
     } else {
-      return getScore(m2, name, schema, opt).score - getScore(m1, name, schema, opt).score;
+      return getScoreDifference([name], m1, m2, schema, opt);
     }
   };
 }
@@ -117,7 +108,18 @@ function getScoreDifference(name: string[], m1: SpecQueryModel, m2: SpecQueryMod
   return 0;
 }
 
+export function getScore(model: SpecQueryModel, rankingName: string, schema: Schema, opt: QueryConfig) {
+  if (model.getRankingScore(rankingName) !== undefined) {
+    return model.getRankingScore(rankingName);
+  }
+  const fn = get(rankingName);
+  const score = fn(model, schema, opt);
+  model.setRankingScore(rankingName, score);
+  return score;
+}
+
 export const EFFECTIVENESS = 'effectiveness';
 register(EFFECTIVENESS, effectiveness.default);
 
 register(aggregation.name, aggregation.score);
+register(fieldOrder.name, fieldOrder.score);

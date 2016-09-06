@@ -5,6 +5,7 @@ import {Channel} from 'vega-lite/src/channel';
 
 import {Schema, PrimitiveType} from '../src/schema';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
+import {extend} from '../src/util';
 
 describe('schema', () => {
 
@@ -58,6 +59,11 @@ describe('schema', () => {
   });
 
   describe('type', () => {
+    var configWithOrdinalInference = extend({}, DEFAULT_QUERY_CONFIG, {
+      numberOrdinalProportion: .05,
+      numberOrdinalLimit: 50,
+    });
+
     it('should return the correct type of measurement for each field', () => {
       assert.equal(schema.type('a'), Type.QUANTITATIVE);
       assert.equal(schema.type('b'), Type.NOMINAL);
@@ -68,81 +74,55 @@ describe('schema', () => {
     it('should infer quantitative type for integers when cardinality is much less than the total but distinct is high', () => {
       const numberData = [];
       // add enough non-distinct data to make the field nominal
-      var total = 1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1;
-      for (let i = 0; i < total * DEFAULT_QUERY_CONFIG.numberOrdinalLimit; i++) {
+      var total = 1 / configWithOrdinalInference.numberOrdinalProportion + 1;
+      for (let i = 0; i < total * configWithOrdinalInference.numberOrdinalLimit; i++) {
         numberData.push({a: 1});
       }
       // add enough distinct data to go over numberOrdinalLimit
-      for (let i = 0; i < DEFAULT_QUERY_CONFIG.numberOrdinalLimit + 1; i++) {
+      for (let i = 0; i < configWithOrdinalInference.numberOrdinalLimit + 1; i++) {
         numberData.push({a: i});
       }
-      const numberSchema = Schema.build(numberData);
+      const numberSchema = Schema.build(numberData, configWithOrdinalInference);
       assert.equal(numberSchema.type('a'), Type.QUANTITATIVE);
     });
 
     it('should infer nominal type for integers when cardinality is much less than the total', () => {
       const numberData = [];
       // add enough non-distinct data to make the field nominal
-      var total = 1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1;
+      var total = 1 / configWithOrdinalInference.numberOrdinalProportion + 1;
       for (var i = 0; i < total; i++) {
         numberData.push({a: 1});
       }
-      const numberSchema = Schema.build(numberData);
+      const numberSchema = Schema.build(numberData, configWithOrdinalInference);
       assert.equal(numberSchema.type('a'), Type.NOMINAL);
     });
 
-    it('should infer nominal type for integers when cardinality is much less than the total and numbers are in order, starts at 0, and have no skipping', () => {
+    it('should infer nominal type for 0, 1, 2 integers when cardinality is much less than the total', () => {
       const numberData = [];
       // add enough non-distinct data to make the field nominal/ordinal and have multiple in-order, non-skipping values that starts at 0
       // (and by default, we set them to nominal)
-      var total = 3 * (1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1);
+      var total = 3 * (1 / configWithOrdinalInference.numberOrdinalProportion + 1);
       for (var i = 0; i < total; i++) {
         numberData.push({a: 0});
         numberData.push({a: 1});
         numberData.push({a: 2});
       }
-      const numberSchema = Schema.build(numberData);
+      const numberSchema = Schema.build(numberData, configWithOrdinalInference);
       assert.equal(numberSchema.type('a'), Type.NOMINAL);
     });
 
-    it('should infer nominal type for integers when cardinality is much less than the total and numbers are in order, starts at 1, and have no skipping', () => {
+    it('should infer nominal type for 1, 2, 3 integers when cardinality is much less than the total', () => {
       const numberData = [];
       // add enough non-distinct data to make the field nominal/ordinal and have multiple in-order, non-skipping values that starts at 1
       // (and by default, we set them to nominal)
-      var total = 3 * (1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1);
+      var total = 3 * (1 / configWithOrdinalInference.numberOrdinalProportion + 1);
       for (var i = 0; i < total; i++) {
         numberData.push({a: 1});
         numberData.push({a: 2});
         numberData.push({a: 3});
       }
-      const numberSchema = Schema.build(numberData);
+      const numberSchema = Schema.build(numberData, configWithOrdinalInference);
       assert.equal(numberSchema.type('a'), Type.NOMINAL);
-    });
-
-    it('should infer ordinal type for integers when cardinality is much less than the total and numbers are not in order', () => {
-      const numberData = [];
-      // add enough non-distinct data to make the field ordinal and have multiple in-order, with skipping values
-      var total = 3 * (1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1);
-      for (var i = 0; i < total; i++) {
-        numberData.push({a: 1});
-        numberData.push({a: 3});
-        numberData.push({a: 5});
-      }
-      const numberSchema = Schema.build(numberData);
-      assert.equal(numberSchema.type('a'), Type.ORDINAL);
-    });
-
-    it('should not infer nominal type if the number set does not contain 0 or 1', () => {
-      const numberData = [];
-      // add enough non-distinct data to make the field ordinal and have multiple in-order, non-skipping values that do not start with 0 or 1
-      var total = 3 * (1 / DEFAULT_QUERY_CONFIG.numberOrdinalProportion + 1);
-      for (var i = 0; i < total; i++) {
-        numberData.push({a: 2});
-        numberData.push({a: 3});
-        numberData.push({a: 4});
-      }
-      const numberSchema = Schema.build(numberData);
-      assert.equal(numberSchema.type('a'), Type.ORDINAL);
     });
   });
 

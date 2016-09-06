@@ -1334,7 +1334,7 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should return false when there are repeated field', function() {
+    it('should return true when repeated fields are not enumerated', function() {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
@@ -1343,7 +1343,33 @@ describe('constraints/spec', () => {
         ]
       });
 
-      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+    });
+
+    it('should return false when repeated fields are not enumerated but constraintManuallySpecifiedValue=true', function() {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, field: 'A', type: Type.NOMINAL}
+        ]
+      });
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+    });
+
+    it('should return false when one of the repeated fields is enumerated', function() {
+      const specM = buildSpecQueryModel({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.Y, field: {enum: ['A', 'B']}, type: Type.NOMINAL}
+        ]
+      });
+
+      specM.setEncodingProperty(1, Property.FIELD, 'A', {enum: ['A', 'B']});
+
+      assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specM, schema, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
     });
   });
 

@@ -33,10 +33,10 @@ export interface QueryConfig {
   types?: Type[];
 
   /** Default ratio for number fields to be considered ordinal */
-  numberOrdinalProportion?: number;
+  numberNominalProportion?: number;
 
   /** Default cutoff for not applying the numberOrdinalProportion inference */
-  numberOrdinalLimit?: number;
+  numberNominalLimit?: number;
 
   /** Default maxbins to enumerate */
   maxBinsList?: number[];
@@ -204,6 +204,7 @@ export interface QueryConfig {
   typeMatchesSchemaType?: boolean;
 
   // STYLIZE
+  stylize?: boolean;
   smallBandSizeForHighCardinalityOrFacet?: {maxCardinality: number, bandSize: number};
   nominalColorScaleForHighCardinality?: {maxCardinality: number, palette: string};
   xAxisOnTopForHighYCardinalityWithoutColumn?: {maxCardinality: number};
@@ -224,7 +225,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   marks: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK], // Mark.TEXT
   channels: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT
   aggregates: [undefined, AggregateOp.MEAN],
-  timeUnits: [undefined, TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.DATE, TimeUnit.MINUTES, TimeUnit.SECONDS],
+  timeUnits: [undefined, TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.MINUTES, TimeUnit.SECONDS],
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
   maxBinsList: [5, 10, 20],
@@ -297,8 +298,8 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   scaleRanges: [undefined],
   scaleTypes: [undefined, ScaleType.LOG],
 
-  numberOrdinalProportion: .05,
-  numberOrdinalLimit: 50,
+  numberNominalProportion: 0.05,
+  numberNominalLimit: 40,
 
   // CONSTRAINTS
   constraintManuallySpecifiedValue: false,
@@ -334,6 +335,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   typeMatchesSchemaType: true,
 
   // STYLIZE
+  stylize: true,
   smallBandSizeForHighCardinalityOrFacet: {maxCardinality: 10, bandSize: 12},
   nominalColorScaleForHighCardinality: {maxCardinality: 10, palette: 'category20'},
   xAxisOnTopForHighYCardinalityWithoutColumn: {maxCardinality: 30},

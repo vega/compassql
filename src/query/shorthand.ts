@@ -32,12 +32,24 @@ export function getReplacer(replace: Dict<string>): Replacer {
   };
 }
 
-export function value(v: any, replace: Replacer): any {
+export function value(v: any, replacer: Replacer): any {
   if (isEnumSpec(v)) {
-    return SHORT_ENUM_SPEC;
+    // Return the enum array if it's a full enum spec, or just return SHORT_ENUM_SPEC for short ones.
+    if (v.enum) {
+      return SHORT_ENUM_SPEC + JSON.stringify(v.enum);
+    } else {
+      return SHORT_ENUM_SPEC;
+    }
   }
-  if (replace) {
-    return replace(v);
+  if (replacer) {
+    return replacer(v);
+  }
+  return v;
+}
+
+export function replace(v: any, replacer: Replacer): any {
+  if (replacer) {
+    return replacer(v);
   }
   return v;
 }
@@ -121,20 +133,24 @@ export function spec(specQ: SpecQuery,
     }
   }
 
-  parts.push(
-    specQ.encodings.reduce((encQs, encQ) => {
-        // Exclude encoding mapping with autoCount=false as they are basically disabled.
-        if (encQ.autoCount !== false) {
-          const str = encoding(encQ, include, replace);
-          if (str) { // only add if the shorthand isn't an empty string.
-            encQs.push(str);
+  if (specQ.encodings) {
+    const encodings = specQ.encodings.reduce((encQs, encQ) => {
+          // Exclude encoding mapping with autoCount=false as they are basically disabled.
+          if (encQ.autoCount !== false) {
+            const str = encoding(encQ, include, replace);
+            if (str) { // only add if the shorthand isn't an empty string.
+              encQs.push(str);
+            }
           }
-        }
-        return encQs;
-      }, [])
-      .sort() // sort at the end to ignore order
-      .join('|')
-  );
+          return encQs;
+        }, [])
+        .sort() // sort at the end to ignore order
+        .join('|');
+
+    if (encodings) {
+      parts.push(encodings);
+    }
+  }
 
   return parts.join('|');
 }
@@ -178,7 +194,7 @@ export function encoding(encQ: EncodingQuery,
  */
 export function fieldDef(encQ: EncodingQuery,
     include: Dict<boolean> = INCLUDE_ALL,
-    replace: Dict<Replacer> = {}): string {
+    replacer: Dict<Replacer> = {}): string {
 
   let fn = null, fnEnumIndex = null;
 
@@ -188,11 +204,11 @@ export function fieldDef(encQ: EncodingQuery,
   if (include[Property.AGGREGATE] && encQ.autoCount === false) {
     return '-';
   } else if (include[Property.AGGREGATE] && encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
-    fn = value(encQ.aggregate, replace[Property.AGGREGATE]);
+    fn = replace(encQ.aggregate, replacer[Property.AGGREGATE]);
   } else if (include[Property.AGGREGATE] && encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
-    fn = value('count', replace[Property.AGGREGATE]);;
+    fn = replace('count', replacer[Property.AGGREGATE]);;
   } else if (include[Property.TIMEUNIT] && encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
-    fn = value(encQ.timeUnit, replace[Property.TIMEUNIT]);
+    fn = replace(encQ.timeUnit, replacer[Property.TIMEUNIT]);
   } else if (include[Property.BIN] && encQ.bin && !isEnumSpec(encQ.bin)) {
     fn = 'bin';
 
@@ -201,7 +217,7 @@ export function fieldDef(encQ: EncodingQuery,
     if (include[Property.BIN_MAXBINS] && encQ.bin['maxbins']) {
       props.push({
         key: 'maxbins',
-        value: value(encQ.bin['maxbins'], replace[Property.BIN_MAXBINS])
+        value: value(encQ.bin['maxbins'], replacer[Property.BIN_MAXBINS])
       });
     }
   } else {
@@ -219,7 +235,7 @@ export function fieldDef(encQ: EncodingQuery,
           if (include[Property.BIN_MAXBINS] && encQ.bin['maxbins']) {
             props.push({
               key: 'maxbins',
-              value: value(encQ.bin['maxbins'], replace[Property.BIN_MAXBINS])
+              value: value(encQ.bin['maxbins'], replacer[Property.BIN_MAXBINS])
             });
           }
         }
@@ -247,7 +263,7 @@ export function fieldDef(encQ: EncodingQuery,
           const nestedProps = getNestedEncodingPropertyChildren(nestedPropParent);
           const nestedPropChildren = nestedProps.reduce((p, nestedProp) => {
             if (include[nestedProp.property] && encQ[nestedPropParent][nestedProp.child] !== undefined) {
-              p[nestedProp.child] = value(encQ[nestedPropParent][nestedProp.child], replace[nestedProp.property]);
+              p[nestedProp.child] = replace(encQ[nestedPropParent][nestedProp.child], replacer[nestedProp.property]);
             }
             return p;
           }, {});
@@ -270,11 +286,15 @@ export function fieldDef(encQ: EncodingQuery,
   }
 
   // field
-  let fieldAndParams = include[Property.FIELD] ? value(encQ.field || '*', replace[Property.FIELD]) : '...';
+  let fieldAndParams = include[Property.FIELD] ? value(encQ.field || '*', replacer[Property.FIELD]) : '...';
   // type
   if (include[Property.TYPE]) {
-    const typeShort = ((encQ.type || Type.QUANTITATIVE)+'').substr(0,1);
-    fieldAndParams += ',' + value(typeShort, replace[Property.TYPE]);
+    if (isEnumSpec(encQ.type)) {
+      fieldAndParams += ',' + value(encQ.type, replacer[Property.TYPE]);
+    } else {
+      const typeShort = ((encQ.type || Type.QUANTITATIVE)+'').substr(0,1);
+      fieldAndParams += ',' + value(typeShort, replacer[Property.TYPE]);
+    }
   }
   // encoding properties
   fieldAndParams += props.map((p) => ',' + p.key + '=' + p.value).join('');

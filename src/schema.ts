@@ -8,7 +8,7 @@ import * as dlBin from 'datalib/src/bins/bins';
 
 import {BinQuery, EncodingQuery} from './query/encoding';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
-import {cmp, contains, extend, keys} from './util';
+import {cmp, extend, keys} from './util';
 
 export class Schema {
   private _fieldSchemas: FieldSchema[];
@@ -37,9 +37,8 @@ export class Schema {
         type = Type.QUANTITATIVE;
       } else if (primitiveType === PrimitiveType.INTEGER) {
         // use ordinal or nominal when cardinality of integer type is relatively low and the distinct values are less than an amount specified in options
-        if ((distinct < opt.numberOrdinalLimit) && (distinct / summary.count < opt.numberOrdinalProportion)) {
-          // use nominal if the integers are 1,2,3,...,N or 0,1,2,3,...,N-1 where N = cardinality
-          type = ((summary.max as number) - (summary.min as number) === distinct - 1 && contains([0,1], summary.min)) ? Type.NOMINAL : Type.ORDINAL;
+        if ((distinct < opt.numberNominalLimit) && (distinct / summary.count < opt.numberNominalProportion)) {
+          type = Type.NOMINAL;
         } else {
           type = Type.QUANTITATIVE;
         }
@@ -89,6 +88,9 @@ export class Schema {
         return a.field.localeCompare(b.field);
       }
     });
+
+    // Add index for sorting
+    fieldSchemas.forEach((fieldSchema, index) => fieldSchema.index = index);
 
     // calculate preset bins for quantitative and temporal data
     for (let fieldSchema of fieldSchemas) {
@@ -366,4 +368,5 @@ export interface FieldSchema {
   binStats?: {[key: string]: Summary};
   timeStats?: {[timeUnit: string]: Summary};
   title?: string;
+  index?: number;
 }

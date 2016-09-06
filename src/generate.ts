@@ -23,10 +23,12 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
     }
   });
 
-  if ((opt.nominalColorScaleForHighCardinality !== null) ||
-      (opt.smallBandSizeForHighCardinalityOrFacet !== null) ||
-      (opt.xAxisOnTopForHighYCardinalityWithoutColumn !== null)) {
-    return stylize(answerSet, schema, opt);
+  if (opt.stylize) {
+    if ((opt.nominalColorScaleForHighCardinality !== null) ||
+        (opt.smallBandSizeForHighCardinalityOrFacet !== null) ||
+        (opt.xAxisOnTopForHighYCardinalityWithoutColumn !== null)) {
+      return stylize(answerSet, schema, opt);
+    }
   }
 
   return answerSet;

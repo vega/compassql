@@ -207,14 +207,23 @@ export const SET_3D: RuleSet<SpecQueryModel> = {
           ]
         };
       }),{
-        mark: POINT,
+        mark: TICK,
         encodings: [
           {channel: X, field: 'Q', type: Type.QUANTITATIVE},
-          {channel: SIZE, field: 'Q1', type: Type.QUANTITATIVE},
+          {channel: COLOR, field: 'Q1', type: Type.QUANTITATIVE},
           {channel: Y, field: 'N', type: Type.NOMINAL}
         ]
-        // TODO: consider facet
-      }], (specQ) => SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG))
+      },
+      [COLOR, SIZE].map((qChannel) => {
+        return {
+          mark: POINT,
+          encodings: [
+            {channel: X, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: COLOR, field: 'Q1', type: Type.QUANTITATIVE},
+            {channel: Y, field: 'N', type: Type.NOMINAL}
+          ]
+        };
+      })], (specQ) => SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG))
     });
 
     rules.push({
@@ -236,13 +245,13 @@ export const SET_3D: RuleSet<SpecQueryModel> = {
           ]
         };
       }),{
+        // TODO: consider x: Q, y:O, color:Q1 like above
         mark: POINT,
         encodings: [
           {channel: X, field: 'Q', type: Type.QUANTITATIVE},
           {channel: SIZE, field: 'Q1', type: Type.QUANTITATIVE},
           {channel: Y, field: 'O', type: Type.ORDINAL}
         ]
-        // TODO: consider facet
       }], (specQ) => SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG))
     });
 

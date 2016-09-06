@@ -542,20 +542,33 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     allowEnumSpecForProperties: true,
     strict: false, // over-encoding is sometimes good, but let's turn it off by default
     satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
-      let usedField = {};
+      let fieldUsed = {};
+      let fieldEnumerated = {};
 
-      // the same field should not be encoded twice
-      return every(specM.getEncodings(), (encQ) => {
+      const encodings = specM.specQuery.encodings;
+      for (let i = 0; i < encodings.length ; i++) {
+        const encQ = encodings[i];
+
         if (encQ.field && !isEnumSpec(encQ.field)) {
-          // If field is specified, it should not be used already
-          if (usedField[encQ.field]) {
-            return false;
+          const field = encQ.field as string;
+          if (specM.enumSpecIndex.hasEncodingProperty(i, Property.FIELD)) {
+            fieldEnumerated[field] = true;
           }
-          usedField[encQ.field] = true;
-          return true;
+          // When the field is specified previously,
+          // if it is enumerated (either previously or in this encQ)
+          // or if the opt.constraintManuallySpecifiedValue is true,
+          // then it violates the constraint.
+
+          if (fieldUsed[field]) {
+            if (fieldEnumerated[field] || opt.constraintManuallySpecifiedValue) {
+              return false;
+            }
+          }
+
+          fieldUsed[field] = true;
         }
-        return true; // unspecified field is valid
-      });
+      }
+      return true;
     }
   },
   // TODO: omitShapeWithBin
