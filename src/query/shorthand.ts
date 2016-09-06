@@ -140,11 +140,9 @@ export function spec(specQ: SpecQuery,
 }
 
 export function calculate(formulaArr: Formula[]): string {
-  return formulaArr.map(function(calculateItem) {
-    // TODO(https://github.com/uwdata/compassql/issues/260)
-    // This should be in the form {field1:expr1,field2:expr2, ... ,fieldN:exprN}
-    return `{${calculateItem.field}:${calculateItem.expr}}`;
-  }).join(',');
+  return '{' + formulaArr.map(function(calculateItem) {
+    return `${calculateItem.field}:${calculateItem.expr}`;
+  }).join(',') + '}';
 }
 
 /**
@@ -309,18 +307,16 @@ export function parse(shorthand: string): SpecQuery {
 
     if (splitPartKey === 'calculate') {
       let transformQ: TransformQuery = specQ.transform || {};
-
       let calculate = [];
-      let formulas = splitPartValue.split(',');
+      let formulas = splitPartValue
+                      .substring(1, splitPartValue.length - 1)
+                      .split(',');
 
       for (let formulaString of formulas) {
         let formula: Formula = {} as Formula;
-        // FIXME(https://github.com/uwdata/compassql/issues/260)
-        // Calculate shorthand should be in the form of `calculate: {field1:expr1, field2: expr2}
-        // This parser will need to be updated accordingly in the future
         let formulaParts = formulaString.split(':');
-        formula.field = formulaParts[0].substr(1);
-        formula.expr = formulaParts[1].slice(0, -1);
+        formula.field = formulaParts[0];
+        formula.expr = formulaParts[1];
         calculate.push(formula);
       }
 
@@ -353,7 +349,7 @@ export function parse(shorthand: string): SpecQuery {
  * @param delim The delimiter string used to separate the string
  * @param number The value used to determine how many times the string is split
  */
-export function splitWithTail(str: string, delim: string, count: number) {
+export function splitWithTail(str: string, delim: string, count: number): string[] {
   let result = [];
   let lastIndex = 0;
 
