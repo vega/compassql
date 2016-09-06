@@ -92,7 +92,7 @@ describe('query/shorthand', () => {
         shorthandParser.encoding(
           specQ,
           'x',
-          'bin(a,q,maxbins=20,scale={"type":"ordinal"})'
+          'bin(a,q,maxbins=20,scale={"type":"linear"})'
         );
 
         assert.deepEqual(specQ.encodings[0], {
@@ -100,7 +100,7 @@ describe('query/shorthand', () => {
           channel: Channel.X,
           field: 'a',
           type: Type.QUANTITATIVE,
-          scale: {type: ScaleType.ORDINAL},
+          scale: {type: ScaleType.LINEAR},
         });
       });
     });
@@ -171,7 +171,7 @@ describe('query/shorthand', () => {
 
         shorthandParser.filter(specQ, splitPartValue);
         assert.deepEqual(specQ.transform.filter, [
-          {field: 'color', equal: 'red'}, 'datum["b2"] > 60', {field: 'color', oneOf: ['red', 'yellow']}, {field: 'x', range: [0,5]}
+          {field: 'color', equal: 'red'}, 'datum[\"b2\"] > 60', {field: 'color', oneOf: ['red', 'yellow']}, {field: 'x', range: [0,5]}
         ]);
       });
     });
@@ -455,16 +455,16 @@ describe('query/shorthand', () => {
     it('should return correct fieldDefShorthand string for bin with maxbins, scale with scaleType ' +
        'and sort field definition object', () => {
       const str = fieldDefShorthand({
-        bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}
+        bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LINEAR}
       });
-      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"})');
+      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"linear"})');
     });
 
     it('should return correct fieldDefShorthand string for bin with maxbins, axis with orient, scale with scaleType ', () => {
       const str = fieldDefShorthand({
-        axis: {orient: AxisOrient.TOP}, bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LOG}
+        axis: {orient: AxisOrient.TOP}, bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LINEAR}
       });
-      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"log"},axis={"orient":"top"})');
+      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"linear"},axis={"orient":"top"})');
     });
 
     it('should return correct fieldDefShorthand string for axis with orient, shortTimeLabels, ticks, and title', () => {
@@ -574,14 +574,14 @@ describe('query/shorthand', () => {
 
     it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType ordinal', () => {
       const str = fieldDefShorthand({
-        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}, scale: {type: ScaleType.ORDINAL}
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}, scale: {type: ScaleType.LINEAR}
       });
-      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"ordinal"})');
+      assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"linear"})');
     });
 
-    it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType ordinal when only field, bin, and type are included', () => {
+    it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType linear when only field, bin, and type are included', () => {
       const str = fieldDefShorthand({
-        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}, scale: {type: ScaleType.ORDINAL}
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}, scale: {type: ScaleType.LINEAR}
       }, {field: true, bin: true, type: true});
       assert.equal(str, 'bin(a,q)');
     });
