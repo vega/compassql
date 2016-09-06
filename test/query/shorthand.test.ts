@@ -48,7 +48,7 @@ describe('query/shorthand', () => {
   });
 
   describe('parse', () => {
-    it('should correctly parse a shorthand string', () => {
+    it('should correctly parse a shorthand string with calculate, filter, and filterInvalid', () => {
       let specQ: SpecQuery = parse(
         'point|calculate:{b2:3*datum["b2"]}|filter:"datum[\\"b2\\"] > 60"|filterInvalid:false|x:b2,q|y:bin(balance,q)'
       );
@@ -67,7 +67,7 @@ describe('query/shorthand', () => {
       });
     });
 
-    it('should correctly parse an ambiguous shorthand with aggregate and bin as enum spec', () => {
+    it('should correctly parse an ambiguous shorthand with aggregate, bin as enum spec, and with hasFn', () => {
       let specQ: SpecQuery = parse('?|?:?{"aggregate":"?","bin":"?","hasFn":true}(?,?)');
 
       assert.equal(specQ.mark, '?');
@@ -427,12 +427,18 @@ describe('query/shorthand', () => {
       assert.equal(str, 'a,q,sort={"field":"a","op":"mean","order":"descending"}');
     });
 
-    it('should return correct fieldDefShorthand string for bin with maxbins, scale with scaleType ' +
-       'and sort field definition object', () => {
+    it('should return correct fieldDefShorthand string for bin with maxbins, and scale with scaleType ', () => {
       const str = fieldDefShorthand({
         bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LINEAR}
       });
       assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"linear"})');
+    });
+
+    it('should return correct fieldDefShorthand string for scale with scaleType ordinal and sort field definition object', () => {
+      const str = fieldDefShorthand({
+        channel: Channel.Y, field: 'a', type: Type.ORDINAL, scale: {type: ScaleType.ORDINAL}, sort: {op: AggregateOp.MEAN, field: 'b'}
+      });
+      assert.equal(str, 'a,o,scale={"type":"ordinal"},sort={"field":"b","op":"mean"}');
     });
 
     it('should return correct fieldDefShorthand string for bin with maxbins, axis with orient, scale with scaleType ', () => {
@@ -547,7 +553,7 @@ describe('query/shorthand', () => {
        assert.equal(str, 'bin(a,q,maxbins=20)');
     });
 
-    it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType ordinal', () => {
+    it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType linear', () => {
       const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}, scale: {type: ScaleType.LINEAR}
       });
