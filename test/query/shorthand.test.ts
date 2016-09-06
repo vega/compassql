@@ -176,7 +176,7 @@ describe('query/shorthand', () => {
       const str = calculateShorthand([
         {field: 'b2', expr: '2*datum["b"]'}, {field: 'a', expr:'3*datum["a"]'}
       ]);
-      assert.equal(str, '{b2:2*datum["b"]},{a:3*datum["a"]}');
+      assert.equal(str, '{b2:2*datum["b"],a:3*datum["a"]}');
     });
   });
 

@@ -153,9 +153,9 @@ export function spec(specQ: SpecQuery,
 }
 
 export function calculate(formulaArr: Formula[]): string {
-  return formulaArr.map(function(calculateItem) {
-    return `{${calculateItem.field}:${calculateItem.expr}}`;
-  }).join(',');
+  return '{' + formulaArr.map(function(calculateItem) {
+    return `${calculateItem.field}:${calculateItem.expr}`;
+  }).join(',') + '}';
 }
 
 /**
