@@ -8,7 +8,6 @@ import {toMap, isString} from 'datalib/src/util';
 
 import {EncodingQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
-import {TransformQuery} from './transform';
 
 import {isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 import {getNestedEncodingPropertyChildren, Property, DEFAULT_PROPERTY_PRECEDENCE} from '../property';
@@ -329,33 +328,27 @@ export function parse(shorthand: string): SpecQuery {
     }
 
     if (splitPartKey === 'calculate') {
-      let transformQ: TransformQuery = specQ.transform || {};
+      specQ.transform = specQ.transform || {};
       let calculate: Formula[] = [];
-      let fieldAndExpr = JSON.parse(splitPartValue);
+      let fieldExprMapping = JSON.parse(splitPartValue);
 
-      for (let field in fieldAndExpr) {
-        let formula: Formula = {} as Formula;
-        formula['field'] = field;
-        formula['expr'] = fieldAndExpr[field];
-        calculate.push(formula);
+      for (let field in fieldExprMapping) {
+        calculate.push({field: field, expr: fieldExprMapping[field]});
       }
 
-      transformQ.calculate = calculate;
-      specQ.transform = transformQ;
+      specQ.transform.calculate = calculate;
       continue;
     }
 
     if (splitPartKey === 'filter') {
-      let transformQ: TransformQuery = specQ.transform || {};
-      transformQ.filter = JSON.parse(splitPartValue);
-      specQ.transform = transformQ;
+      specQ.transform = specQ.transform || {};
+      specQ.transform.filter = JSON.parse(splitPartValue);
       continue;
     }
 
     if (splitPartKey === 'filterInvalid') {
-      let transformQ: TransformQuery = specQ.transform || {};
-      transformQ.filterInvalid = JSON.parse(splitPartValue);
-      specQ.transform = transformQ;
+      specQ.transform = specQ.transform || {};
+      specQ.transform.filterInvalid = JSON.parse(splitPartValue);
       continue;
     }
   }
