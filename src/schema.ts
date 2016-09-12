@@ -234,8 +234,9 @@ export class Schema {
     let fullTimeUnit = encQ.timeUnit;
     for (let singleUnit of SINGLE_TIMEUNITS) {
       if (containsTimeUnit(fullTimeUnit as TimeUnit, singleUnit)) {
-        encQ.timeUnit = singleUnit;
-        if (this.cardinality(encQ, false, true) <= 1) {
+        // Create a clone of encQ, but with singleTimeUnit
+        const singleUnitEncQ = extend({}, encQ, {timeUnit: singleUnit});
+        if (this.cardinality(singleUnitEncQ, false, true) <= 1) {
           return false;
         }
       }
