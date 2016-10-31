@@ -10,15 +10,15 @@
     "build": "tsc && browserify src/cql.js -d -s cql | exorcist compassql.js.map > compassql.js",
     "postbuild": "uglifyjs compassql.js -cm --source-map compassql.min.js.map > compassql.min.js",
     "clean": "rm -f compassql.* & find src -name '*.js*' -type f -delete & find test -name '*.js*' -type f -delete",
-    "cover": "tsc && istanbul cover node_modules/.bin/_mocha -- --recursive",
     "deploy": "npm run clean && npm run lint && npm run test && scripts/deploy.sh",
     "lint": "tslint -c tslint.json src/*.ts test/*.ts src/**/*.ts test/**/*.ts",
     "watch": "nodemon -x 'npm run build && npm run test:only && npm run lint'",
     "schema": "typescript-json-schema --required true src/query.ts Query > compassql-schema.json",
     "tsc": "tsc",
     "test": "tsc && npm run test:only",
-    "test:only": "mocha --recursive --require source-map-support/register",
-    "test:debug": "mocha --recursive --require source-map-support/register --debug-brk"
+    "test:only": "nyc --reporter=html --reporter=text-summary mocha",
+    "codecov": "nyc report --reporter=json && codecov -f coverage/*.json",
+    "test:debug": "mocha --debug-brk"
   },
   "repository": {
     "type": "git",
@@ -48,7 +48,8 @@
     "chai": "~3.5.0",
     "datalib": "~1.7.0",
     "exorcist": "~0.4.0",
-    "istanbul": "~0.4.2",
+    "codecov": "~1.0.1",
+    "nyc": "~6.4.4",
     "mocha": "~2.4.4",
     "nodemon": "~1.9.2",
     "source-map-support": "~0.4.0",

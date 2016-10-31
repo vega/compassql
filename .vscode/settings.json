@@ -3,6 +3,10 @@
   "editor.tabSize": 2,
   "files.exclude": {
     "**/*.js": {"when": "$(basename).ts"},
-    "**/*.js.map": true
+    "src/**/*.d.ts": {"when": "$(basename).ts"},
+    "**/*.js.map": true,
+    "coverage/**/*": true
   }
+,
+"typescript.tsdk": "./node_modules/typescript/lib"
 }
