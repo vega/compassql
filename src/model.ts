@@ -9,8 +9,8 @@ import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 
 import {QueryConfig} from './config';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
-import {EnumSpec, SHORT_ENUM_SPEC, initEnumSpec, isEnumSpec} from './enumspec';
-import {EnumSpecIndex} from './enumspecindex';
+import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard} from './wildcard';
+import {WildcardIndex} from './enumspecindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
 import {GroupBy, ExtendedGroupBy, parse as parseGroupBy} from './query/groupby';
@@ -421,8 +421,8 @@ export class SpecQueryModel {
 
   /** channel => EncodingQuery */
   private _channelCount: Dict<number>;
-  private _enumSpecIndex: EnumSpecIndex;
-  private _enumSpecAssignment: Dict<any>;
+  private _wildcardIndex: WildcardIndex;
+  private _wildcardAssignment: Dict<any>;
   private _schema: Schema;
   private _opt: QueryConfig;
 
@@ -430,19 +430,19 @@ export class SpecQueryModel {
 
 
   /**
-   * Build an enumSpecIndex by detecting enumeration specifiers
+   * Build an WildcardIndex by detecting enumeration specifiers
    * in the input specQuery and replace short enum specs with
    * full ones that includes both names and enumValues.
    *
-   * @return a SpecQueryModel that wraps the specQuery and the enumSpecIndex.
+   * @return a SpecQueryModel that wraps the specQuery and the WildcardIndex.
    */
   public static build(specQ: SpecQuery, schema: Schema, opt: QueryConfig): SpecQueryModel {
-    let enumSpecIndex: EnumSpecIndex = new EnumSpecIndex();
+    let wildcardIndex: WildcardIndex = new WildcardIndex();
     // mark
-    if (isEnumSpec(specQ.mark)) {
+    if (isWildcard(specQ.mark)) {
       const name = getDefaultName(Property.MARK);
-      specQ.mark = initEnumSpec(specQ.mark, name, opt.marks);
-      enumSpecIndex.setMark(specQ.mark);
+      specQ.mark = initWildcard(specQ.mark, name, opt.marks);
+      wildcardIndex.setMark(specQ.mark);
     }
 
     // TODO: transform
@@ -458,19 +458,19 @@ export class SpecQueryModel {
 
       if (encQ.type === undefined) {
         // type is optional -- we automatically augment enum spec if not specified
-        encQ.type = SHORT_ENUM_SPEC;
+        encQ.type = SHORT_WILDCARD;
       }
 
       // For each property of the encodingQuery, enumerate
       ENCODING_PROPERTIES.forEach((prop) => {
-        if(isEnumSpec(encQ[prop])) {
+        if(isWildcard(encQ[prop])) {
           // Assign default enum spec name and enum values.
-          const defaultEnumSpecName = getDefaultName(prop) + index;
+          const defaultWildcardName = getDefaultName(prop) + index;
           const defaultEnumValues = getDefaultEnumValues(prop, schema, opt);
-          const enumSpec = encQ[prop] = initEnumSpec(encQ[prop], defaultEnumSpecName, defaultEnumValues);
+          const wildcard = encQ[prop] = initWildcard(encQ[prop], defaultWildcardName, defaultEnumValues);
 
           // Add index of the encoding mapping to the property's enum spec index.
-          enumSpecIndex.setEncodingProperty(index, prop, enumSpec);
+          wildcardIndex.setEncodingProperty(index, prop, wildcard);
         }
       });
 
@@ -480,14 +480,14 @@ export class SpecQueryModel {
         if (propObj) {
           const prop = nestedProp.property;
           const child = nestedProp.child;
-          if (isEnumSpec(propObj[child])) {
+          if (isWildcard(propObj[child])) {
             // Assign default enum spec name and enum values.
-            const defaultEnumSpecName = getDefaultName(prop) + index;
+            const defaultWildcardName = getDefaultName(prop) + index;
             const defaultEnumValues = getDefaultEnumValues(prop, schema, opt);
-            const enumSpec = propObj[child] = initEnumSpec(propObj[child], defaultEnumSpecName, defaultEnumValues);
+            const wildcard = propObj[child] = initWildcard(propObj[child], defaultWildcardName, defaultEnumValues);
 
             // Add index of the encoding mapping to the property's enum spec index.
-            enumSpecIndex.setEncodingProperty(index, prop, enumSpec);
+            wildcardIndex.setEncodingProperty(index, prop, wildcard);
           }
         }
       });
@@ -512,30 +512,30 @@ export class SpecQueryModel {
       const index = specQ.encodings.length - 1;
 
       // Add index of the encoding mapping to the property's enum spec index.
-      enumSpecIndex.setEncodingProperty(index, Property.CHANNEL, countEncQ.channel);
-      enumSpecIndex.setEncodingProperty(index, Property.AUTOCOUNT, countEncQ.autoCount);
+      wildcardIndex.setEncodingProperty(index, Property.CHANNEL, countEncQ.channel);
+      wildcardIndex.setEncodingProperty(index, Property.AUTOCOUNT, countEncQ.autoCount);
     }
 
-    return new SpecQueryModel(specQ, enumSpecIndex, schema, opt, {});
+    return new SpecQueryModel(specQ, wildcardIndex, schema, opt, {});
   }
 
-  constructor(spec: SpecQuery, enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig, enumSpecAssignment: Dict<any>) {
+  constructor(spec: SpecQuery, wildcardIndex: WildcardIndex, schema: Schema, opt: QueryConfig, wildcardAssignment: Dict<any>) {
     this._spec = spec;
     this._channelCount = spec.encodings.reduce((m, encQ) => {
-      if (!isEnumSpec(encQ.channel) && encQ.autoCount !== false) {
+      if (!isWildcard(encQ.channel) && encQ.autoCount !== false) {
         m[encQ.channel as string] = 1;
       }
       return m;
     }, {} as Dict<number>);
 
-    this._enumSpecIndex = enumSpecIndex;
-    this._enumSpecAssignment = enumSpecAssignment;
+    this._wildcardIndex = wildcardIndex;
+    this._wildcardAssignment = wildcardAssignment;
     this._opt = opt;
     this._schema = schema;
   }
 
-  public get enumSpecIndex() {
-    return this._enumSpecIndex;
+  public get wildcardIndex() {
+    return this._wildcardIndex;
   }
 
   public get schema() {
@@ -547,17 +547,17 @@ export class SpecQueryModel {
   }
 
   public duplicate(): SpecQueryModel {
-    return new SpecQueryModel(duplicate(this._spec), this._enumSpecIndex, this._schema, this._opt, duplicate(this._enumSpecAssignment));
+    return new SpecQueryModel(duplicate(this._spec), this._wildcardIndex, this._schema, this._opt, duplicate(this._wildcardAssignment));
   }
 
   public setMark(mark: Mark) {
-    const name = (this._spec.mark as EnumSpec<Mark>).name;
-    this._enumSpecAssignment[name] = this._spec.mark = mark;
+    const name = (this._spec.mark as Wildcard<Mark>).name;
+    this._wildcardAssignment[name] = this._spec.mark = mark;
   }
 
   public resetMark() {
-    const enumSpec = this._spec.mark = this._enumSpecIndex.mark;
-    delete this._enumSpecAssignment[enumSpec.name];
+    const wildcard = this._spec.mark = this._wildcardIndex.mark;
+    delete this._wildcardAssignment[wildcard.name];
   }
 
   public getMark() {
@@ -573,10 +573,10 @@ export class SpecQueryModel {
     return encQ[prop]; // encoding property (non-nested)
   }
 
-  public setEncodingProperty(index: number, prop: Property, value: any, enumSpec: EnumSpec<any>) {
+  public setEncodingProperty(index: number, prop: Property, value: any, wildcard: Wildcard<any>) {
     const encQ = this._spec.encodings[index];
     const nestedProp = getNestedEncodingProperty(prop);
-    if (prop === Property.CHANNEL && encQ.channel && !isEnumSpec(encQ.channel)) {
+    if (prop === Property.CHANNEL && encQ.channel && !isWildcard(encQ.channel)) {
       // If there is an old channel
       this._channelCount[encQ.channel as Channel]--;
     }
@@ -586,13 +586,13 @@ export class SpecQueryModel {
     } else if (hasNestedProperty(prop) && value === true) {
       encQ[prop] = extend({},
         encQ[prop], // copy all existing properties
-        {enum: undefined, name: undefined} // except name and values to it no longer an enumSpec
+        {enum: undefined, name: undefined} // except name and values to it no longer an wildcard
       );
     } else { // encoding property (non-nested)
       encQ[prop] = value;
     }
 
-    this._enumSpecAssignment[enumSpec.name] = value;
+    this._wildcardAssignment[wildcard.name] = value;
 
     if (prop === Property.CHANNEL) {
       // If there is a new channel, make sure it exists and add it to the count.
@@ -600,22 +600,22 @@ export class SpecQueryModel {
     }
   }
 
-  public resetEncodingProperty(index: number, prop: Property, enumSpec: EnumSpec<any>) {
+  public resetEncodingProperty(index: number, prop: Property, wildcard: Wildcard<any>) {
     const encQ = this._spec.encodings[index];
     const nestedProp = getNestedEncodingProperty(prop);
     if (prop === Property.CHANNEL) {
       this._channelCount[encQ.channel as Channel]--;
     }
 
-    // reset it to enumSpec
+    // reset it to wildcard
     if (nestedProp) { // nested encoding property
-      encQ[nestedProp.parent][nestedProp.child] = enumSpec;
+      encQ[nestedProp.parent][nestedProp.child] = wildcard;
     } else { // encoding property (non-nested)
-      encQ[prop] = enumSpec;
+      encQ[prop] = wildcard;
     }
 
     // add remove value that is reset from the assignment map
-    delete this._enumSpecAssignment[enumSpec.name];
+    delete this._wildcardAssignment[wildcard.name];
   }
 
   public channelUsed(channel: Channel) {
@@ -685,7 +685,7 @@ export class SpecQueryModel {
       }
 
       // if channel is an enum spec, return null
-      if (isEnumSpec(encQ.channel)) return null;
+      if (isWildcard(encQ.channel)) return null;
 
       // assemble other property into a field def.
       const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND];
@@ -695,7 +695,7 @@ export class SpecQueryModel {
         const prop = PROPERTIES[j];
 
         // if the property is an enum spec, return null
-        if (isEnumSpec(encQ[prop])) return null;
+        if (isWildcard(encQ[prop])) return null;
 
         // otherwise, assign the proper to the field def
         if (encQ[prop] !== undefined) {
@@ -721,7 +721,7 @@ export class SpecQueryModel {
    * @return a Vega-Lite spec if completed, null otherwise.
    */
   public toSpec(data?: Data): ExtendedUnitSpec {
-    if (isEnumSpec(this._spec.mark)) return null;
+    if (isWildcard(this._spec.mark)) return null;
 
     let spec: any = {};
     data = data || this._spec.data;

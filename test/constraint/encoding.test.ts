@@ -10,7 +10,7 @@ import {Property} from '../../src/property';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {EncodingConstraintModel, ENCODING_CONSTRAINTS, ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
 import {EncodingQuery, ScaleQuery} from '../../src/query/encoding';
-import {SHORT_ENUM_SPEC} from '../../src/enumspec';
+import {SHORT_WILDCARD} from '../../src/wildcard';
 import {duplicate, extend} from '../../src/util';
 
 import {schema} from '../fixture';
@@ -35,7 +35,7 @@ describe('constraints/encoding', () => {
         name: 'TestEncoding for hasAllRequiredProperties class method',
         description: 'TestEncoding for hasAllRequirdProperties class method',
         properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, Property.SCALE_TYPE],
-        allowEnumSpecForProperties: false,
+        allowWildcardForProperties: false,
         strict: true,
         satisfy: undefined
       }
@@ -65,7 +65,7 @@ describe('constraints/encoding', () => {
     it('should return false if a required property is an enum spec', () => {
       let encQ: EncodingQuery = {
         channel: Channel.X,
-        aggregate: SHORT_ENUM_SPEC,
+        aggregate: SHORT_WILDCARD,
         scale: {type: ScaleType.LOG},
         type: Type.QUANTITATIVE
       };
@@ -77,7 +77,7 @@ describe('constraints/encoding', () => {
         channel: Channel.X,
         aggregate: AggregateOp.MEAN,
         field: 'A',
-        scale: {type: SHORT_ENUM_SPEC},
+        scale: {type: SHORT_WILDCARD},
         type: Type.QUANTITATIVE
       };
       assert.isFalse(encModel.hasAllRequiredPropertiesSpecific(encQ));

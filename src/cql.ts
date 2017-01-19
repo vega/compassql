@@ -6,7 +6,7 @@ export import config = require('./config');
 export import constraint = require('./constraint/constraint');
 
 export import enumerate = require('./enumerator');
-export import enumSpec = require('./enumspec');
+export import wildcard = require('./wildcard');
 export {generate} from './generate';
 export import model = require('./model');
 export import nest = require('./nest');
