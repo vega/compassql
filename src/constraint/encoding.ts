@@ -373,11 +373,7 @@ export const ENCODING_CONSTRAINTS_BY_PROPERTY: {[prop: string]: EncodingConstrai
 /**
  * Check all encoding constraints for a particular property and index tuple
  */
-<<<<<<< HEAD
-export function checkEncoding(prop: Property, enumSpec: EnumSpec<any>, index: number,
-=======
 export function checkEncoding(prop: Property, wildcard: Wildcard<any>, index: number,
->>>>>>> 119093b... renamed enum spec and related to wildcard
   specM: SpecQueryModel, schema: Schema, opt: QueryConfig): string {
 
   // Check encoding constraint
@@ -395,11 +391,7 @@ export function checkEncoding(prop: Property, wildcard: Wildcard<any>, index: nu
         let violatedConstraint = '(enc) ' + c.name();
         /* istanbul ignore if */
         if (opt.verbose) {
-<<<<<<< HEAD
-          console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + enumSpec.name);
-=======
           console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + wildcard.name);
->>>>>>> 119093b... renamed enum spec and related to wildcard
         }
         return violatedConstraint;
       }
