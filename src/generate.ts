@@ -7,18 +7,18 @@ import {Schema} from './schema';
 import {stylize} from './stylize';
 
 export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DEFAULT_QUERY_CONFIG) {
-  // 1. Build a SpecQueryModel, which also contains enumSpecIndex
+  // 1. Build a SpecQueryModel, which also contains wildcardIndex
   const specM = SpecQueryModel.build(specQ, schema, opt);
-  const enumSpecIndex = specM.enumSpecIndex;
+  const wildcardIndex = specM.wildcardIndex;
 
   // 2. Enumerate each of the properties based on propPrecedence.
 
   let answerSet = [specM]; // Initialize Answer Set with only the input spec query.
   opt.propertyPrecedence.forEach((prop) => {
-    // If the original specQuery contains enumSpec for this prop
-    if (enumSpecIndex.hasProperty(prop)) {
+    // If the original specQuery contains wildcard for this prop
+    if (wildcardIndex.hasProperty(prop)) {
       // update answerset
-      const reducer = ENUMERATOR_INDEX[prop](enumSpecIndex, schema, opt);
+      const reducer = ENUMERATOR_INDEX[prop](wildcardIndex, schema, opt);
       answerSet = answerSet.reduce(reducer, []);
     }
   });

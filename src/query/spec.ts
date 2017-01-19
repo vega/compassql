@@ -5,7 +5,7 @@ import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {Mark, BAR, AREA} from 'vega-lite/src/mark';
 import {StackOffset, StackProperties} from 'vega-lite/src/stack';
 
-import {EnumSpec, ShortEnumSpec, isEnumSpec} from '../enumspec';
+import {Wildcard, ShortWildcard, isWildcard} from '../wildcard';
 import {ENCODING_PROPERTIES, isNestedEncodingProperty, Property} from '../property';
 import {contains, extend, keys, some} from '../util';
 
@@ -16,7 +16,7 @@ import {EncodingQuery} from './encoding';
 
 export interface SpecQuery {
   data?: Data;
-  mark: Mark | EnumSpec<Mark> | ShortEnumSpec;
+  mark: Mark | Wildcard<Mark> | ShortWildcard;
   transform?: TransformQuery;
   encodings: EncodingQuery[];
 
@@ -59,7 +59,7 @@ export function fromSpec(spec: ExtendedUnitSpec): SpecQuery {
 
 export function isAggregate(specQ: SpecQuery) {
   return some(specQ.encodings, (encQ: EncodingQuery) => {
-    return (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate) || encQ.autoCount === true;
+    return (!isWildcard(encQ.aggregate) && !!encQ.aggregate) || encQ.autoCount === true;
   });
 }
 
