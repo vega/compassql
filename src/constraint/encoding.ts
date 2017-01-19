@@ -9,7 +9,7 @@ import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
 import {getNestedEncodingProperty, Property, SCALE_PROPERTIES, SUPPORTED_SCALE_PROPERTY_INDEX} from '../property';
 import {isWildcard, Wildcard} from '../wildcard';
-import {EncodingWildcardIndex} from '../enumspecindex';
+import {EncodingWildcardIndex} from '../wildcardindex';
 import {PrimitiveType, Schema} from '../schema';
 import {contains, every} from '../util';
 

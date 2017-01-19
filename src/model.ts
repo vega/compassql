@@ -10,7 +10,7 @@ import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {QueryConfig} from './config';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard} from './wildcard';
-import {WildcardIndex} from './enumspecindex';
+import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
 import {GroupBy, ExtendedGroupBy, parse as parseGroupBy} from './query/groupby';

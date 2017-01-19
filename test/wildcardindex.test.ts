@@ -1,5 +1,5 @@
 import {Mark} from 'vega-lite/src/mark';
-import {WildcardIndex} from '../src/enumspecindex';
+import {WildcardIndex} from '../src/wildcardindex';
 import {Property} from '../src/property';
 
 import {assert} from 'chai';

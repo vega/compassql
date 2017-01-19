@@ -3,7 +3,7 @@ import {Mark} from 'vega-lite/src/mark';
 import {QueryConfig} from './config';
 import {checkEncoding} from './constraint/encoding';
 import {checkSpec} from './constraint/spec';
-import {WildcardIndex} from './enumspecindex';
+import {WildcardIndex} from './wildcardindex';
 import {SpecQueryModel} from './model';
 import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from './property';
 import {Wildcard} from './wildcard';
