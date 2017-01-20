@@ -9,7 +9,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX, SpecConstraintModel} from '../../src/constraint/spec';
-import {SHORT_WILDCARD} from '../../src/wildcard';
+import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {SpecQuery} from '../../src/query/spec';
@@ -64,7 +64,7 @@ describe('constraints/spec', () => {
         name: 'Test SpecModel for hasAllRequiredPropertiesSpecific class method',
         description: 'Test SpecModel for hasAllRequiredPropertiesSpecific class method',
         properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, Property.SCALE_TYPE, Property.MARK],
-        allowWildcardForProperties: false,
+        allowEnumSpecForProperties: false,
         strict: true,
         satisfy: undefined
       }
@@ -94,7 +94,7 @@ describe('constraints/spec', () => {
       const specQM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: SHORT_WILDCARD, type: Type.QUANTITATIVE}
+          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: SHORT_ENUM_SPEC, type: Type.QUANTITATIVE}
         ]
       });
       assert.isFalse(specCModel.hasAllRequiredPropertiesSpecific(specQM));
@@ -104,7 +104,7 @@ describe('constraints/spec', () => {
       const specQM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: {type: SHORT_WILDCARD}, type: Type.QUANTITATIVE}
+          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: {type: SHORT_ENUM_SPEC}, type: Type.QUANTITATIVE}
         ]
       });
       assert.isFalse(specCModel.hasAllRequiredPropertiesSpecific(specQM));
@@ -1084,7 +1084,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {aggregate: SHORT_WILDCARD, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+          {aggregate: SHORT_ENUM_SPEC, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
@@ -1094,7 +1094,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {autoCount: SHORT_WILDCARD, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+          {autoCount: SHORT_ENUM_SPEC, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
@@ -1162,7 +1162,7 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should return true if the aggregate plot groups by a temporal field with timeUnit as Wildcard', () => {
+    it('should return true if the aggregate plot groups by a temporal field with timeUnit as enumSpec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
@@ -1224,7 +1224,7 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should return true if the aggregate plot groups by a quantitative field with bin as Wildcard', () => {
+    it('should return true if the aggregate plot groups by a quantitative field with bin as enumSpec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [

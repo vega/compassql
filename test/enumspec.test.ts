@@ -1,61 +1,61 @@
 import {Mark} from 'vega-lite/src/mark';
 
 import {assert} from 'chai';
-import {initWildcard, isWildcard, SHORT_WILDCARD} from '../src/wildcard';
+import {initEnumSpec, isEnumSpec, SHORT_ENUM_SPEC} from '../src/enumspec';
 
-describe('wildcard', () => {
-  describe('isWildcard', () => {
+describe('enumspec', () => {
+  describe('isEnumSpec', () => {
     it('should return true for an enum spec with name and values', () => {
-      assert(isWildcard({
+      assert(isEnumSpec({
         name: 'a',
         enum: [1,2,3]
       }));
     });
 
     it('should return true for an enum spec with name.', () => {
-      assert(isWildcard({
+      assert(isEnumSpec({
         name: 'a'
       }));
     });
 
     it('should return true for an enum spec with values', () => {
-      assert(isWildcard({
+      assert(isEnumSpec({
         enum: [1,2,3]
       }));
     });
 
     it('should return true for a short enum spec', () => {
-      assert(isWildcard(SHORT_WILDCARD));
+      assert(isEnumSpec(SHORT_ENUM_SPEC));
     });
 
     it('should return false for a string', () => {
-      assert(!isWildcard('string'));
+      assert(!isEnumSpec('string'));
     });
 
     it('should return false for a number', () => {
-      assert(!isWildcard(9));
+      assert(!isEnumSpec(9));
     });
 
     it('should return false for a boolean value', () => {
-      assert(!isWildcard(true));
+      assert(!isEnumSpec(true));
     });
 
     it('should return false for an array', () => {
-      assert(!isWildcard([1,2]));
+      assert(!isEnumSpec([1,2]));
     });
   });
 
-  describe('initWildcard', () => {
-    it('should not extend the wildcard with SHORT_WILDCARD.', () => {
-      const mark = initWildcard(SHORT_WILDCARD, 'm', [Mark.POINT]);
+  describe('initEnumSpec', () => {
+    it('should not extend the enumSpec with SHORT_ENUM_SPEC.', () => {
+      const mark = initEnumSpec(SHORT_ENUM_SPEC, 'm', [Mark.POINT]);
       assert.deepEqual(mark, {
         name: 'm',
         enum: [Mark.POINT]
       });
     });
 
-    it('should return full wildcard with other properties preserved', () => {
-      const binQuery = initWildcard({enum: [true, false], maxbins: 30}, 'b1', [true, false]);
+    it('should return full enumSpec with other properties preserved', () => {
+      const binQuery = initEnumSpec({enum: [true, false], maxbins: 30}, 'b1', [true, false]);
       assert.deepEqual(binQuery.enum, [true, false]);
       assert.equal(binQuery['maxbins'], 30);
       assert.equal(binQuery.name, 'b1');

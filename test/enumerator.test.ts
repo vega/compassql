@@ -31,7 +31,7 @@ describe('enumerator', () => {
           {channel: Channel.Y, field: 'O', type: Type.ORDINAL}
         ]
       });
-      const enumerator = ENUMERATOR_INDEX[Property.MARK](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+      const enumerator = ENUMERATOR_INDEX[Property.MARK](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
       const answerSet = enumerator([], specM);
       assert.equal(answerSet.length, 2);
@@ -47,7 +47,7 @@ describe('enumerator', () => {
           {channel: Channel.SHAPE, field: 'O', type: Type.ORDINAL}
         ]
       });
-      const enumerator = ENUMERATOR_INDEX[Property.MARK](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+      const enumerator = ENUMERATOR_INDEX[Property.MARK](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
       const answerSet = enumerator([], specM);
       assert.equal(answerSet.length, 1);
@@ -69,7 +69,7 @@ describe('enumerator', () => {
           ]
         });
         const opt = extend({}, DEFAULT_QUERY_CONFIG, {omitVerticalDotPlot: false});
-        const enumerator = ENUMERATOR_INDEX[Property.CHANNEL](specM.wildcardIndex, schema, opt);
+        const enumerator = ENUMERATOR_INDEX[Property.CHANNEL](specM.enumSpecIndex, schema, opt);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
@@ -88,7 +88,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.CHANNEL](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.CHANNEL](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -110,7 +110,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -131,7 +131,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.AGGREGATE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -155,7 +155,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.BIN](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.BIN](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
@@ -177,7 +177,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.BIN](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.BIN](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
@@ -201,7 +201,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.BIN_MAXBINS](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.BIN_MAXBINS](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -227,7 +227,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.SCALE](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
@@ -249,7 +249,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.SCALE](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
@@ -273,7 +273,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.SCALE_CLAMP](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_CLAMP](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -298,7 +298,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.SCALE_DOMAIN](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_DOMAIN](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -321,7 +321,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.SCALE_DOMAIN](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_DOMAIN](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -347,7 +347,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.SCALE_EXPONENT](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_EXPONENT](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 4);
@@ -374,7 +374,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.SCALE_NICE](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_NICE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -396,7 +396,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.SCALE_RANGE](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_RANGE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -419,7 +419,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.SCALE_RANGE](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_RANGE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -444,7 +444,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.SCALE_ROUND](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_ROUND](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -469,7 +469,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.SCALE_TYPE](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -494,7 +494,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.SCALE_USERAWDOMAIN](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.SCALE_USERAWDOMAIN](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -517,7 +517,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.TIMEUNIT](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.TIMEUNIT](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 4);
@@ -539,7 +539,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.TIMEUNIT](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.TIMEUNIT](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -559,7 +559,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -579,7 +579,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -597,7 +597,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 4);
@@ -618,7 +618,7 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.FIELD](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
@@ -636,7 +636,7 @@ describe('enumerator', () => {
           ]
         });
         const noTypeMatchesSchema = extend({}, DEFAULT_QUERY_CONFIG, {typeMatchesSchemaType: false});
-        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.wildcardIndex, schema, noTypeMatchesSchema);
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, noTypeMatchesSchema);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
@@ -652,7 +652,7 @@ describe('enumerator', () => {
             {channel: Channel.X, field: 'Q', type:  {enum: [Type.QUANTITATIVE, Type.NOMINAL, Type.ORDINAL, Type.TEMPORAL]}},
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -666,7 +666,7 @@ describe('enumerator', () => {
             {channel: Channel.X, field: 'O', type: {enum: [Type.ORDINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.NOMINAL]}}
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -680,7 +680,7 @@ describe('enumerator', () => {
             {channel: Channel.X, field: 'T', type: {enum:[Type.TEMPORAL, Type.ORDINAL, Type.QUANTITATIVE, Type.NOMINAL]}}
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
@@ -694,7 +694,7 @@ describe('enumerator', () => {
             {channel: Channel.X, field: 'N', type: {enum: [Type.NOMINAL, Type.TEMPORAL, Type.QUANTITATIVE, Type.ORDINAL]}}
           ]
         });
-        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = ENUMERATOR_INDEX[Property.TYPE](specM.enumSpecIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);

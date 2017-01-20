@@ -157,7 +157,7 @@ export class Schema {
       // encQ.bin will either be a boolean or a BinQuery
       var bin: BinQuery;
       if (typeof encQ.bin === 'boolean') {
-        // autoMaxBins defaults to 10 if channel is Wildcard
+        // autoMaxBins defaults to 10 if channel is EnumSpec
         bin = {
           maxbins: autoMaxBins(encQ.channel as Channel)
         };

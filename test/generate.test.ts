@@ -10,7 +10,7 @@ import {Type} from 'vega-lite/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
 import {AxisQuery, ScaleQuery} from '../src/query/encoding';
-import {SHORT_WILDCARD} from '../src/wildcard';
+import {SHORT_ENUM_SPEC} from '../src/enumspec';
 import {extend, some} from '../src/util';
 
 import {schema} from './fixture';
@@ -115,8 +115,8 @@ describe('generate', function () {
           mark: Mark.POINT,
           encodings: [{
             channel: Channel.X,
-            bin: SHORT_WILDCARD,
-            aggregate: SHORT_WILDCARD,
+            bin: SHORT_ENUM_SPEC,
+            aggregate: SHORT_ENUM_SPEC,
             field: 'Q',
             type: Type.QUANTITATIVE
           }]
@@ -164,7 +164,7 @@ describe('generate', function () {
   describe('2D', () => {
     describe('x:N,y:N', () => {
       const query = {
-        mark: SHORT_WILDCARD,
+        mark: SHORT_ENUM_SPEC,
         encodings: [{
           channel: Channel.X,
           field: 'N',
@@ -222,7 +222,7 @@ describe('generate', function () {
     describe('QxQ', () => {
       it('should not return any of bar, tick, line, or area', () => {
         const query = {
-          mark: SHORT_WILDCARD,
+          mark: SHORT_ENUM_SPEC,
           encodings: [{
             channel: Channel.X,
             field: 'Q',
@@ -246,7 +246,7 @@ describe('generate', function () {
     describe('A(Q) x A(Q)', () => {
       it('should return neither line nor area', () => {
         const query = {
-          mark: SHORT_WILDCARD,
+          mark: SHORT_ENUM_SPEC,
           encodings: [{
             channel: Channel.X,
             aggregate: AggregateOp.MEAN,
@@ -271,17 +271,17 @@ describe('generate', function () {
   describe('3D', () => {
     describe('NxNxQ', () => {
       const query = {
-        mark: SHORT_WILDCARD,
+        mark: SHORT_ENUM_SPEC,
         encodings: [{
-          channel: SHORT_WILDCARD,
+          channel: SHORT_ENUM_SPEC,
           field: 'N',
           type: Type.NOMINAL
         },{
-          channel: SHORT_WILDCARD,
+          channel: SHORT_ENUM_SPEC,
           field: 'N20',
           type: Type.NOMINAL
         },{
-          channel: SHORT_WILDCARD,
+          channel: SHORT_ENUM_SPEC,
           field: 'Q',
           type: Type.QUANTITATIVE
         }]
@@ -309,7 +309,7 @@ describe('generate', function () {
             channel: Channel.X,
             field: 'Q',
             type: Type.QUANTITATIVE,
-            axis: {layer: SHORT_WILDCARD}
+            axis: {layer: SHORT_ENUM_SPEC}
           }
         ]
       };
