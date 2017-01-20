@@ -220,13 +220,118 @@ export const NESTED_ENCODING_PROPERTIES_PARENT = [
 ];
 
 export function hasNestedProperty(prop: Property) {
+<<<<<<< f13875fae5b4c2d406c66e60509b794d366ad1d1
   return NESTED_ENCODING_PROPERTIES_PARENT.indexOf(prop) !== -1;
+=======
+  switch (prop) {
+    case Property.BIN:
+    case Property.SCALE:
+    case Property.SORT:
+    case Property.AXIS:
+    case Property.LEGEND:
+      return true;
+    case Property.MARK:
+    case Property.FILTER:
+    case Property.CALCULATE:
+    case Property.FILTERINVALID:
+    case Property.STACK:
+    case Property.CHANNEL:
+    case Property.AGGREGATE:
+    case Property.AUTOCOUNT:
+    case Property.TIMEUNIT:
+    case Property.FIELD:
+    case Property.TYPE:
+    case Property.BIN_MAXBINS:
+    case Property.BIN_MIN:
+    case Property.BIN_MAX:
+    case Property.BIN_BASE:
+    case Property.BIN_STEP:
+    case Property.BIN_STEPS:
+    case Property.BIN_MINISTEP:
+    case Property.BIN_DIV:
+    case Property.SCALE_BANDSIZE:
+    case Property.SCALE_CLAMP:
+    case Property.SCALE_DOMAIN:
+    case Property.SCALE_EXPONENT:
+    case Property.SCALE_NICE:
+    case Property.SCALE_RANGE:
+    case Property.SCALE_ROUND:
+    case Property.SCALE_TYPE:
+    case Property.SCALE_USERAWDOMAIN:
+    case Property.SCALE_ZERO:
+    case Property.AXIS_AXISCOLOR:
+    case Property.AXIS_AXISWIDTH:
+    case Property.AXIS_LAYER:
+    case Property.AXIS_OFFSET:
+    case Property.AXIS_ORIENT:
+    case Property.AXIS_GRID:
+    case Property.AXIS_GRIDCOLOR:
+    case Property.AXIS_GRIDDASH:
+    case Property.AXIS_GRIDOPACITY:
+    case Property.AXIS_GRIDWIDTH:
+    case Property.AXIS_LABELS:
+    case Property.AXIS_FORMAT:
+    case Property.AXIS_LABELANGLE:
+    case Property.AXIS_LABELMAXLENGTH:
+    case Property.AXIS_SHORTTIMELABELS:
+    case Property.AXIS_TICKS:
+    case Property.AXIS_SUBDIVIDE:
+    case Property.AXIS_TICKCOLOR:
+    case Property.AXIS_TICKLABELCOLOR:
+    case Property.AXIS_TICKLABELFONT:
+    case Property.AXIS_TICKLABELFONTSIZE:
+    case Property.AXIS_TICKPADDING:
+    case Property.AXIS_TICKSIZE:
+    case Property.AXIS_TICKSIZEMAJOR:
+    case Property.AXIS_TICKSIZEMINOR:
+    case Property.AXIS_TICKSIZEEND:
+    case Property.AXIS_TICKWIDTH:
+    case Property.AXIS_VALUES:
+    case Property.AXIS_TITLE:
+    case Property.AXIS_TITLECOLOR:
+    case Property.AXIS_TITLEFONT:
+    case Property.AXIS_TITLEFONTSIZE:
+    case Property.AXIS_TITLEFONTWEIGHT:
+    case Property.AXIS_CHARACTERWIDTH:
+    case Property.AXIS_TITLEMAXLENGTH:
+    case Property.AXIS_TITLEOFFSET:
+    case Property.LEGEND_ORIENT:
+    case Property.LEGEND_OFFSET:
+    case Property.LEGEND_VALUES:
+    case Property.LEGEND_FORMAT:
+    case Property.LEGEND_LABELALIGN:
+    case Property.LEGEND_LABELBASELINE:
+    case Property.LEGEND_LABELCOLOR:
+    case Property.LEGEND_LABELFONT:
+    case Property.LEGEND_LABELFONTSIZE:
+    case Property.LEGEND_SHORTTIMELABELS:
+    case Property.LEGEND_SYMBOLCOLOR:
+    case Property.LEGEND_SYMBOLSHAPE:
+    case Property.LEGEND_SYMBOLSIZE:
+    case Property.LEGEND_SYMBOLSTROKEWIDTH:
+    case Property.LEGEND_TITLE:
+    case Property.LEGEND_TITLECOLOR:
+    case Property.LEGEND_TITLEFONT:
+    case Property.LEGEND_TITLEFONTSIZE:
+    case Property.LEGEND_TITLEFONTWEIGHT:
+      return false;
+  }
+  /* istanbul ignore next */
+  throw new Error('hasNestedProperty undefined for property ' + prop);
+>>>>>>> Added new properties for each of the new bin properties. Also editted the BinQuery interface to support the new bin properties. The new bin properties include min, max, base, step, steps, ministep, and div. Editted fieldDef() in shorthand to support cleanly the new bin properties. None of these changes have been tested. Added a fixme to the rawFieldDef() in shorthand because it needs to be refactored in the future
 }
 
 export const ENCODING_PROPERTIES = [
   Property.CHANNEL,
   Property.BIN,
   Property.BIN_MAXBINS,
+  Property.BIN_MIN,
+  Property.BIN_MAX,
+  Property.BIN_BASE,
+  Property.BIN_STEP,
+  Property.BIN_STEPS,
+  Property.BIN_MINISTEP,
+  Property.BIN_DIV,
   Property.TIMEUNIT,
   Property.AGGREGATE,
   Property.AUTOCOUNT,
@@ -334,6 +439,13 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
 
   // Nested Transform Property
   Property.BIN_MAXBINS,
+  Property.BIN_MIN,
+  Property.BIN_MAX,
+  Property.BIN_BASE,
+  Property.BIN_STEP,
+  Property.BIN_STEPS,
+  Property.BIN_MINISTEP,
+  Property.BIN_DIV,
 
   // Encoding
   Property.CHANNEL,
@@ -422,6 +534,7 @@ export interface NestedEncodingProperty {
   child: string;
 }
 
+<<<<<<< f13875fae5b4c2d406c66e60509b794d366ad1d1
 /**
  * Collection of nested encoding properties.
  *
@@ -455,6 +568,388 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] =
    }
    return nestedEncodingProperties;
  }, []);
+=======
+export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
+  // TODO: add other for bins 
+  {
+    property: Property.BIN_MAXBINS,
+    parent: 'bin',
+    child: 'maxbins'
+  },
+  {
+    property: Property.BIN_MIN,
+    parent: 'bin',
+    child: 'min'
+  },
+  {
+    property: Property.BIN_MAX,
+    parent: 'bin',
+    child: 'max'
+  },
+  {
+    property: Property.BIN_BASE,
+    parent: 'bin',
+    child: 'base'
+  },
+  {
+    property: Property.BIN_STEP,
+    parent: 'bin',
+    child: 'step'
+  },
+  {
+    property: Property.BIN_STEPS,
+    parent: 'bin',
+    child: 'steps'
+  },
+  {
+    property: Property.BIN_MINISTEP,
+    parent: 'bin',
+    child: 'ministep'
+  },
+  {
+    property: Property.BIN_DIV,
+    parent: 'bin',
+    child: 'div'
+  },
+  {
+    property: Property.SORT_FIELD,
+    parent: 'sort',
+    child: 'field'
+  },
+  {
+    property: Property.SORT_OP,
+    parent: 'sort',
+    child: 'op'
+  },
+  {
+    property: Property.SORT_ORDER,
+    parent: 'sort',
+    child: 'order'
+  },
+  {
+    property: Property.SCALE_BANDSIZE,
+    parent: 'scale',
+    child: 'bandSize'
+  },
+  {
+    property: Property.SCALE_CLAMP,
+    parent: 'scale',
+    child: 'clamp'
+  },
+  {
+    property: Property.SCALE_DOMAIN,
+    parent: 'scale',
+    child: 'domain'
+  },
+  {
+    property: Property.SCALE_EXPONENT,
+    parent: 'scale',
+    child: 'exponent'
+  },
+  {
+    property: Property.SCALE_NICE,
+    parent: 'scale',
+    child: 'nice'
+  },
+  {
+    property: Property.SCALE_RANGE,
+    parent: 'scale',
+    child: 'range'
+  },
+  {
+    property: Property.SCALE_ROUND,
+    parent: 'scale',
+    child: 'round'
+  },
+  {
+    property: Property.SCALE_TYPE,
+    parent: 'scale',
+    child: 'type'
+  },
+  {
+    property: Property.SCALE_USERAWDOMAIN,
+    parent: 'scale',
+    child: 'useRawDomain'
+  },
+  {
+    property: Property.SCALE_ZERO,
+    parent: 'scale',
+    child: 'zero'
+  },
+  {
+    property: Property.AXIS_AXISCOLOR,
+    parent: 'axis',
+    child: 'axisColor'
+  },
+  {
+    property: Property.AXIS_AXISWIDTH,
+    parent: 'axis',
+    child: 'axisWidth'
+  },
+  {
+    property: Property.AXIS_LAYER,
+    parent: 'axis',
+    child: 'layer'
+  },
+  {
+    property: Property.AXIS_OFFSET,
+    parent: 'axis',
+    child: 'offset'
+  },
+  {
+    property: Property.AXIS_ORIENT,
+    parent: 'axis',
+    child: 'orient'
+  },
+  {
+    property: Property.AXIS_GRID,
+    parent: 'axis',
+    child: 'grid'
+  },
+  {
+    property: Property.AXIS_GRIDCOLOR,
+    parent: 'axis',
+    child: 'gridColor'
+  },
+  {
+    property: Property.AXIS_GRIDDASH,
+    parent: 'axis',
+    child: 'gridDash'
+  },
+  {
+    property: Property.AXIS_GRIDOPACITY,
+    parent: 'axis',
+    child: 'gridOpacity'
+  },
+  {
+    property: Property.AXIS_GRIDWIDTH,
+    parent: 'axis',
+    child: 'gridWidth'
+  },
+  {
+    property: Property.AXIS_LABELS,
+    parent: 'axis',
+    child: 'labels'
+  },
+  {
+    property: Property.AXIS_FORMAT,
+    parent: 'axis',
+    child: 'format'
+  },
+  {
+    property: Property.AXIS_LABELANGLE,
+    parent: 'axis',
+    child: 'labelAngle'
+  },
+  {
+    property: Property.AXIS_LABELMAXLENGTH,
+    parent: 'axis',
+    child: 'labelMaxLength'
+  },
+  {
+    property: Property.AXIS_SHORTTIMELABELS,
+    parent: 'axis',
+    child: 'shortTimeLabels'
+  },
+  {
+    property: Property.AXIS_TICKS,
+    parent: 'axis',
+    child: 'ticks'
+  },
+  {
+    property: Property.AXIS_SUBDIVIDE,
+    parent: 'axis',
+    child: 'subdivide'
+  },
+  {
+    property: Property.AXIS_TICKCOLOR,
+    parent: 'axis',
+    child: 'tickColor'
+  },
+  {
+    property: Property.AXIS_TICKLABELCOLOR,
+    parent: 'axis',
+    child: 'tickLabelColor'
+  },
+  {
+    property: Property.AXIS_TICKLABELFONT,
+    parent: 'axis',
+    child: 'tickLabelFont'
+  },
+  {
+    property: Property.AXIS_TICKLABELFONTSIZE,
+    parent: 'axis',
+    child: 'tickLabelFontSize'
+  },
+  {
+    property: Property.AXIS_TICKPADDING,
+    parent: 'axis',
+    child: 'tickPadding'
+  },
+  {
+    property: Property.AXIS_TICKSIZE,
+    parent: 'axis',
+    child: 'tickSize'
+  },
+  {
+    property: Property.AXIS_TICKSIZEMAJOR,
+    parent: 'axis',
+    child: 'tickSizeMajor'
+  },
+  {
+    property: Property.AXIS_TICKSIZEMINOR,
+    parent: 'axis',
+    child: 'tickSizeMinor'
+  },
+  {
+    property: Property.AXIS_TICKSIZEEND,
+    parent: 'axis',
+    child: 'tickSizeEnd'
+  },
+  {
+    property: Property.AXIS_TICKWIDTH,
+    parent: 'axis',
+    child: 'tickWidth'
+  },
+  {
+    property: Property.AXIS_VALUES,
+    parent: 'axis',
+    child: 'values'
+  },
+  {
+    property: Property.AXIS_TITLE,
+    parent: 'axis',
+    child: 'title'
+  },
+  {
+    property: Property.AXIS_TITLECOLOR,
+    parent: 'axis',
+    child: 'titleColor'
+  },
+  {
+    property: Property.AXIS_TITLEFONT,
+    parent: 'axis',
+    child: 'titleFont'
+  },
+  {
+    property: Property.AXIS_TITLEFONTSIZE,
+    parent: 'axis',
+    child: 'titleFontSize'
+  },
+  {
+    property: Property.AXIS_TITLEFONTWEIGHT,
+    parent: 'axis',
+    child: 'titleFontWeight'
+  },
+  {
+    property: Property.AXIS_CHARACTERWIDTH,
+    parent: 'axis',
+    child: 'characterWidth'
+  },
+  {
+    property: Property.AXIS_TITLEMAXLENGTH,
+    parent: 'axis',
+    child: 'titleMaxLength'
+  },
+  {
+    property: Property.AXIS_TITLEOFFSET,
+    parent: 'axis',
+    child: 'titleOffset'
+  },
+  {
+    property: Property.LEGEND_ORIENT,
+    parent: 'legend',
+    child: 'orient'
+  },
+  {
+    property: Property.LEGEND_OFFSET,
+    parent: 'legend',
+    child: 'offset',
+  },
+  {
+    property: Property.LEGEND_VALUES,
+    parent: 'legend',
+    child: 'values'
+  },
+  {
+    property: Property.LEGEND_FORMAT,
+    parent: 'legend',
+    child: 'format'
+  },
+  {
+    property: Property.LEGEND_LABELALIGN,
+    parent: 'legend',
+    child: 'labelAlign'
+  },
+  {
+    property: Property.LEGEND_LABELBASELINE,
+    parent: 'legend',
+    child: 'labelBaseline'
+  },
+  {
+    property: Property.LEGEND_LABELFONT,
+    parent: 'legend',
+    child: 'labelFont'
+  },
+  {
+    property: Property.LEGEND_LABELFONTSIZE,
+    parent: 'legend',
+    child: 'labelFontSize'
+  },
+  {
+    property: Property.LEGEND_SHORTTIMELABELS,
+    parent: 'legend',
+    child: 'shortTimeLabels'
+  },
+  {
+    property: Property.LEGEND_SYMBOLCOLOR,
+    parent: 'legend',
+    child: 'symbolColor'
+  },
+  {
+    property: Property.LEGEND_SYMBOLSHAPE,
+    parent: 'legend',
+    child: 'symbolShape'
+  },
+  {
+    property: Property.LEGEND_SYMBOLSIZE,
+    parent: 'legend',
+    child: 'symbolSize'
+  },
+  {
+    property: Property.LEGEND_SYMBOLSTROKEWIDTH,
+    parent: 'legend',
+    child: 'symbolStrokeWidth'
+  },
+  {
+    property: Property.LEGEND_TITLE,
+    parent: 'legend',
+    child: 'title'
+  },
+  {
+    property: Property.LEGEND_TITLECOLOR,
+    parent: 'legend',
+    child: 'titleColor'
+  },
+  {
+    property: Property.LEGEND_TITLEFONT,
+    parent: 'legend',
+    child: 'titleFont'
+  },
+  {
+    property: Property.LEGEND_TITLEFONTSIZE,
+    parent: 'legend',
+    child: 'titleFontSize'
+  },
+  {
+    property: Property.LEGEND_TITLEFONTWEIGHT,
+    parent: 'legend',
+    child: 'titleFontWeight'
+  }
+
+  // TODO: other bin parameters
+];
+>>>>>>> Added new properties for each of the new bin properties. Also editted the BinQuery interface to support the new bin properties. The new bin properties include min, max, base, step, steps, ministep, and div. Editted fieldDef() in shorthand to support cleanly the new bin properties. None of these changes have been tested. Added a fixme to the rawFieldDef() in shorthand because it needs to be refactored in the future
 
 const NESTED_ENCODING_INDEX: Dict<NestedEncodingProperty> =
   NESTED_ENCODING_PROPERTIES.reduce((m, nestedProp) => {

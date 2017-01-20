@@ -5,6 +5,7 @@ import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {SINGLE_TIMEUNITS, MULTI_TIMEUNITS} from 'vega-lite/src/timeunit';
 import {Type, TYPE_FROM_SHORT_TYPE} from 'vega-lite/src/type';
 import {toMap, isString} from 'datalib/src/util';
+import {NESTED_ENCODING_PROPERTIES} from '../property';
 
 import {EncodingQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
@@ -213,12 +214,18 @@ export function fieldDef(encQ: EncodingQuery,
 
     // TODO(https://github.com/uwdata/compassql/issues/97):
     // extract this as a method that support other bin properties
-    if (include[Property.BIN_MAXBINS] && encQ.bin['maxbins']) {
-      props.push({
-        key: 'maxbins',
-        value: value(encQ.bin['maxbins'], replacer[Property.BIN_MAXBINS])
-      });
-    }
+    NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
+      if (nestedProp && nestedProp.parent == fn) {
+        var binTypeProp = nestedProp.property;
+        var binTypeStr = nestedProp.child;
+        if (include[binTypeProp] && encQ.bin[binTypeStr]) {
+          props.push({
+            key: binTypeStr,
+            value: value(encQ.bin[binTypeStr], replacer[binTypeProp])
+          });
+        }
+      }
+    });
   } else {
     for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
       if (include[prop] && encQ[prop] && isWildcard(encQ[prop])) {
@@ -231,12 +238,18 @@ export function fieldDef(encQ: EncodingQuery,
         if (prop === Property.BIN) {
           // TODO(https://github.com/uwdata/compassql/issues/97):
           // extract this as a method that support other bin properties
-          if (include[Property.BIN_MAXBINS] && encQ.bin['maxbins']) {
-            props.push({
-              key: 'maxbins',
-              value: value(encQ.bin['maxbins'], replacer[Property.BIN_MAXBINS])
-            });
-          }
+          NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
+            if (nestedProp && nestedProp.parent == fn) {
+              var binTypeProp = nestedProp.property;
+              var binTypeStr = nestedProp.child;
+              if (include[binTypeProp] && encQ.bin[binTypeStr]) {
+                props.push({
+                  key: binTypeStr,
+                  value: value(encQ.bin[binTypeStr], replacer[binTypeProp])
+                });
+              }
+            }
+          });
         }
       }
     }
@@ -403,6 +416,7 @@ export namespace shorthandParser {
     return encQ;
   }
 
+  // FIXME: this function is hacky and needs to be refactored
   export function rawFieldDef(encQ: EncodingQuery, fieldDefPart: string[]): EncodingQuery {
     encQ.field = fieldDefPart[0];
     encQ.type = TYPE_FROM_SHORT_TYPE[fieldDefPart[1].toUpperCase()] || '?';

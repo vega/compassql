@@ -136,6 +136,7 @@ describe('query/shorthand', () => {
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with bin function', () => {
+        // TODO: loop over different bin properties
         let encQ: EncodingQuery = {} as EncodingQuery;
         shorthandParser.fn(encQ, 'bin(a,q,maxbins=20)');
         assert.deepEqual(encQ, {
@@ -574,12 +575,13 @@ describe('query/shorthand', () => {
 
 
     it('should return correct fieldDefShorthand string for bin field with maxbins', () => {
+       // TODO: modify this test to loop through all possible bin properties 
        const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}
        });
        assert.equal(str, 'bin(a,q,maxbins=20)');
     });
-
+    
     it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType linear', () => {
       const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}, scale: {type: ScaleType.LINEAR}
