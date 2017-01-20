@@ -88,7 +88,7 @@ describe('stylize', () => {
         assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, undefined);
     });
 
-    it('should assign a bandSize if scale is an Wildcard', () => {
+    it('should assign a bandSize if scale is an EnumSpec', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.BAR,
             encodings: [
@@ -100,7 +100,7 @@ describe('stylize', () => {
         assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 12);
     });
 
-    it('should not assign a bandSize if bandSize is a Wildcard', () => {
+    it('should not assign a bandSize if bandSize is an EnumSpec', () => {
       let specM = SpecQueryModel.build({
           mark: Mark.BAR,
           encodings: [
@@ -162,7 +162,7 @@ describe('stylize', () => {
         assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, undefined);
     });
 
-    it('should assign a range if cardinality of color is over 10 and scale is a Wildcard', () => {
+    it('should assign a range if cardinality of color is over 10 and scale is an EnumSpec', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.POINT,
             encodings: [

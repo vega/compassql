@@ -12,7 +12,7 @@ import {nest, FIELD, FIELD_TRANSFORM, ENCODING, TRANSPOSE} from '../src/nest';
 import {Property} from '../src/property';
 import {REPLACE_BLANK_FIELDS, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS} from '../src/query/groupby';
 
-import {SHORT_WILDCARD} from '../src/wildcard';
+import {SHORT_ENUM_SPEC} from '../src/enumspec';
 import {contains, extend} from '../src/util';
 
 import {schema} from './fixture';
@@ -23,9 +23,9 @@ describe('nest', () => {
       it('should group visualization with same fields', () => {
         const query = {
           spec: {
-            mark: SHORT_WILDCARD,
+            mark: SHORT_ENUM_SPEC,
             encodings: [{
-              channel: SHORT_WILDCARD,
+              channel: SHORT_ENUM_SPEC,
               field: 'Q',
               type: Type.QUANTITATIVE,
               aggregate: {
@@ -33,7 +33,7 @@ describe('nest', () => {
                 enum: [AggregateOp.MEAN, AggregateOp.MEDIAN]
               }
             }, {
-              channel: SHORT_WILDCARD,
+              channel: SHORT_ENUM_SPEC,
               field: 'O',
               type: Type.ORDINAL
             }]
@@ -54,13 +54,13 @@ describe('nest', () => {
       it('should group histogram and raw plots in the same group', () => {
         const query = {
           spec: {
-            mark: SHORT_WILDCARD,
+            mark: SHORT_ENUM_SPEC,
             encodings: [{
-              channel: SHORT_WILDCARD,
+              channel: SHORT_ENUM_SPEC,
               field: 'Q',
               type: Type.QUANTITATIVE,
-              bin: SHORT_WILDCARD,
-              aggregate: SHORT_WILDCARD
+              bin: SHORT_ENUM_SPEC,
+              aggregate: SHORT_ENUM_SPEC
             }]
           },
           nest: [{
@@ -89,13 +89,13 @@ describe('nest', () => {
       it('should group stacked and non-stacked plots of same fields in the same group', () => {
         const query = {
           spec: {
-            mark: SHORT_WILDCARD,
+            mark: SHORT_ENUM_SPEC,
             encodings: [{
-              channel: SHORT_WILDCARD,
+              channel: SHORT_ENUM_SPEC,
               field: 'N',
               type: Type.NOMINAL
             },{
-              channel: SHORT_WILDCARD,
+              channel: SHORT_ENUM_SPEC,
               field: 'N1',
               type: Type.NOMINAL
             }]
@@ -121,9 +121,9 @@ describe('nest', () => {
     it('should group visualization with same fields and transformations', () => {
       const query = {
         spec: {
-        mark: SHORT_WILDCARD,
+        mark: SHORT_ENUM_SPEC,
           encodings: [{
-            channel: SHORT_WILDCARD,
+            channel: SHORT_ENUM_SPEC,
             field: 'Q',
             type: Type.QUANTITATIVE,
             aggregate: {
@@ -131,7 +131,7 @@ describe('nest', () => {
               enum: [AggregateOp.MEAN, AggregateOp.MEDIAN]
             }
           }, {
-            channel: SHORT_WILDCARD,
+            channel: SHORT_ENUM_SPEC,
             field: 'O',
             type: Type.ORDINAL
           }]
@@ -163,7 +163,7 @@ describe('nest', () => {
     it('should group visualizations with different retinal variables if has proper replace', () => {
       const query = {
         spec: {
-          mark: SHORT_WILDCARD,
+          mark: SHORT_ENUM_SPEC,
           encodings: [{
             channel: Channel.X,
             field: 'Q',
@@ -200,7 +200,7 @@ describe('nest', () => {
     it('should group visualizations with different retinal variables', () => {
       const query = {
         spec: {
-          mark: SHORT_WILDCARD,
+          mark: SHORT_ENUM_SPEC,
           encodings: [{
             channel: Channel.X,
             field: 'Q',
@@ -237,7 +237,7 @@ describe('nest', () => {
     it('should group visualizations with different retinal variables or transposed', () => {
       const query = {
         spec: {
-          mark: SHORT_WILDCARD,
+          mark: SHORT_ENUM_SPEC,
           encodings: [{
             channel: {enum: [Channel.X, Channel.Y]},
             field: 'Q',
@@ -274,7 +274,7 @@ describe('nest', () => {
     it('should separate different types of stacked and non-stacked visualizations', () => {
       const query = {
         spec: {
-          mark: SHORT_WILDCARD,
+          mark: SHORT_ENUM_SPEC,
           encodings: [{
             channel: Channel.X,
             aggregate: AggregateOp.SUM,
@@ -321,7 +321,7 @@ describe('nest', () => {
     it('should separate different types of stacked and non-stacked visualizations even if it is nested ', () => {
       const query = {
         spec: {
-          mark: SHORT_WILDCARD,
+          mark: SHORT_ENUM_SPEC,
           encodings: [{
             channel: Channel.X,
             aggregate: AggregateOp.SUM,
@@ -374,9 +374,9 @@ describe('nest', () => {
     it('should group visualization with same fields', () => {
       const query = {
         spec: {
-        mark: SHORT_WILDCARD,
+        mark: SHORT_ENUM_SPEC,
           encodings: [{
-            channel: SHORT_WILDCARD,
+            channel: SHORT_ENUM_SPEC,
             field: 'Q',
             type: Type.QUANTITATIVE,
             aggregate: {
@@ -384,7 +384,7 @@ describe('nest', () => {
               enum: [AggregateOp.MEAN, AggregateOp.MEDIAN]
             }
           }, {
-            channel: SHORT_WILDCARD,
+            channel: SHORT_ENUM_SPEC,
             field: 'O',
             type: Type.ORDINAL
           }]
@@ -404,13 +404,13 @@ describe('nest', () => {
     it('should group histogram and raw plots in the same group', () => {
       const query = {
         spec: {
-        mark: SHORT_WILDCARD,
+        mark: SHORT_ENUM_SPEC,
           encodings: [{
-            channel: SHORT_WILDCARD,
+            channel: SHORT_ENUM_SPEC,
             field: 'Q',
             type: Type.QUANTITATIVE,
-            bin: SHORT_WILDCARD,
-            aggregate: SHORT_WILDCARD
+            bin: SHORT_ENUM_SPEC,
+            aggregate: SHORT_ENUM_SPEC
           }]
         },
         nest: [{groupBy: FIELD}, {groupBy: FIELD_TRANSFORM}],
@@ -431,9 +431,9 @@ describe('nest', () => {
     it('should group visualization with same fields and transformations', () => {
       const query = {
         spec: {
-        mark: SHORT_WILDCARD,
+        mark: SHORT_ENUM_SPEC,
           encodings: [{
-            channel: SHORT_WILDCARD,
+            channel: SHORT_ENUM_SPEC,
             field: 'Q',
             type: Type.QUANTITATIVE,
             aggregate: {
@@ -441,7 +441,7 @@ describe('nest', () => {
               enum: [AggregateOp.MEAN, AggregateOp.MEDIAN]
             }
           }, {
-            channel: SHORT_WILDCARD,
+            channel: SHORT_ENUM_SPEC,
             field: 'O',
             type: Type.ORDINAL
           }]
@@ -464,7 +464,7 @@ describe('nest', () => {
     it('should group visualizations with different retinal variables', () => {
       const query = {
         spec: {
-          mark: SHORT_WILDCARD,
+          mark: SHORT_ENUM_SPEC,
           encodings: [{
             channel: Channel.X,
             field: 'Q',
@@ -491,7 +491,7 @@ describe('nest', () => {
     it('should group visualizations with different retinal variables', () => {
       const query = {
         spec: {
-          mark: SHORT_WILDCARD,
+          mark: SHORT_ENUM_SPEC,
           encodings: [{
             channel: Channel.X,
             field: 'Q',
@@ -518,7 +518,7 @@ describe('nest', () => {
     it('should group visualizations with different retinal variables or transposed', () => {
       const query = {
         spec: {
-          mark: SHORT_WILDCARD,
+          mark: SHORT_ENUM_SPEC,
           encodings: [{
             channel: {enum: [Channel.X, Channel.Y]},
             field: 'Q',
@@ -545,7 +545,7 @@ describe('nest', () => {
     it('should separate different types of stacked and non-stacked visualizations', () => {
       const query = {
         spec: {
-          mark: SHORT_WILDCARD,
+          mark: SHORT_ENUM_SPEC,
           encodings: [{
             channel: Channel.X,
             aggregate: AggregateOp.SUM,
@@ -582,7 +582,7 @@ describe('nest', () => {
     it('should separate different types of stacked and non-stacked visualizations even if it is nested ', () => {
       const query = {
         spec: {
-          mark: SHORT_WILDCARD,
+          mark: SHORT_ENUM_SPEC,
           encodings: [{
             channel: Channel.X,
             aggregate: AggregateOp.SUM,
@@ -622,7 +622,7 @@ describe('nest', () => {
         it(groupBy + ' should group transposed visualizations', () => {
         const query = {
           spec: {
-            mark: SHORT_WILDCARD,
+            mark: SHORT_ENUM_SPEC,
             encodings: [{
               channel: {enum: [Channel.X, Channel.Y]},
               field: 'Q',
@@ -645,7 +645,7 @@ describe('nest', () => {
       it(groupBy + ' should group transposed facets visualizations', () => {
         const query = {
           spec: {
-            mark: SHORT_WILDCARD,
+            mark: SHORT_ENUM_SPEC,
             encodings: [{
               channel: Channel.X,
               field: 'Q',
