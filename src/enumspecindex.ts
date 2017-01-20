@@ -5,83 +5,83 @@ import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-import {Wildcard} from './wildcard';
+import {EnumSpec} from './enumspec';
 import {Property, isEncodingProperty} from './property';
 import {Dict, keys} from './util';
 
 
-export interface EncodingWildcardIndex {
+export interface EncodingEnumSpecIndex {
   /** Enum spec for channel enumeration. */
-  channel?: Wildcard<Channel>;
+  channel?: EnumSpec<Channel>;
 
   /** Enum spec for aggregate enumeration. */
-  aggregate?: Wildcard<AggregateOp>;
+  aggregate?: EnumSpec<AggregateOp>;
 
   /** Enum spec for autoCount enumeration. */
-  autoCount?: Wildcard<AggregateOp>;
+  autoCount?: EnumSpec<AggregateOp>;
 
   /** Enum spec for bin enumeration. */
-  bin?: Wildcard<boolean>;
+  bin?: EnumSpec<boolean>;
 
   /** Enum spec for bin.maxbins enumeration */
-  maxbin?: Wildcard<number>;
+  maxbin?: EnumSpec<number>;
 
   /** Enum spec for scale enumeration. */
-  scale?: Wildcard<boolean>;
+  scale?: EnumSpec<boolean>;
 
   /** Enum spec for scale.bandSize enumeration */
-  scaleBandSize?: Wildcard<number>;
+  scaleBandSize?: EnumSpec<number>;
 
   /** Enum spec for scale.clamp enumeration */
-  scaleClamp?: Wildcard<boolean>;
+  scaleClamp?: EnumSpec<boolean>;
 
   /** Enum spec for scale.domain enumeration */
-  scaleDomain?: Wildcard<string | string[] | number[]>;
+  scaleDomain?: EnumSpec<string | string[] | number[]>;
 
   /** Enum spec for scale.exponent enumeration */
-  scaleExponent?: Wildcard<number>;
+  scaleExponent?: EnumSpec<number>;
 
   /** Enum spec for scale.nice enumeration */
-  scaleNice?: Wildcard<boolean>;
+  scaleNice?: EnumSpec<boolean>;
 
   /** Enum spec for scale.range enumeration */
-  scaleRange?: Wildcard<string | string[] | number[]>;
+  scaleRange?: EnumSpec<string | string[] | number[]>;
 
   /** Enum spec for scale.round enumeration */
-  scaleRound?: Wildcard<boolean>;
+  scaleRound?: EnumSpec<boolean>;
 
   /** Enum spec for scale.type enumeration */
-  scaleType?: Wildcard<ScaleType>;
+  scaleType?: EnumSpec<ScaleType>;
 
   /** Enum spec for scale.useRawDomain enumeration */
-  scaleUseRawDomain?: Wildcard<boolean>;
+  scaleUseRawDomain?: EnumSpec<boolean>;
 
   /** Enum spec for scale.zero enumeration */
-  scaleZero?: Wildcard<boolean>;
+  scaleZero?: EnumSpec<boolean>;
 
   /** Enum spec for timeUnit enumeration. */
-  timeUnit?: Wildcard<TimeUnit>;
+  timeUnit?: EnumSpec<TimeUnit>;
 
   /** Enum spec for field enumeration. */
-  field?: Wildcard<string>;
+  field?: EnumSpec<string>;
 
   /** Enum spec for type enumeration. */
-  type?: Wildcard<Type>;
+  type?: EnumSpec<Type>;
 }
 
-export interface EncodingsWildcardIndex {
-  [index: number]: EncodingWildcardIndex;
+export interface EncodingsEnumSpecIndex {
+  [index: number]: EncodingEnumSpecIndex;
 }
 
-export class WildcardIndex {
-  private _mark: Wildcard<Mark>;
+export class EnumSpecIndex {
+  private _mark: EnumSpec<Mark>;
   // TODO: transform
 
   /**
    * Dictionary mapping encoding index to an encoding enum spec index.
    */
 
-  private _encodings: EncodingsWildcardIndex;
+  private _encodings: EncodingsEnumSpecIndex;
   private _encodingIndicesByProperty: Dict<number[]>;
 
   constructor() {
@@ -90,12 +90,12 @@ export class WildcardIndex {
     this._encodingIndicesByProperty = {};
   }
 
-  public setEncodingProperty(index: number, prop: Property, wildcard: Wildcard<any>) {
+  public setEncodingProperty(index: number, prop: Property, enumSpec: EnumSpec<any>) {
     const encodingsIndex = this._encodings;
 
     // Init encoding index and set prop
     const encIndex = encodingsIndex[index] = encodingsIndex[index] || {};
-    encIndex[prop] = wildcard;
+    encIndex[prop] = enumSpec;
 
     // Initialize indicesByProperty[prop] and add index
     const encodingIndicesByProperty = this._encodingIndicesByProperty;

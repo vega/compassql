@@ -7,7 +7,7 @@ import {SortOrder} from 'vega-lite/src/sort';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-import {SHORT_WILDCARD} from '../../src/wildcard';
+import {SHORT_ENUM_SPEC} from '../../src/enumspec';
 import {parse, splitWithTail, shorthandParser, vlSpec, spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, calculate as calculateShorthand, INCLUDE_ALL, getReplacer} from '../../src/query/shorthand';
 import {extend} from '../../src/util';
 import {REPLACE_BLANK_FIELDS} from '../../src/query/groupby';
@@ -239,8 +239,8 @@ describe('query/shorthand', () => {
             channel: {name: 'c1', enum: [Channel.X, Channel.Y]},
             field: {enum: ['field1', 'field2']},
             type: {enum: [Type.NOMINAL, Type.ORDINAL]},
-            aggregate: SHORT_WILDCARD,
-            bin: SHORT_WILDCARD
+            aggregate: SHORT_ENUM_SPEC,
+            bin: SHORT_ENUM_SPEC
           }
         ]
       });
@@ -250,9 +250,9 @@ describe('query/shorthand', () => {
 
     it('should return correct spec string for ambiguous specQuery', () => {
       const str = specShorthand({
-        mark: SHORT_WILDCARD,
+        mark: SHORT_ENUM_SPEC,
         encodings: [
-          {channel: SHORT_WILDCARD, field: SHORT_WILDCARD, type: SHORT_WILDCARD, aggregate: SHORT_WILDCARD, bin: SHORT_WILDCARD}
+          {channel: SHORT_ENUM_SPEC, field: SHORT_ENUM_SPEC, type: SHORT_ENUM_SPEC, aggregate: SHORT_ENUM_SPEC, bin: SHORT_ENUM_SPEC}
         ]
       });
       assert.equal(str, '?|?:?{"aggregate":"?","bin":"?"}(?,?)');
@@ -397,8 +397,8 @@ describe('query/shorthand', () => {
          channel: Channel.X,
          field: 'a',
          type: Type.QUANTITATIVE,
-         aggregate: SHORT_WILDCARD,
-         bin: SHORT_WILDCARD
+         aggregate: SHORT_ENUM_SPEC,
+         bin: SHORT_ENUM_SPEC
        });
        assert.equal(str, '?{"aggregate":"?","bin":"?"}(a,q)');
     });
@@ -435,7 +435,7 @@ describe('query/shorthand', () => {
 
     it('should return correct fieldDefShorthand string for ambiguous timeunit field', () => {
       const str = fieldDefShorthand({
-        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, timeUnit: SHORT_WILDCARD
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, timeUnit: SHORT_ENUM_SPEC
         });
       assert.equal(str, '?{"timeUnit":"?"}(a,q)');
     });
@@ -668,14 +668,14 @@ describe('query/shorthand', () => {
 
     it('should return correct fieldDefShorthand string for ambiguous bin field', () => {
        const str = fieldDefShorthand({
-         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: SHORT_WILDCARD
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: SHORT_ENUM_SPEC
        });
        assert.equal(str, '?{"bin":"?"}(a,q)');
     });
 
     it('should return correct fieldDefShorthand string for ambiguous field', () => {
        const str = fieldDefShorthand({
-         channel: Channel.X, field: SHORT_WILDCARD, type: Type.QUANTITATIVE
+         channel: Channel.X, field: SHORT_ENUM_SPEC, type: Type.QUANTITATIVE
        });
        assert.equal(str, '?,q');
     });
@@ -689,14 +689,14 @@ describe('query/shorthand', () => {
 
     it('should return correct fieldDefShorthand string for ambiguous autocount field', () => {
        const str = fieldDefShorthand({
-         channel: Channel.X, autoCount: SHORT_WILDCARD
+         channel: Channel.X, autoCount: SHORT_ENUM_SPEC
        });
        assert.equal(str, '?{"autoCount":"?"}(*,q)');
     });
 
     it('should return correct fieldDefShorthand string for ambiguous type', () => {
        const str = fieldDefShorthand({
-         channel: Channel.X, field: 'a', type: SHORT_WILDCARD
+         channel: Channel.X, field: 'a', type: SHORT_ENUM_SPEC
        });
        assert.equal(str, 'a,?');
     });

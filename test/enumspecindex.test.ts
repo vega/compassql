@@ -1,57 +1,57 @@
 import {Mark} from 'vega-lite/src/mark';
-import {WildcardIndex} from '../src/wildcardindex';
+import {EnumSpecIndex} from '../src/enumspecindex';
 import {Property} from '../src/property';
 
 import {assert} from 'chai';
 
-describe('wildcardindex', () => {
+describe('enumspecindex', () => {
   describe('isEmpty', () => {
     it('should return false if encoding property is set', () => {
-      let wildcardIndex = new WildcardIndex()
+      let enumSpecIndex = new EnumSpecIndex()
         .setEncodingProperty(0, Property.SCALE, {name: 'scale', enum: [true, false]});
-      assert.equal(wildcardIndex.isEmpty(), false);
+      assert.equal(enumSpecIndex.isEmpty(), false);
     });
 
     it('should return false if mark is set', () => {
-      let wildcardIndex = new WildcardIndex()
+      let enumSpecIndex = new EnumSpecIndex()
         .setMark({name: 'mark', enum: [Mark.POINT, Mark.BAR, Mark.LINE]});
-      assert.equal(wildcardIndex.isEmpty(), false);
+      assert.equal(enumSpecIndex.isEmpty(), false);
     });
 
     it('should return false if mark and encoding property are set', () => {
-      let wildcardIndex = new WildcardIndex()
+      let enumSpecIndex = new EnumSpecIndex()
         .setEncodingProperty(0, Property.SCALE, {name: 'scale', enum: [true, false]})
         .setMark({name: 'mark', enum: [Mark.POINT, Mark.BAR, Mark.LINE]});
-      assert.equal(wildcardIndex.isEmpty(), false);
+      assert.equal(enumSpecIndex.isEmpty(), false);
     });
 
     it('should return true if mark and encoding property are not set', () => {
-      let wildcardIndex = new WildcardIndex();
-      assert.equal(wildcardIndex.isEmpty(), true);
+      let enumSpecindex = new EnumSpecIndex();
+      assert.equal(enumSpecindex.isEmpty(), true);
     });
   });
 
   describe('hasProperty', () => {
     it('should return true if encodingIndicesByProperty contains a specified encoding property', () => {
-      let wildcardIndex = new WildcardIndex()
+      let enumSpecIndex = new EnumSpecIndex()
         .setEncodingProperty(0, Property.SCALE, {name: 'scale', enum: [true, false]});
-      assert.equal(wildcardIndex.hasProperty(Property.SCALE), true);
+      assert.equal(enumSpecIndex.hasProperty(Property.SCALE), true);
     });
 
     it('should return false if encodingIndicesByProperty does not contain a specified encoding property', () => {
-      let wildcardIndex = new WildcardIndex();
-      assert.equal(wildcardIndex.hasProperty(Property.SCALE), false);
+      let enumSpecIndex = new EnumSpecIndex();
+      assert.equal(enumSpecIndex.hasProperty(Property.SCALE), false);
     });
 
-    it('should return true if wildcardIndex contains Property.MARK when Property.MARK is specified', () => {
-      let wildcardIndex = new WildcardIndex()
+    it('should return true if enumSpecIndex contains Property.MARK when Property.MARK is specified', () => {
+      let enumSpecIndex = new EnumSpecIndex()
         .setMark({name: 'mark', enum: [Mark.POINT, Mark.BAR, Mark.LINE]});
-      assert.equal(wildcardIndex.hasProperty(Property.MARK), true);
+      assert.equal(enumSpecIndex.hasProperty(Property.MARK), true);
     });
 
-    it('should return false if wildcardIndex does not contain Property.MARK when Property.MARK is specified', () => {
-      let wildcardIndex = new WildcardIndex();
-      assert.equal(wildcardIndex.hasProperty(Property.MARK), false);
+    it('should return false if enumSpecIndex does not contain Property.MARK when Property.MARK is specified', () => {
+      let enumSpecIndex = new EnumSpecIndex();
+      assert.equal(enumSpecIndex.hasProperty(Property.MARK), false);
     });
   });
 });

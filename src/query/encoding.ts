@@ -6,137 +6,137 @@ import {SortOrder, SortField} from 'vega-lite/src/sort';
 import {defaultScaleType, TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-import {Wildcard, isWildcard, ShortWildcard, SHORT_WILDCARD} from '../wildcard';
+import {EnumSpec, isEnumSpec, ShortEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
 import {contains} from '../util';
 
 export type Field = string;
 
 export interface EncodingQuery {
-  channel: Channel | Wildcard<Channel> | ShortWildcard;
+  channel: Channel | EnumSpec<Channel> | ShortEnumSpec;
 
   // FieldDef
-  aggregate?: AggregateOp | Wildcard<AggregateOp> | ShortWildcard;
+  aggregate?: AggregateOp | EnumSpec<AggregateOp> | ShortEnumSpec;
   /** Internal flag for representing automatic count that are added to plots with only ordinal or binned fields. */
-  autoCount?: boolean | Wildcard<boolean> | ShortWildcard;
-  timeUnit?: TimeUnit | Wildcard<TimeUnit> | ShortWildcard;
+  autoCount?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+  timeUnit?: TimeUnit | EnumSpec<TimeUnit> | ShortEnumSpec;
 
   /**
    * Special flag for enforcing that the field should have either timeUnit, bin, or aggregate
    */
   hasFn?: boolean;
 
-  bin?: boolean | BinQuery | ShortWildcard;
-  scale?: boolean | ScaleQuery | ShortWildcard;
+  bin?: boolean | BinQuery | ShortEnumSpec;
+  scale?: boolean | ScaleQuery | ShortEnumSpec;
 
   sort?: SortOrder | SortField;
 
-  field?: Field | Wildcard<Field> | ShortWildcard;
-  type?: Type | Wildcard<Type> | ShortWildcard;
+  field?: Field | EnumSpec<Field> | ShortEnumSpec;
+  type?: Type | EnumSpec<Type> | ShortEnumSpec;
   // TODO: value
 
-  axis?: boolean | AxisQuery | ShortWildcard;
-  legend?: boolean | LegendQuery | ShortWildcard;
+  axis?: boolean | AxisQuery | ShortEnumSpec;
+  legend?: boolean | LegendQuery | ShortEnumSpec;
 }
 
-export interface AxisQuery extends Wildcard<boolean> {
+export interface AxisQuery extends EnumSpec<boolean> {
   // General Axis Properties
-  axisColor?: string | Wildcard<string> | ShortWildcard;
-  axisWidth?: number | Wildcard<number> | ShortWildcard;
-  layer?: string | Wildcard<string> | ShortWildcard;
-  offset?: number | Wildcard<number> | ShortWildcard;
-  orient?: AxisOrient | Wildcard<AxisOrient> | ShortWildcard;
+  axisColor?: string | EnumSpec<string> | ShortEnumSpec;
+  axisWidth?: number | EnumSpec<number> | ShortEnumSpec;
+  layer?: string | EnumSpec<string> | ShortEnumSpec;
+  offset?: number | EnumSpec<number> | ShortEnumSpec;
+  orient?: AxisOrient | EnumSpec<AxisOrient> | ShortEnumSpec;
 
   // Axis_Grid Properties
-  grid?: boolean | Wildcard<boolean> | ShortWildcard;
-  gridColor?: string | Wildcard<string> | ShortWildcard;
-  gridDash?: number[] | Wildcard<number[]> | ShortWildcard;
-  gridOpacity?: number | Wildcard<number> | ShortWildcard;
-  gridWidth?: number | Wildcard<number> | ShortWildcard;
+  grid?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+  gridColor?: string | EnumSpec<string> | ShortEnumSpec;
+  gridDash?: number[] | EnumSpec<number[]> | ShortEnumSpec;
+  gridOpacity?: number | EnumSpec<number> | ShortEnumSpec;
+  gridWidth?: number | EnumSpec<number> | ShortEnumSpec;
 
   // Axis_Label Properties
-  labels?: boolean | Wildcard<boolean> | ShortWildcard;
-  format?: string | Wildcard<string> | ShortWildcard;
-  labelAngle?: number | Wildcard<number> | ShortWildcard;
-  labelMaxLength?: number | Wildcard<number> | ShortWildcard;
-  shortTimeLabels?: boolean | Wildcard<boolean> | ShortWildcard;
+  labels?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+  format?: string | EnumSpec<string> | ShortEnumSpec;
+  labelAngle?: number | EnumSpec<number> | ShortEnumSpec;
+  labelMaxLength?: number | EnumSpec<number> | ShortEnumSpec;
+  shortTimeLabels?: boolean | EnumSpec<boolean> | ShortEnumSpec;
 
   // Axis_Tick Properties
-  subdivide?: number | Wildcard<number> | ShortWildcard;
-  ticks?: number | Wildcard<number> | ShortWildcard;
-  tickColor?: string | Wildcard<string> | ShortWildcard;
-  tickLabelColor?: string | Wildcard<string> | ShortWildcard;
-  tickLabelFont?: string | Wildcard<string> | ShortWildcard;
-  ticklabelFontSize?: number | Wildcard<number> | ShortWildcard;
-  tickPadding?: number | Wildcard<number> | ShortWildcard;
-  tickSize?: number | Wildcard<number> | ShortWildcard;
-  tickSizeMajor?: number | Wildcard<number> | ShortWildcard;
-  tickSizeMinor?: number | Wildcard<number> | ShortWildcard;
-  tickSizeEnd?: number | Wildcard<number> | ShortWildcard;
-  tickWidth?: number | Wildcard<number> | ShortWildcard;
-  values?: number[] | Wildcard<number[]> | ShortWildcard;
+  subdivide?: number | EnumSpec<number> | ShortEnumSpec;
+  ticks?: number | EnumSpec<number> | ShortEnumSpec;
+  tickColor?: string | EnumSpec<string> | ShortEnumSpec;
+  tickLabelColor?: string | EnumSpec<string> | ShortEnumSpec;
+  tickLabelFont?: string | EnumSpec<string> | ShortEnumSpec;
+  ticklabelFontSize?: number | EnumSpec<number> | ShortEnumSpec;
+  tickPadding?: number | EnumSpec<number> | ShortEnumSpec;
+  tickSize?: number | EnumSpec<number> | ShortEnumSpec;
+  tickSizeMajor?: number | EnumSpec<number> | ShortEnumSpec;
+  tickSizeMinor?: number | EnumSpec<number> | ShortEnumSpec;
+  tickSizeEnd?: number | EnumSpec<number> | ShortEnumSpec;
+  tickWidth?: number | EnumSpec<number> | ShortEnumSpec;
+  values?: number[] | EnumSpec<number[]> | ShortEnumSpec;
 
   // Axis_Title Properties
-  title?: string | Wildcard<string> | ShortWildcard;
-  titleColor?: string | Wildcard<string> | ShortWildcard;
-  titleFont?: string | Wildcard<string> | ShortWildcard;
-  titleFontWeight?: string | Wildcard<string> | ShortWildcard;
-  titleFontSize?: number | Wildcard<number> | ShortWildcard;
-  titleOffset?: number | Wildcard<number> | ShortWildcard;
-  titleMaxLength?: number | Wildcard<number> | ShortWildcard;
-  characterWidth?: number | Wildcard<number> | ShortWildcard;
+  title?: string | EnumSpec<string> | ShortEnumSpec;
+  titleColor?: string | EnumSpec<string> | ShortEnumSpec;
+  titleFont?: string | EnumSpec<string> | ShortEnumSpec;
+  titleFontWeight?: string | EnumSpec<string> | ShortEnumSpec;
+  titleFontSize?: number | EnumSpec<number> | ShortEnumSpec;
+  titleOffset?: number | EnumSpec<number> | ShortEnumSpec;
+  titleMaxLength?: number | EnumSpec<number> | ShortEnumSpec;
+  characterWidth?: number | EnumSpec<number> | ShortEnumSpec;
 }
 
-export interface BinQuery extends Wildcard<boolean> {
-  maxbins?: number | Wildcard<number> | ShortWildcard;
+export interface BinQuery extends EnumSpec<boolean> {
+  maxbins?: number | EnumSpec<number> | ShortEnumSpec;
 }
 
-export interface LegendQuery extends Wildcard<boolean> {
+export interface LegendQuery extends EnumSpec<boolean> {
   // General Legend Properties
-  orient?: string | Wildcard<string> | ShortWildcard;
-  offset?: number | Wildcard<number> | ShortWildcard;
-  values?: any[] | Wildcard<any[]> | ShortWildcard;
+  orient?: string | EnumSpec<string> | ShortEnumSpec;
+  offset?: number | EnumSpec<number> | ShortEnumSpec;
+  values?: any[] | EnumSpec<any[]> | ShortEnumSpec;
 
   // Legend_Label Properties
-  format?: string | Wildcard<string> | ShortWildcard;
-  labelAlign?: string | Wildcard<string> | ShortWildcard;
-  labelBaseline?:string | Wildcard<string> | ShortWildcard;
-  labelColor?: string | Wildcard<string> | ShortWildcard;
-  labelFont?: string | Wildcard<string> | ShortWildcard;
-  labelFontSize?: number | Wildcard<number> | ShortWildcard;
-  shortTimeLabels?: boolean | Wildcard<boolean> | ShortWildcard;
+  format?: string | EnumSpec<string> | ShortEnumSpec;
+  labelAlign?: string | EnumSpec<string> | ShortEnumSpec;
+  labelBaseline?:string | EnumSpec<string> | ShortEnumSpec;
+  labelColor?: string | EnumSpec<string> | ShortEnumSpec;
+  labelFont?: string | EnumSpec<string> | ShortEnumSpec;
+  labelFontSize?: number | EnumSpec<number> | ShortEnumSpec;
+  shortTimeLabels?: boolean | EnumSpec<boolean> | ShortEnumSpec;
 
   // Legend_Symbol Properties
-  symbolColor?: string | Wildcard<string> | ShortWildcard;
-  symbolShape?: string | Wildcard<string> | ShortWildcard;
-  symbolSize?: number | Wildcard<number> | ShortWildcard;
-  symbolStrokeWidth?: number | Wildcard<number> | ShortWildcard;
+  symbolColor?: string | EnumSpec<string> | ShortEnumSpec;
+  symbolShape?: string | EnumSpec<string> | ShortEnumSpec;
+  symbolSize?: number | EnumSpec<number> | ShortEnumSpec;
+  symbolStrokeWidth?: number | EnumSpec<number> | ShortEnumSpec;
 
   // Legend_Title Properties
-  title?: string | Wildcard<string> | ShortWildcard;
-  titleColor?: string | Wildcard<string> | ShortWildcard;
-  titleFont?: string | Wildcard<string> | ShortWildcard;
-  titleFontSize?: number | Wildcard<number> | ShortWildcard;
-  titleFontWeight?: string | Wildcard<string> | ShortWildcard;
+  title?: string | EnumSpec<string> | ShortEnumSpec;
+  titleColor?: string | EnumSpec<string> | ShortEnumSpec;
+  titleFont?: string | EnumSpec<string> | ShortEnumSpec;
+  titleFontSize?: number | EnumSpec<number> | ShortEnumSpec;
+  titleFontWeight?: string | EnumSpec<string> | ShortEnumSpec;
 }
 
-export interface ScaleQuery extends Wildcard<boolean> {
-  bandSize?: number | Wildcard<number> | ShortWildcard;
-  clamp?: boolean | Wildcard<boolean> | ShortWildcard;
-  domain?: number[] | string[] | Wildcard<number[] | string[]> | ShortWildcard;
-  exponent?: number | Wildcard<number> | ShortWildcard;
-  nice?: boolean | Wildcard<boolean> | ShortWildcard;
-  range?: string | number[] | string[] | Wildcard<string | number[] | string[]> | ShortWildcard;
-  round?: boolean | Wildcard<boolean> | ShortWildcard;
-  type?: ScaleType | Wildcard<ScaleType> | ShortWildcard;
-  useRawDomain?: boolean | Wildcard<boolean> | ShortWildcard;
-  zero?: boolean | Wildcard<boolean> | ShortWildcard;
+export interface ScaleQuery extends EnumSpec<boolean> {
+  bandSize?: number | EnumSpec<number> | ShortEnumSpec;
+  clamp?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+  domain?: number[] | string[] | EnumSpec<number[] | string[]> | ShortEnumSpec;
+  exponent?: number | EnumSpec<number> | ShortEnumSpec;
+  nice?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+  range?: string | number[] | string[] | EnumSpec<string | number[] | string[]> | ShortEnumSpec;
+  round?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+  type?: ScaleType | EnumSpec<ScaleType> | ShortEnumSpec;
+  useRawDomain?: boolean | EnumSpec<boolean> | ShortEnumSpec;
+  zero?: boolean | EnumSpec<boolean> | ShortEnumSpec;
 
 }
 
 export function isDimension(encQ: EncodingQuery) {
   return contains([Type.NOMINAL, Type.ORDINAL], encQ.type) ||
-      (!isWildcard(encQ.bin) && !!encQ.bin) ||          // surely Q type
-      (!isWildcard(encQ.timeUnit) && !!encQ.timeUnit);  // surely T type
+      (!isEnumSpec(encQ.bin) && !!encQ.bin) ||          // surely Q type
+      (!isEnumSpec(encQ.timeUnit) && !!encQ.timeUnit);  // surely T type
 }
 
 export function isMeasure(encQ: EncodingQuery) {
@@ -147,18 +147,18 @@ export function isMeasure(encQ: EncodingQuery) {
 /**
  *  Returns the true scale type of an encoding.
  *  @returns {ScaleType} If the scale type was not specified, it is inferred from the encoding's Type.
- *  @returns {undefined} If the scale type was not specified and Type (or TimeUnit if applicable) is a Wildcard, there is no clear scale type
+ *  @returns {undefined} If the scale type was not specified and Type (or TimeUnit if applicable) is an EnumSpec, there is no clear scale type
  */
 
 export function scaleType(encQ: EncodingQuery) {
-  const scale: ScaleQuery = encQ.scale === true || encQ.scale === SHORT_WILDCARD ? {} : encQ.scale;
+  const scale: ScaleQuery = encQ.scale === true || encQ.scale === SHORT_ENUM_SPEC ? {} : encQ.scale;
   const type = encQ.type;
   const timeUnit = encQ.timeUnit;
 
   if (scale && scale.type !== undefined) {
     return scale.type;
   }
-  if (isWildcard(type)) {
+  if (isEnumSpec(type)) {
     return undefined;
   }
 
@@ -170,7 +170,7 @@ export function scaleType(encQ: EncodingQuery) {
 
   } else if (type === Type.TEMPORAL) {
     if (timeUnit !== undefined) {
-      if (isWildcard(timeUnit)) {
+      if (isEnumSpec(timeUnit)) {
         return undefined;
       }
       return defaultScaleType(timeUnit as TimeUnit);
