@@ -5,7 +5,7 @@ import {Type} from 'vega-lite/src/type';
 import {RuleSet, testRuleSet} from './rule';
 
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
-import {SHORT_ENUM_SPEC} from '../../src/enumspec';
+import {SHORT_WILDCARD} from '../../src/wildcard';
 import {SpecQueryModel} from '../../src/model';
 import {EncodingQuery} from '../../src/query/encoding';
 
@@ -15,7 +15,7 @@ import {schema} from '../fixture';
 function getScore(shortenedFields: string) {
   const encodings: EncodingQuery[] = shortenedFields.split('x')
     .map((shortenedEncQ: string) => {
-      let encQ: EncodingQuery = {channel: SHORT_ENUM_SPEC};
+      let encQ: EncodingQuery = {channel: SHORT_WILDCARD};
       const split = shortenedEncQ.trim().split('_');
 
       const field: string = encQ.field = split.length > 1 ? split[1] : split[0];
@@ -36,7 +36,7 @@ function getScore(shortenedFields: string) {
     });
 
   const specM = SpecQueryModel.build({
-    mark: SHORT_ENUM_SPEC,
+    mark: SHORT_WILDCARD,
     encodings: encodings
   }, schema, DEFAULT_QUERY_CONFIG);
 
