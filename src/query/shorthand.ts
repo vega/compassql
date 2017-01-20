@@ -416,6 +416,10 @@ export namespace shorthandParser {
     return encQ;
   }
 
+  // export function rawFieldDef(encQ: EncodingQuery, fieldDefPart: string[]): EncodingQuery {
+    
+  // }
+
   // FIXME: this function is hacky and needs to be refactored
   export function rawFieldDef(encQ: EncodingQuery, fieldDefPart: string[]): EncodingQuery {
     encQ.field = fieldDefPart[0];
