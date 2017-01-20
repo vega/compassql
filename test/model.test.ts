@@ -10,7 +10,7 @@ import {Type} from 'vega-lite/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel, getDefaultName, getDefaultEnumValues} from '../src/model';
 import {Property, DEFAULT_PROPERTY_PRECEDENCE, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
-import {SHORT_ENUM_SPEC, isEnumSpec} from '../src/enumspec';
+import {SHORT_WILDCARD, isWildcard} from '../src/wildcard';
 import {SpecQuery} from '../src/query/spec';
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
@@ -37,46 +37,46 @@ describe('SpecQueryModel', () => {
 
   describe('build', () => {
     // Mark
-    it('should have mark enumSpecIndex if mark is a ShortEnumSpec.', () => {
+    it('should have mark wildcardIndex if mark is a ShortWildcard.', () => {
       const specQ: SpecQuery = {
-        mark: SHORT_ENUM_SPEC,
+        mark: SHORT_WILDCARD,
         encodings: []
       };
-      const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-      assert.deepEqual(enumSpecIndex.mark, {
+      const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
+      assert.deepEqual(wildcardIndex.mark, {
         name: 'm',
         enum: DEFAULT_QUERY_CONFIG.marks
       });
     });
 
-    it('should have mark enumSpecIndex if mark is an EnumSpec.', () => {
+    it('should have mark wildcardIndex if mark is an Wildcard.', () => {
       const specQ: SpecQuery = {
         mark: {
           enum: [Mark.BAR]
         },
         encodings: []
       };
-      const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-      assert.deepEqual(enumSpecIndex.mark, {
+      const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
+      assert.deepEqual(wildcardIndex.mark, {
         name: 'm',
         enum: [Mark.BAR]
       });
     });
 
-    it('should have no mark enumSpecIndex if mark is specific.', () => {
+    it('should have no mark wildcardIndex if mark is specific.', () => {
       const specQ: SpecQuery = {
         mark: Mark.BAR,
         encodings: []
       };
-      const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-      assert.isNotOk(enumSpecIndex.mark);
+      const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
+      assert.isNotOk(wildcardIndex.mark);
     });
 
     // TODO: Transform
 
     // Encoding
     describe('type', () => {
-      it('should automatically add type as enumspec and index it', () => {
+      it('should automatically add type as wildcard and index it', () => {
         const specQ: SpecQuery = {
           mark: Mark.POINT,
           encodings: [
@@ -85,10 +85,10 @@ describe('SpecQueryModel', () => {
         };
 
         const specM = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
-        // check if type is enumspec
-        assert.isTrue(isEnumSpec(specM.getEncodingQueryByIndex(0).type));
+        // check if type is wildcard
+        assert.isTrue(isWildcard(specM.getEncodingQueryByIndex(0).type));
         // check if enumeration specifier index has an index for type
-        assert.isOk(specM.enumSpecIndex.encodings[0].type);
+        assert.isOk(specM.wildcardIndex.encodings[0].type);
       });
     });
 
@@ -100,17 +100,17 @@ describe('SpecQueryModel', () => {
     };
 
     ENCODING_PROPERTIES.forEach((prop) => {
-      it('should have ' + prop + ' enumSpecIndex if it is a ShortEnumSpec.', () => {
+      it('should have ' + prop + ' wildcardIndex if it is a ShortWildcard.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a short enum spec
-        specQ.encodings[0][prop] = SHORT_ENUM_SPEC;
+        specQ.encodings[0][prop] = SHORT_WILDCARD;
 
-        const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isOk(enumSpecIndex.encodingIndicesByProperty[prop]);
-        assert.isOk(enumSpecIndex.encodings[0][prop]);
+        const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
+        assert.isOk(wildcardIndex.encodingIndicesByProperty[prop]);
+        assert.isOk(wildcardIndex.encodings[0][prop]);
       });
 
-      it('should have ' + prop + ' enumSpecIndex if it is an EnumSpec.', () => {
+      it('should have ' + prop + ' wildcardIndex if it is an Wildcard.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a full enum spec
         const enumValues = prop === Property.FIELD ?
@@ -120,18 +120,18 @@ describe('SpecQueryModel', () => {
           enum: enumValues
         };
 
-        const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isOk(enumSpecIndex.encodingIndicesByProperty[prop]);
-        assert.isOk(enumSpecIndex.encodings[0][prop]);
+        const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
+        assert.isOk(wildcardIndex.encodingIndicesByProperty[prop]);
+        assert.isOk(wildcardIndex.encodings[0][prop]);
       });
 
-      it('should not have ' + prop + ' enumSpecIndex if it is specific.', () => {
+      it('should not have ' + prop + ' wildcardIndex if it is specific.', () => {
         let specQ = duplicate(templateSpecQ);
         // do not set to enum spec = make it specific
 
-        const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isNotOk(enumSpecIndex.encodingIndicesByProperty[prop]);
-        assert.isNotOk(enumSpecIndex.encodings[0]);
+        const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
+        assert.isNotOk(wildcardIndex.encodingIndicesByProperty[prop]);
+        assert.isNotOk(wildcardIndex.encodings[0]);
       });
     });
 
@@ -140,35 +140,35 @@ describe('SpecQueryModel', () => {
       const parent = nestedProp.parent;
       const child = nestedProp.child;
 
-      it('should have ' + prop + ' enumSpecIndex if it is a ShortEnumSpec.', () => {
+      it('should have ' + prop + ' wildcardIndex if it is a ShortWildcard.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a short enum spec
         specQ.encodings[0][parent] = {};
-        specQ.encodings[0][parent][child] = SHORT_ENUM_SPEC;
+        specQ.encodings[0][parent][child] = SHORT_WILDCARD;
 
-        const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isOk(enumSpecIndex.encodingIndicesByProperty[prop]);
-        assert.isOk(enumSpecIndex.encodings[0][prop]);
+        const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
+        assert.isOk(wildcardIndex.encodingIndicesByProperty[prop]);
+        assert.isOk(wildcardIndex.encodings[0][prop]);
       });
 
-      it('should have ' + prop + ' enumSpecIndex if it is an EnumSpec.', () => {
+      it('should have ' + prop + ' wildcardIndex if it is an Wildcard.', () => {
         let specQ = duplicate(templateSpecQ);
         specQ.encodings[0][parent] = {};
         specQ.encodings[0][parent][child] = {
           enum: getDefaultEnumValues(prop, schema, DEFAULT_QUERY_CONFIG)
         };
 
-        const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isOk(enumSpecIndex.encodingIndicesByProperty[prop]);
-        assert.isOk(enumSpecIndex.encodings[0][prop]);
+        const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
+        assert.isOk(wildcardIndex.encodingIndicesByProperty[prop]);
+        assert.isOk(wildcardIndex.encodings[0][prop]);
       });
 
-      it('should not have ' + prop + ' enumSpecIndex if it is specific.', () => {
+      it('should not have ' + prop + ' wildcardIndex if it is specific.', () => {
         let specQ = duplicate(templateSpecQ);
 
-        const enumSpecIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).enumSpecIndex;
-        assert.isNotOk(enumSpecIndex.encodingIndicesByProperty[prop]);
-        assert.isNotOk(enumSpecIndex.encodings[0]);
+        const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
+        assert.isNotOk(wildcardIndex.encodingIndicesByProperty[prop]);
+        assert.isNotOk(wildcardIndex.encodings[0]);
       });
     });
 
@@ -181,12 +181,12 @@ describe('SpecQueryModel', () => {
 
       it('should add new encoding if autoCount is enabled' , () => {
         assert.equal(model.specQuery.encodings.length, 2);
-        assert.isTrue(isEnumSpec(model.specQuery.encodings[1].autoCount));
+        assert.isTrue(isWildcard(model.specQuery.encodings[1].autoCount));
       });
 
-      it('should add new channel and autoCount to the enumSpec', () => {
-        assert.equal(model.enumSpecIndex.encodingIndicesByProperty['autoCount'][0], 1);
-        assert.equal(model.enumSpecIndex.encodingIndicesByProperty['channel'][0], 1);
+      it('should add new channel and autoCount to the wildcard', () => {
+        assert.equal(model.wildcardIndex.encodingIndicesByProperty['autoCount'][0], 1);
+        assert.equal(model.wildcardIndex.encodingIndicesByProperty['channel'][0], 1);
       });
     });
   });
@@ -460,7 +460,7 @@ describe('SpecQueryModel', () => {
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, field: 'A', type: Type.ORDINAL},
-          {channel: SHORT_ENUM_SPEC, autoCount: false}
+          {channel: SHORT_WILDCARD, autoCount: false}
         ]
       });
 

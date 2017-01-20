@@ -8,8 +8,8 @@ import {RankingScore, FeatureScore} from './ranking';
 export const name = 'fieldOrder';
 
 export function score(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): RankingScore {
-  const fieldEnumSpecIndices = specM.enumSpecIndex.encodingIndicesByProperty[Property.FIELD];
-  if (!fieldEnumSpecIndices) {
+  const fieldWildcardIndices = specM.wildcardIndex.encodingIndicesByProperty[Property.FIELD];
+  if (!fieldWildcardIndices) {
     return {
       score: 0,
       features: []
@@ -22,10 +22,10 @@ export function score(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): 
   const features: FeatureScore[] = [];
   let totalScore = 0, base = 1;
 
-  for (let i = fieldEnumSpecIndices.length - 1; i >= 0; i--) {
-    const index = fieldEnumSpecIndices[i];
+  for (let i = fieldWildcardIndices.length - 1; i >= 0; i--) {
+    const index = fieldWildcardIndices[i];
     const field = encodings[index].field as string;
-    const fieldEnumSpec = specM.enumSpecIndex.encodings[index].field;
+    const fieldWildcard = specM.wildcardIndex.encodings[index].field;
     const fieldIndex = schema.fieldSchema(field).index;
      // reverse order field with lower index should get higher score and come first
     const score = - fieldIndex * base;
@@ -34,7 +34,7 @@ export function score(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): 
     features.push({
       score: score,
       type: 'fieldOrder',
-      feature: `field ${fieldEnumSpec.name} is ${field} (#${fieldIndex} in the schema)`
+      feature: `field ${fieldWildcard.name} is ${field} (#${fieldIndex} in the schema)`
     });
 
     base *= numFields;
