@@ -8,8 +8,8 @@ import {AbstractConstraint, AbstractConstraintModel} from './base';
 import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
 import {getNestedEncodingProperty, Property, SCALE_PROPERTIES, SUPPORTED_SCALE_PROPERTY_INDEX} from '../property';
-import {isEnumSpec, EnumSpec} from '../enumspec';
-import {EncodingEnumSpecIndex} from '../enumspecindex';
+import {isWildcard, Wildcard} from '../wildcard';
+import {EncodingWildcardIndex} from '../wildcardindex';
 import {PrimitiveType, Schema} from '../schema';
 import {contains, every} from '../util';
 
@@ -21,7 +21,7 @@ import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery} from '../q
 
 /** A method for satisfying whether the provided encoding query satisfy the constraint. */
 export interface EncodingConstraintChecker {
-  (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig): boolean;
+  (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig): boolean;
 }
 
 export class EncodingConstraintModel extends AbstractConstraintModel {
@@ -42,27 +42,27 @@ export class EncodingConstraintModel extends AbstractConstraintModel {
           return true;
         }
 
-        return !isEnumSpec(encQ[parent][child]);
+        return !isWildcard(encQ[parent][child]);
       }
 
       if (!encQ[prop]) {
         return true;
       }
 
-      return !isEnumSpec(encQ[prop]);
+      return !isWildcard(encQ[prop]);
     });
   }
 
-  public satisfy(encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig): boolean {
-    // TODO: Re-order logic to optimize the "allowEnumSpecForProperties" check
-    if (!this.constraint.allowEnumSpecForProperties) {
+  public satisfy(encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig): boolean {
+    // TODO: Re-order logic to optimize the "allowWildcardForProperties" check
+    if (!this.constraint.allowWildcardForProperties) {
       // TODO: extract as a method and do unit test
 
       if (!this.hasAllRequiredPropertiesSpecific(encQ)) {
         return true;
       }
     }
-    return (this.constraint as EncodingConstraint).satisfy(encQ, schema, encEnumSpecIndex, opt);
+    return (this.constraint as EncodingConstraint).satisfy(encQ, schema, encWildcardIndex, opt);
   }
 }
 
@@ -77,9 +77,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'aggregateOpSupportedByType',
     description: 'Aggregate function should be supported by data type.',
     properties: [Property.TYPE, Property.AGGREGATE],
-    allowEnumSpecForProperties: false,
+    allowWildcardForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       if (encQ.aggregate) {
         return encQ.type !== Type.ORDINAL && encQ.type !== Type.NOMINAL;
       }
@@ -91,9 +91,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'asteriskFieldWithCountOnly',
     description: 'Field="*" should be disallowed except aggregate="count"',
     properties: [Property.FIELD, Property.AGGREGATE],
-    allowEnumSpecForProperties: false,
+    allowWildcardForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       return (encQ.field === '*') === (encQ.aggregate === AggregateOp.COUNT);
     }
   // TODO: minCardinalityForBin
@@ -101,9 +101,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'binAppliedForQuantitative',
     description: 'bin should be applied to quantitative field only.',
     properties: [Property.TYPE, Property.BIN],
-    allowEnumSpecForProperties: false,
+    allowWildcardForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       if (encQ.bin) {
         // If binned, the type must be quantitative
         return encQ.type === Type.QUANTITATIVE;
@@ -114,12 +114,12 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'channelSupportsRole',
     description: 'encoding channel should support the role of the field',
     properties: [Property.CHANNEL, Property.TYPE, Property.BIN, Property.TIMEUNIT],
-    allowEnumSpecForProperties: true,
+    allowWildcardForProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
-      if (isEnumSpec(encQ.channel)) return true; // not ready for checking yet!
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+      if (isWildcard(encQ.channel)) return true; // not ready for checking yet!
 
-      if (!encEnumSpecIndex.channel && !opt.constraintManuallySpecifiedValue) {
+      if (!encWildcardIndex.channel && !opt.constraintManuallySpecifiedValue) {
         // Do not have to check this as this is manually specified by users.
         return true;
       }
@@ -136,9 +136,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'hasFn',
     description: 'A field with as hasFn flag should have one of aggregate, timeUnit, or bin.',
     properties: [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT],
-    allowEnumSpecForProperties: true,
+    allowWildcardForProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       if (encQ.hasFn) {
         return !!encQ.aggregate || !!encQ.bin || !!encQ.timeUnit;
       }
@@ -148,9 +148,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'omitScaleZeroWithBinnedField',
     description: 'Do not use scale zero with binned field',
     properties: [Property.SCALE, Property.SCALE_ZERO, Property.BIN],
-    allowEnumSpecForProperties: false,
+    allowWildcardForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       if (encQ.bin && encQ.scale) {
         if ((encQ.scale as ScaleQuery).zero === true) {
           return false;
@@ -162,22 +162,22 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'onlyOneTypeOfFunction',
     description: 'Only of of aggregate, autoCount, timeUnit, or bin should be applied at the same time.',
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN],
-    allowEnumSpecForProperties: true,
+    allowWildcardForProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
-      const numFn = (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate ? 1 : 0) +
-        (!isEnumSpec(encQ.autoCount) && !!encQ.autoCount ? 1 : 0) +
-        (!isEnumSpec(encQ.bin) && !!encQ.bin ? 1 : 0) +
-        (!isEnumSpec(encQ.timeUnit) && !!encQ.timeUnit ? 1 : 0);
+satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+      const numFn = (!isWildcard(encQ.aggregate) && !!encQ.aggregate ? 1 : 0) +
+        (!isWildcard(encQ.autoCount) && !!encQ.autoCount ? 1 : 0) +
+        (!isWildcard(encQ.bin) && !!encQ.bin ? 1 : 0) +
+        (!isWildcard(encQ.timeUnit) && !!encQ.timeUnit ? 1 : 0);
       return numFn <= 1;
     }
   },{
     name: 'timeUnitAppliedForTemporal',
     description: 'Time unit should be applied to temporal field only.',
     properties: [Property.TYPE, Property.TIMEUNIT],
-    allowEnumSpecForProperties: false,
+    allowWildcardForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       if (encQ.timeUnit && encQ.type !== Type.TEMPORAL) {
         return false;
       }
@@ -187,11 +187,11 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'timeUnitShouldHaveVariation',
     description: 'A particular time unit should be applied only if they produce unique values.',
     properties: [Property.TIMEUNIT, Property.TYPE],
-    allowEnumSpecForProperties: false,
+    allowWildcardForProperties: false,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       if (encQ.timeUnit && encQ.type === Type.TEMPORAL) {
-        if (!encEnumSpecIndex.timeUnit && !opt.constraintManuallySpecifiedValue) {
+        if (!encWildcardIndex.timeUnit && !opt.constraintManuallySpecifiedValue) {
           // Do not have to check this as this is manually specified by users.
           return true;
         }
@@ -204,14 +204,14 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'scalePropertiesSupportedByScaleType',
     description: 'Scale properties must be supported by correct scale type',
     properties: SCALE_PROPERTIES.concat([Property.SCALE, Property.TYPE]),
-    allowEnumSpecForProperties: true,
+    allowWildcardForProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       if (encQ.scale) {
         const scale: ScaleQuery = encQ.scale as ScaleQuery;
 
-         //  If encQ.type is an EnumSpec and scale.type is undefined, it is equivalent
-         //  to scale type is EnumSpec. If scale type is an EnumSpec, we do not yet know
+         //  If encQ.type is an Wildcard and scale.type is undefined, it is equivalent
+         //  to scale type is Wildcard. If scale type is an Wildcard, we do not yet know
          //  what the scale type is, and thus can ignore the constraint.
 
         const sType = scaleType(encQ);
@@ -235,9 +235,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'typeMatchesPrimitiveType',
     description: 'Data type should be supported by field\'s primitive type.',
     properties: [Property.FIELD, Property.TYPE],
-    allowEnumSpecForProperties: false,
+    allowWildcardForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       if (encQ.field === '*') {
         return true;
       }
@@ -245,7 +245,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       const primitiveType = schema.primitiveType(encQ.field as string);
       const type = encQ.type;
 
-      if (!encEnumSpecIndex.field && !encEnumSpecIndex.type && !opt.constraintManuallySpecifiedValue) {
+      if (!encWildcardIndex.field && !encWildcardIndex.type && !opt.constraintManuallySpecifiedValue) {
         // Do not have to check this as this is manually specified by users.
         return true;
       }
@@ -271,10 +271,10 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'typeMatchesSchemaType',
     description: 'Enumerated data type of a field should match the field\'s type in the schema.',
     properties: [Property.FIELD, Property.TYPE],
-    allowEnumSpecForProperties: false,
+    allowWildcardForProperties: false,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
-      if (!encEnumSpecIndex.field && !encEnumSpecIndex.type && !opt.constraintManuallySpecifiedValue) {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+      if (!encWildcardIndex.field && !encWildcardIndex.type && !opt.constraintManuallySpecifiedValue) {
         // Do not have to check this as this is manually specified by users.
         return true;
       }
@@ -289,9 +289,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
    name: 'maxCardinalityForCategoricalColor',
     description: 'Categorical channel should not have too high cardinality',
     properties: [Property.CHANNEL, Property.FIELD],
-    allowEnumSpecForProperties: false,
+    allowWildcardForProperties: false,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       // TODO: missing case where ordinal / temporal use categorical color
       // (once we do so, need to add Property.BIN, Property.TIMEUNIT)
       if (encQ.channel === Channel.COLOR && encQ.type === Type.NOMINAL) {
@@ -303,9 +303,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'maxCardinalityForFacet',
     description: 'Row/column channel should not have too high cardinality',
     properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
-    allowEnumSpecForProperties: false,
+    allowWildcardForProperties: false,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       if (encQ.channel === Channel.ROW || encQ.channel === Channel.COLUMN) {
         return schema.cardinality(encQ) <= opt.maxCardinalityForFacet;
       }
@@ -315,9 +315,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'maxCardinalityForShape',
     description: 'Shape channel should not have too high cardinality',
     properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
-    allowEnumSpecForProperties: false,
+    allowWildcardForProperties: false,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       if (encQ.channel === Channel.SHAPE) {
         return schema.cardinality(encQ) <= opt.maxCardinalityForShape;
       }
@@ -327,9 +327,9 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'dataTypeAndFunctionMatchScaleType',
     description: 'Scale type must match data type',
     properties: [Property.TYPE, Property.SCALE, Property.SCALE_TYPE, Property.TIMEUNIT, Property.BIN],
-    allowEnumSpecForProperties: false,
+    allowWildcardForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encEnumSpecIndex: EncodingEnumSpecIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       if (encQ.scale) {
         const type = encQ.type;
         const sType = scaleType(encQ);
@@ -373,7 +373,11 @@ export const ENCODING_CONSTRAINTS_BY_PROPERTY: {[prop: string]: EncodingConstrai
 /**
  * Check all encoding constraints for a particular property and index tuple
  */
+<<<<<<< HEAD
 export function checkEncoding(prop: Property, enumSpec: EnumSpec<any>, index: number,
+=======
+export function checkEncoding(prop: Property, wildcard: Wildcard<any>, index: number,
+>>>>>>> 119093b... renamed enum spec and related to wildcard
   specM: SpecQueryModel, schema: Schema, opt: QueryConfig): string {
 
   // Check encoding constraint
@@ -386,12 +390,16 @@ export function checkEncoding(prop: Property, enumSpec: EnumSpec<any>, index: nu
     if (c.strict() || !!opt[c.name()]) {
       // For strict constraint, or enabled non-strict, check the constraints
 
-      const satisfy = c.satisfy(encQ, schema, specM.enumSpecIndex.encodings[index], opt);
+      const satisfy = c.satisfy(encQ, schema, specM.wildcardIndex.encodings[index], opt);
       if (!satisfy) {
         let violatedConstraint = '(enc) ' + c.name();
         /* istanbul ignore if */
         if (opt.verbose) {
+<<<<<<< HEAD
           console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + enumSpec.name);
+=======
+          console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + wildcard.name);
+>>>>>>> 119093b... renamed enum spec and related to wildcard
         }
         return violatedConstraint;
       }

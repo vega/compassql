@@ -9,7 +9,7 @@ import {toMap, isString} from 'datalib/src/util';
 import {EncodingQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
 
-import {isEnumSpec, SHORT_ENUM_SPEC} from '../enumspec';
+import {isWildcard, SHORT_WILDCARD} from '../wildcard';
 import {getNestedEncodingPropertyChildren, Property, DEFAULT_PROPERTY_PRECEDENCE} from '../property';
 import {Dict, extend, keys, isArray} from '../util';
 
@@ -32,12 +32,12 @@ export function getReplacer(replace: Dict<string>): Replacer {
 }
 
 export function value(v: any, replacer: Replacer): any {
-  if (isEnumSpec(v)) {
-    // Return the enum array if it's a full enum spec, or just return SHORT_ENUM_SPEC for short ones.
+  if (isWildcard(v)) {
+    // Return the enum array if it's a full enum spec, or just return SHORT_WILDCARD for short ones.
     if (v.enum) {
-      return SHORT_ENUM_SPEC + JSON.stringify(v.enum);
+      return SHORT_WILDCARD + JSON.stringify(v.enum);
     } else {
-      return SHORT_ENUM_SPEC;
+      return SHORT_WILDCARD;
     }
   }
   if (replacer) {
@@ -202,13 +202,13 @@ export function fieldDef(encQ: EncodingQuery,
 
   if (include[Property.AGGREGATE] && encQ.autoCount === false) {
     return '-';
-  } else if (include[Property.AGGREGATE] && encQ.aggregate && !isEnumSpec(encQ.aggregate)) {
+  } else if (include[Property.AGGREGATE] && encQ.aggregate && !isWildcard(encQ.aggregate)) {
     fn = replace(encQ.aggregate, replacer[Property.AGGREGATE]);
-  } else if (include[Property.AGGREGATE] && encQ.autoCount && !isEnumSpec(encQ.autoCount)) {
+  } else if (include[Property.AGGREGATE] && encQ.autoCount && !isWildcard(encQ.autoCount)) {
     fn = replace('count', replacer[Property.AGGREGATE]);;
-  } else if (include[Property.TIMEUNIT] && encQ.timeUnit && !isEnumSpec(encQ.timeUnit)) {
+  } else if (include[Property.TIMEUNIT] && encQ.timeUnit && !isWildcard(encQ.timeUnit)) {
     fn = replace(encQ.timeUnit, replacer[Property.TIMEUNIT]);
-  } else if (include[Property.BIN] && encQ.bin && !isEnumSpec(encQ.bin)) {
+  } else if (include[Property.BIN] && encQ.bin && !isWildcard(encQ.bin)) {
     fn = 'bin';
 
     // TODO(https://github.com/uwdata/compassql/issues/97):
@@ -221,10 +221,10 @@ export function fieldDef(encQ: EncodingQuery,
     }
   } else {
     for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
-      if (include[prop] && encQ[prop] && isEnumSpec(encQ[prop])) {
-        fn = SHORT_ENUM_SPEC + '';
+      if (include[prop] && encQ[prop] && isWildcard(encQ[prop])) {
+        fn = SHORT_WILDCARD + '';
 
-        // assign fnEnumIndex[prop] = array of enum values or just "?" if it is SHORT_ENUM_SPEC
+        // assign fnEnumIndex[prop] = array of enum values or just "?" if it is SHORT_WILDCARD
         fnEnumIndex = fnEnumIndex || {};
         fnEnumIndex[prop] = encQ[prop].enum || encQ[prop];
 
@@ -246,12 +246,12 @@ export function fieldDef(encQ: EncodingQuery,
   }
 
   for (const nestedPropParent of [Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND]) {
-    if (!isEnumSpec(encQ.channel) && !PROPERTY_SUPPORTED_CHANNELS[nestedPropParent][encQ.channel as Channel]) {
+    if (!isWildcard(encQ.channel) && !PROPERTY_SUPPORTED_CHANNELS[nestedPropParent][encQ.channel as Channel]) {
       continue;
     }
 
     if (include[nestedPropParent]) {
-      if (encQ[nestedPropParent] && !isEnumSpec(encQ[nestedPropParent])) {
+      if (encQ[nestedPropParent] && !isWildcard(encQ[nestedPropParent])) {
         // `sort` can be a string (ascending/descending).
         if (isString(encQ[nestedPropParent])) {
           props.push({
@@ -288,7 +288,7 @@ export function fieldDef(encQ: EncodingQuery,
   let fieldAndParams = include[Property.FIELD] ? value(encQ.field || '*', replacer[Property.FIELD]) : '...';
   // type
   if (include[Property.TYPE]) {
-    if (isEnumSpec(encQ.type)) {
+    if (isWildcard(encQ.type)) {
       fieldAndParams += ',' + value(encQ.type, replacer[Property.TYPE]);
     } else {
       const typeShort = ((encQ.type || Type.QUANTITATIVE)+'').substr(0,1);
@@ -467,7 +467,7 @@ export namespace shorthandParser {
       for (let encodingProperty in fnEnumIndex) {
         if (isArray(fnEnumIndex[encodingProperty])) {
           encQ[encodingProperty] = {enum: fnEnumIndex[encodingProperty]};
-        } else { // Definitely a `SHORT_ENUM_SPEC`
+        } else { // Definitely a `SHORT_WILDCARD`
           encQ[encodingProperty] = fnEnumIndex[encodingProperty];
         }
       }
