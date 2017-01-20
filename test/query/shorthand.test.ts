@@ -67,7 +67,7 @@ describe('query/shorthand', () => {
       });
     });
 
-    it('should correctly parse an ambiguous shorthand with aggregate, bin as enum spec, and with hasFn', () => {
+    it('should correctly parse an ambiguous shorthand with aggregate, bin as wildcard, and with hasFn', () => {
       let specQ: SpecQuery = parse('?|?:?{"aggregate":"?","bin":"?","hasFn":true}(?,?)');
 
       assert.equal(specQ.mark, '?');
@@ -81,7 +81,7 @@ describe('query/shorthand', () => {
       });
     });
 
-    it('should correctly parse an ambiguous shorthand with aggregate and bin as enum spec', () => {
+    it('should correctly parse an ambiguous shorthand with aggregate and bin as wildcard', () => {
       let specQ: SpecQuery = parse('?|?:?{"aggregate":["max","min"],"bin":[false,true],"hasFn":true}(?,?)');
 
       assert.equal(specQ.mark, '?');
@@ -342,12 +342,12 @@ describe('query/shorthand', () => {
        assert.equal(str, 'x:a,q');
     });
 
-    it('should return correct encoding string for channel as short enum spec', () => {
+    it('should return correct encoding string for channel as short wildcard', () => {
       const str = encodingShorthand({channel: '?', field: 'a', type: Type.QUANTITATIVE});
       assert.equal(str, '?:a,q');
     });
 
-    it('should return correct encoding string for bin with maxbins as enum spec and channel as enum spec', () => {
+    it('should return correct encoding string for bin with maxbins as wildcard and channel as wildcard', () => {
       const str = encodingShorthand({bin: {maxbins: {enum: [10, 20]}}, channel: {enum: [Channel.X, Channel.Y]}, field: 'a', type: Type.QUANTITATIVE});
       assert.equal(str, '?["x","y"]:bin(a,q,maxbins=?[10,20])');
     });

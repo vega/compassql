@@ -174,7 +174,7 @@ describe('stylize', () => {
         assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, 'category20');
     });
 
-    it('should not assign a range if cardinality of color is over 10 and scale.range is an Enum Spec', () => {
+    it('should not assign a range if cardinality of color is over 10 and scale.range is wildcard', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.POINT,
             encodings: [
