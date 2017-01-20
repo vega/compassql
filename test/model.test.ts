@@ -102,7 +102,7 @@ describe('SpecQueryModel', () => {
     ENCODING_PROPERTIES.forEach((prop) => {
       it('should have ' + prop + ' wildcardIndex if it is a ShortWildcard.', () => {
         let specQ = duplicate(templateSpecQ);
-        // set to a short enum spec
+        // set to a short wildcard
         specQ.encodings[0][prop] = SHORT_WILDCARD;
 
         const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
@@ -112,7 +112,7 @@ describe('SpecQueryModel', () => {
 
       it('should have ' + prop + ' wildcardIndex if it is an Wildcard.', () => {
         let specQ = duplicate(templateSpecQ);
-        // set to a full enum spec
+        // set to a full wildcard
         const enumValues = prop === Property.FIELD ?
           ['A', 'B'] :
           getDefaultEnumValues(prop, schema, DEFAULT_QUERY_CONFIG);
@@ -127,7 +127,7 @@ describe('SpecQueryModel', () => {
 
       it('should not have ' + prop + ' wildcardIndex if it is specific.', () => {
         let specQ = duplicate(templateSpecQ);
-        // do not set to enum spec = make it specific
+        // do not set to wildcard = make it specific
 
         const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
         assert.isNotOk(wildcardIndex.encodingIndicesByProperty[prop]);
@@ -142,7 +142,7 @@ describe('SpecQueryModel', () => {
 
       it('should have ' + prop + ' wildcardIndex if it is a ShortWildcard.', () => {
         let specQ = duplicate(templateSpecQ);
-        // set to a short enum spec
+        // set to a short wildcard
         specQ.encodings[0][parent] = {};
         specQ.encodings[0][parent][child] = SHORT_WILDCARD;
 

@@ -33,7 +33,7 @@ export function getReplacer(replace: Dict<string>): Replacer {
 
 export function value(v: any, replacer: Replacer): any {
   if (isWildcard(v)) {
-    // Return the enum array if it's a full enum spec, or just return SHORT_WILDCARD for short ones.
+    // Return the enum array if it's a full wildcard, or just return SHORT_WILDCARD for short ones.
     if (v.enum) {
       return SHORT_WILDCARD + JSON.stringify(v.enum);
     } else {
@@ -458,7 +458,7 @@ export namespace shorthandParser {
   }
 
   export function fn(encQ: EncodingQuery, fieldDefShorthand: string): EncodingQuery {
-    // Aggregate, Bin, TimeUnit as enum spec case
+    // Aggregate, Bin, TimeUnit as wildcard case
     if (fieldDefShorthand[0] === '?') {
       let closingBraceIndex = getClosingBraceIndex(1, fieldDefShorthand);
 
