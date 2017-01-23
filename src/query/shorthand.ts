@@ -422,12 +422,14 @@ export namespace shorthandParser {
 
     let partParams = fieldDefPart[2];
     let closingBraceIndex = 0;
+    let i = 0;
 
-    for (let i = 0; i < partParams.length; i++) {
-      let nestedPropertyParentIndex = partParams.indexOf('=', i);
+    while (i < partParams.length) {
+      let propEqualSignIndex = partParams.indexOf('=', i);
 
-      if (nestedPropertyParentIndex !== -1) {
-        let nestedPropertyParent = partParams.substr(i, nestedPropertyParentIndex); 
+      if (propEqualSignIndex !== -1) {
+        let nestedPropertyParent = partParams.substr(i, propEqualSignIndex); 
+        let nestedPropertyParentIndex = partParams.indexOf(nestedPropertyParent, i);
         if (partParams[nestedPropertyParentIndex + nestedPropertyParent.length + 1] === '{') {
           let openingBraceIndex = nestedPropertyParentIndex + nestedPropertyParent.length + 1;
           closingBraceIndex = getClosingBraceIndex(openingBraceIndex, partParams);
