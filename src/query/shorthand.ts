@@ -416,9 +416,17 @@ export namespace shorthandParser {
     return encQ;
   }
 
-  // export function rawFieldDef(encQ: EncodingQuery, fieldDefPart: string[]): EncodingQuery {
-    
-  // }
+  export function rawFieldDef(encQ: EncodingQuery, fieldDefPart: string[]): EncodingQuery {
+    encQ.field = fieldDefPart[0];
+    encQ.type = TYPE_FROM_SHORT_TYPE[fieldDefPart[1].toUpperCase()] || '?';
+
+    let partParams = fieldDefPart[2];
+    let closingBraceIndex = 0;
+    for (var i = 0; i < fieldDefPart.length; i++) {
+      var propNameEndIndex = fieldDefPart.indexOf('=', i);
+      
+    }
+  }
 
   // FIXME: this function is hacky and needs to be refactored
   export function rawFieldDef(encQ: EncodingQuery, fieldDefPart: string[]): EncodingQuery {

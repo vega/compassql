@@ -570,7 +570,6 @@ export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] =
  }, []);
 =======
 export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
-  // TODO: add other for bins 
   {
     property: Property.BIN_MAXBINS,
     parent: 'bin',
