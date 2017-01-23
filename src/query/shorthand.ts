@@ -422,25 +422,12 @@ export namespace shorthandParser {
 
     let partParams = fieldDefPart[2];
     let closingBraceIndex = 0;
-    for (var i = 0; i < fieldDefPart.length; i++) {
-      var propNameEndIndex = fieldDefPart.indexOf('=', i);
-      
-    }
-  }
 
-  // FIXME: this function is hacky and needs to be refactored
-  export function rawFieldDef(encQ: EncodingQuery, fieldDefPart: string[]): EncodingQuery {
-    encQ.field = fieldDefPart[0];
-    encQ.type = TYPE_FROM_SHORT_TYPE[fieldDefPart[1].toUpperCase()] || '?';
+    for (let i = 0; i < partParams.length; i++) {
+      let nestedPropertyParentIndex = partParams.indexOf('=', i);
 
-    let partParams = fieldDefPart[2];
-    let closingBraceIndex = 0;
-
-    // FIXME: don't use a loop
-    // FIXME: separate maxbins from nestedPropertyParent and support other bin properties
-    for (let nestedPropertyParent of ['maxbins', 'scale', 'sort', 'axis', 'legend']) {
-      let nestedPropertyParentIndex = partParams.indexOf(nestedPropertyParent, closingBraceIndex);
       if (nestedPropertyParentIndex !== -1) {
+        let nestedPropertyParent = partParams.substr(i, nestedPropertyParentIndex); 
         if (partParams[nestedPropertyParentIndex + nestedPropertyParent.length + 1] === '{') {
           let openingBraceIndex = nestedPropertyParentIndex + nestedPropertyParent.length + 1;
           closingBraceIndex = getClosingBraceIndex(openingBraceIndex, partParams);
@@ -460,17 +447,31 @@ export namespace shorthandParser {
             )
           );
 
-          // TODO(https://github.com/uwdata/compassql/issues/97): Make this generalized for other bin properties.
-          if (nestedPropertyParent === 'maxbins') {
-            encQ.bin['maxbins'] = parsedValue;
+          if (typeOfProperty(nestedPropertyParent) === 'bin') {
+            // nestedPropertyParent is a bin property
+            encQ.bin[nestedPropertyParent] = parsedValue;
           } else {
             encQ[nestedPropertyParent] = parsedValue;
           }
         }
       }
-    }
 
+      // reassign index to after comma
+      i = partParams.indexOf(',', i) + 1;
+
+
+    }
     return encQ;
+  }
+  
+  function typeOfProperty(property: string): string {
+    let result;
+    NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
+      if (nestedProp.child = property) {
+        result = nestedProp.parent;
+      }
+    });
+    return result; 
   }
 
   // TODO(https://github.com/uwdata/compassql/issues/259):

@@ -41,6 +41,13 @@ export interface QueryConfig {
 
   /** Default maxbins to enumerate */
   maxBinsList?: number[];
+  binMinList?: number[],
+  binMaxList?: number[],
+  binBaseList?: number[],
+  binStepList?: number[],
+  binStepsList?: number[],
+  binMinistepsList?: number[],
+  binDivList?: number[],
 
   axisAxisColors?: string[];
 
@@ -230,6 +237,14 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
   maxBinsList: [5, 10, 20],
+  binMinList: [undefined],
+  binMaxList: [undefined],
+  binBaseList: [undefined],
+  binStepList: [undefined],
+  binStepsList: [undefined],
+  binMinistepsList: [undefined],
+  binDivList: [undefined],
+  
 
   axisAxisColors: [undefined],
   axisAxisWidths: [undefined],
