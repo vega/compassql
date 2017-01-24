@@ -1,12 +1,8 @@
 import {extend, isArray} from './util';
 
+export const SHORT_WILDCARD: SHORT_WILDCARD = "?";
 
-/** Enum for a short form of the enumeration spec. */
-export enum ShortWildcard {
-  WILDCARD = '?' as any
-}
-
-export const SHORT_WILDCARD = ShortWildcard.WILDCARD;
+export type SHORT_WILDCARD = "?";
 
 export interface Wildcard<T> {
   name?: string;
