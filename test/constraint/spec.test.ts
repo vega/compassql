@@ -905,7 +905,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true for stack with autoCount.', () => {
-      SUM_OPS.forEach((aggregate) => {
+      SUM_OPS.forEach((_) => {
         [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
           const specM = buildSpecQueryModel({
             mark: Mark.BAR,

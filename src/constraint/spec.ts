@@ -90,7 +90,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     allowWildcardForProperties: true,
     strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       let usedChannel = {};
 
       // channel for all encodings should be valid
@@ -113,7 +113,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.MARK, Property.SCALE, Property.SCALE_ZERO, Property.CHANNEL, Property.TYPE],
     allowWildcardForProperties: false,
     strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       const mark = specM.getMark();
       const encodings = specM.getEncodings();
 
@@ -137,7 +137,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.BIN, Property.TIMEUNIT, Property.TYPE, Property.AUTOCOUNT],
     allowWildcardForProperties: true,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       const hasAutoCount =  some(specM.getEncodings(), (encQ: EncodingQuery) => encQ.autoCount === true);
 
       if (hasAutoCount) {
@@ -193,7 +193,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.MARK],
     allowWildcardForProperties: true, // only require mark
     strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       const mark = specM.getMark();
 
       // if mark is unspecified, no need to check
@@ -214,7 +214,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.MARK],
     allowWildcardForProperties: false,
     strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       const mark = specM.getMark();
 
       switch (mark) {
@@ -244,7 +244,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.AGGREGATE, Property.AUTOCOUNT],
     allowWildcardForProperties: true,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       if (specM.isAggregate()) {
         return false;
       }
@@ -257,7 +257,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.AGGREGATE, Property.AUTOCOUNT],
     allowWildcardForProperties: false,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
       if (specM.isAggregate()) {
         let hasNonFacetDim = false, hasDim = false, hasEnumeratedFacetDim = false;
         specM.specQuery.encodings.forEach((encQ, index) => {
@@ -289,7 +289,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.BIN, Property.TIMEUNIT, Property.TYPE],
     allowWildcardForProperties: false,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       if (specM.isAggregate()) {
         // TODO relax
         return some(specM.getEncodings(), (encQ: EncodingQuery) => {
@@ -309,7 +309,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
     allowWildcardForProperties: false,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       if (contains([Mark.BAR, Mark.LINE, Mark.AREA], specM.getMark())) {
         return specM.isAggregate();
       }
@@ -322,7 +322,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.MARK],
     allowWildcardForProperties: true,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();
       if (contains([Mark.TICK, Mark.BAR], mark)) {
         if (specM.channelUsed(Channel.SIZE)) {
@@ -357,7 +357,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.MARK, Property.CHANNEL, Property.SCALE, Property.SCALE_TYPE, Property.TYPE],
     allowWildcardForProperties: false,
     strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       const mark = specM.getMark();
       const encodings = specM.getEncodings();
 
@@ -383,7 +383,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     allowWildcardForProperties: true,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
       // have to use specM.specQuery.encodings insetad of specM.getEncodings()
       // since specM.getEncodings() remove encQ with autoCount===false from the array
       // and thus might shift the index
@@ -397,7 +397,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
         const channel = encQ.channel;
         if (!isWildcard(channel)) {
-          if (NONSPATIAL_CHANNELS_INDEX[channel as string]) {
+          if (NONSPATIAL_CHANNELS_INDEX[channel + '']) {
             nonPositionChannelCount += 1;
             if (specM.wildcardIndex.hasEncodingProperty(i, Property.CHANNEL)) {
               hasEnumeratedNonPositionChannel = true;
@@ -419,7 +419,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     allowWildcardForProperties: false,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
       const encodings = specM.specQuery.encodings;
       let hasNonPositionalChannelOrFacet = false;
       let hasEnumeratedNonPositionOrFacetChannel = false;
@@ -456,7 +456,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.AGGREGATE, Property.AUTOCOUNT],
     allowWildcardForProperties: false,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       if (!specM.isAggregate()) {
         return false;
       }
@@ -470,7 +470,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN, Property.TYPE],
     allowWildcardForProperties: true,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
        if (specM.isAggregate()) {
          const encodings = specM.specQuery.encodings;
          for (let i = 0; i < encodings.length; i++) {
@@ -516,7 +516,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.AGGREGATE, Property.AUTOCOUNT],
     allowWildcardForProperties: false,
     strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
       if (specM.isAggregate()) {
         return true;
       }
@@ -541,7 +541,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.FIELD],
     allowWildcardForProperties: true,
     strict: false, // over-encoding is sometimes good, but let's turn it off by default
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
       let fieldUsed = {};
       let fieldEnumerated = {};
 
@@ -578,7 +578,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL],
     allowWildcardForProperties: true,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       const encodings = specM.getEncodings();
       if (encodings.length === 1 && encodings[0].channel === Channel.Y) {
         return false;
@@ -593,7 +593,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.MARK, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
     allowWildcardForProperties: false,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       const mark = specM.getMark();
 
       switch (mark) {
@@ -649,7 +649,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     // TODO: Property.STACK
     allowWildcardForProperties: false,
     strict: true,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       const stack = specM.stack();
       if (stack) {
         for (let encQ of specM.getEncodings()) {
@@ -671,7 +671,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
     allowWildcardForProperties: false,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       const stack = specM.stack();
       if (stack) {
         const measureEncQ = specM.getEncodingQueryByChannel(stack.fieldChannel);
@@ -686,7 +686,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     properties: [Property.CHANNEL, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
     allowWildcardForProperties: false,
     strict: false,
-    satisfy: (specM: SpecQueryModel, schema: Schema, opt: QueryConfig) => {
+    satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
       if(opt.autoAddCount) {
         // TODO(#186): take mark properties channel into account
         if (specM.isDimension(Channel.X) &&
@@ -728,8 +728,7 @@ export function checkSpec(prop: Property, wildcard: Wildcard<any>,
   // Check encoding constraint
   const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[prop] || [];
 
-  for (let i = 0; i < specConstraints.length; i++) {
-    const c = specConstraints[i];
+  for (const c of specConstraints) {
     // Check if the constraint is enabled
     if (c.strict() || !!opt[c.name()]) {
       // For strict constraint, or enabled non-strict, check the constraints

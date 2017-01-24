@@ -10,7 +10,7 @@ import {NESTED_ENCODING_PROPERTIES, hasNestedProperty} from '../property';
 import {EncodingQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
 
-import {isWildcard, SHORT_WILDCARD} from '../wildcard';
+import {isWildcard, isShortWildcard, SHORT_WILDCARD} from '../wildcard';
 import {getNestedEncodingPropertyChildren, Property, DEFAULT_PROPERTY_PRECEDENCE} from '../property';
 import {Dict, extend, keys, isArray} from '../util';
 
@@ -35,7 +35,7 @@ export function getReplacer(replace: Dict<string>): Replacer {
 export function value(v: any, replacer: Replacer): any {
   if (isWildcard(v)) {
     // Return the enum array if it's a full wildcard, or just return SHORT_WILDCARD for short ones.
-    if (v.enum) {
+    if (!isShortWildcard(v) && v.enum) {
       return SHORT_WILDCARD + JSON.stringify(v.enum);
     } else {
       return SHORT_WILDCARD;
@@ -64,8 +64,8 @@ export const INCLUDE_ALL: Dict<boolean> =
 
 
 export function vlSpec(vlspec: ExtendedUnitSpec,
-    include: Dict<boolean> = INCLUDE_ALL,
-    replace: Dict<Replacer> = {}) {
+    _: Dict<boolean> = INCLUDE_ALL,
+    __: Dict<Replacer> = {}) {
   const specQ = fromSpec(vlspec);
   return spec(specQ);
 }
@@ -214,8 +214,8 @@ export function fieldDef(encQ: EncodingQuery,
 
     NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
       if (nestedProp && nestedProp.parent === fn) {
-        var binTypeProp = nestedProp.property;
-        var binTypeStr = nestedProp.child;
+        const  binTypeProp = nestedProp.property;
+        const  binTypeStr = nestedProp.child;
         if (include[binTypeProp] && encQ.bin[binTypeStr]) {
           props.push({
             key: binTypeStr,
@@ -226,17 +226,18 @@ export function fieldDef(encQ: EncodingQuery,
     });
   } else {
     for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
-      if (include[prop] && encQ[prop] && isWildcard(encQ[prop])) {
+      const val = encQ[prop];
+      if (include[prop] && encQ[prop] && isWildcard(val)) {
         fn = SHORT_WILDCARD + '';
 
         // assign fnEnumIndex[prop] = array of enum values or just "?" if it is SHORT_WILDCARD
         fnEnumIndex = fnEnumIndex || {};
-        fnEnumIndex[prop] = encQ[prop].enum || encQ[prop];
+        fnEnumIndex[prop] = isShortWildcard(val) ? val : val.enum;
 
         if (prop === Property.BIN) {
           NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
-            var binTypeProp = nestedProp.property;
-            var binTypeStr = nestedProp.child;
+            const  binTypeProp = nestedProp.property;
+            const  binTypeStr = nestedProp.child;
 
             if (include[binTypeProp] && encQ.bin[binTypeStr]) {
               props.push({
@@ -462,7 +463,7 @@ export namespace shorthandParser {
           );
         }
 
-        if (hasNestedProperty(prop)) {
+        if (hasNestedProperty(prop as Property)) {
           encQ[prop] = parsedValue;
         } else {
           // prop is a property of the aggregation function such as bin

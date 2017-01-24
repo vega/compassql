@@ -16,8 +16,12 @@ export interface ExtendedWildcard<T> extends Wildcard<T> {
   [prop: string]: any;
 }
 
-export function isWildcard(prop: any) {
-  return prop === SHORT_WILDCARD || (prop !== undefined && (!!prop.enum || !!prop.name) && !isArray(prop));
+export function isWildcard(prop: any): prop is Wildcard<any> | SHORT_WILDCARD  {
+  return isShortWildcard(prop) || (prop !== undefined && (!!prop.enum || !!prop.name) && !isArray(prop));
+}
+
+export function isShortWildcard(prop: any): prop is SHORT_WILDCARD {
+  return prop === SHORT_WILDCARD;
 }
 
 export function initWildcard(prop: any, defaultName: string, defaultEnumValues: any[]): ExtendedWildcard<any> {

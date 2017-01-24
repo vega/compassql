@@ -19,7 +19,7 @@ import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
 
-/*
+/**
  * Internal class for specQuery that provides helper for the enumeration process.
  */
 export class SpecQueryModel {
@@ -130,7 +130,7 @@ export class SpecQueryModel {
     this._spec = spec;
     this._channelCount = spec.encodings.reduce((m, encQ) => {
       if (!isWildcard(encQ.channel) && encQ.autoCount !== false) {
-        m[encQ.channel as string] = 1;
+        m[encQ.channel + ''] = 1;
       }
       return m;
     }, {} as Dict<number>);
@@ -240,9 +240,9 @@ export class SpecQueryModel {
   }
 
   public getEncodingQueryByChannel(channel: Channel) {
-    for (let i = 0; i < this._spec.encodings.length; i++) {
-      if (this._spec.encodings[i].channel === channel) {
-        return this._spec.encodings[i];
+    for (let specEncoding of this._spec.encodings) {
+      if (specEncoding.channel === channel) {
+        return specEncoding;
       }
     }
     return undefined;
@@ -278,8 +278,7 @@ export class SpecQueryModel {
   private _encoding(): Encoding {
     let encoding: Encoding = {};
 
-    for (let i = 0; i < this._spec.encodings.length; i++) {
-      const encQ = this._spec.encodings[i];
+    for (const encQ of this._spec.encodings) {
       let fieldDef: FieldDef = {};
 
       // For count field that is automatically added, convert to correct vega-lite fieldDef
@@ -298,8 +297,7 @@ export class SpecQueryModel {
       const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND];
       // TODO(#226):
       // write toSpec() and toShorthand() in a way that prevents outputting inapplicable scale, sort, axis / legend
-      for (let j = 0; j < PROPERTIES.length; j++) {
-        const prop = PROPERTIES[j];
+      for (const prop of PROPERTIES) {
 
         // if the property is a wildcard, return null
         if (isWildcard(encQ[prop])) return null;
