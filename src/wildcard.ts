@@ -1,7 +1,7 @@
 import {extend, isArray} from './util';
-export const SHORT_WILDCARD: SHORT_WILDCARD = "?";
+export const SHORT_WILDCARD: SHORT_WILDCARD = '?';
 
-export type SHORT_WILDCARD = "?";
+export type SHORT_WILDCARD = '?';
 
 export interface Wildcard<T> {
   name?: string;

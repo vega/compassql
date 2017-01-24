@@ -694,7 +694,7 @@ export class SpecQueryModel {
       // write toSpec() and toShorthand() in a way that prevents outputting inapplicable scale, sort, axis / legend
       for (let j = 0; j < PROPERTIES.length; j++) {
         const prop = PROPERTIES[j];
-        
+
         // if the property is a wildcard, return null
         if (isWildcard(encQ[prop])) return null;
 
