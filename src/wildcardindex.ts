@@ -78,7 +78,7 @@ export class WildcardIndex {
   // TODO: transform
 
   /**
-   * Dictionary mapping encoding index to an encoding enum spec index.
+   * Dictionary mapping encoding index to an encoding wildcard index.
    */
 
   private _encodings: EncodingsWildcardIndex;
