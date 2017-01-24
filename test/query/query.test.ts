@@ -113,7 +113,7 @@ describe('query/query', () => {
         }
       });
 
-      it('should augment wildcard name for enum specs', () => {
+      it('should augment wildcard name for wildcards', () => {
         assert.isDefined((output.query.spec.mark as Wildcard<Mark>).name);
       });
 

@@ -458,7 +458,7 @@ export namespace shorthandParser {
   }
 
   export function fn(encQ: EncodingQuery, fieldDefShorthand: string): EncodingQuery {
-    // Aggregate, Bin, TimeUnit as enum spec case
+    // Aggregate, Bin, TimeUnit as wildcard case
     if (fieldDefShorthand[0] === '?') {
       let closingBraceIndex = getClosingBraceIndex(1, fieldDefShorthand);
 

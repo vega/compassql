@@ -1,5 +1,4 @@
 import {extend, isArray} from './util';
-
 export const SHORT_WILDCARD: SHORT_WILDCARD = "?";
 
 export type SHORT_WILDCARD = "?";

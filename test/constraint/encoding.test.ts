@@ -62,7 +62,7 @@ describe('constraints/encoding', () => {
       assert.isTrue(encModel.hasAllRequiredPropertiesSpecific(encQ));
     });
 
-    it('should return false if a required property is an enum spec', () => {
+    it('should return false if a required property is a wildcard', () => {
       let encQ: EncodingQuery = {
         channel: Channel.X,
         aggregate: SHORT_WILDCARD,
@@ -72,7 +72,7 @@ describe('constraints/encoding', () => {
       assert.isFalse(encModel.hasAllRequiredPropertiesSpecific(encQ));
     });
 
-    it('should return false if a nested required property is an enum spec', () => {
+    it('should return false if a nested required property is a wildcard', () => {
       let encQ: EncodingQuery = {
         channel: Channel.X,
         aggregate: AggregateOp.MEAN,

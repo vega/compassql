@@ -431,7 +431,7 @@ export class SpecQueryModel {
 
   /**
    * Build an WildcardIndex by detecting enumeration specifiers
-   * in the input specQuery and replace short enum specs with
+   * in the input specQuery and replace short wildcards with
    * full ones that includes both names and enumValues.
    *
    * @return a SpecQueryModel that wraps the specQuery and the WildcardIndex.
@@ -457,19 +457,19 @@ export class SpecQueryModel {
       }
 
       if (encQ.type === undefined) {
-        // type is optional -- we automatically augment enum spec if not specified
+        // type is optional -- we automatically augment wildcard if not specified
         encQ.type = SHORT_WILDCARD;
       }
 
       // For each property of the encodingQuery, enumerate
       ENCODING_PROPERTIES.forEach((prop) => {
         if(isWildcard(encQ[prop])) {
-          // Assign default enum spec name and enum values.
+          // Assign default wildcard name and enum values.
           const defaultWildcardName = getDefaultName(prop) + index;
           const defaultEnumValues = getDefaultEnumValues(prop, schema, opt);
           const wildcard = encQ[prop] = initWildcard(encQ[prop], defaultWildcardName, defaultEnumValues);
 
-          // Add index of the encoding mapping to the property's enum spec index.
+          // Add index of the encoding mapping to the property's wildcard index.
           wildcardIndex.setEncodingProperty(index, prop, wildcard);
         }
       });
@@ -481,12 +481,13 @@ export class SpecQueryModel {
           const prop = nestedProp.property;
           const child = nestedProp.child;
           if (isWildcard(propObj[child])) {
-            // Assign default enum spec name and enum values.
+
+            // Assign default wildcard name and enum values.
             const defaultWildcardName = getDefaultName(prop) + index;
             const defaultEnumValues = getDefaultEnumValues(prop, schema, opt);
             const wildcard = propObj[child] = initWildcard(propObj[child], defaultWildcardName, defaultEnumValues);
 
-            // Add index of the encoding mapping to the property's enum spec index.
+            // Add index of the encoding mapping to the property's wildcard index.
             wildcardIndex.setEncodingProperty(index, prop, wildcard);
           }
         }
@@ -511,7 +512,7 @@ export class SpecQueryModel {
 
       const index = specQ.encodings.length - 1;
 
-      // Add index of the encoding mapping to the property's enum spec index.
+      // Add index of the encoding mapping to the property's wildcard index.
       wildcardIndex.setEncodingProperty(index, Property.CHANNEL, countEncQ.channel);
       wildcardIndex.setEncodingProperty(index, Property.AUTOCOUNT, countEncQ.autoCount);
     }
@@ -684,7 +685,7 @@ export class SpecQueryModel {
         continue; // Do not include this in the output.
       }
 
-      // if channel is an enum spec, return null
+      // if channel is a wildcard, return null
       if (isWildcard(encQ.channel)) return null;
 
       // assemble other property into a field def.
@@ -693,8 +694,8 @@ export class SpecQueryModel {
       // write toSpec() and toShorthand() in a way that prevents outputting inapplicable scale, sort, axis / legend
       for (let j = 0; j < PROPERTIES.length; j++) {
         const prop = PROPERTIES[j];
-
-        // if the property is an enum spec, return null
+        
+        // if the property is a wildcard, return null
         if (isWildcard(encQ[prop])) return null;
 
         // otherwise, assign the proper to the field def

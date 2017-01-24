@@ -90,7 +90,7 @@ describe('constraints/spec', () => {
       assert.isTrue(specCModel.hasAllRequiredPropertiesSpecific(specQM));
     });
 
-    it('should return false if a required property is an enum spec', () => {
+    it('should return false if a required property is a wildcard', () => {
       const specQM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
@@ -100,7 +100,7 @@ describe('constraints/spec', () => {
       assert.isFalse(specCModel.hasAllRequiredPropertiesSpecific(specQM));
     });
 
-    it('should return false if a nested required property is an enum spec', () => {
+    it('should return false if a nested required property is a wildcard', () => {
       const specQM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
@@ -1080,7 +1080,7 @@ describe('constraints/spec', () => {
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('It should return true if there is an enum spec aggregate', () => {
+    it('It should return true if there is a wildcard aggregate', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
@@ -1090,7 +1090,7 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('It should return true if there is an enum spec autoCount', () => {
+    it('It should return true if there is a wildcard autoCount', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
