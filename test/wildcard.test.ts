@@ -5,26 +5,26 @@ import {initWildcard, isWildcard, SHORT_WILDCARD} from '../src/wildcard';
 
 describe('wildcard', () => {
   describe('isWildcard', () => {
-    it('should return true for a wildcard with name and values', () => {
+    it('should return true for an enum spec with name and values', () => {
       assert(isWildcard({
         name: 'a',
         enum: [1,2,3]
       }));
     });
 
-    it('should return true for a wildcard with name.', () => {
+    it('should return true for an enum spec with name.', () => {
       assert(isWildcard({
         name: 'a'
       }));
     });
 
-    it('should return true for a wildcard with values', () => {
+    it('should return true for an enum spec with values', () => {
       assert(isWildcard({
         enum: [1,2,3]
       }));
     });
 
-    it('should return true for a short wildcard', () => {
+    it('should return true for a short enum spec', () => {
       assert(isWildcard(SHORT_WILDCARD));
     });
 

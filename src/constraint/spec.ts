@@ -230,7 +230,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         case Mark.RULE:
           return specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
         case Mark.POINT:
-          // This allows generating a point plot if channel was not a wildcard.
+          // This allows generating a point plot if channel was not an enum spec.
           return !specM.wildcardIndex.hasProperty(Property.CHANNEL) ||
                  specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
       }
