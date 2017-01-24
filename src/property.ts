@@ -21,7 +21,7 @@ export enum Property {
   AGGREGATE = 'aggregate' as any,
   AUTOCOUNT = 'autoCount' as any,
   BIN = 'bin' as any,
-  BIN_MAXBINS = 'binMaxBins' as any,
+  BIN_MAXBINS = 'binMaxbins' as any,
   HAS_FN = 'hasFn' as any,
   TIMEUNIT = 'timeUnit' as any,
   FIELD = 'field' as any,
@@ -417,350 +417,43 @@ export interface NestedEncodingProperty {
   child: string;
 }
 
-export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] = [
-  {
-    property: Property.BIN_MAXBINS,
-    parent: 'bin',
-    child: 'maxbins'
-  },
-  {
-    property: Property.SORT_FIELD,
-    parent: 'sort',
-    child: 'field'
-  },
-  {
-    property: Property.SORT_OP,
-    parent: 'sort',
-    child: 'op'
-  },
-  {
-    property: Property.SORT_ORDER,
-    parent: 'sort',
-    child: 'order'
-  },
-  {
-    property: Property.SCALE_BANDSIZE,
-    parent: 'scale',
-    child: 'bandSize'
-  },
-  {
-    property: Property.SCALE_CLAMP,
-    parent: 'scale',
-    child: 'clamp'
-  },
-  {
-    property: Property.SCALE_DOMAIN,
-    parent: 'scale',
-    child: 'domain'
-  },
-  {
-    property: Property.SCALE_EXPONENT,
-    parent: 'scale',
-    child: 'exponent'
-  },
-  {
-    property: Property.SCALE_NICE,
-    parent: 'scale',
-    child: 'nice'
-  },
-  {
-    property: Property.SCALE_RANGE,
-    parent: 'scale',
-    child: 'range'
-  },
-  {
-    property: Property.SCALE_ROUND,
-    parent: 'scale',
-    child: 'round'
-  },
-  {
-    property: Property.SCALE_TYPE,
-    parent: 'scale',
-    child: 'type'
-  },
-  {
-    property: Property.SCALE_USERAWDOMAIN,
-    parent: 'scale',
-    child: 'useRawDomain'
-  },
-  {
-    property: Property.SCALE_ZERO,
-    parent: 'scale',
-    child: 'zero'
-  },
-  {
-    property: Property.AXIS_AXISCOLOR,
-    parent: 'axis',
-    child: 'axisColor'
-  },
-  {
-    property: Property.AXIS_AXISWIDTH,
-    parent: 'axis',
-    child: 'axisWidth'
-  },
-  {
-    property: Property.AXIS_LAYER,
-    parent: 'axis',
-    child: 'layer'
-  },
-  {
-    property: Property.AXIS_OFFSET,
-    parent: 'axis',
-    child: 'offset'
-  },
-  {
-    property: Property.AXIS_ORIENT,
-    parent: 'axis',
-    child: 'orient'
-  },
-  {
-    property: Property.AXIS_GRID,
-    parent: 'axis',
-    child: 'grid'
-  },
-  {
-    property: Property.AXIS_GRIDCOLOR,
-    parent: 'axis',
-    child: 'gridColor'
-  },
-  {
-    property: Property.AXIS_GRIDDASH,
-    parent: 'axis',
-    child: 'gridDash'
-  },
-  {
-    property: Property.AXIS_GRIDOPACITY,
-    parent: 'axis',
-    child: 'gridOpacity'
-  },
-  {
-    property: Property.AXIS_GRIDWIDTH,
-    parent: 'axis',
-    child: 'gridWidth'
-  },
-  {
-    property: Property.AXIS_LABELS,
-    parent: 'axis',
-    child: 'labels'
-  },
-  {
-    property: Property.AXIS_FORMAT,
-    parent: 'axis',
-    child: 'format'
-  },
-  {
-    property: Property.AXIS_LABELANGLE,
-    parent: 'axis',
-    child: 'labelAngle'
-  },
-  {
-    property: Property.AXIS_LABELMAXLENGTH,
-    parent: 'axis',
-    child: 'labelMaxLength'
-  },
-  {
-    property: Property.AXIS_SHORTTIMELABELS,
-    parent: 'axis',
-    child: 'shortTimeLabels'
-  },
-  {
-    property: Property.AXIS_TICKS,
-    parent: 'axis',
-    child: 'ticks'
-  },
-  {
-    property: Property.AXIS_SUBDIVIDE,
-    parent: 'axis',
-    child: 'subdivide'
-  },
-  {
-    property: Property.AXIS_TICKCOLOR,
-    parent: 'axis',
-    child: 'tickColor'
-  },
-  {
-    property: Property.AXIS_TICKLABELCOLOR,
-    parent: 'axis',
-    child: 'tickLabelColor'
-  },
-  {
-    property: Property.AXIS_TICKLABELFONT,
-    parent: 'axis',
-    child: 'tickLabelFont'
-  },
-  {
-    property: Property.AXIS_TICKLABELFONTSIZE,
-    parent: 'axis',
-    child: 'tickLabelFontSize'
-  },
-  {
-    property: Property.AXIS_TICKPADDING,
-    parent: 'axis',
-    child: 'tickPadding'
-  },
-  {
-    property: Property.AXIS_TICKSIZE,
-    parent: 'axis',
-    child: 'tickSize'
-  },
-  {
-    property: Property.AXIS_TICKSIZEMAJOR,
-    parent: 'axis',
-    child: 'tickSizeMajor'
-  },
-  {
-    property: Property.AXIS_TICKSIZEMINOR,
-    parent: 'axis',
-    child: 'tickSizeMinor'
-  },
-  {
-    property: Property.AXIS_TICKSIZEEND,
-    parent: 'axis',
-    child: 'tickSizeEnd'
-  },
-  {
-    property: Property.AXIS_TICKWIDTH,
-    parent: 'axis',
-    child: 'tickWidth'
-  },
-  {
-    property: Property.AXIS_VALUES,
-    parent: 'axis',
-    child: 'values'
-  },
-  {
-    property: Property.AXIS_TITLE,
-    parent: 'axis',
-    child: 'title'
-  },
-  {
-    property: Property.AXIS_TITLECOLOR,
-    parent: 'axis',
-    child: 'titleColor'
-  },
-  {
-    property: Property.AXIS_TITLEFONT,
-    parent: 'axis',
-    child: 'titleFont'
-  },
-  {
-    property: Property.AXIS_TITLEFONTSIZE,
-    parent: 'axis',
-    child: 'titleFontSize'
-  },
-  {
-    property: Property.AXIS_TITLEFONTWEIGHT,
-    parent: 'axis',
-    child: 'titleFontWeight'
-  },
-  {
-    property: Property.AXIS_CHARACTERWIDTH,
-    parent: 'axis',
-    child: 'characterWidth'
-  },
-  {
-    property: Property.AXIS_TITLEMAXLENGTH,
-    parent: 'axis',
-    child: 'titleMaxLength'
-  },
-  {
-    property: Property.AXIS_TITLEOFFSET,
-    parent: 'axis',
-    child: 'titleOffset'
-  },
-  {
-    property: Property.LEGEND_ORIENT,
-    parent: 'legend',
-    child: 'orient'
-  },
-  {
-    property: Property.LEGEND_OFFSET,
-    parent: 'legend',
-    child: 'offset',
-  },
-  {
-    property: Property.LEGEND_VALUES,
-    parent: 'legend',
-    child: 'values'
-  },
-  {
-    property: Property.LEGEND_FORMAT,
-    parent: 'legend',
-    child: 'format'
-  },
-  {
-    property: Property.LEGEND_LABELALIGN,
-    parent: 'legend',
-    child: 'labelAlign'
-  },
-  {
-    property: Property.LEGEND_LABELBASELINE,
-    parent: 'legend',
-    child: 'labelBaseline'
-  },
-  {
-    property: Property.LEGEND_LABELFONT,
-    parent: 'legend',
-    child: 'labelFont'
-  },
-  {
-    property: Property.LEGEND_LABELFONTSIZE,
-    parent: 'legend',
-    child: 'labelFontSize'
-  },
-  {
-    property: Property.LEGEND_SHORTTIMELABELS,
-    parent: 'legend',
-    child: 'shortTimeLabels'
-  },
-  {
-    property: Property.LEGEND_SYMBOLCOLOR,
-    parent: 'legend',
-    child: 'symbolColor'
-  },
-  {
-    property: Property.LEGEND_SYMBOLSHAPE,
-    parent: 'legend',
-    child: 'symbolShape'
-  },
-  {
-    property: Property.LEGEND_SYMBOLSIZE,
-    parent: 'legend',
-    child: 'symbolSize'
-  },
-  {
-    property: Property.LEGEND_SYMBOLSTROKEWIDTH,
-    parent: 'legend',
-    child: 'symbolStrokeWidth'
-  },
-  {
-    property: Property.LEGEND_TITLE,
-    parent: 'legend',
-    child: 'title'
-  },
-  {
-    property: Property.LEGEND_TITLECOLOR,
-    parent: 'legend',
-    child: 'titleColor'
-  },
-  {
-    property: Property.LEGEND_TITLEFONT,
-    parent: 'legend',
-    child: 'titleFont'
-  },
-  {
-    property: Property.LEGEND_TITLEFONTSIZE,
-    parent: 'legend',
-    child: 'titleFontSize'
-  },
-  {
-    property: Property.LEGEND_TITLEFONTWEIGHT,
-    parent: 'legend',
-    child: 'titleFontWeight'
-  }
-
-  // TODO: other bin parameters
+export const NESTED_ENCODING_PROPERTIES_PARENT = [
+  'bin', 'scale', 'sort', 'axis', 'legend'
 ];
+
+/**
+ * Collection of nested encoding properties.
+ *
+ * [
+ *  {
+ *    property: Property.BIN_MAXBINS,
+ *    parent: 'bin',
+ *    child: 'maxbins'
+ *  },
+ *  ...
+ * ]
+ */
+export const NESTED_ENCODING_PROPERTIES: NestedEncodingProperty[] =
+ ENCODING_PROPERTIES.reduce((nestedEncodingProperties, prop: Property) => {
+   const p = prop+'';
+
+   // Check if it's a child property of any of the nested encoding property parent
+   for (let parent of NESTED_ENCODING_PROPERTIES_PARENT) {
+     if (p.length > parent.length && p.substr(0, parent.length) === parent) {
+
+       // Convert PascalCase to camelCase
+       const child = (p[parent.length] +'').toLowerCase() + p.substr(parent.length + 1);
+
+       nestedEncodingProperties.push({
+         property: prop,
+         parent: parent,
+         child: child
+       });
+       break;
+     }
+   }
+   return nestedEncodingProperties;
+ }, []);
 
 const NESTED_ENCODING_INDEX: Dict<NestedEncodingProperty> =
   NESTED_ENCODING_PROPERTIES.reduce((m, nestedProp) => {
