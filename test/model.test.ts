@@ -8,9 +8,9 @@ import {SortOrder} from 'vega-lite/src/sort';
 import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
-import {SpecQueryModel, getDefaultName, getDefaultEnumValues} from '../src/model';
+import {SpecQueryModel} from '../src/model';
 import {Property, DEFAULT_PROPERTY_PRECEDENCE, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
-import {SHORT_WILDCARD, isWildcard} from '../src/wildcard';
+import {SHORT_WILDCARD, isWildcard, getDefaultName, getDefaultEnumValues} from '../src/wildcard';
 import {SpecQuery} from '../src/query/spec';
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
