@@ -11,61 +11,61 @@ import {Dict, keys} from './util';
 
 
 export interface EncodingWildcardIndex {
-  /** Enum spec for channel enumeration. */
+  /** Wildcard for channel enumeration. */
   channel?: Wildcard<Channel>;
 
-  /** Enum spec for aggregate enumeration. */
+  /** Wildcard for aggregate enumeration. */
   aggregate?: Wildcard<AggregateOp>;
 
-  /** Enum spec for autoCount enumeration. */
+  /** Wildcard for autoCount enumeration. */
   autoCount?: Wildcard<AggregateOp>;
 
-  /** Enum spec for bin enumeration. */
+  /** Wildcard for bin enumeration. */
   bin?: Wildcard<boolean>;
 
-  /** Enum spec for bin.maxbins enumeration */
+  /** Wildcard for bin.maxbins enumeration */
   maxbin?: Wildcard<number>;
 
-  /** Enum spec for scale enumeration. */
+  /** Wildcard for scale enumeration. */
   scale?: Wildcard<boolean>;
 
-  /** Enum spec for scale.bandSize enumeration */
+  /** Wildcard for scale.bandSize enumeration */
   scaleBandSize?: Wildcard<number>;
 
-  /** Enum spec for scale.clamp enumeration */
+  /** Wildcard for scale.clamp enumeration */
   scaleClamp?: Wildcard<boolean>;
 
-  /** Enum spec for scale.domain enumeration */
+  /** Wildcard for scale.domain enumeration */
   scaleDomain?: Wildcard<string | string[] | number[]>;
 
-  /** Enum spec for scale.exponent enumeration */
+  /** Wildcard for scale.exponent enumeration */
   scaleExponent?: Wildcard<number>;
 
-  /** Enum spec for scale.nice enumeration */
+  /** Wildcard for scale.nice enumeration */
   scaleNice?: Wildcard<boolean>;
 
-  /** Enum spec for scale.range enumeration */
+  /** Wildcard for scale.range enumeration */
   scaleRange?: Wildcard<string | string[] | number[]>;
 
-  /** Enum spec for scale.round enumeration */
+  /** Wildcard for scale.round enumeration */
   scaleRound?: Wildcard<boolean>;
 
-  /** Enum spec for scale.type enumeration */
+  /** Wildcard for scale.type enumeration */
   scaleType?: Wildcard<ScaleType>;
 
-  /** Enum spec for scale.useRawDomain enumeration */
+  /** Wildcard for scale.useRawDomain enumeration */
   scaleUseRawDomain?: Wildcard<boolean>;
 
-  /** Enum spec for scale.zero enumeration */
+  /** Wildcard for scale.zero enumeration */
   scaleZero?: Wildcard<boolean>;
 
-  /** Enum spec for timeUnit enumeration. */
+  /** Wildcard for timeUnit enumeration. */
   timeUnit?: Wildcard<TimeUnit>;
 
-  /** Enum spec for field enumeration. */
+  /** Wildcard for field enumeration. */
   field?: Wildcard<string>;
 
-  /** Enum spec for type enumeration. */
+  /** Wildcard for type enumeration. */
   type?: Wildcard<Type>;
 }
 
