@@ -127,95 +127,12 @@ export enum Property {
   LEGEND_TITLEFONTWEIGHT = 'legendTitleFontWeight' as any
 }
 
+export const NESTED_ENCODING_PROPERTIES_PARENT = [
+  'bin', 'scale', 'sort', 'axis', 'legend'
+];
+
 export function hasNestedProperty(prop: Property) {
-  switch (prop) {
-    case Property.BIN:
-    case Property.SCALE:
-    case Property.SORT:
-    case Property.AXIS:
-    case Property.LEGEND:
-      return true;
-    case Property.MARK:
-    case Property.FILTER:
-    case Property.CALCULATE:
-    case Property.FILTERINVALID:
-    case Property.STACK:
-    case Property.CHANNEL:
-    case Property.AGGREGATE:
-    case Property.AUTOCOUNT:
-    case Property.TIMEUNIT:
-    case Property.FIELD:
-    case Property.TYPE:
-    case Property.BIN_MAXBINS:
-    case Property.SCALE_BANDSIZE:
-    case Property.SCALE_CLAMP:
-    case Property.SCALE_DOMAIN:
-    case Property.SCALE_EXPONENT:
-    case Property.SCALE_NICE:
-    case Property.SCALE_RANGE:
-    case Property.SCALE_ROUND:
-    case Property.SCALE_TYPE:
-    case Property.SCALE_USERAWDOMAIN:
-    case Property.SCALE_ZERO:
-    case Property.AXIS_AXISCOLOR:
-    case Property.AXIS_AXISWIDTH:
-    case Property.AXIS_LAYER:
-    case Property.AXIS_OFFSET:
-    case Property.AXIS_ORIENT:
-    case Property.AXIS_GRID:
-    case Property.AXIS_GRIDCOLOR:
-    case Property.AXIS_GRIDDASH:
-    case Property.AXIS_GRIDOPACITY:
-    case Property.AXIS_GRIDWIDTH:
-    case Property.AXIS_LABELS:
-    case Property.AXIS_FORMAT:
-    case Property.AXIS_LABELANGLE:
-    case Property.AXIS_LABELMAXLENGTH:
-    case Property.AXIS_SHORTTIMELABELS:
-    case Property.AXIS_TICKS:
-    case Property.AXIS_SUBDIVIDE:
-    case Property.AXIS_TICKCOLOR:
-    case Property.AXIS_TICKLABELCOLOR:
-    case Property.AXIS_TICKLABELFONT:
-    case Property.AXIS_TICKLABELFONTSIZE:
-    case Property.AXIS_TICKPADDING:
-    case Property.AXIS_TICKSIZE:
-    case Property.AXIS_TICKSIZEMAJOR:
-    case Property.AXIS_TICKSIZEMINOR:
-    case Property.AXIS_TICKSIZEEND:
-    case Property.AXIS_TICKWIDTH:
-    case Property.AXIS_VALUES:
-    case Property.AXIS_TITLE:
-    case Property.AXIS_TITLECOLOR:
-    case Property.AXIS_TITLEFONT:
-    case Property.AXIS_TITLEFONTSIZE:
-    case Property.AXIS_TITLEFONTWEIGHT:
-    case Property.AXIS_CHARACTERWIDTH:
-    case Property.AXIS_TITLEMAXLENGTH:
-    case Property.AXIS_TITLEOFFSET:
-    case Property.LEGEND_ORIENT:
-    case Property.LEGEND_OFFSET:
-    case Property.LEGEND_VALUES:
-    case Property.LEGEND_FORMAT:
-    case Property.LEGEND_LABELALIGN:
-    case Property.LEGEND_LABELBASELINE:
-    case Property.LEGEND_LABELCOLOR:
-    case Property.LEGEND_LABELFONT:
-    case Property.LEGEND_LABELFONTSIZE:
-    case Property.LEGEND_SHORTTIMELABELS:
-    case Property.LEGEND_SYMBOLCOLOR:
-    case Property.LEGEND_SYMBOLSHAPE:
-    case Property.LEGEND_SYMBOLSIZE:
-    case Property.LEGEND_SYMBOLSTROKEWIDTH:
-    case Property.LEGEND_TITLE:
-    case Property.LEGEND_TITLECOLOR:
-    case Property.LEGEND_TITLEFONT:
-    case Property.LEGEND_TITLEFONTSIZE:
-    case Property.LEGEND_TITLEFONTWEIGHT:
-      return false;
-  }
-  /* istanbul ignore next */
-  throw new Error('hasNestedProperty undefined for property ' + prop);
+  return NESTED_ENCODING_PROPERTIES_PARENT.indexOf(prop) !== -1;
 }
 
 export const ENCODING_PROPERTIES = [
@@ -416,10 +333,6 @@ export interface NestedEncodingProperty {
   parent: string;
   child: string;
 }
-
-export const NESTED_ENCODING_PROPERTIES_PARENT = [
-  'bin', 'scale', 'sort', 'axis', 'legend'
-];
 
 /**
  * Collection of nested encoding properties.
