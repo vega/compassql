@@ -428,19 +428,25 @@ export namespace shorthandParser {
       let propEqualSignIndex = partParams.indexOf('=', i);
 
       if (propEqualSignIndex !== -1) {
-        let nestedPropertyParent = partParams.substr(i, propEqualSignIndex); 
-        let nestedPropertyParentIndex = partParams.indexOf(nestedPropertyParent, i);
+        let nestedPropertyParent = partParams.substring(i, propEqualSignIndex); 
+        // let nestedPropertyParentIndex = partParams.indexOf(nestedPropertyParent, i);
+        let nestedPropertyParentIndex = i;
         if (partParams[nestedPropertyParentIndex + nestedPropertyParent.length + 1] === '{') {
           let openingBraceIndex = nestedPropertyParentIndex + nestedPropertyParent.length + 1;
           closingBraceIndex = getClosingBraceIndex(openingBraceIndex, partParams);
-          encQ[nestedPropertyParent] = JSON.parse(partParams.substring(openingBraceIndex, closingBraceIndex + 1));
+          const value = partParams.substring(openingBraceIndex, closingBraceIndex + 1);
+          encQ[nestedPropertyParent] = JSON.parse(value);
 
+          // index after next comma
+          i = closingBraceIndex + 2;
         } else {
           // Substring until the next comma (or end of the string)
           let nextCommaIndex = partParams.indexOf(',', nestedPropertyParentIndex + nestedPropertyParent.length);
           if (nextCommaIndex === -1) {
             nextCommaIndex = partParams.length;
           }
+          // index after next comma
+          i = nextCommaIndex + 1;
 
           let parsedValue = JSON.parse(
             partParams.substring(
@@ -456,11 +462,12 @@ export namespace shorthandParser {
             encQ[nestedPropertyParent] = parsedValue;
           }
         }
+      } else {
+        // something is wrong with the format of the partParams
+        i++;
       }
 
-      // reassign index to after comma
-      i = partParams.indexOf(',', i) + 1;
-
+      console.error("i: " + i);
 
     }
     return encQ;
@@ -469,7 +476,7 @@ export namespace shorthandParser {
   function typeOfProperty(property: string): string {
     let result;
     NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
-      if (nestedProp.child = property) {
+      if (nestedProp.child === property) {
         result = nestedProp.parent;
       }
     });
