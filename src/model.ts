@@ -481,6 +481,7 @@ export class SpecQueryModel {
           const prop = nestedProp.property;
           const child = nestedProp.child;
           if (isWildcard(propObj[child])) {
+
             // Assign default wildcard name and enum values.
             const defaultWildcardName = getDefaultName(prop) + index;
             const defaultEnumValues = getDefaultEnumValues(prop, schema, opt);
