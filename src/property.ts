@@ -1,131 +1,219 @@
 import {Dict} from './util';
 import {ScaleType} from 'vega-lite/src/scale';
 
-export enum Property {
-  MARK = 'mark' as any,
+export namespace Property {
+  export const MARK = 'mark';
 
-  FILTER = 'filter' as any,
+  export const FILTER = 'filter';
   // TODO: Sub-properties for filter
 
-  CALCULATE = 'calculate' as any,
+  export const CALCULATE = 'calculate';
   // TODO: Sub-properties for calculate
 
-  FILTERINVALID = 'filterInvalid' as any,
+  export const FILTERINVALID = 'filterInvalid';
 
   // Layout
-  STACK = 'stack' as any,
+  export const STACK = 'stack';
   // TODO: sub parts of stack
 
   // Encoding Properties
-  CHANNEL = 'channel' as any,
-  AGGREGATE = 'aggregate' as any,
-  AUTOCOUNT = 'autoCount' as any,
-  BIN = 'bin' as any,
-  BIN_MAXBINS = 'binMaxbins' as any,
-  HAS_FN = 'hasFn' as any,
-  TIMEUNIT = 'timeUnit' as any,
-  FIELD = 'field' as any,
-  TYPE = 'type' as any,
+  export const CHANNEL = 'channel';
+  export const AGGREGATE = 'aggregate';
+  export const AUTOCOUNT = 'autoCount';
+  export const BIN = 'bin';
+  export const BIN_MAXBINS = 'binMaxbins';
+  export const HAS_FN = 'hasFn';
+  export const TIMEUNIT = 'timeUnit';
+  export const FIELD = 'field';
+  export const TYPE = 'type';
 
   // - Sort
-  SORT = 'sort' as any,
-  SORT_FIELD = 'sortField' as any,
-  SORT_OP = 'sortOp' as any,
-  SORT_ORDER = 'sortOrder' as any,
+  export const SORT = 'sort';
+  export const SORT_FIELD = 'sortField';
+  export const SORT_OP = 'sortOp';
+  export const SORT_ORDER = 'sortOrder';
 
   // - Scale
-  SCALE = 'scale' as any,
-  SCALE_BANDSIZE = 'scaleBandSize' as any,
-  SCALE_CLAMP = 'scaleClamp' as any,
-  SCALE_DOMAIN = 'scaleDomain' as any,
-  SCALE_EXPONENT = 'scaleExponent' as any,
-  SCALE_NICE = 'scaleNice' as any,
-  SCALE_RANGE = 'scaleRange' as any,
-  SCALE_ROUND = 'scaleRound' as any,
-  SCALE_TYPE = 'scaleType' as any,
-  SCALE_USERAWDOMAIN = 'scaleUseRawDomain' as any,
-  SCALE_ZERO = 'scaleZero' as any,
+  export const SCALE = 'scale';
+  export const SCALE_BANDSIZE = 'scaleBandSize';
+  export const SCALE_CLAMP = 'scaleClamp';
+  export const SCALE_DOMAIN = 'scaleDomain';
+  export const SCALE_EXPONENT = 'scaleExponent';
+  export const SCALE_NICE = 'scaleNice';
+  export const SCALE_RANGE = 'scaleRange';
+  export const SCALE_ROUND = 'scaleRound';
+  export const SCALE_TYPE = 'scaleType';
+  export const SCALE_USERAWDOMAIN = 'scaleUseRawDomain';
+  export const SCALE_ZERO = 'scaleZero';
 
 
   // - Axis
-  AXIS = 'axis' as any,
+  export const AXIS = 'axis';
 
   // General Axis Properties
-  AXIS_AXISCOLOR = 'axisAxisColor' as any,
-  AXIS_AXISWIDTH = 'axisAxisWidth' as any,
-  AXIS_LAYER = 'axisLayer' as any,
-  AXIS_OFFSET = 'axisOffset' as any,
-  AXIS_ORIENT = 'axisOrient' as any,
+  export const AXIS_AXISCOLOR = 'axisAxisColor';
+  export const AXIS_AXISWIDTH = 'axisAxisWidth';
+  export const AXIS_LAYER = 'axisLayer';
+  export const AXIS_OFFSET = 'axisOffset';
+  export const AXIS_ORIENT = 'axisOrient';
 
   // Axis_Grid Properties
-  AXIS_GRID = 'axisGrid' as any,
-  AXIS_GRIDCOLOR = 'axisGridColor' as any,
-  AXIS_GRIDDASH = 'axisGridDash' as any,
-  AXIS_GRIDOPACITY = 'axisGridOpacity' as any,
-  AXIS_GRIDWIDTH = 'axisGridWidth' as any,
+  export const AXIS_GRID = 'axisGrid';
+  export const AXIS_GRIDCOLOR = 'axisGridColor';
+  export const AXIS_GRIDDASH = 'axisGridDash';
+  export const AXIS_GRIDOPACITY = 'axisGridOpacity';
+  export const AXIS_GRIDWIDTH = 'axisGridWidth';
 
   // Axis Properties
-  AXIS_LABELS = 'axisLabels' as any,
-  AXIS_FORMAT = 'axisFormat' as any,
-  AXIS_LABELANGLE = 'axisLabelAngle' as any,
-  AXIS_LABELMAXLENGTH = 'axisLabelMaxLength' as any,
-  AXIS_SHORTTIMELABELS = 'axisShortTimeLabels' as any,
+  export const AXIS_LABELS = 'axisLabels';
+  export const AXIS_FORMAT = 'axisFormat';
+  export const AXIS_LABELANGLE = 'axisLabelAngle';
+  export const AXIS_LABELMAXLENGTH = 'axisLabelMaxLength';
+  export const AXIS_SHORTTIMELABELS = 'axisShortTimeLabels';
 
   // Axis_Tick Properties
-  AXIS_SUBDIVIDE = 'axisSubdivide' as any,
-  AXIS_TICKS = 'axisTicks' as any,
-  AXIS_TICKCOLOR = 'axisTickColor' as any,
-  AXIS_TICKLABELCOLOR = 'axisTickLabelColor' as any,
-  AXIS_TICKLABELFONT = 'axisTickLabelFont' as any,
-  AXIS_TICKLABELFONTSIZE = 'axisTickLabelFontSize' as any,
-  AXIS_TICKPADDING = 'axisTickPadding' as any,
-  AXIS_TICKSIZE = 'axisTickSize' as any,
-  AXIS_TICKSIZEMAJOR = 'axisTickSizeMajor' as any,
-  AXIS_TICKSIZEMINOR = 'axisTickSizeMinor' as any,
-  AXIS_TICKSIZEEND = 'axisTickSizeEnd' as any,
-  AXIS_TICKWIDTH = 'axisTickWidth' as any,
-  AXIS_VALUES = 'axisValues' as any,
+  export const AXIS_SUBDIVIDE = 'axisSubdivide';
+  export const AXIS_TICKS = 'axisTicks';
+  export const AXIS_TICKCOLOR = 'axisTickColor';
+  export const AXIS_TICKLABELCOLOR = 'axisTickLabelColor';
+  export const AXIS_TICKLABELFONT = 'axisTickLabelFont';
+  export const AXIS_TICKLABELFONTSIZE = 'axisTickLabelFontSize';
+  export const AXIS_TICKPADDING = 'axisTickPadding';
+  export const AXIS_TICKSIZE = 'axisTickSize';
+  export const AXIS_TICKSIZEMAJOR = 'axisTickSizeMajor';
+  export const AXIS_TICKSIZEMINOR = 'axisTickSizeMinor';
+  export const AXIS_TICKSIZEEND = 'axisTickSizeEnd';
+  export const AXIS_TICKWIDTH = 'axisTickWidth';
+  export const AXIS_VALUES = 'axisValues';
 
   // Axis_Title Properties
-  AXIS_TITLE = 'axisTitle' as any,
-  AXIS_TITLECOLOR = 'axisTitleColor' as any,
-  AXIS_TITLEFONT = 'axisTitleFont' as any,
-  AXIS_TITLEFONTSIZE = 'axisTitleFontSize' as any,
-  AXIS_TITLEFONTWEIGHT = 'axisTitleFontWeight' as any,
-  AXIS_TITLEOFFSET = 'axisTitleOffset' as any,
-  AXIS_TITLEMAXLENGTH = 'axisTitleMaxLength' as any,
-  AXIS_CHARACTERWIDTH = 'axisCharacterWidth' as any,
+  export const AXIS_TITLE = 'axisTitle';
+  export const AXIS_TITLECOLOR = 'axisTitleColor';
+  export const AXIS_TITLEFONT = 'axisTitleFont';
+  export const AXIS_TITLEFONTSIZE = 'axisTitleFontSize';
+  export const AXIS_TITLEFONTWEIGHT = 'axisTitleFontWeight';
+  export const AXIS_TITLEOFFSET = 'axisTitleOffset';
+  export const AXIS_TITLEMAXLENGTH = 'axisTitleMaxLength';
+  export const AXIS_CHARACTERWIDTH = 'axisCharacterWidth';
 
   // - Legend
-  LEGEND = 'legend' as any,
+  export const LEGEND = 'legend';
 
   // General Legend Properties
-  LEGEND_ORIENT = 'legendOrient' as any,
-  LEGEND_OFFSET = 'legendOffset' as any,
-  LEGEND_VALUES = 'legendValues' as any,
+  export const LEGEND_ORIENT = 'legendOrient';
+  export const LEGEND_OFFSET = 'legendOffset';
+  export const LEGEND_VALUES = 'legendValues';
 
   // Legend_Label Properties
-  LEGEND_FORMAT = 'legendFormat' as any,
-  LEGEND_LABELALIGN = 'legendLabelAlign' as any,
-  LEGEND_LABELBASELINE = 'legendLabelBaseline' as any,
-  LEGEND_LABELCOLOR = 'legendLabelColor' as any,
-  LEGEND_LABELFONT = 'legendLabelFont' as any,
-  LEGEND_LABELFONTSIZE = 'legendLabelFontSize' as any,
-  LEGEND_SHORTTIMELABELS = 'legendShortTimeLabels' as any,
+  export const LEGEND_FORMAT = 'legendFormat';
+  export const LEGEND_LABELALIGN = 'legendLabelAlign';
+  export const LEGEND_LABELBASELINE = 'legendLabelBaseline';
+  export const LEGEND_LABELCOLOR = 'legendLabelColor';
+  export const LEGEND_LABELFONT = 'legendLabelFont';
+  export const LEGEND_LABELFONTSIZE = 'legendLabelFontSize';
+  export const LEGEND_SHORTTIMELABELS = 'legendShortTimeLabels';
 
   // Legend_Symbol Properties
-  LEGEND_SYMBOLCOLOR = 'legendSymbolColor' as any,
-  LEGEND_SYMBOLSHAPE = 'legendSymbolShape' as any,
-  LEGEND_SYMBOLSIZE = 'legendSymbolSize' as any,
-  LEGEND_SYMBOLSTROKEWIDTH = 'legendSymbolStrokeWidth' as any,
+  export const LEGEND_SYMBOLCOLOR = 'legendSymbolColor';
+  export const LEGEND_SYMBOLSHAPE = 'legendSymbolShape';
+  export const LEGEND_SYMBOLSIZE = 'legendSymbolSize';
+  export const LEGEND_SYMBOLSTROKEWIDTH = 'legendSymbolStrokeWidth';
 
   // Legend_Title Properties
-  LEGEND_TITLE = 'legendTitle' as any,
-  LEGEND_TITLECOLOR = 'legendTitleColor' as any,
-  LEGEND_TITLEFONT = 'legendTitleFont' as any,
-  LEGEND_TITLEFONTSIZE = 'legendTitleFontSize' as any,
-  LEGEND_TITLEFONTWEIGHT = 'legendTitleFontWeight' as any
+  export const LEGEND_TITLE = 'legendTitle';
+  export const LEGEND_TITLECOLOR = 'legendTitleColor';
+  export const LEGEND_TITLEFONT = 'legendTitleFont';
+  export const LEGEND_TITLEFONTSIZE = 'legendTitleFontSize';
+  export const LEGEND_TITLEFONTWEIGHT = 'legendTitleFontWeight';
 }
+
+export type Property = typeof Property.MARK |
+  typeof Property.FILTER |
+  typeof Property.CALCULATE |
+  typeof Property.FILTERINVALID |
+  typeof Property.STACK |
+  typeof Property.CHANNEL |
+  typeof Property.AGGREGATE |
+  typeof Property.AUTOCOUNT |
+  typeof Property.BIN |
+  typeof Property.BIN_MAXBINS |
+  typeof Property.HAS_FN |
+  typeof Property.TIMEUNIT |
+  typeof Property.FIELD |
+  typeof Property.TYPE |
+  typeof Property.SORT |
+  typeof Property.SORT_FIELD |
+  typeof Property.SORT_OP |
+  typeof Property.SORT_ORDER |
+  typeof Property.SCALE |
+  typeof Property.SCALE_BANDSIZE |
+  typeof Property.SCALE_CLAMP |
+  typeof Property.SCALE_DOMAIN |
+  typeof Property.SCALE_EXPONENT |
+  typeof Property.SCALE_NICE |
+  typeof Property.SCALE_RANGE |
+  typeof Property.SCALE_ROUND |
+  typeof Property.SCALE_TYPE |
+  typeof Property.SCALE_USERAWDOMAIN |
+  typeof Property.SCALE_ZERO |
+  typeof Property.AXIS |
+  typeof Property.AXIS_AXISCOLOR |
+  typeof Property.AXIS_AXISWIDTH |
+  typeof Property.AXIS_LAYER |
+  typeof Property.AXIS_OFFSET |
+  typeof Property.AXIS_ORIENT |
+  typeof Property.AXIS_GRID |
+  typeof Property.AXIS_GRIDCOLOR |
+  typeof Property.AXIS_GRIDDASH |
+  typeof Property.AXIS_GRIDOPACITY |
+  typeof Property.AXIS_GRIDWIDTH |
+  typeof Property.AXIS_LABELS |
+  typeof Property.AXIS_FORMAT |
+  typeof Property.AXIS_LABELANGLE |
+  typeof Property.AXIS_LABELMAXLENGTH |
+  typeof Property.AXIS_SHORTTIMELABELS |
+  typeof Property.AXIS_SUBDIVIDE |
+  typeof Property.AXIS_TICKS |
+  typeof Property.AXIS_TICKCOLOR |
+  typeof Property.AXIS_TICKLABELCOLOR |
+  typeof Property.AXIS_TICKLABELFONT |
+  typeof Property.AXIS_TICKLABELFONTSIZE |
+  typeof Property.AXIS_TICKPADDING |
+  typeof Property.AXIS_TICKSIZE |
+  typeof Property.AXIS_TICKSIZEMAJOR |
+  typeof Property.AXIS_TICKSIZEMINOR |
+  typeof Property.AXIS_TICKSIZEEND |
+  typeof Property.AXIS_TICKWIDTH |
+  typeof Property.AXIS_VALUES |
+  typeof Property.AXIS_TITLE |
+  typeof Property.AXIS_TITLECOLOR |
+  typeof Property.AXIS_TITLEFONT |
+  typeof Property.AXIS_TITLEFONTSIZE |
+  typeof Property.AXIS_TITLEFONTWEIGHT |
+  typeof Property.AXIS_TITLEOFFSET |
+  typeof Property.AXIS_TITLEMAXLENGTH |
+  typeof Property.AXIS_CHARACTERWIDTH |
+  typeof Property.LEGEND |
+  typeof Property.LEGEND_ORIENT |
+  typeof Property.LEGEND_OFFSET |
+  typeof Property.LEGEND_VALUES |
+  typeof Property.LEGEND_FORMAT |
+  typeof Property.LEGEND_LABELALIGN |
+  typeof Property.LEGEND_LABELBASELINE |
+  typeof Property.LEGEND_LABELCOLOR |
+  typeof Property.LEGEND_LABELFONT |
+  typeof Property.LEGEND_LABELFONTSIZE |
+  typeof Property.LEGEND_SHORTTIMELABELS |
+  typeof Property.LEGEND_SYMBOLCOLOR |
+  typeof Property.LEGEND_SYMBOLSHAPE |
+  typeof Property.LEGEND_SYMBOLSIZE |
+  typeof Property.LEGEND_SYMBOLSTROKEWIDTH |
+  typeof Property.LEGEND_TITLE |
+  typeof Property.LEGEND_TITLECOLOR |
+  typeof Property.LEGEND_TITLEFONT |
+  typeof Property.LEGEND_TITLEFONTSIZE |
+  typeof Property.LEGEND_TITLEFONTWEIGHT;
+
 
 export const NESTED_ENCODING_PROPERTIES_PARENT = [
   'bin', 'scale', 'sort', 'axis', 'legend'
