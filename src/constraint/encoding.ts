@@ -111,6 +111,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       return true;
     }
   },{
+    // FIXME(#301) revise this
     name: 'channelSupportsRole',
     description: 'encoding channel should support the role of the field',
     properties: [Property.CHANNEL, Property.TYPE, Property.BIN, Property.TIMEUNIT],
