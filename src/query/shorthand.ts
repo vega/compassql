@@ -239,15 +239,14 @@ export function fieldDef(encQ: EncodingQuery,
           // TODO(https://github.com/uwdata/compassql/issues/97):
           // extract this as a method that support other bin properties
           NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
-            if (nestedProp && nestedProp.parent == fn) {
-              var binTypeProp = nestedProp.property;
-              var binTypeStr = nestedProp.child;
-              if (include[binTypeProp] && encQ.bin[binTypeStr]) {
-                props.push({
-                  key: binTypeStr,
-                  value: value(encQ.bin[binTypeStr], replacer[binTypeProp])
-                });
-              }
+            var binTypeProp = nestedProp.property;
+            var binTypeStr = nestedProp.child;
+ 
+            if (include[binTypeProp] && encQ.bin[binTypeStr]) {
+              props.push({
+                key: binTypeStr,
+                value: value(encQ.bin[binTypeStr], replacer[binTypeProp])
+              });
             }
           });
         }
