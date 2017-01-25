@@ -24,8 +24,8 @@ export function testRuleSet(ruleSet: RuleSet<any>, getScore: {(item: any): numbe
             const rScore = getScore(right) || 0;
             assert.isTrue(
               lScore > rScore,
-              'Score for ' + stringify(left) + ' (' + lScore + ') ' +
-              'should > ' + stringify(right) + ' (' + rScore + ')'
+              'Score for ' + stringify(left) + ' (' + lScore.toFixed(3) + ') ' +
+              'should > ' + stringify(right) + ' (' + rScore.toFixed(3) + ')'
             );
           });
         });
