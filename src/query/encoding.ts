@@ -92,7 +92,7 @@ export interface BinQuery extends Wildcard<boolean> {
   max?: number | Wildcard<number> | SHORT_WILDCARD;
   base?: number | Wildcard<number> | SHORT_WILDCARD;
   step?: number | Wildcard<number> | SHORT_WILDCARD;
-  steps?: number[] | Wildcard<number[]> | SHORT_WILDCARD[]
+  steps?: number[] | Wildcard<number[]> | SHORT_WILDCARD[];
   minstep?: number | Wildcard<number> | SHORT_WILDCARD;
   div?: number[] | Wildcard<number[]> | SHORT_WILDCARD[];
 }

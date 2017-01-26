@@ -342,8 +342,8 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
       return opt.maxBinsList;
 
     case Property.BIN_MIN:
-      return opt.binMaxList;
-    
+      return opt.binMinList;
+
     case Property.BIN_MAX:
       return opt.binMaxList;
     
