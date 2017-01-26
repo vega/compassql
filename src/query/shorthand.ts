@@ -215,7 +215,7 @@ export function fieldDef(encQ: EncodingQuery,
     // TODO(https://github.com/uwdata/compassql/issues/97):
     // extract this as a method that support other bin properties
     NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
-      if (nestedProp && nestedProp.parent == fn) {
+      if (nestedProp && nestedProp.parent === fn) {
         var binTypeProp = nestedProp.property;
         var binTypeStr = nestedProp.child;
         if (include[binTypeProp] && encQ.bin[binTypeStr]) {
@@ -241,7 +241,7 @@ export function fieldDef(encQ: EncodingQuery,
           NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
             var binTypeProp = nestedProp.property;
             var binTypeStr = nestedProp.child;
- 
+
             if (include[binTypeProp] && encQ.bin[binTypeStr]) {
               props.push({
                 key: binTypeStr,
@@ -427,7 +427,7 @@ export namespace shorthandParser {
       let propEqualSignIndex = partParams.indexOf('=', i);
 
       if (propEqualSignIndex !== -1) {
-        let nestedPropertyParent = partParams.substring(i, propEqualSignIndex); 
+        let nestedPropertyParent = partParams.substring(i, propEqualSignIndex);
         // let nestedPropertyParentIndex = partParams.indexOf(nestedPropertyParent, i);
         let nestedPropertyParentIndex = i;
         if (partParams[nestedPropertyParentIndex + nestedPropertyParent.length + 1] === '{') {
@@ -468,7 +468,7 @@ export namespace shorthandParser {
     }
     return encQ;
   }
-  
+
   function typeOfProperty(property: string): string {
     let result;
     NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
@@ -476,7 +476,7 @@ export namespace shorthandParser {
         result = nestedProp.parent;
       }
     });
-    return result; 
+    return result;
   }
 
   // TODO(https://github.com/uwdata/compassql/issues/259):
