@@ -63,8 +63,8 @@ export const INCLUDE_ALL: Dict<boolean> =
 
 
 export function vlSpec(vlspec: ExtendedUnitSpec,
-    include: Dict<boolean> = INCLUDE_ALL,
-    replace: Dict<Replacer> = {}) {
+    _: Dict<boolean> = INCLUDE_ALL,
+    __: Dict<Replacer> = {}) {
   const specQ = fromSpec(vlspec);
   return spec(specQ);
 }

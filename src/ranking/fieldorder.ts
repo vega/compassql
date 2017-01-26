@@ -7,7 +7,7 @@ import {RankingScore, FeatureScore} from './ranking';
 
 export const name = 'fieldOrder';
 
-export function score(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): RankingScore {
+export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): RankingScore {
   const fieldWildcardIndices = specM.wildcardIndex.encodingIndicesByProperty[Property.FIELD];
   if (!fieldWildcardIndices) {
     return {

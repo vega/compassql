@@ -79,7 +79,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.AGGREGATE],
     allowWildcardForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, _: Schema, __: EncodingWildcardIndex, ___: QueryConfig) => {
       if (encQ.aggregate) {
         return encQ.type !== Type.ORDINAL && encQ.type !== Type.NOMINAL;
       }
@@ -93,7 +93,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.FIELD, Property.AGGREGATE],
     allowWildcardForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, _: Schema, __: EncodingWildcardIndex, ___: QueryConfig) => {
       return (encQ.field === '*') === (encQ.aggregate === AggregateOp.COUNT);
     }
   // TODO: minCardinalityForBin
@@ -103,7 +103,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.TYPE, Property.BIN],
     allowWildcardForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, _: Schema, __: EncodingWildcardIndex, ___: QueryConfig) => {
       if (encQ.bin) {
         // If binned, the type must be quantitative
         return encQ.type === Type.QUANTITATIVE;
@@ -116,7 +116,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.CHANNEL, Property.TYPE, Property.BIN, Property.TIMEUNIT],
     allowWildcardForProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, _: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
       if (isWildcard(encQ.channel)) return true; // not ready for checking yet!
 
       if (!encWildcardIndex.channel && !opt.constraintManuallySpecifiedValue) {
@@ -138,7 +138,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT],
     allowWildcardForProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, _: Schema, __: EncodingWildcardIndex, ___: QueryConfig) => {
       if (encQ.hasFn) {
         return !!encQ.aggregate || !!encQ.bin || !!encQ.timeUnit;
       }
@@ -150,7 +150,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.SCALE, Property.SCALE_ZERO, Property.BIN],
     allowWildcardForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, _: Schema, __: EncodingWildcardIndex, ___: QueryConfig) => {
       if (encQ.bin && encQ.scale) {
         if ((encQ.scale as ScaleQuery).zero === true) {
           return false;
@@ -164,7 +164,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN],
     allowWildcardForProperties: true,
     strict: true,
-satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+satisfy: (encQ: EncodingQuery, _: Schema, __: EncodingWildcardIndex, ___: QueryConfig) => {
       const numFn = (!isWildcard(encQ.aggregate) && !!encQ.aggregate ? 1 : 0) +
         (!isWildcard(encQ.autoCount) && !!encQ.autoCount ? 1 : 0) +
         (!isWildcard(encQ.bin) && !!encQ.bin ? 1 : 0) +
@@ -177,7 +177,7 @@ satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcar
     properties: [Property.TYPE, Property.TIMEUNIT],
     allowWildcardForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, _: Schema, __: EncodingWildcardIndex, ___: QueryConfig) => {
       if (encQ.timeUnit && encQ.type !== Type.TEMPORAL) {
         return false;
       }
@@ -206,7 +206,7 @@ satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcar
     properties: SCALE_PROPERTIES.concat([Property.SCALE, Property.TYPE]),
     allowWildcardForProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, _: Schema, __: EncodingWildcardIndex, ___: QueryConfig) => {
       if (encQ.scale) {
         const scale: ScaleQuery = encQ.scale as ScaleQuery;
 
@@ -291,7 +291,7 @@ satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcar
     properties: [Property.CHANNEL, Property.FIELD],
     allowWildcardForProperties: false,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, _: EncodingWildcardIndex, opt: QueryConfig) => {
       // TODO: missing case where ordinal / temporal use categorical color
       // (once we do so, need to add Property.BIN, Property.TIMEUNIT)
       if (encQ.channel === Channel.COLOR && encQ.type === Type.NOMINAL) {
@@ -305,7 +305,7 @@ satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcar
     properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
     allowWildcardForProperties: false,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, _: EncodingWildcardIndex, opt: QueryConfig) => {
       if (encQ.channel === Channel.ROW || encQ.channel === Channel.COLUMN) {
         return schema.cardinality(encQ) <= opt.maxCardinalityForFacet;
       }
@@ -317,7 +317,7 @@ satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcar
     properties: [Property.CHANNEL, Property.FIELD, Property.BIN, Property.TIMEUNIT],
     allowWildcardForProperties: false,
     strict: false,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, schema: Schema, _: EncodingWildcardIndex, opt: QueryConfig) => {
       if (encQ.channel === Channel.SHAPE) {
         return schema.cardinality(encQ) <= opt.maxCardinalityForShape;
       }
@@ -329,7 +329,7 @@ satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcar
     properties: [Property.TYPE, Property.SCALE, Property.SCALE_TYPE, Property.TIMEUNIT, Property.BIN],
     allowWildcardForProperties: false,
     strict: true,
-    satisfy: (encQ: EncodingQuery, schema: Schema, encWildcardIndex: EncodingWildcardIndex, opt: QueryConfig) => {
+    satisfy: (encQ: EncodingQuery, _: Schema, __: EncodingWildcardIndex, ___: QueryConfig) => {
       if (encQ.scale) {
         const type = encQ.type;
         const sType = scaleType(encQ);
@@ -380,8 +380,7 @@ export function checkEncoding(prop: Property, wildcard: Wildcard<any>, index: nu
   const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY[prop] || [];
   const encQ = specM.getEncodingQueryByIndex(index);
 
-  for (let i = 0; i < encodingConstraints.length; i++) {
-    const c = encodingConstraints[i];
+  for (const c of encodingConstraints) {
     // Check if the constraint is enabled
     if (c.strict() || !!opt[c.name()]) {
       // For strict constraint, or enabled non-strict, check the constraints

@@ -19,7 +19,7 @@ export function score(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): 
   };
 }
 
-function aggregationQualityFeature (specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore {
+function aggregationQualityFeature (specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore {
   const encodings = specM.getEncodings();
   if (specM.isAggregate()) {
     const isRawContinuous = (encQ) => {
@@ -38,10 +38,10 @@ function aggregationQualityFeature (specM: SpecQueryModel, schema: Schema, opt: 
     }
 
     if (some(encodings, isDimension)) {
-      var hasCount = some(encodings, (encQ: EncodingQuery) => {
+      let hasCount = some(encodings, (encQ: EncodingQuery) => {
         return encQ.aggregate === AggregateOp.COUNT || encQ.autoCount === true;
       });
-      var hasBin = some(encodings, (encQ: EncodingQuery) => {
+      let hasBin = some(encodings, (encQ: EncodingQuery) => {
         return !!encQ.bin;
       });
 

@@ -42,7 +42,7 @@ export function toString(groupBy: GroupBy): string {
     return groupBy.map((g: Property | ExtendedGroupBy) => {
       if (isExtendedGroupBy(g)) {
         if (g.replace) {
-          var replaceIndex = keys(g.replace).reduce((index, valFrom) => {
+          let replaceIndex = keys(g.replace).reduce((index, valFrom) => {
           const valTo = g.replace[valFrom];
             (index[valTo] = index[valTo] || []).push(valFrom);
             return index;
