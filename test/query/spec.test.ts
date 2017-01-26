@@ -66,7 +66,7 @@ describe('query/spec', () => {
       });
     });
     it('should always be disabled if both x and y are aggregate', () => {
-      [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((stacked) => {
+      [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((_) => {
         PRIMITIVE_MARKS.forEach((mark) => {
           const specQ = {
               mark: mark,
@@ -82,7 +82,7 @@ describe('query/spec', () => {
     });
 
     it('should always be disabled if neither x nor y is aggregate', () => {
-      [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((stacked) => {
+      [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((_) => {
         PRIMITIVE_MARKS.forEach((mark) => {
           const specQ = {
               mark: mark,

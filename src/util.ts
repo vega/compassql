@@ -10,7 +10,7 @@ export function contains(array: any[], item: any) {
 };
 
 export function every(arr, f) {
-    var i = 0, k;
+    let i = 0, k;
     for (k in arr) {
       if (!f(arr[k], k, i++)) {
         return false;
@@ -23,14 +23,14 @@ export function forEach(obj, f, thisArg?) {
   if (obj.forEach) {
     obj.forEach.call(thisArg, f);
   } else {
-    for (var k in obj) {
+    for (let k in obj) {
       f.call(thisArg, obj[k], k, obj);
     }
   }
 };
 
 export function some(arr, f) {
-    var i = 0, k;
+    let i = 0, k;
     for (k in arr) {
       if (f(arr[k], k, i++)) {
         return true;

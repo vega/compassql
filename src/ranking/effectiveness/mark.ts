@@ -258,7 +258,7 @@ export namespace MarkScore {
     return SCORE;
   }
 
-  export function getScore(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore[] {
+  export function getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     let mark = specM.getMark() as Mark;
     if (mark === Mark.CIRCLE || mark === Mark.SQUARE) {
       mark = Mark.POINT;

@@ -214,7 +214,7 @@ export const SET_3D: RuleSet<SpecQueryModel> = {
           {channel: Y, field: 'N', type: Type.NOMINAL}
         ]
       },
-      [COLOR, SIZE].map((qChannel) => {
+      [COLOR, SIZE].map((_) => {
         return {
           mark: POINT,
           encodings: [
@@ -306,7 +306,7 @@ export const SET_FACET_PREFERENCE: RuleSet<SpecQueryModel> = {
   name: 'Facet Preference',
   rules: function() {
     const rules: Rule<SpecQueryModel>[] = [];
-    function facetedPlot(mark: Mark, facet: Channel) {
+    function facetedPlot(_: Mark, facet: Channel) {
       return build({
         mark: 'point',
         encodings: [
