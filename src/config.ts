@@ -10,6 +10,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {Property, DEFAULT_PROPERTY_PRECEDENCE} from './property';
 
+// We name this QueryConfig to avoid confusion with Vega-Lite's Config
 export interface QueryConfig {
   verbose?: boolean;
 

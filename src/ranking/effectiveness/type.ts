@@ -36,6 +36,7 @@ export function getExtendedType(encQ: EncodingQuery): ExtendedType {
   if (encQ.bin) {
     return ExtendedType.BIN_Q;
   } else if (encQ.timeUnit) {
+    // FIXME fix scale type checking here
     return scaleType(encQ) === ScaleType.ORDINAL ? ExtendedType.TIMEUNIT_O : ExtendedType.TIMEUNIT_T;
   }
   return encQ.type as ExtendedType;

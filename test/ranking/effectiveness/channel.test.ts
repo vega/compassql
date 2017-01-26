@@ -8,8 +8,8 @@ import {RuleSet, testRuleSet} from '../rule';
 export const TYPE_CHANNEL_RULESET: RuleSet<string> = {
   name: 'typeChannelScore (quantitative)',
   rules: [].concat(
-    [Q, T].map((type) => {
-      const order = [[X, Y], SIZE, COLOR, OPACITY, [ROW, COLUMN], SHAPE, DETAIL];
+    [Q, T, TIMEUNIT_T].map((type) => {
+      const order = [[X, Y], SIZE, COLOR, TEXT, OPACITY, [ROW, COLUMN, SHAPE], DETAIL];
       return {
         name: type + '',
         items: nestedMap(order, (channel) => {
@@ -17,8 +17,8 @@ export const TYPE_CHANNEL_RULESET: RuleSet<string> = {
         })
       };
     }),
-    [BIN_Q, TIMEUNIT_T, TIMEUNIT_O, O].map((type) => {
-      const order = [[X, Y], SIZE, COLOR, [ROW, COLUMN], OPACITY, SHAPE, DETAIL];
+    [BIN_Q, TIMEUNIT_O, O].map((type) => {
+      const order = [[X, Y], SIZE, COLOR, [ROW, COLUMN], OPACITY, SHAPE, TEXT, DETAIL];
       return {
         name: type + '',
         items: nestedMap(order, (channel) => {
@@ -28,7 +28,7 @@ export const TYPE_CHANNEL_RULESET: RuleSet<string> = {
     }),
     [{
       name: 'nominal',
-      items: nestedMap([[X, Y], COLOR, SHAPE, [ROW, COLUMN], TEXT, SIZE, DETAIL, OPACITY], (channel) => {
+      items: nestedMap([[X, Y], COLOR, SHAPE, [ROW, COLUMN], TEXT, DETAIL, SIZE, OPACITY], (channel) => {
           return TypeChannelScore.featurize(N, channel);
         })
     }]
