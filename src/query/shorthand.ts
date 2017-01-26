@@ -465,9 +465,6 @@ export namespace shorthandParser {
         // something is wrong with the format of the partParams
         i++;
       }
-
-      console.error("i: " + i);
-
     }
     return encQ;
   }
