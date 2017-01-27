@@ -2,129 +2,129 @@ import {Dict, toMap} from './util';
 import {ScaleType} from 'vega-lite/src/scale';
 
 export namespace Property {
-  export const MARK = 'mark';
+  export const MARK: 'mark' = 'mark';
 
-  export const FILTER = 'filter';
+  export const FILTER: 'filter' = 'filter';
   // TODO: Sub-properties for filter
 
-  export const CALCULATE = 'calculate';
+  export const CALCULATE: 'calculate' = 'calculate';
   // TODO: Sub-properties for calculate
 
-  export const FILTERINVALID = 'filterInvalid';
+  export const FILTERINVALID: 'filterInvalid' = 'filterInvalid';
 
   // Layout
-  export const STACK = 'stack';
+  export const STACK: 'stack' = 'stack';
   // TODO: sub parts of stack
 
   // Encoding Properties
-  export const CHANNEL = 'channel';
-  export const AGGREGATE = 'aggregate';
-  export const AUTOCOUNT = 'autoCount';
-  export const BIN = 'bin';
-  export const BIN_MAXBINS = 'binMaxbins';
-  export const HAS_FN = 'hasFn';
-  export const TIMEUNIT = 'timeUnit';
-  export const FIELD = 'field';
-  export const TYPE = 'type';
+  export const CHANNEL: 'channel' = 'channel';
+  export const AGGREGATE: 'aggregate' = 'aggregate';
+  export const AUTOCOUNT: 'autoCount' = 'autoCount';
+  export const BIN: 'bin' = 'bin';
+  export const BIN_MAXBINS: 'binMaxbins' = 'binMaxbins';
+  export const HAS_FN: 'hasFn' = 'hasFn';
+  export const TIMEUNIT: 'timeUnit' = 'timeUnit';
+  export const FIELD: 'field' = 'field';
+  export const TYPE: 'type' = 'type';
 
   // - Sort
-  export const SORT = 'sort';
-  export const SORT_FIELD = 'sortField';
-  export const SORT_OP = 'sortOp';
-  export const SORT_ORDER = 'sortOrder';
+  export const SORT: 'sort' = 'sort';
+  export const SORT_FIELD: 'sortField' = 'sortField';
+  export const SORT_OP: 'sortOp' = 'sortOp';
+  export const SORT_ORDER: 'sortOrder' = 'sortOrder';
 
   // - Scale
-  export const SCALE = 'scale';
-  export const SCALE_BANDSIZE = 'scaleBandSize';
-  export const SCALE_CLAMP = 'scaleClamp';
-  export const SCALE_DOMAIN = 'scaleDomain';
-  export const SCALE_EXPONENT = 'scaleExponent';
-  export const SCALE_NICE = 'scaleNice';
-  export const SCALE_RANGE = 'scaleRange';
-  export const SCALE_ROUND = 'scaleRound';
-  export const SCALE_TYPE = 'scaleType';
-  export const SCALE_USERAWDOMAIN = 'scaleUseRawDomain';
-  export const SCALE_ZERO = 'scaleZero';
+  export const SCALE: 'scale' = 'scale';
+  export const SCALE_BANDSIZE: 'scaleBandSize' = 'scaleBandSize';
+  export const SCALE_CLAMP: 'scaleClamp' = 'scaleClamp';
+  export const SCALE_DOMAIN: 'scaleDomain' = 'scaleDomain';
+  export const SCALE_EXPONENT: 'scaleExponent' = 'scaleExponent';
+  export const SCALE_NICE: 'scaleNice' = 'scaleNice';
+  export const SCALE_RANGE: 'scaleRange' = 'scaleRange';
+  export const SCALE_ROUND: 'scaleRound' = 'scaleRound';
+  export const SCALE_TYPE: 'scaleType' = 'scaleType';
+  export const SCALE_USERAWDOMAIN: 'scaleUseRawDomain' = 'scaleUseRawDomain';
+  export const SCALE_ZERO: 'scaleZero' = 'scaleZero';
 
 
   // - Axis
-  export const AXIS = 'axis';
+  export const AXIS: 'axis' = 'axis';
 
   // General Axis Properties
-  export const AXIS_AXISCOLOR = 'axisAxisColor';
-  export const AXIS_AXISWIDTH = 'axisAxisWidth';
-  export const AXIS_LAYER = 'axisLayer';
-  export const AXIS_OFFSET = 'axisOffset';
-  export const AXIS_ORIENT = 'axisOrient';
+  export const AXIS_AXISCOLOR: 'axisAxisColor' = 'axisAxisColor';
+  export const AXIS_AXISWIDTH: 'axisAxisWidth' = 'axisAxisWidth';
+  export const AXIS_LAYER: 'axisLayer' = 'axisLayer';
+  export const AXIS_OFFSET: 'axisOffset' = 'axisOffset';
+  export const AXIS_ORIENT: 'axisOrient' = 'axisOrient';
 
   // Axis_Grid Properties
-  export const AXIS_GRID = 'axisGrid';
-  export const AXIS_GRIDCOLOR = 'axisGridColor';
-  export const AXIS_GRIDDASH = 'axisGridDash';
-  export const AXIS_GRIDOPACITY = 'axisGridOpacity';
-  export const AXIS_GRIDWIDTH = 'axisGridWidth';
+  export const AXIS_GRID: 'axisGrid' = 'axisGrid';
+  export const AXIS_GRIDCOLOR: 'axisGridColor' = 'axisGridColor';
+  export const AXIS_GRIDDASH: 'axisGridDash' = 'axisGridDash';
+  export const AXIS_GRIDOPACITY: 'axisGridOpacity' = 'axisGridOpacity';
+  export const AXIS_GRIDWIDTH: 'axisGridWidth' = 'axisGridWidth';
 
   // Axis Properties
-  export const AXIS_LABELS = 'axisLabels';
-  export const AXIS_FORMAT = 'axisFormat';
-  export const AXIS_LABELANGLE = 'axisLabelAngle';
-  export const AXIS_LABELMAXLENGTH = 'axisLabelMaxLength';
-  export const AXIS_SHORTTIMELABELS = 'axisShortTimeLabels';
+  export const AXIS_LABELS: 'axisLabels' = 'axisLabels';
+  export const AXIS_FORMAT: 'axisFormat' = 'axisFormat';
+  export const AXIS_LABELANGLE: 'axisLabelAngle' = 'axisLabelAngle';
+  export const AXIS_LABELMAXLENGTH: 'axisLabelMaxLength' = 'axisLabelMaxLength';
+  export const AXIS_SHORTTIMELABELS: 'axisShortTimeLabels' = 'axisShortTimeLabels';
 
   // Axis_Tick Properties
-  export const AXIS_SUBDIVIDE = 'axisSubdivide';
-  export const AXIS_TICKS = 'axisTicks';
-  export const AXIS_TICKCOLOR = 'axisTickColor';
-  export const AXIS_TICKLABELCOLOR = 'axisTickLabelColor';
-  export const AXIS_TICKLABELFONT = 'axisTickLabelFont';
-  export const AXIS_TICKLABELFONTSIZE = 'axisTickLabelFontSize';
-  export const AXIS_TICKPADDING = 'axisTickPadding';
-  export const AXIS_TICKSIZE = 'axisTickSize';
-  export const AXIS_TICKSIZEMAJOR = 'axisTickSizeMajor';
-  export const AXIS_TICKSIZEMINOR = 'axisTickSizeMinor';
-  export const AXIS_TICKSIZEEND = 'axisTickSizeEnd';
-  export const AXIS_TICKWIDTH = 'axisTickWidth';
-  export const AXIS_VALUES = 'axisValues';
+  export const AXIS_SUBDIVIDE: 'axisSubdivide' = 'axisSubdivide';
+  export const AXIS_TICKS: 'axisTicks' = 'axisTicks';
+  export const AXIS_TICKCOLOR: 'axisTickColor' = 'axisTickColor';
+  export const AXIS_TICKLABELCOLOR: 'axisTickLabelColor' = 'axisTickLabelColor';
+  export const AXIS_TICKLABELFONT: 'axisTickLabelFont' = 'axisTickLabelFont';
+  export const AXIS_TICKLABELFONTSIZE: 'axisTickLabelFontSize' = 'axisTickLabelFontSize';
+  export const AXIS_TICKPADDING: 'axisTickPadding' = 'axisTickPadding';
+  export const AXIS_TICKSIZE: 'axisTickSize' = 'axisTickSize';
+  export const AXIS_TICKSIZEMAJOR: 'axisTickSizeMajor' = 'axisTickSizeMajor';
+  export const AXIS_TICKSIZEMINOR: 'axisTickSizeMinor' = 'axisTickSizeMinor';
+  export const AXIS_TICKSIZEEND: 'axisTickSizeEnd' = 'axisTickSizeEnd';
+  export const AXIS_TICKWIDTH: 'axisTickWidth' = 'axisTickWidth';
+  export const AXIS_VALUES: 'axisValues' = 'axisValues';
 
   // Axis_Title Properties
-  export const AXIS_TITLE = 'axisTitle';
-  export const AXIS_TITLECOLOR = 'axisTitleColor';
-  export const AXIS_TITLEFONT = 'axisTitleFont';
-  export const AXIS_TITLEFONTSIZE = 'axisTitleFontSize';
-  export const AXIS_TITLEFONTWEIGHT = 'axisTitleFontWeight';
-  export const AXIS_TITLEOFFSET = 'axisTitleOffset';
-  export const AXIS_TITLEMAXLENGTH = 'axisTitleMaxLength';
-  export const AXIS_CHARACTERWIDTH = 'axisCharacterWidth';
+  export const AXIS_TITLE: 'axisTitle' = 'axisTitle';
+  export const AXIS_TITLECOLOR: 'axisTitleColor' = 'axisTitleColor';
+  export const AXIS_TITLEFONT: 'axisTitleFont' = 'axisTitleFont';
+  export const AXIS_TITLEFONTSIZE: 'axisTitleFontSize' = 'axisTitleFontSize';
+  export const AXIS_TITLEFONTWEIGHT: 'axisTitleFontWeight' = 'axisTitleFontWeight';
+  export const AXIS_TITLEOFFSET: 'axisTitleOffset' = 'axisTitleOffset';
+  export const AXIS_TITLEMAXLENGTH: 'axisTitleMaxLength' = 'axisTitleMaxLength';
+  export const AXIS_CHARACTERWIDTH: 'axisCharacterWidth' = 'axisCharacterWidth';
 
   // - Legend
-  export const LEGEND = 'legend';
+  export const LEGEND: 'legend' = 'legend';
 
   // General Legend Properties
-  export const LEGEND_ORIENT = 'legendOrient';
-  export const LEGEND_OFFSET = 'legendOffset';
-  export const LEGEND_VALUES = 'legendValues';
+  export const LEGEND_ORIENT: 'legendOrient' = 'legendOrient';
+  export const LEGEND_OFFSET: 'legendOffset' = 'legendOffset';
+  export const LEGEND_VALUES: 'legendValues' = 'legendValues';
 
   // Legend_Label Properties
-  export const LEGEND_FORMAT = 'legendFormat';
-  export const LEGEND_LABELALIGN = 'legendLabelAlign';
-  export const LEGEND_LABELBASELINE = 'legendLabelBaseline';
-  export const LEGEND_LABELCOLOR = 'legendLabelColor';
-  export const LEGEND_LABELFONT = 'legendLabelFont';
-  export const LEGEND_LABELFONTSIZE = 'legendLabelFontSize';
-  export const LEGEND_SHORTTIMELABELS = 'legendShortTimeLabels';
+  export const LEGEND_FORMAT: 'legendFormat' = 'legendFormat';
+  export const LEGEND_LABELALIGN: 'legendLabelAlign' = 'legendLabelAlign';
+  export const LEGEND_LABELBASELINE: 'legendLabelBaseline' = 'legendLabelBaseline';
+  export const LEGEND_LABELCOLOR: 'legendLabelColor' = 'legendLabelColor';
+  export const LEGEND_LABELFONT: 'legendLabelFont' = 'legendLabelFont';
+  export const LEGEND_LABELFONTSIZE: 'legendLabelFontSize' = 'legendLabelFontSize';
+  export const LEGEND_SHORTTIMELABELS: 'legendShortTimeLabels' = 'legendShortTimeLabels';
 
   // Legend_Symbol Properties
-  export const LEGEND_SYMBOLCOLOR = 'legendSymbolColor';
-  export const LEGEND_SYMBOLSHAPE = 'legendSymbolShape';
-  export const LEGEND_SYMBOLSIZE = 'legendSymbolSize';
-  export const LEGEND_SYMBOLSTROKEWIDTH = 'legendSymbolStrokeWidth';
+  export const LEGEND_SYMBOLCOLOR: 'legendSymbolColor' = 'legendSymbolColor';
+  export const LEGEND_SYMBOLSHAPE: 'legendSymbolShape' = 'legendSymbolShape';
+  export const LEGEND_SYMBOLSIZE: 'legendSymbolSize' = 'legendSymbolSize';
+  export const LEGEND_SYMBOLSTROKEWIDTH: 'legendSymbolStrokeWidth' = 'legendSymbolStrokeWidth';
 
   // Legend_Title Properties
-  export const LEGEND_TITLE = 'legendTitle';
-  export const LEGEND_TITLECOLOR = 'legendTitleColor';
-  export const LEGEND_TITLEFONT = 'legendTitleFont';
-  export const LEGEND_TITLEFONTSIZE = 'legendTitleFontSize';
-  export const LEGEND_TITLEFONTWEIGHT = 'legendTitleFontWeight';
+  export const LEGEND_TITLE: 'legendTitle' = 'legendTitle';
+  export const LEGEND_TITLECOLOR: 'legendTitleColor' = 'legendTitleColor';
+  export const LEGEND_TITLEFONT: 'legendTitleFont' = 'legendTitleFont';
+  export const LEGEND_TITLEFONTSIZE: 'legendTitleFontSize' = 'legendTitleFontSize';
+  export const LEGEND_TITLEFONTWEIGHT: 'legendTitleFontWeight' = 'legendTitleFontWeight';
 }
 
 export type Property = typeof Property.MARK |

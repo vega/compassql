@@ -12,7 +12,7 @@ describe('schema', () => {
   describe('build', () => {
     it('should correctly create a Schema object with empty data', () => {
       const data = [];
-      var schema = Schema.build(data);
+      let schema = Schema.build(data);
 
       assert.isNotNull(schema);
       assert.equal(schema.fields().length, 0);
@@ -22,7 +22,7 @@ describe('schema', () => {
       const data = [
         {a: '1/1/2000', c: 'abc', d: 1, b: 1}
       ];
-      var schema = Schema.build(data);
+      let schema = Schema.build(data);
 
       assert.equal(schema['fieldSchemas'][0]['field'], 'c');
       assert.equal(schema['fieldSchemas'][1]['field'], 'a');
@@ -59,7 +59,7 @@ describe('schema', () => {
   });
 
   describe('type', () => {
-    var configWithOrdinalInference = extend({}, DEFAULT_QUERY_CONFIG, {
+    let configWithOrdinalInference = extend({}, DEFAULT_QUERY_CONFIG, {
       numberOrdinalProportion: .05,
       numberOrdinalLimit: 50,
     });
@@ -74,7 +74,7 @@ describe('schema', () => {
     it('should infer quantitative type for integers when cardinality is much less than the total but distinct is high', () => {
       const numberData = [];
       // add enough non-distinct data to make the field nominal
-      var total = 1 / configWithOrdinalInference.numberOrdinalProportion + 1;
+      let total = 1 / configWithOrdinalInference.numberOrdinalProportion + 1;
       for (let i = 0; i < total * configWithOrdinalInference.numberOrdinalLimit; i++) {
         numberData.push({a: 1});
       }
@@ -89,8 +89,8 @@ describe('schema', () => {
     it('should infer nominal type for integers when cardinality is much less than the total', () => {
       const numberData = [];
       // add enough non-distinct data to make the field nominal
-      var total = 1 / configWithOrdinalInference.numberOrdinalProportion + 1;
-      for (var i = 0; i < total; i++) {
+      let total = 1 / configWithOrdinalInference.numberOrdinalProportion + 1;
+      for (let i = 0; i < total; i++) {
         numberData.push({a: 1});
       }
       const numberSchema = Schema.build(numberData, configWithOrdinalInference);
@@ -101,8 +101,8 @@ describe('schema', () => {
       const numberData = [];
       // add enough non-distinct data to make the field nominal/ordinal and have multiple in-order, non-skipping values that starts at 0
       // (and by default, we set them to nominal)
-      var total = 3 * (1 / configWithOrdinalInference.numberOrdinalProportion + 1);
-      for (var i = 0; i < total; i++) {
+      let total = 3 * (1 / configWithOrdinalInference.numberOrdinalProportion + 1);
+      for (let i = 0; i < total; i++) {
         numberData.push({a: 0});
         numberData.push({a: 1});
         numberData.push({a: 2});
@@ -115,8 +115,8 @@ describe('schema', () => {
       const numberData = [];
       // add enough non-distinct data to make the field nominal/ordinal and have multiple in-order, non-skipping values that starts at 1
       // (and by default, we set them to nominal)
-      var total = 3 * (1 / configWithOrdinalInference.numberOrdinalProportion + 1);
-      for (var i = 0; i < total; i++) {
+      let total = 3 * (1 / configWithOrdinalInference.numberOrdinalProportion + 1);
+      for (let i = 0; i < total; i++) {
         numberData.push({a: 1});
         numberData.push({a: 2});
         numberData.push({a: 3});
@@ -223,7 +223,7 @@ describe('schema', () => {
 
     it('should correctly compute cardinality for multiple timeUnits when relevant timeUnits are the same and irrelevant timeUnits are different', () => {
       const cardinalityData = [];
-      for (var i = 1; i <= 30; i++) {
+      for (let i = 1; i <= 30; i++) {
         cardinalityData.push({
           a: 'June ' + i + ', 2000'
         });
@@ -241,7 +241,7 @@ describe('schema', () => {
     it('should correctly compute cardinality for multiple timeUnits when there are not duplicate dates', () => {
       const numYears = 5;
       const cardinalityData = [];
-      for (var i = 1; i <= numYears; i++) {
+      for (let i = 1; i <= numYears; i++) {
         cardinalityData.push({
           a: 'June ' + i + ', 200' + i
         });
@@ -502,7 +502,7 @@ describe('schema', () => {
     });
 
     it('should return an array of length 2 containing min and max for quantitative data', () => {
-      var domain: number[] = domainSchema.domain({field: 'a', channel: Channel.X});
+      let domain: number[] = domainSchema.domain({field: 'a', channel: Channel.X});
       assert.equal(domain.length, 2);
       assert.equal(domain.indexOf(1), 0);
       assert.equal(domain.indexOf(4), 1);
@@ -513,7 +513,7 @@ describe('schema', () => {
     });
 
     it('should return a date array containing correctly translated date types', () => {
-      var domain: Date[] = domainSchema.domain({field: 'e', channel: Channel.X});
+      let domain: Date[] = domainSchema.domain({field: 'e', channel: Channel.X});
       assert.equal(domain.length, 2);
       assert.equal(domain[0].getTime(), new Date('6/14/2016').getTime());
       assert.equal(domain[1].getTime(), new Date('7/14/2016').getTime());

@@ -52,7 +52,7 @@ export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModel
 
       const groupBy = query.nest[l].groupBy;
       if (isArray(groupBy)) {
-        var parsedGroupBy = parseGroupBy(groupBy, includes[l], replaces[l]);
+        let parsedGroupBy = parseGroupBy(groupBy, includes[l], replaces[l]);
         replacers.push(parsedGroupBy.replacer);
       }
     }
