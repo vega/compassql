@@ -1,4 +1,4 @@
-import {Dict} from './util';
+import {Dict, toMap} from './util';
 import {ScaleType} from 'vega-lite/src/scale';
 
 export namespace Property {
@@ -219,8 +219,10 @@ export const NESTED_ENCODING_PROPERTIES_PARENT = [
   'bin', 'scale', 'sort', 'axis', 'legend'
 ];
 
+const NESTED_ENCODING_PROPERTIES_PARENT_INDEX = toMap(NESTED_ENCODING_PROPERTIES_PARENT);
+
 export function hasNestedProperty(prop: Property) {
-  return NESTED_ENCODING_PROPERTIES_PARENT.indexOf(prop) !== -1;
+  return NESTED_ENCODING_PROPERTIES_PARENT_INDEX[prop];
 }
 
 export const ENCODING_PROPERTIES = [
