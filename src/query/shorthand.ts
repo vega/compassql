@@ -308,7 +308,10 @@ export function fieldDef(encQ: EncodingQuery,
     }
   }
   // encoding properties
-  fieldAndParams += props.map((p) => ',' + p.key + '=' + p.value).join('');
+  fieldAndParams += props.map((p) => {
+    let val = p.value instanceof Array ? '[' + p.value + ']' : p.value;
+    return ',' + p.key + '=' + val;
+  }).join('');
   if (fn) {
     return fn + (fnEnumIndex ? JSON.stringify(fnEnumIndex) : '') + '(' + fieldAndParams + ')';
   }
@@ -427,20 +430,34 @@ export namespace shorthandParser {
       let propEqualSignIndex = partParams.indexOf('=', i);
 
       if (propEqualSignIndex !== -1) {
-        let nestedPropertyParent = partParams.substring(i, propEqualSignIndex);
-        // let nestedPropertyParentIndex = partParams.indexOf(nestedPropertyParent, i);
-        let nestedPropertyParentIndex = i;
-        if (partParams[nestedPropertyParentIndex + nestedPropertyParent.length + 1] === '{') {
-          let openingBraceIndex = nestedPropertyParentIndex + nestedPropertyParent.length + 1;
-          closingBraceIndex = getClosingBraceIndex(openingBraceIndex, partParams);
+        let prop = partParams.substring(i, propEqualSignIndex);
+        if (partParams[i + prop.length + 1] === '{') {
+          let openingBraceIndex = i + prop.length + 1;
+          closingBraceIndex = getClosingIndex(openingBraceIndex, partParams, '}');
           const value = partParams.substring(openingBraceIndex, closingBraceIndex + 1);
-          encQ[nestedPropertyParent] = JSON.parse(value);
+          encQ[prop] = JSON.parse(value);
 
           // index after next comma
           i = closingBraceIndex + 2;
+        } else if (partParams[i + prop.length + 1] === '[') {
+          // find closing square bracket
+          let openingBracketIndex = i + prop.length + 1;
+          let closingBracketIndex = getClosingIndex(openingBracketIndex, partParams, ']');
+          const value = partParams.substring(openingBracketIndex, closingBracketIndex + 1);
+          let parsedValue = JSON.parse(value);
+          if (typeOfProperty(prop) === 'bin') {
+            // prop is a bin property
+            encQ.bin[prop] = parsedValue;
+          } else {
+            encQ[prop] = parsedValue;
+          }
+
+          // index after next comma
+          i = closingBracketIndex + 2;
         } else {
+          let propIndex = i;
           // Substring until the next comma (or end of the string)
-          let nextCommaIndex = partParams.indexOf(',', nestedPropertyParentIndex + nestedPropertyParent.length);
+          let nextCommaIndex = partParams.indexOf(',', i + prop.length);
           if (nextCommaIndex === -1) {
             nextCommaIndex = partParams.length;
           }
@@ -449,21 +466,21 @@ export namespace shorthandParser {
 
           let parsedValue = JSON.parse(
             partParams.substring(
-              nestedPropertyParentIndex + nestedPropertyParent.length + 1,
+              propIndex + prop.length + 1,
               nextCommaIndex
             )
           );
 
-          if (typeOfProperty(nestedPropertyParent) === 'bin') {
-            // nestedPropertyParent is a bin property
-            encQ.bin[nestedPropertyParent] = parsedValue;
+          if (typeOfProperty(prop) === 'bin') {
+            // prop is a bin property
+            encQ.bin[prop] = parsedValue;
           } else {
-            encQ[nestedPropertyParent] = parsedValue;
+            encQ[prop] = parsedValue;
           }
         }
       } else {
         // something is wrong with the format of the partParams
-        i++;
+        i = partParams.length; // exits loop
       }
     }
     return encQ;
@@ -481,9 +498,9 @@ export namespace shorthandParser {
 
   // TODO(https://github.com/uwdata/compassql/issues/259):
   // Extend this to support nested braces and brackets
-  export function getClosingBraceIndex(openingBraceIndex: number, str: string): number {
+  export function getClosingIndex(openingBraceIndex: number, str: string, closingChar: string): number {
     for (let i = openingBraceIndex; i < str.length; i++) {
-      if (str[i] === '}') {
+      if (str[i] === closingChar) {
         return i;
       }
     }
@@ -492,7 +509,7 @@ export namespace shorthandParser {
   export function fn(encQ: EncodingQuery, fieldDefShorthand: string): EncodingQuery {
     // Aggregate, Bin, TimeUnit as wildcard case
     if (fieldDefShorthand[0] === '?') {
-      let closingBraceIndex = getClosingBraceIndex(1, fieldDefShorthand);
+      let closingBraceIndex = getClosingIndex(1, fieldDefShorthand, '}');
 
       let fnEnumIndex = JSON.parse(fieldDefShorthand.substring(1, closingBraceIndex + 1));
 

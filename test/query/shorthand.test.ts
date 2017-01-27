@@ -135,12 +135,81 @@ describe('query/shorthand', () => {
         assert.deepEqual(encQ, {field: 'a', timeUnit: TimeUnit.HOURS, type: Type.TEMPORAL});
       });
 
-      it('should correctly parse an encoding query given a fieldDefShorthand with bin function', () => {
-        // TODO: loop over different bin properties
+      it('should correctly parse an encoding query given a fieldDefShorthand with maxbins bin function', () => {
         let encQ: EncodingQuery = {} as EncodingQuery;
         shorthandParser.fn(encQ, 'bin(a,q,maxbins=20)');
         assert.deepEqual(encQ, {
           bin: {maxbins: 20},
+          field: 'a',
+          type: Type.QUANTITATIVE,
+        });
+      });
+
+      it('should correctly parse an encoding query given a fieldDefShorthand with min bin function', () => {
+        let encQ: EncodingQuery = {} as EncodingQuery;
+        shorthandParser.fn(encQ, 'bin(a,q,min=20)');
+        assert.deepEqual(encQ, {
+          bin: {min: 20},
+          field: 'a',
+          type: Type.QUANTITATIVE,
+        });
+      });
+
+      it('should correctly parse an encoding query given a fieldDefShorthand with max bin function', () => {
+        let encQ: EncodingQuery = {} as EncodingQuery;
+        shorthandParser.fn(encQ, 'bin(a,q,max=20)');
+        assert.deepEqual(encQ, {
+          bin: {max: 20},
+          field: 'a',
+          type: Type.QUANTITATIVE,
+        });
+      });
+
+      it('should correctly parse an encoding query given a fieldDefShorthand with base bin function', () => {
+        let encQ: EncodingQuery = {} as EncodingQuery;
+        shorthandParser.fn(encQ, 'bin(a,q,base=20)');
+        assert.deepEqual(encQ, {
+          bin: {base: 20},
+          field: 'a',
+          type: Type.QUANTITATIVE,
+        });
+      });
+
+      it('should correctly parse an encoding query given a fieldDefShorthand with step bin function', () => {
+        let encQ: EncodingQuery = {} as EncodingQuery;
+        shorthandParser.fn(encQ, 'bin(a,q,step=20)');
+        assert.deepEqual(encQ, {
+          bin: {step: 20},
+          field: 'a',
+          type: Type.QUANTITATIVE,
+        });
+      });
+
+      it('should correctly parse an encoding query given a fieldDefShorthand with steps bin function', () => {
+        let encQ: EncodingQuery = {} as EncodingQuery;
+        shorthandParser.fn(encQ, 'bin(a,q,steps=[2,5])');
+        assert.deepEqual(encQ, {
+          bin: {steps: [2, 5]},
+          field: 'a',
+          type: Type.QUANTITATIVE,
+        });
+      });
+
+      it('should correctly parse an encoding query given a fieldDefShorthand with minstep bin function', () => {
+        let encQ: EncodingQuery = {} as EncodingQuery;
+        shorthandParser.fn(encQ, 'bin(a,q,minstep=20)');
+        assert.deepEqual(encQ, {
+          bin: {minstep: 20},
+          field: 'a',
+          type: Type.QUANTITATIVE,
+        });
+      });
+
+      it('should correctly parse an encoding query given a fieldDefShorthand with div bin function', () => {
+        let encQ: EncodingQuery = {} as EncodingQuery;
+        shorthandParser.fn(encQ, 'bin(a,q,div=[5,2])');
+        assert.deepEqual(encQ, {
+          bin: {div: [5, 2]},
           field: 'a',
           type: Type.QUANTITATIVE,
         });
@@ -575,11 +644,58 @@ describe('query/shorthand', () => {
 
 
     it('should return correct fieldDefShorthand string for bin field with maxbins', () => {
-       // TODO: modify this test to loop through all possible bin properties
        const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}
        });
        assert.equal(str, 'bin(a,q,maxbins=20)');
+    });
+
+    it('should return correct fieldDefShorthand string for bin field with min', () => {
+       const str = fieldDefShorthand({
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {min: 20}
+       });
+       assert.equal(str, 'bin(a,q,min=20)');
+    });
+
+    it('should return correct fieldDefShorthand string for bin field with max', () => {
+       const str = fieldDefShorthand({
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {max: 20}
+       });
+       assert.equal(str, 'bin(a,q,max=20)');
+    });
+
+    it('should return correct fieldDefShorthand string for bin field with base', () => {
+       const str = fieldDefShorthand({
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {base: 20}
+       });
+       assert.equal(str, 'bin(a,q,base=20)');
+    });
+
+    it('should return correct fieldDefShorthand string for bin field with step', () => {
+       const str = fieldDefShorthand({
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {step: 20}
+       });
+       assert.equal(str, 'bin(a,q,step=20)');
+    });
+
+    it('should return correct fieldDefShorthand string for bin field with steps', () => {
+       const str = fieldDefShorthand({
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {steps: [2, 5]}
+       });
+       assert.equal(str, 'bin(a,q,steps=[2,5])');
+    });
+
+    it('should return correct fieldDefShorthand string for bin field with minstep', () => {
+       const str = fieldDefShorthand({
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {minstep: 20}
+       });
+       assert.equal(str, 'bin(a,q,minstep=20)');
+    });
+
+    it('should return correct fieldDefShorthand string for bin field with div', () => {       const str = fieldDefShorthand({
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {div: [5, 2]}
+       });
+       assert.equal(str, 'bin(a,q,div=[5,2])');
     });
 
     it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType linear', () => {

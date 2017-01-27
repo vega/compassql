@@ -27,8 +27,8 @@ export namespace Property {
   export const BIN_BASE = 'binBase';
   export const BIN_STEP = 'binStep';
   export const BIN_STEPS = 'binSteps';
-  export const BIN_MINISTEP = 'binMinistep';
-  export const BIN_DIV = 'minDiv';
+  export const BIN_MINSTEP = 'binMinstep';
+  export const BIN_DIV = 'binDiv';
   export const HAS_FN = 'hasFn';
   export const TIMEUNIT = 'timeUnit';
   export const FIELD = 'field';
@@ -239,7 +239,7 @@ export const ENCODING_PROPERTIES = [
   Property.BIN_BASE,
   Property.BIN_STEP,
   Property.BIN_STEPS,
-  Property.BIN_MINISTEP,
+  Property.BIN_MINSTEP,
   Property.BIN_DIV,
   Property.TIMEUNIT,
   Property.AGGREGATE,
@@ -353,7 +353,7 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   Property.BIN_BASE,
   Property.BIN_STEP,
   Property.BIN_STEPS,
-  Property.BIN_MINISTEP,
+  Property.BIN_MINSTEP,
   Property.BIN_DIV,
 
   // Encoding

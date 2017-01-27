@@ -51,7 +51,7 @@ export function getDefaultName(prop: Property) {
       return 'b-step';
     case Property.BIN_STEPS:
       return 'b-steps';
-    case Property.BIN_MINISTEP:
+    case Property.BIN_MINSTEP:
       return 'b-mstep';
     case Property.BIN_DIV:
       return 'b-div';
@@ -356,8 +356,8 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     case Property.BIN_STEPS:
       return opt.binStepsList;
 
-    case Property.BIN_MINISTEP:
-      return opt.binMinistepsList;
+    case Property.BIN_MINSTEP:
+      return opt.binMinstepList;
 
     case Property.BIN_DIV:
       return opt.binDivList;

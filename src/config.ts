@@ -46,7 +46,7 @@ export interface QueryConfig {
   binBaseList?: number[];
   binStepList?: number[];
   binStepsList?: number[];
-  binMinistepsList?: number[];
+  binMinstepList?: number[];
   binDivList?: number[];
 
   axisAxisColors?: string[];
@@ -239,11 +239,11 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   maxBinsList: [5, 10, 20],
   binMinList: [undefined],
   binMaxList: [undefined],
-  binBaseList: [undefined],
+  binBaseList: [10],
   binStepList: [undefined],
   binStepsList: [undefined],
-  binMinistepsList: [undefined],
-  binDivList: [undefined],
+  binMinstepList: [undefined],
+  binDivList: [5, 2],
 
   axisAxisColors: [undefined],
   axisAxisWidths: [undefined],
