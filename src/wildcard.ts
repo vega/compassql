@@ -2,7 +2,7 @@ import {QueryConfig} from './config';
 import {Property} from './property';
 import {Schema} from './schema';
 import {extend, isArray} from './util';
-export const SHORT_WILDCARD: SHORT_WILDCARD = "?";
+export const SHORT_WILDCARD: SHORT_WILDCARD = '?';
 
 export type SHORT_WILDCARD = '?';
 
@@ -15,8 +15,12 @@ export interface ExtendedWildcard<T> extends Wildcard<T> {
   [prop: string]: any;
 }
 
-export function isWildcard(prop: any) {
-  return prop === SHORT_WILDCARD || (prop !== undefined && (!!prop.enum || !!prop.name) && !isArray(prop));
+export function isWildcard(prop: any): prop is Wildcard<any> | SHORT_WILDCARD  {
+  return isShortWildcard(prop) || (prop !== undefined && (!!prop.enum || !!prop.name) && !isArray(prop));
+}
+
+export function isShortWildcard(prop: any): prop is SHORT_WILDCARD {
+  return prop === SHORT_WILDCARD;
 }
 
 export function initWildcard(prop: any, defaultName: string, defaultEnumValues: any[]): ExtendedWildcard<any> {

@@ -9,7 +9,7 @@ import {toMap, isString} from 'datalib/src/util';
 import {EncodingQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
 
-import {isWildcard, SHORT_WILDCARD} from '../wildcard';
+import {isWildcard, isShortWildcard, SHORT_WILDCARD} from '../wildcard';
 import {getNestedEncodingPropertyChildren, Property, DEFAULT_PROPERTY_PRECEDENCE} from '../property';
 import {Dict, extend, keys, isArray} from '../util';
 
@@ -34,7 +34,7 @@ export function getReplacer(replace: Dict<string>): Replacer {
 export function value(v: any, replacer: Replacer): any {
   if (isWildcard(v)) {
     // Return the enum array if it's a full wildcard, or just return SHORT_WILDCARD for short ones.
-    if (v.enum) {
+    if (!isShortWildcard(v) && v.enum) {
       return SHORT_WILDCARD + JSON.stringify(v.enum);
     } else {
       return SHORT_WILDCARD;
@@ -223,10 +223,11 @@ export function fieldDef(encQ: EncodingQuery,
     for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
       if (include[prop] && encQ[prop] && isWildcard(encQ[prop])) {
         fn = SHORT_WILDCARD + '';
+        const val = encQ[prop];
 
         // assign fnEnumIndex[prop] = array of enum values or just "?" if it is SHORT_WILDCARD
         fnEnumIndex = fnEnumIndex || {};
-        fnEnumIndex[prop] = encQ[prop].enum || encQ[prop];
+        fnEnumIndex[prop] = isShortWildcard(val) ? val : val.enum;
 
         if (prop === Property.BIN) {
           // TODO(https://github.com/uwdata/compassql/issues/97):
