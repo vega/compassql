@@ -397,7 +397,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
         const channel = encQ.channel;
         if (!isWildcard(channel)) {
-          if (NONSPATIAL_CHANNELS_INDEX[channel as string]) {
+          if (NONSPATIAL_CHANNELS_INDEX[channel + '']) {
             nonPositionChannelCount += 1;
             if (specM.wildcardIndex.hasEncodingProperty(i, Property.CHANNEL)) {
               hasEnumeratedNonPositionChannel = true;

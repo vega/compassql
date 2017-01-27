@@ -130,7 +130,7 @@ export class SpecQueryModel {
     this._spec = spec;
     this._channelCount = spec.encodings.reduce((m, encQ) => {
       if (!isWildcard(encQ.channel) && encQ.autoCount !== false) {
-        m[encQ.channel as string] = 1;
+        m[encQ.channel + ''] = 1;
       }
       return m;
     }, {} as Dict<number>);
