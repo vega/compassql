@@ -212,8 +212,6 @@ export function fieldDef(encQ: EncodingQuery,
   } else if (include[Property.BIN] && encQ.bin && !isWildcard(encQ.bin)) {
     fn = 'bin';
 
-    // TODO(https://github.com/uwdata/compassql/issues/97):
-    // extract this as a method that support other bin properties
     NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
       if (nestedProp && nestedProp.parent === fn) {
         var binTypeProp = nestedProp.property;
@@ -236,8 +234,6 @@ export function fieldDef(encQ: EncodingQuery,
         fnEnumIndex[prop] = encQ[prop].enum || encQ[prop];
 
         if (prop === Property.BIN) {
-          // TODO(https://github.com/uwdata/compassql/issues/97):
-          // extract this as a method that support other bin properties
           NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
             var binTypeProp = nestedProp.property;
             var binTypeStr = nestedProp.child;
@@ -428,14 +424,14 @@ export namespace shorthandParser {
 
     while (i < partParams.length) {
       let propEqualSignIndex = partParams.indexOf('=', i);
-
+      let parsedValue;
       if (propEqualSignIndex !== -1) {
         let prop = partParams.substring(i, propEqualSignIndex);
         if (partParams[i + prop.length + 1] === '{') {
           let openingBraceIndex = i + prop.length + 1;
           closingBraceIndex = getClosingIndex(openingBraceIndex, partParams, '}');
           const value = partParams.substring(openingBraceIndex, closingBraceIndex + 1);
-          encQ[prop] = JSON.parse(value);
+          parsedValue = JSON.parse(value);
 
           // index after next comma
           i = closingBraceIndex + 2;
@@ -444,13 +440,7 @@ export namespace shorthandParser {
           let openingBracketIndex = i + prop.length + 1;
           let closingBracketIndex = getClosingIndex(openingBracketIndex, partParams, ']');
           const value = partParams.substring(openingBracketIndex, closingBracketIndex + 1);
-          let parsedValue = JSON.parse(value);
-          if (typeOfProperty(prop) === 'bin') {
-            // prop is a bin property
-            encQ.bin[prop] = parsedValue;
-          } else {
-            encQ[prop] = parsedValue;
-          }
+          parsedValue = JSON.parse(value);
 
           // index after next comma
           i = closingBracketIndex + 2;
@@ -464,23 +454,24 @@ export namespace shorthandParser {
           // index after next comma
           i = nextCommaIndex + 1;
 
-          let parsedValue = JSON.parse(
+          parsedValue = JSON.parse(
             partParams.substring(
               propIndex + prop.length + 1,
               nextCommaIndex
             )
           );
+        }
 
-          if (typeOfProperty(prop) === 'bin') {
-            // prop is a bin property
-            encQ.bin[prop] = parsedValue;
-          } else {
-            encQ[prop] = parsedValue;
-          }
+        if (typeOfProperty(prop) === 'bin') {
+          // prop is a bin property
+          encQ.bin[prop] = parsedValue;
+        } else {
+          encQ[prop] = parsedValue;
         }
       } else {
         // something is wrong with the format of the partParams
-        i = partParams.length; // exits loop
+        // exits loop if don't have then infintie loop
+        break;
       }
     }
     return encQ;
@@ -496,8 +487,6 @@ export namespace shorthandParser {
     return result;
   }
 
-  // TODO(https://github.com/uwdata/compassql/issues/259):
-  // Extend this to support nested braces and brackets
   export function getClosingIndex(openingBraceIndex: number, str: string, closingChar: string): number {
     for (let i = openingBraceIndex; i < str.length; i++) {
       if (str[i] === closingChar) {
