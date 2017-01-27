@@ -5,7 +5,7 @@ import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {SINGLE_TIMEUNITS, MULTI_TIMEUNITS} from 'vega-lite/src/timeunit';
 import {Type, TYPE_FROM_SHORT_TYPE} from 'vega-lite/src/type';
 import {toMap, isString} from 'datalib/src/util';
-import {NESTED_ENCODING_PROPERTIES} from '../property';
+import {NESTED_ENCODING_PROPERTIES, hasNestedProperty} from '../property';
 
 import {EncodingQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
@@ -462,11 +462,11 @@ export namespace shorthandParser {
           );
         }
 
-        if (typeOfProperty(prop) === 'bin') {
-          // prop is a bin property
-          encQ.bin[prop] = parsedValue;
-        } else {
+        if (hasNestedProperty(prop)) {
           encQ[prop] = parsedValue;
+        } else {
+          // prop is a property of the aggregation function such as bin
+          encQ.bin[prop] = parsedValue;
         }
       } else {
         // something is wrong with the format of the partParams
@@ -477,15 +477,6 @@ export namespace shorthandParser {
     return encQ;
   }
 
-  function typeOfProperty(property: string): string {
-    let result;
-    NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
-      if (nestedProp.child === property) {
-        result = nestedProp.parent;
-      }
-    });
-    return result;
-  }
 
   export function getClosingIndex(openingBraceIndex: number, str: string, closingChar: string): number {
     for (let i = openingBraceIndex; i < str.length; i++) {
