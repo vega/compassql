@@ -5,6 +5,7 @@ import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {SINGLE_TIMEUNITS, MULTI_TIMEUNITS} from 'vega-lite/src/timeunit';
 import {Type, TYPE_FROM_SHORT_TYPE} from 'vega-lite/src/type';
 import {toMap, isString} from 'datalib/src/util';
+import {NESTED_ENCODING_PROPERTIES, hasNestedProperty} from '../property';
 
 import {EncodingQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
@@ -211,14 +212,18 @@ export function fieldDef(encQ: EncodingQuery,
   } else if (include[Property.BIN] && encQ.bin && !isWildcard(encQ.bin)) {
     fn = 'bin';
 
-    // TODO(https://github.com/uwdata/compassql/issues/97):
-    // extract this as a method that support other bin properties
-    if (include[Property.BIN_MAXBINS] && encQ.bin['maxbins']) {
-      props.push({
-        key: 'maxbins',
-        value: value(encQ.bin['maxbins'], replacer[Property.BIN_MAXBINS])
-      });
-    }
+    NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
+      if (nestedProp && nestedProp.parent === fn) {
+        var binTypeProp = nestedProp.property;
+        var binTypeStr = nestedProp.child;
+        if (include[binTypeProp] && encQ.bin[binTypeStr]) {
+          props.push({
+            key: binTypeStr,
+            value: value(encQ.bin[binTypeStr], replacer[binTypeProp])
+          });
+        }
+      }
+    });
   } else {
     for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
       if (include[prop] && encQ[prop] && isWildcard(encQ[prop])) {
@@ -229,14 +234,17 @@ export function fieldDef(encQ: EncodingQuery,
         fnEnumIndex[prop] = encQ[prop].enum || encQ[prop];
 
         if (prop === Property.BIN) {
-          // TODO(https://github.com/uwdata/compassql/issues/97):
-          // extract this as a method that support other bin properties
-          if (include[Property.BIN_MAXBINS] && encQ.bin['maxbins']) {
-            props.push({
-              key: 'maxbins',
-              value: value(encQ.bin['maxbins'], replacer[Property.BIN_MAXBINS])
-            });
-          }
+          NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
+            var binTypeProp = nestedProp.property;
+            var binTypeStr = nestedProp.child;
+
+            if (include[binTypeProp] && encQ.bin[binTypeStr]) {
+              props.push({
+                key: binTypeStr,
+                value: value(encQ.bin[binTypeStr], replacer[binTypeProp])
+              });
+            }
+          });
         }
       }
     }
@@ -296,7 +304,10 @@ export function fieldDef(encQ: EncodingQuery,
     }
   }
   // encoding properties
-  fieldAndParams += props.map((p) => ',' + p.key + '=' + p.value).join('');
+  fieldAndParams += props.map((p) => {
+    let val = p.value instanceof Array ? '[' + p.value + ']' : p.value;
+    return ',' + p.key + '=' + val;
+  }).join('');
   if (fn) {
     return fn + (fnEnumIndex ? JSON.stringify(fnEnumIndex) : '') + '(' + fieldAndParams + ')';
   }
@@ -409,49 +420,67 @@ export namespace shorthandParser {
 
     let partParams = fieldDefPart[2];
     let closingBraceIndex = 0;
+    let i = 0;
 
-    // FIXME: don't use a loop
-    // FIXME: separate maxbins from nestedPropertyParent and support other bin properties
-    for (let nestedPropertyParent of ['maxbins', 'scale', 'sort', 'axis', 'legend']) {
-      let nestedPropertyParentIndex = partParams.indexOf(nestedPropertyParent, closingBraceIndex);
-      if (nestedPropertyParentIndex !== -1) {
-        if (partParams[nestedPropertyParentIndex + nestedPropertyParent.length + 1] === '{') {
-          let openingBraceIndex = nestedPropertyParentIndex + nestedPropertyParent.length + 1;
-          closingBraceIndex = getClosingBraceIndex(openingBraceIndex, partParams);
-          encQ[nestedPropertyParent] = JSON.parse(partParams.substring(openingBraceIndex, closingBraceIndex + 1));
+    while (i < partParams.length) {
+      let propEqualSignIndex = partParams.indexOf('=', i);
+      let parsedValue;
+      if (propEqualSignIndex !== -1) {
+        let prop = partParams.substring(i, propEqualSignIndex);
+        if (partParams[i + prop.length + 1] === '{') {
+          let openingBraceIndex = i + prop.length + 1;
+          closingBraceIndex = getClosingIndex(openingBraceIndex, partParams, '}');
+          const value = partParams.substring(openingBraceIndex, closingBraceIndex + 1);
+          parsedValue = JSON.parse(value);
 
+          // index after next comma
+          i = closingBraceIndex + 2;
+        } else if (partParams[i + prop.length + 1] === '[') {
+          // find closing square bracket
+          let openingBracketIndex = i + prop.length + 1;
+          let closingBracketIndex = getClosingIndex(openingBracketIndex, partParams, ']');
+          const value = partParams.substring(openingBracketIndex, closingBracketIndex + 1);
+          parsedValue = JSON.parse(value);
+
+          // index after next comma
+          i = closingBracketIndex + 2;
         } else {
+          let propIndex = i;
           // Substring until the next comma (or end of the string)
-          let nextCommaIndex = partParams.indexOf(',', nestedPropertyParentIndex + nestedPropertyParent.length);
+          let nextCommaIndex = partParams.indexOf(',', i + prop.length);
           if (nextCommaIndex === -1) {
             nextCommaIndex = partParams.length;
           }
+          // index after next comma
+          i = nextCommaIndex + 1;
 
-          let parsedValue = JSON.parse(
+          parsedValue = JSON.parse(
             partParams.substring(
-              nestedPropertyParentIndex + nestedPropertyParent.length + 1,
+              propIndex + prop.length + 1,
               nextCommaIndex
             )
           );
-
-          // TODO(https://github.com/uwdata/compassql/issues/97): Make this generalized for other bin properties.
-          if (nestedPropertyParent === 'maxbins') {
-            encQ.bin['maxbins'] = parsedValue;
-          } else {
-            encQ[nestedPropertyParent] = parsedValue;
-          }
         }
+
+        if (hasNestedProperty(prop)) {
+          encQ[prop] = parsedValue;
+        } else {
+          // prop is a property of the aggregation function such as bin
+          encQ.bin[prop] = parsedValue;
+        }
+      } else {
+        // something is wrong with the format of the partParams
+        // exits loop if don't have then infintie loop
+        break;
       }
     }
-
     return encQ;
   }
 
-  // TODO(https://github.com/uwdata/compassql/issues/259):
-  // Extend this to support nested braces and brackets
-  export function getClosingBraceIndex(openingBraceIndex: number, str: string): number {
+
+  export function getClosingIndex(openingBraceIndex: number, str: string, closingChar: string): number {
     for (let i = openingBraceIndex; i < str.length; i++) {
-      if (str[i] === '}') {
+      if (str[i] === closingChar) {
         return i;
       }
     }
@@ -460,7 +489,7 @@ export namespace shorthandParser {
   export function fn(encQ: EncodingQuery, fieldDefShorthand: string): EncodingQuery {
     // Aggregate, Bin, TimeUnit as wildcard case
     if (fieldDefShorthand[0] === '?') {
-      let closingBraceIndex = getClosingBraceIndex(1, fieldDefShorthand);
+      let closingBraceIndex = getClosingIndex(1, fieldDefShorthand, '}');
 
       let fnEnumIndex = JSON.parse(fieldDefShorthand.substring(1, closingBraceIndex + 1));
 

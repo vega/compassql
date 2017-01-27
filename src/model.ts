@@ -19,7 +19,7 @@ import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
 
-/**
+/*
  * Internal class for specQuery that provides helper for the enumeration process.
  */
 export class SpecQueryModel {

@@ -41,6 +41,20 @@ export function getDefaultName(prop: Property) {
       return 'b';
     case Property.BIN_MAXBINS:
       return 'b-mb';
+    case Property.BIN_MIN:
+      return 'b-min';
+    case Property.BIN_MAX:
+      return 'b-max';
+    case Property.BIN_BASE:
+      return 'b-base';
+    case Property.BIN_STEP:
+      return 'b-step';
+    case Property.BIN_STEPS:
+      return 'b-steps';
+    case Property.BIN_MINSTEP:
+      return 'b-mstep';
+    case Property.BIN_DIV:
+      return 'b-div';
     case Property.SORT:
       return 'so';
     case Property.SORT_FIELD:
@@ -326,6 +340,27 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
 
     case Property.BIN_MAXBINS:
       return opt.maxBinsList;
+
+    case Property.BIN_MIN:
+      return opt.binMinList;
+
+    case Property.BIN_MAX:
+      return opt.binMaxList;
+
+    case Property.BIN_BASE:
+      return opt.binBaseList;
+
+    case Property.BIN_STEP:
+      return opt.binStepList;
+
+    case Property.BIN_STEPS:
+      return opt.binStepsList;
+
+    case Property.BIN_MINSTEP:
+      return opt.binMinstepList;
+
+    case Property.BIN_DIV:
+      return opt.binDivList;
 
     case Property.CHANNEL:
       return opt.channels;

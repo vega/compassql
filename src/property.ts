@@ -22,6 +22,13 @@ export namespace Property {
   export const AUTOCOUNT = 'autoCount';
   export const BIN = 'bin';
   export const BIN_MAXBINS = 'binMaxbins';
+  export const BIN_MIN = 'binMin';
+  export const BIN_MAX = 'binMax';
+  export const BIN_BASE = 'binBase';
+  export const BIN_STEP = 'binStep';
+  export const BIN_STEPS = 'binSteps';
+  export const BIN_MINSTEP = 'binMinstep';
+  export const BIN_DIV = 'binDiv';
   export const HAS_FN = 'hasFn';
   export const TIMEUNIT = 'timeUnit';
   export const FIELD = 'field';
@@ -229,6 +236,13 @@ export const ENCODING_PROPERTIES = [
   Property.CHANNEL,
   Property.BIN,
   Property.BIN_MAXBINS,
+  Property.BIN_MIN,
+  Property.BIN_MAX,
+  Property.BIN_BASE,
+  Property.BIN_STEP,
+  Property.BIN_STEPS,
+  Property.BIN_MINSTEP,
+  Property.BIN_DIV,
   Property.TIMEUNIT,
   Property.AGGREGATE,
   Property.AUTOCOUNT,
@@ -336,6 +350,13 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
 
   // Nested Transform Property
   Property.BIN_MAXBINS,
+  Property.BIN_MIN,
+  Property.BIN_MAX,
+  Property.BIN_BASE,
+  Property.BIN_STEP,
+  Property.BIN_STEPS,
+  Property.BIN_MINSTEP,
+  Property.BIN_DIV,
 
   // Encoding
   Property.CHANNEL,
