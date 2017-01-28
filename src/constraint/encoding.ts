@@ -1,13 +1,13 @@
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel, getSupportedRole} from 'vega-lite/src/channel';
-import {ScaleType} from 'vega-lite/src/scale';
+import {ScaleType, scaleTypeSupportProperty} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
-import {getNestedEncodingProperty, Property, SCALE_PROPERTIES, SUPPORTED_SCALE_PROPERTY_INDEX} from '../property';
+import {getNestedEncodingProperty, Property, SCALE_PROPERTIES} from '../property';
 import {isWildcard, Wildcard} from '../wildcard';
 import {EncodingWildcardIndex} from '../wildcardindex';
 import {PrimitiveType, Schema} from '../schema';
@@ -223,10 +223,17 @@ satisfy: (encQ: EncodingQuery, _: Schema, __: EncodingWildcardIndex, ___: QueryC
         }
 
         for (let scaleProp in scale) {
-          if (SUPPORTED_SCALE_PROPERTY_INDEX[scaleProp]) {
-            if (!contains(SUPPORTED_SCALE_PROPERTY_INDEX[scaleProp], sType)) {
+          if (scaleProp === 'type') {
+            continue; // ignore type!
+          }
+          if (sType === 'point') {
+            // HACK: our current implementation of scaleType() can return point
+            // when the scaleType is a band since we didn't pass all parameter to Vega-Lite's scale type method.
+            if (!scaleTypeSupportProperty('point', scaleProp) && !scaleTypeSupportProperty('band', scaleProp)) {
               return false;
             }
+          } else if (!scaleTypeSupportProperty(sType, scaleProp)) {
+            return false;
           }
         }
       }

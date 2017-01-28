@@ -548,198 +548,88 @@ describe('constraints/encoding', () => {
   });
 
   describe('scalePropertiesSupportedByScaleType', () => {
-    describe('scaleRangeStep', () => {
+    it('should return true if scaleType is not specified.', () => {
       let encQ: EncodingQuery = {
-        channel: Channel.X,
+        channel: '?',
         field: 'A',
-        type: Type.NOMINAL,
-        scale: {rangeStep: 10}
+        type: '?'
       };
 
-      it('should return false if scaleType does not suport scaleRangeStep', () => {
-        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE,
-         ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC]. forEach((scaleType) => {
-          (encQ.scale as ScaleQuery).type = scaleType;
-          assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-        });
-      });
-
-      it('should return true if scaleType supports scaleRangeStep', () => {
-        (encQ.scale as ScaleQuery).type = ScaleType.ORDINAL;
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-      });
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
     });
 
-    describe('scaleClamp', () => {
+    it('should return true if scaleType is still ambiguous.', () => {
       let encQ: EncodingQuery = {
-        channel: Channel.X,
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: '?',
         field: 'A',
-        type: Type.QUANTITATIVE,
-        scale: {clamp: true}
+        type: '?',
+        scale: {}
       };
 
-      it('should return false if scaleType does not support scaleClamp', () => {
-         [ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.SQRT].forEach((scaleType) => {
-            (encQ.scale as ScaleQuery).type = scaleType;
-            assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-          });
-      });
-
-      it('should return true if scaleType supports scaleClamp', () => {
-        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.TIME, ScaleType.UTC, undefined].forEach((scaleType) => {
-          (encQ.scale as ScaleQuery).type = scaleType;
-          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-        });
-      });
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
     });
 
-    describe('scaleDomain', () => {
+    it('should return false if scale property is not supported by the scale type', () => {
       let encQ: EncodingQuery = {
-        channel: Channel.X,
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'x',
         field: 'A',
-        type: Type.QUANTITATIVE,
-        scale: {domain: [1, 2]}
+        type: 'quantitative',
+        scale: {
+          type: 'linear',
+          rangeStep: 20 // rangeStep should not work with linear
+        }
       };
 
-      it('should return true if scaleType supports scaleDomain', () => {
-        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.QUANTILE,
-         ScaleType.QUANTIZE, ScaleType.ORDINAL, ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
-          (encQ.scale as ScaleQuery).type = scaleType;
-          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-         });
-      });
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
     });
 
-    describe('scaleExponent', () => {
+    it('should return false if scale property is not supported by the scale type', () => {
       let encQ: EncodingQuery = {
-        channel: Channel.X,
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'x',
         field: 'A',
-        type: Type.QUANTITATIVE,
-        scale: {exponent: 1}
+        type: 'nominal',
+        scale: {
+          // type: point
+          clamp: 20 // clamp should not work with discreteDomain scale
+        }
       };
 
-      it('should return false if scaleType does not support scaleExponent', () => {
-        [ScaleType.LINEAR, ScaleType.QUANTILE, ScaleType.QUANTIZE,
-         ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC, undefined].forEach((scaleType) => {
-          (encQ.scale as ScaleQuery).type = scaleType;
-          assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-        });
-      });
-
-      it('should return true if scaleType supports scaleExponent', () => {
-        [ScaleType.LOG, ScaleType.POW, ScaleType.SQRT].forEach((scaleType) => {
-          (encQ.scale as ScaleQuery).type = scaleType;
-          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-        });
-      });
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
     });
 
-    describe('scaleNice', () => {
+    it('should return true if scale property is supported', () => {
       let encQ: EncodingQuery = {
-        channel: Channel.X,
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'x',
         field: 'A',
-        type: Type.QUANTITATIVE,
-        scale: {nice: true}
+        type: 'quantitative',
+        scale: {
+          type: 'linear',
+          round: true
+        }
       };
 
-      it('should return false if scaleType does not support scaleNice', () => {
-        [ScaleType.ORDINAL, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.SQRT].forEach((scaleType) => {
-          (encQ.scale as ScaleQuery).type = scaleType;
-          assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-         });
-      });
-
-      it('should return true if scaleType supports scaleNice', () => {
-        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.TIME, ScaleType.UTC, undefined].forEach((scaleType) => {
-          (encQ.scale as ScaleQuery).type = scaleType;
-          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-        });
-      });
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
     });
 
-    describe('scaleRange', () => {
+    it('should return true if scale type is point and a property is supported by band', () => {
       let encQ: EncodingQuery = {
-        channel: Channel.X,
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'x',
         field: 'A',
-        type: Type.QUANTITATIVE,
-        scale: {range: [1, 2]}
+        type: 'nominal',
+        scale: {
+          // type: point
+          // paddingInner is actually a band scale property, but our scaleType doesn't distinguish point and band.
+          paddingInner: 20
+        }
       };
 
-      it('should return true if scaleType supports scaleRange', () => {
-        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.POW, ScaleType.QUANTILE,
-         ScaleType.QUANTIZE, ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
-          (encQ.scale as ScaleQuery).type = scaleType;
-          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-         });
-      });
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
     });
-
-    describe('scaleRound', () => {
-      let encQ: EncodingQuery = {
-        channel: Channel.X,
-        field: 'A',
-        type: Type.QUANTITATIVE,
-        scale: {round: true}
-      };
-
-      it('should return true if scaleType does not support scaleRound', () => {
-        [ScaleType.ORDINAL, ScaleType.QUANTILE, ScaleType.QUANTIZE].forEach((scaleType) => {
-          (encQ.scale as ScaleQuery).type = scaleType;
-          assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-         });
-      });
-
-      it('should return true if scaleType supports scaleRound', () => {
-        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.TIME,
-         ScaleType.UTC, undefined].forEach((scaleType) => {
-           (encQ.scale as ScaleQuery).type = scaleType;
-          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-         });
-      });
-    });
-
-    describe('scaleUseRawDomain', () => {
-      let encQ: EncodingQuery = {
-        channel: Channel.X,
-        field: 'A',
-        type: Type.QUANTITATIVE,
-        scale: {useRawDomain: true}
-      };
-
-      it('should return true if scaleType supports scaleUseRawDomain', () => {
-        [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.QUANTILE,
-         ScaleType.QUANTIZE, ScaleType.ORDINAL, ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
-          (encQ.scale as ScaleQuery).type = scaleType;
-          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-         });
-      });
-    });
-
-    describe('scaleZero', () => {
-      let encQ: EncodingQuery = {
-        channel: Channel.X,
-        field: 'A',
-        type: Type.QUANTITATIVE,
-        scale: {zero: true}
-      };
-
-      it('should return false if scaleType does not support scaleZero', () => {
-        [ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
-          (encQ.scale as ScaleQuery).type = scaleType;
-          assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-        });
-      });
-
-      it('should return true if scaleType supports scaleZero', () => {
-        [ScaleType.LINEAR, ScaleType.POW, ScaleType.SQRT].forEach((scaleType) => {
-          (encQ.scale as ScaleQuery).type = scaleType;
-          assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-        });
-      });
-    });
-
-
-    // TODO: test for other scale properties
   });
 
   describe('typeMatchesSchemaType', () => {
