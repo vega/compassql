@@ -652,16 +652,9 @@ describe('query/shorthand', () => {
 
     it('should return correct fieldDefShorthand string for bin field with min', () => {
        const str = fieldDefShorthand({
-         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {min: 20}
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {extent: [0, 20]}
        });
-       assert.equal(str, 'bin(a,q,min=20)');
-    });
-
-    it('should return correct fieldDefShorthand string for bin field with max', () => {
-       const str = fieldDefShorthand({
-         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {max: 20}
-       });
-       assert.equal(str, 'bin(a,q,max=20)');
+       assert.equal(str, 'bin(a,q,extent=[0, 20])');
     });
 
     it('should return correct fieldDefShorthand string for bin field with base', () => {
@@ -692,10 +685,10 @@ describe('query/shorthand', () => {
        assert.equal(str, 'bin(a,q,minstep=20)');
     });
 
-    it('should return correct fieldDefShorthand string for bin field with div', () => {       const str = fieldDefShorthand({
-         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {div: [5, 2]}
+    it('should return correct fieldDefShorthand string for bin field with divide', () => {       const str = fieldDefShorthand({
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {divide: [5, 2]}
        });
-       assert.equal(str, 'bin(a,q,div=[5,2])');
+       assert.equal(str, 'bin(a,q,divide=[5,2])');
     });
 
     it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType linear', () => {

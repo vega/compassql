@@ -300,7 +300,7 @@ describe('generate', function () {
     });
   });
 
-  describe('axis-layer', () => {
+  describe('axis-zindex', () => {
     it('should enumerate default axisLayers', () => {
       const specQ = {
         mark: Mark.POINT,
@@ -315,8 +315,8 @@ describe('generate', function () {
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).axis as AxisQuery).layer, 'front');
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).axis as AxisQuery).layer, 'back');
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).axis as AxisQuery).zindex, 1);
+      assert.equal((answerSet[1].getEncodingQueryByIndex(0).axis as AxisQuery).zindex, 0);
     });
   });
 

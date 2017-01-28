@@ -1,7 +1,10 @@
 import {AggregateOp} from 'vega-lite/src/aggregate';
-import {AxisOrient} from 'vega-lite/src/axis';
+import {Axis} from 'vega-lite/src/axis';
+import {Bin} from 'vega-lite/src/bin';
 import {Channel} from 'vega-lite/src/channel';
 import {ScaleType} from 'vega-lite/src/scale';
+import {Scale} from 'vega-lite/src/scale';
+import {Legend} from 'vega-lite/src/legend';
 import {SortOrder, SortField} from 'vega-lite/src/sort';
 import {defaultScaleType, TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
@@ -38,107 +41,16 @@ export interface EncodingQuery {
   legend?: boolean | LegendQuery | SHORT_WILDCARD;
 }
 
-export interface AxisQuery extends Wildcard<boolean> {
-  // General Axis Properties
-  axisColor?: WildcardProperty<string>;
-  axisWidth?: WildcardProperty<number>;
-  layer?: WildcardProperty<string>;
-  offset?: WildcardProperty<number>;
-  orient?: WildcardProperty<AxisOrient>;
+// Using Mapped Type from TS2.1 to declare query for an object without nested property
+// https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-1.html#mapped-types
+export type FlatQuery<T> = {
+  [P in keyof T]: WildcardProperty<T[P]>
+};
 
-  // Axis_Grid Properties
-  grid?: WildcardProperty<boolean>;
-  gridColor?: WildcardProperty<string>;
-  gridDash?: WildcardProperty<number>;
-  gridOpacity?: WildcardProperty<number>;
-  gridWidth?: WildcardProperty<number>;
-
-  // Axis_Label Properties
-  labels?: WildcardProperty<boolean>;
-  format?: WildcardProperty<string>;
-  labelAngle?: WildcardProperty<number>;
-  labelMaxLength?: WildcardProperty<number>;
-  shortTimeLabels?: WildcardProperty<boolean>;
-
-  // Axis_Tick Properties
-  subdivide?: WildcardProperty<number>;
-  ticks?: WildcardProperty<number>;
-  tickColor?: WildcardProperty<string>;
-  tickLabelColor?: WildcardProperty<string>;
-  tickLabelFont?: WildcardProperty<string>;
-  ticklabelFontSize?: WildcardProperty<number>;
-  tickPadding?: WildcardProperty<number>;
-  tickSize?: WildcardProperty<number>;
-  tickSizeMajor?: WildcardProperty<number>;
-  tickSizeMinor?: WildcardProperty<number>;
-  tickSizeEnd?: WildcardProperty<number>;
-  tickWidth?: WildcardProperty<number>;
-  values?: WildcardProperty<number>;
-
-  // Axis_Title Properties
-  title?: WildcardProperty<string>;
-  titleColor?: WildcardProperty<string>;
-  titleFont?: WildcardProperty<string>;
-  titleFontWeight?: WildcardProperty<string>;
-  titleFontSize?: WildcardProperty<number>;
-  titleOffset?: WildcardProperty<number>;
-  titleMaxLength?: WildcardProperty<number>;
-  characterWidth?: WildcardProperty<number>;
-}
-
-export interface BinQuery extends Wildcard<boolean> {
-  maxbins?: WildcardProperty<number>;
-  min?: WildcardProperty<number>;
-  max?: WildcardProperty<number>;
-  base?: WildcardProperty<number>;
-  step?: WildcardProperty<number>;
-  steps?: WildcardProperty<number>;
-  minstep?: WildcardProperty<number>;
-  div?: WildcardProperty<number>;
-}
-
-export interface LegendQuery extends Wildcard<boolean> {
-  // General Legend Properties
-  orient?: WildcardProperty<string>;
-  offset?: WildcardProperty<number>;
-  values?: WildcardProperty<any>;
-
-  // Legend_Label Properties
-  format?: WildcardProperty<string>;
-  labelAlign?: WildcardProperty<string>;
-  labelBaseline?:string | Wildcard<string> | SHORT_WILDCARD;
-  labelColor?: WildcardProperty<string>;
-  labelFont?: WildcardProperty<string>;
-  labelFontSize?: WildcardProperty<number>;
-  shortTimeLabels?: WildcardProperty<boolean>;
-
-  // Legend_Symbol Properties
-  symbolColor?: WildcardProperty<string>;
-  symbolShape?: WildcardProperty<string>;
-  symbolSize?: WildcardProperty<number>;
-  symbolStrokeWidth?: WildcardProperty<number>;
-
-  // Legend_Title Properties
-  title?: WildcardProperty<string>;
-  titleColor?: WildcardProperty<string>;
-  titleFont?: WildcardProperty<string>;
-  titleFontSize?: WildcardProperty<number>;
-  titleFontWeight?: WildcardProperty<string>;
-}
-
-export interface ScaleQuery extends Wildcard<boolean> {
-  clamp?: WildcardProperty<boolean>;
-  domain?: number[] | string[] | Wildcard<number[] | string[]> | SHORT_WILDCARD;
-  exponent?: WildcardProperty<number>;
-  nice?: WildcardProperty<boolean>;
-  range?: string | number[] | string[] | Wildcard<string | number[] | string[]> | SHORT_WILDCARD;
-  rangeStep?: WildcardProperty<number>;
-  round?: WildcardProperty<boolean>;
-  type?: WildcardProperty<ScaleType>;
-  useRawDomain?: WildcardProperty<boolean>;
-  zero?: WildcardProperty<boolean>;
-
-}
+export type BinQuery = Wildcard<boolean> & FlatQuery<Bin>;
+export type ScaleQuery =  Wildcard<boolean> & FlatQuery<Scale>;
+export type AxisQuery =  Wildcard<boolean> & FlatQuery<Axis>;
+export type LegendQuery =  Wildcard<boolean> & FlatQuery<Legend>;
 
 export function isDimension(encQ: EncodingQuery) {
   return contains([Type.NOMINAL, Type.ORDINAL], encQ.type) ||
