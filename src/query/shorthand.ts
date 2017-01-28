@@ -3,7 +3,7 @@ import {Channel, CHANNELS} from 'vega-lite/src/channel';
 import {Formula} from 'vega-lite/src/transform';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {SINGLE_TIMEUNITS, MULTI_TIMEUNITS} from 'vega-lite/src/timeunit';
-import {Type, TYPE_FROM_SHORT_TYPE} from 'vega-lite/src/type';
+import {Type, getFullName} from 'vega-lite/src/type';
 import {toMap, isString} from 'datalib/src/util';
 import {NESTED_ENCODING_PROPERTIES, hasNestedProperty} from '../property';
 
@@ -158,7 +158,7 @@ export function spec(specQ: SpecQuery,
 export function calculate(formulaArr: Formula[]): string {
   return JSON.stringify(
     formulaArr.reduce((m, calculateItem) => {
-      m[calculateItem.field] = calculateItem.expr;
+      m[calculateItem.as] = calculateItem.expr;
       return m;
     }, {})
   );
@@ -345,7 +345,7 @@ export function parse(shorthand: string): SpecQuery {
       let fieldExprMapping = JSON.parse(splitPartValue);
 
       for (let field in fieldExprMapping) {
-        calculate.push({field: field, expr: fieldExprMapping[field]});
+        calculate.push({expr: fieldExprMapping[field], as: field});
       }
 
       specQ.transform.calculate = calculate;
@@ -417,7 +417,7 @@ export namespace shorthandParser {
 
   export function rawFieldDef(encQ: EncodingQuery, fieldDefPart: string[]): EncodingQuery {
     encQ.field = fieldDefPart[0];
-    encQ.type = TYPE_FROM_SHORT_TYPE[fieldDefPart[1].toUpperCase()] || '?';
+    encQ.type = getFullName(fieldDefPart[1].toUpperCase()) || '?';
 
     let partParams = fieldDefPart[2];
     let closingBraceIndex = 0;

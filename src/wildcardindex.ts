@@ -29,9 +29,6 @@ export interface EncodingWildcardIndex {
   /** Wildcard for scale enumeration. */
   scale?: Wildcard<boolean>;
 
-  /** Wildcard for scale.bandSize enumeration */
-  scaleBandSize?: Wildcard<number>;
-
   /** Wildcard for scale.clamp enumeration */
   scaleClamp?: Wildcard<boolean>;
 
@@ -46,6 +43,9 @@ export interface EncodingWildcardIndex {
 
   /** Wildcard for scale.range enumeration */
   scaleRange?: Wildcard<string | string[] | number[]>;
+
+  /** Wildcard for scale.rangeStep enumeration */
+  scaleRangeStep?: Wildcard<number>;
 
   /** Wildcard for scale.round enumeration */
   scaleRound?: Wildcard<boolean>;

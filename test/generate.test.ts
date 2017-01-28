@@ -320,15 +320,15 @@ describe('generate', function () {
     });
   });
 
-  describe('scale-bandSize', () => {
-    it('should enumerate correct scaleType with bandSize', () => {
+  describe('scale-rangeStep', () => {
+    it('should enumerate correct scaleType with rangeStep', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
           {
             channel: Channel.X,
             scale: {
-              bandSize: 10,
+              rangeStep: 10,
               type: {enum: [undefined, ScaleType.LOG, ScaleType.TIME, ScaleType.ORDINAL]}
             },
             field: 'Q',
@@ -354,8 +354,9 @@ describe('generate', function () {
               clamp: true,
               exponent: [1,2],
               type: {enum: [undefined, ScaleType.LINEAR, ScaleType.LOG, ScaleType.ORDINAL,
-                              ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.SQRT,
-                              ScaleType.TIME, ScaleType.UTC]}
+                            ScaleType.POW, ScaleType.SQRT,
+                            // TODO: add these back ScaleType.QUANTILE, ScaleType.QUANTIZE,
+                            ScaleType.TIME, ScaleType.UTC]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -370,7 +371,7 @@ describe('generate', function () {
   });
 
   describe('scale-nice', () => {
-    it('should enuemrate correct scale type when scale nice is used with scale round and Type.QUANTITATIVE', () => {
+    it('should enumerate correct scale type when scale nice is used with scale round and Type.QUANTITATIVE', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -380,8 +381,9 @@ describe('generate', function () {
               nice: true,
               round: true,
               type: {enum: [undefined, ScaleType.LINEAR, ScaleType.LOG, ScaleType.ORDINAL,
-                              ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.SQRT,
-                              ScaleType.TIME, ScaleType.UTC]}
+                            ScaleType.POW, ScaleType.SQRT,
+                            // TODO: add these back ScaleType.QUANTILE, ScaleType.QUANTIZE,
+                            ScaleType.TIME, ScaleType.UTC] as ScaleType[]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -599,8 +601,8 @@ describe('generate', function () {
         mark: Mark.POINT,
         encodings: [
           {
-            channel: Channel.X,
-            scale: {type: {enum: [ScaleType.ORDINAL, ScaleType.QUANTILE, undefined, ScaleType.LOG]}},
+            channel: 'Channel.X',
+            scale: {type: {enum: [ScaleType.ORDINAL, undefined, ScaleType.LOG]}},
             field: 'O',
             type: Type.ORDINAL
           }
@@ -751,7 +753,7 @@ describe('generate', function () {
       };
 
       const CONFIG_WITHOUT_HIGH_CARDINALITY_OR_FACET = extend(
-        {}, DEFAULT_QUERY_CONFIG, {nominalColorScaleForHighCardinality: null}, {smallBandSizeForHighCardinalityOrFacet: null});
+        {}, DEFAULT_QUERY_CONFIG, {nominalColorScaleForHighCardinality: null}, {smallRangeStepForHighCardinalityOrFacet: null});
 
       const answerSet = generate(specQ, schema, CONFIG_WITHOUT_HIGH_CARDINALITY_OR_FACET);
       assert.equal(answerSet.length, 1);
@@ -776,8 +778,8 @@ describe('generate', function () {
       });
     });
 
-    describe('smallBandSizeForHighCardinalityOrFacet', () => {
-      it('should output bandSize = 12', () => {
+    describe('smallRangeStepForHighCardinalityOrFacet', () => {
+      it('should output rangeStep = 12', () => {
         const specQ = {
           mark: Mark.BAR,
           encodings: [
@@ -791,10 +793,10 @@ describe('generate', function () {
         };
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).bandSize, 12);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).rangeStep, 12);
       });
 
-      it('should output bandSize = 12', () => {
+      it('should output rangeStep = 12', () => {
         const specQ = {
           mark: Mark.BAR,
           encodings: [
@@ -813,7 +815,7 @@ describe('generate', function () {
         };
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).bandSize, 12);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).rangeStep, 12);
       });
     });
   });

@@ -70,8 +70,6 @@ export function getDefaultName(prop: Property) {
       return 'so-or';
     case Property.SCALE:
       return 's';
-    case Property.SCALE_BANDSIZE:
-      return 's-bs';
     case Property.SCALE_CLAMP:
       return 's-c';
     case Property.SCALE_DOMAIN:
@@ -82,6 +80,8 @@ export function getDefaultName(prop: Property) {
       return 's-n';
     case Property.SCALE_RANGE:
       return 's-ra';
+    case Property.SCALE_RANGESTEP:
+      return 's-rs';
     case Property.SCALE_ROUND:
       return 's-r';
     case Property.SCALE_TYPE:
@@ -436,8 +436,8 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
     case Property.SORT_ORDER:
       return opt.sortOrders;
 
-    case Property.SCALE_BANDSIZE:
-      return opt.scaleBandSizes;
+    case Property.SCALE_RANGESTEP:
+      return opt.scaleRangeSteps;
 
     case Property.SCALE_DOMAIN:
       return opt.scaleDomains;

@@ -548,15 +548,15 @@ describe('constraints/encoding', () => {
   });
 
   describe('scalePropertiesSupportedByScaleType', () => {
-    describe('scaleBandSize', () => {
+    describe('scaleRangeStep', () => {
       let encQ: EncodingQuery = {
         channel: Channel.X,
         field: 'A',
         type: Type.NOMINAL,
-        scale: {bandSize: 10}
+        scale: {rangeStep: 10}
       };
 
-      it('should return false if scaleType does not suport scaleBandSize', () => {
+      it('should return false if scaleType does not suport scaleRangeStep', () => {
         [ScaleType.LINEAR, ScaleType.LOG, ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE,
          ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC]. forEach((scaleType) => {
           (encQ.scale as ScaleQuery).type = scaleType;
@@ -564,7 +564,7 @@ describe('constraints/encoding', () => {
         });
       });
 
-      it('should return true if scaleType supports scaleBandSize', () => {
+      it('should return true if scaleType supports scaleRangeStep', () => {
         (encQ.scale as ScaleQuery).type = ScaleType.ORDINAL;
         assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
       });

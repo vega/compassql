@@ -25,7 +25,7 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
 
   if (opt.stylize) {
     if ((opt.nominalColorScaleForHighCardinality !== null) ||
-        (opt.smallBandSizeForHighCardinalityOrFacet !== null) ||
+        (opt.smallRangeStepForHighCardinalityOrFacet !== null) ||
         (opt.xAxisOnTopForHighYCardinalityWithoutColumn !== null)) {
       return stylize(answerSet, schema, opt);
     }

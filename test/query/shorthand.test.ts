@@ -23,7 +23,7 @@ describe('query/shorthand', () => {
         transform: {
           filter: 'datum.x === 5',
           calculate: [{
-            field: 'x2',
+            as: 'x2',
             expr: 'datum.x*2'
           }]
         },
@@ -55,7 +55,7 @@ describe('query/shorthand', () => {
 
       assert.deepEqual(specQ, {
         transform: {
-          calculate: [{field: 'b2', expr: '3*datum["b2"]'}, {field: 'a3', expr: '3*datum["a3"]'}],
+          calculate: [{as: 'b2', expr: '3*datum["b2"]'}, {as: 'a3', expr: '3*datum["a3"]'}],
           filter: 'datum["b2"] > 60',
           filterInvalid: false
         },
@@ -331,7 +331,7 @@ describe('query/shorthand', () => {
     it('should return correct spec string for a specific specQuery with transform filter and calculate', () => {
       const str = specShorthand({
         transform: {
-          calculate: [{field: 'b2', expr: '3*datum["b2"]'}],
+          calculate: [{as: 'b2', expr: '3*datum["b2"]'}],
           filter: 'datum["b2"] > 60',
           filterInvalid: false
         },
@@ -374,7 +374,7 @@ describe('query/shorthand', () => {
   describe('calculate', () => {
     it('should return a correct calculate string when passed a Formula array', () => {
       const str = calculateShorthand([
-        {field: 'b2', expr: '2*datum["b"]'}, {field: 'a', expr:'3*datum["a"]'}
+        {as: 'b2', expr: '2*datum["b"]'}, {as: 'a', expr:'3*datum["a"]'}
       ]);
       assert.equal(str, '{"b2":"2*datum[\\"b\\"]","a":"3*datum[\\"a\\"]"}');
     });

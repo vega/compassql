@@ -127,12 +127,12 @@ export interface LegendQuery extends Wildcard<boolean> {
 }
 
 export interface ScaleQuery extends Wildcard<boolean> {
-  bandSize?: WildcardProperty<number>;
   clamp?: WildcardProperty<boolean>;
   domain?: number[] | string[] | Wildcard<number[] | string[]> | SHORT_WILDCARD;
   exponent?: WildcardProperty<number>;
   nice?: WildcardProperty<boolean>;
   range?: string | number[] | string[] | Wildcard<string | number[] | string[]> | SHORT_WILDCARD;
+  rangeStep?: WildcardProperty<number>;
   round?: WildcardProperty<boolean>;
   type?: WildcardProperty<ScaleType>;
   useRawDomain?: WildcardProperty<boolean>;

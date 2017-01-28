@@ -2,8 +2,8 @@ import {Channel, X, Y, STACK_GROUP_CHANNELS} from 'vega-lite/src/channel';
 import {Config} from 'vega-lite/src/config';
 import {Data} from 'vega-lite/src/data';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
-import {Mark, BAR, AREA} from 'vega-lite/src/mark';
-import {StackOffset, StackProperties} from 'vega-lite/src/stack';
+import {Mark} from 'vega-lite/src/mark';
+import {StackOffset, StackProperties, STACKABLE_MARKS} from 'vega-lite/src/stack';
 
 import {isWildcard, WildcardProperty} from '../wildcard';
 import {ENCODING_PROPERTIES, isNestedEncodingProperty, Property} from '../property';
@@ -76,7 +76,7 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
   }
 
   // Should have stackable mark
-  if (!contains([BAR, AREA], specQ.mark)) {
+  if (!contains(STACKABLE_MARKS, specQ.mark)) {
     return null;
   }
 
@@ -85,14 +85,17 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
     return null;
   }
 
-  const stackByChannels = specQ.encodings.reduce((sc, encQ: EncodingQuery) => {
+  const stackBy = specQ.encodings.reduce((sc, encQ: EncodingQuery) => {
     if (contains(STACK_GROUP_CHANNELS, encQ.channel) && !encQ.aggregate) {
-      sc.push(encQ.channel);
+      sc.push({
+        channel: encQ.channel,
+        fieldDef: encQ
+      });
     }
     return sc;
   }, []);
 
-  if (stackByChannels.length === 0) {
+  if (stackBy.length === 0) {
     return null;
   }
 
@@ -112,7 +115,7 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
       groupByEncQ: xIsAggregate ? yEncQ : xEncQ,
       fieldChannel: xIsAggregate ? X : Y,
       fieldEncQ: xIsAggregate ? xEncQ : yEncQ,
-      stackByChannels: stackByChannels,
+      stackBy: stackBy,
       offset: stacked || StackOffset.ZERO
     };
   }

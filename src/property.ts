@@ -44,12 +44,12 @@ export namespace Property {
 
   // - Scale
   export const SCALE: 'scale' = 'scale';
-  export const SCALE_BANDSIZE: 'scaleBandSize' = 'scaleBandSize';
   export const SCALE_CLAMP: 'scaleClamp' = 'scaleClamp';
   export const SCALE_DOMAIN: 'scaleDomain' = 'scaleDomain';
   export const SCALE_EXPONENT: 'scaleExponent' = 'scaleExponent';
   export const SCALE_NICE: 'scaleNice' = 'scaleNice';
   export const SCALE_RANGE: 'scaleRange' = 'scaleRange';
+  export const SCALE_RANGESTEP: 'scaleRangeStep' = 'scaleRangeStep';
   export const SCALE_ROUND: 'scaleRound' = 'scaleRound';
   export const SCALE_TYPE: 'scaleType' = 'scaleType';
   export const SCALE_USERAWDOMAIN: 'scaleUseRawDomain' = 'scaleUseRawDomain';
@@ -162,7 +162,7 @@ export type Property = typeof Property.MARK |
   typeof Property.SORT_OP |
   typeof Property.SORT_ORDER |
   typeof Property.SCALE |
-  typeof Property.SCALE_BANDSIZE |
+  typeof Property.SCALE_RANGESTEP |
   typeof Property.SCALE_CLAMP |
   typeof Property.SCALE_DOMAIN |
   typeof Property.SCALE_EXPONENT |
@@ -230,7 +230,6 @@ export type Property = typeof Property.MARK |
   typeof Property.LEGEND_TITLEFONTSIZE |
   typeof Property.LEGEND_TITLEFONTWEIGHT;
 
-
 export const NESTED_ENCODING_PROPERTIES_PARENT = [
   'bin', 'scale', 'sort', 'axis', 'legend'
 ];
@@ -262,7 +261,7 @@ export const ENCODING_PROPERTIES = [
   Property.SORT_OP,
   Property.SORT_ORDER,
   Property.SCALE,
-  Property.SCALE_BANDSIZE,
+  Property.SCALE_RANGESTEP,
   Property.SCALE_CLAMP,
   Property.SCALE_DOMAIN,
   Property.SCALE_EXPONENT,
@@ -377,7 +376,7 @@ export const DEFAULT_PROPERTY_PRECEDENCE: Property[] =  [
   // Nested Encoding Property
 
   // - Scale
-  Property.SCALE_BANDSIZE,
+  Property.SCALE_RANGESTEP,
   Property.SCALE_CLAMP,
   Property.SCALE_DOMAIN,
   Property.SCALE_EXPONENT,

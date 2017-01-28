@@ -160,7 +160,7 @@ export interface QueryConfig {
 
   sortOrders?: SortOrder[];
 
-  scaleBandSizes?: number[];
+  scaleRangeSteps?: number[];
 
   scaleDomains?: Array<number[] | string[]>;
 
@@ -213,7 +213,7 @@ export interface QueryConfig {
 
   // STYLIZE
   stylize?: boolean;
-  smallBandSizeForHighCardinalityOrFacet?: {maxCardinality: number, bandSize: number};
+  smallRangeStepForHighCardinalityOrFacet?: {maxCardinality: number, rangeStep: number};
   nominalColorScaleForHighCardinality?: {maxCardinality: number, palette: string};
   xAxisOnTopForHighYCardinalityWithoutColumn?: {maxCardinality: number};
 
@@ -307,7 +307,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   sortOps: [AggregateOp.MIN, AggregateOp.MEAN],
   sortOrders: [SortOrder.ASCENDING, SortOrder.DESCENDING],
 
-  scaleBandSizes: [17, 21],
+  scaleRangeSteps: [17, 21],
   scaleDomains: [undefined],
   scaleExponents: [1],
   scaleRanges: [undefined],
@@ -351,7 +351,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
   // STYLIZE
   stylize: true,
-  smallBandSizeForHighCardinalityOrFacet: {maxCardinality: 10, bandSize: 12},
+  smallRangeStepForHighCardinalityOrFacet: {maxCardinality: 10, rangeStep: 12},
   nominalColorScaleForHighCardinality: {maxCardinality: 10, palette: 'category20'},
   xAxisOnTopForHighYCardinalityWithoutColumn: {maxCardinality: 30},
 
