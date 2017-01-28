@@ -6,19 +6,19 @@ import {SortOrder, SortField} from 'vega-lite/src/sort';
 import {defaultScaleType, TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
-import {Wildcard, isWildcard, SHORT_WILDCARD} from '../wildcard';
+import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
 import {contains} from '../util';
 
 export type Field = string;
 
 export interface EncodingQuery {
-  channel: Channel | Wildcard<Channel> | SHORT_WILDCARD;
+  channel: WildcardProperty<Channel>;
 
   // FieldDef
-  aggregate?: AggregateOp | Wildcard<AggregateOp> | SHORT_WILDCARD;
+  aggregate?: WildcardProperty<AggregateOp>;
   /** Internal flag for representing automatic count that are added to plots with only ordinal or binned fields. */
-  autoCount?: boolean | Wildcard<boolean> | SHORT_WILDCARD;
-  timeUnit?: TimeUnit | Wildcard<TimeUnit> | SHORT_WILDCARD;
+  autoCount?: WildcardProperty<boolean>;
+  timeUnit?: WildcardProperty<TimeUnit>;
 
   /**
    * Special flag for enforcing that the field should have either timeUnit, bin, or aggregate
@@ -30,8 +30,8 @@ export interface EncodingQuery {
 
   sort?: SortOrder | SortField;
 
-  field?: Field | Wildcard<Field> | SHORT_WILDCARD;
-  type?: Type | Wildcard<Type> | SHORT_WILDCARD;
+  field?: WildcardProperty<Field>;
+  type?: WildcardProperty<Type>;
   // TODO: value
 
   axis?: boolean | AxisQuery | SHORT_WILDCARD;
@@ -40,103 +40,103 @@ export interface EncodingQuery {
 
 export interface AxisQuery extends Wildcard<boolean> {
   // General Axis Properties
-  axisColor?: string | Wildcard<string> | SHORT_WILDCARD;
-  axisWidth?: number | Wildcard<number> | SHORT_WILDCARD;
-  layer?: string | Wildcard<string> | SHORT_WILDCARD;
-  offset?: number | Wildcard<number> | SHORT_WILDCARD;
-  orient?: AxisOrient | Wildcard<AxisOrient> | SHORT_WILDCARD;
+  axisColor?: WildcardProperty<string>;
+  axisWidth?: WildcardProperty<number>;
+  layer?: WildcardProperty<string>;
+  offset?: WildcardProperty<number>;
+  orient?: WildcardProperty<AxisOrient>;
 
   // Axis_Grid Properties
-  grid?: boolean | Wildcard<boolean> | SHORT_WILDCARD;
-  gridColor?: string | Wildcard<string> | SHORT_WILDCARD;
-  gridDash?: number[] | Wildcard<number[]> | SHORT_WILDCARD;
-  gridOpacity?: number | Wildcard<number> | SHORT_WILDCARD;
-  gridWidth?: number | Wildcard<number> | SHORT_WILDCARD;
+  grid?: WildcardProperty<boolean>;
+  gridColor?: WildcardProperty<string>;
+  gridDash?: WildcardProperty<number>;
+  gridOpacity?: WildcardProperty<number>;
+  gridWidth?: WildcardProperty<number>;
 
   // Axis_Label Properties
-  labels?: boolean | Wildcard<boolean> | SHORT_WILDCARD;
-  format?: string | Wildcard<string> | SHORT_WILDCARD;
-  labelAngle?: number | Wildcard<number> | SHORT_WILDCARD;
-  labelMaxLength?: number | Wildcard<number> | SHORT_WILDCARD;
-  shortTimeLabels?: boolean | Wildcard<boolean> | SHORT_WILDCARD;
+  labels?: WildcardProperty<boolean>;
+  format?: WildcardProperty<string>;
+  labelAngle?: WildcardProperty<number>;
+  labelMaxLength?: WildcardProperty<number>;
+  shortTimeLabels?: WildcardProperty<boolean>;
 
   // Axis_Tick Properties
-  subdivide?: number | Wildcard<number> | SHORT_WILDCARD;
-  ticks?: number | Wildcard<number> | SHORT_WILDCARD;
-  tickColor?: string | Wildcard<string> | SHORT_WILDCARD;
-  tickLabelColor?: string | Wildcard<string> | SHORT_WILDCARD;
-  tickLabelFont?: string | Wildcard<string> | SHORT_WILDCARD;
-  ticklabelFontSize?: number | Wildcard<number> | SHORT_WILDCARD;
-  tickPadding?: number | Wildcard<number> | SHORT_WILDCARD;
-  tickSize?: number | Wildcard<number> | SHORT_WILDCARD;
-  tickSizeMajor?: number | Wildcard<number> | SHORT_WILDCARD;
-  tickSizeMinor?: number | Wildcard<number> | SHORT_WILDCARD;
-  tickSizeEnd?: number | Wildcard<number> | SHORT_WILDCARD;
-  tickWidth?: number | Wildcard<number> | SHORT_WILDCARD;
-  values?: number[] | Wildcard<number[]> | SHORT_WILDCARD;
+  subdivide?: WildcardProperty<number>;
+  ticks?: WildcardProperty<number>;
+  tickColor?: WildcardProperty<string>;
+  tickLabelColor?: WildcardProperty<string>;
+  tickLabelFont?: WildcardProperty<string>;
+  ticklabelFontSize?: WildcardProperty<number>;
+  tickPadding?: WildcardProperty<number>;
+  tickSize?: WildcardProperty<number>;
+  tickSizeMajor?: WildcardProperty<number>;
+  tickSizeMinor?: WildcardProperty<number>;
+  tickSizeEnd?: WildcardProperty<number>;
+  tickWidth?: WildcardProperty<number>;
+  values?: WildcardProperty<number>;
 
   // Axis_Title Properties
-  title?: string | Wildcard<string> | SHORT_WILDCARD;
-  titleColor?: string | Wildcard<string> | SHORT_WILDCARD;
-  titleFont?: string | Wildcard<string> | SHORT_WILDCARD;
-  titleFontWeight?: string | Wildcard<string> | SHORT_WILDCARD;
-  titleFontSize?: number | Wildcard<number> | SHORT_WILDCARD;
-  titleOffset?: number | Wildcard<number> | SHORT_WILDCARD;
-  titleMaxLength?: number | Wildcard<number> | SHORT_WILDCARD;
-  characterWidth?: number | Wildcard<number> | SHORT_WILDCARD;
+  title?: WildcardProperty<string>;
+  titleColor?: WildcardProperty<string>;
+  titleFont?: WildcardProperty<string>;
+  titleFontWeight?: WildcardProperty<string>;
+  titleFontSize?: WildcardProperty<number>;
+  titleOffset?: WildcardProperty<number>;
+  titleMaxLength?: WildcardProperty<number>;
+  characterWidth?: WildcardProperty<number>;
 }
 
 export interface BinQuery extends Wildcard<boolean> {
-  maxbins?: number | Wildcard<number> | SHORT_WILDCARD;
-  min?: number | Wildcard<number> | SHORT_WILDCARD;
-  max?: number | Wildcard<number> | SHORT_WILDCARD;
-  base?: number | Wildcard<number> | SHORT_WILDCARD;
-  step?: number | Wildcard<number> | SHORT_WILDCARD;
-  steps?: number[] | Wildcard<number[]> | SHORT_WILDCARD;
-  minstep?: number | Wildcard<number> | SHORT_WILDCARD;
-  div?: number[] | Wildcard<number[]> | SHORT_WILDCARD;
+  maxbins?: WildcardProperty<number>;
+  min?: WildcardProperty<number>;
+  max?: WildcardProperty<number>;
+  base?: WildcardProperty<number>;
+  step?: WildcardProperty<number>;
+  steps?: WildcardProperty<number>;
+  minstep?: WildcardProperty<number>;
+  div?: WildcardProperty<number>;
 }
 
 export interface LegendQuery extends Wildcard<boolean> {
   // General Legend Properties
-  orient?: string | Wildcard<string> | SHORT_WILDCARD;
-  offset?: number | Wildcard<number> | SHORT_WILDCARD;
-  values?: any[] | Wildcard<any[]> | SHORT_WILDCARD;
+  orient?: WildcardProperty<string>;
+  offset?: WildcardProperty<number>;
+  values?: WildcardProperty<any>;
 
   // Legend_Label Properties
-  format?: string | Wildcard<string> | SHORT_WILDCARD;
-  labelAlign?: string | Wildcard<string> | SHORT_WILDCARD;
+  format?: WildcardProperty<string>;
+  labelAlign?: WildcardProperty<string>;
   labelBaseline?:string | Wildcard<string> | SHORT_WILDCARD;
-  labelColor?: string | Wildcard<string> | SHORT_WILDCARD;
-  labelFont?: string | Wildcard<string> | SHORT_WILDCARD;
-  labelFontSize?: number | Wildcard<number> | SHORT_WILDCARD;
-  shortTimeLabels?: boolean | Wildcard<boolean> | SHORT_WILDCARD;
+  labelColor?: WildcardProperty<string>;
+  labelFont?: WildcardProperty<string>;
+  labelFontSize?: WildcardProperty<number>;
+  shortTimeLabels?: WildcardProperty<boolean>;
 
   // Legend_Symbol Properties
-  symbolColor?: string | Wildcard<string> | SHORT_WILDCARD;
-  symbolShape?: string | Wildcard<string> | SHORT_WILDCARD;
-  symbolSize?: number | Wildcard<number> | SHORT_WILDCARD;
-  symbolStrokeWidth?: number | Wildcard<number> | SHORT_WILDCARD;
+  symbolColor?: WildcardProperty<string>;
+  symbolShape?: WildcardProperty<string>;
+  symbolSize?: WildcardProperty<number>;
+  symbolStrokeWidth?: WildcardProperty<number>;
 
   // Legend_Title Properties
-  title?: string | Wildcard<string> | SHORT_WILDCARD;
-  titleColor?: string | Wildcard<string> | SHORT_WILDCARD;
-  titleFont?: string | Wildcard<string> | SHORT_WILDCARD;
-  titleFontSize?: number | Wildcard<number> | SHORT_WILDCARD;
-  titleFontWeight?: string | Wildcard<string> | SHORT_WILDCARD;
+  title?: WildcardProperty<string>;
+  titleColor?: WildcardProperty<string>;
+  titleFont?: WildcardProperty<string>;
+  titleFontSize?: WildcardProperty<number>;
+  titleFontWeight?: WildcardProperty<string>;
 }
 
 export interface ScaleQuery extends Wildcard<boolean> {
-  bandSize?: number | Wildcard<number> | SHORT_WILDCARD;
-  clamp?: boolean | Wildcard<boolean> | SHORT_WILDCARD;
+  bandSize?: WildcardProperty<number>;
+  clamp?: WildcardProperty<boolean>;
   domain?: number[] | string[] | Wildcard<number[] | string[]> | SHORT_WILDCARD;
-  exponent?: number | Wildcard<number> | SHORT_WILDCARD;
-  nice?: boolean | Wildcard<boolean> | SHORT_WILDCARD;
+  exponent?: WildcardProperty<number>;
+  nice?: WildcardProperty<boolean>;
   range?: string | number[] | string[] | Wildcard<string | number[] | string[]> | SHORT_WILDCARD;
-  round?: boolean | Wildcard<boolean> | SHORT_WILDCARD;
-  type?: ScaleType | Wildcard<ScaleType> | SHORT_WILDCARD;
-  useRawDomain?: boolean | Wildcard<boolean> | SHORT_WILDCARD;
-  zero?: boolean | Wildcard<boolean> | SHORT_WILDCARD;
+  round?: WildcardProperty<boolean>;
+  type?: WildcardProperty<ScaleType>;
+  useRawDomain?: WildcardProperty<boolean>;
+  zero?: WildcardProperty<boolean>;
 
 }
 

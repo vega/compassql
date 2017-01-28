@@ -5,7 +5,7 @@ import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {Mark, BAR, AREA} from 'vega-lite/src/mark';
 import {StackOffset, StackProperties} from 'vega-lite/src/stack';
 
-import {Wildcard, SHORT_WILDCARD, isWildcard} from '../wildcard';
+import {isWildcard, WildcardProperty} from '../wildcard';
 import {ENCODING_PROPERTIES, isNestedEncodingProperty, Property} from '../property';
 import {contains, extend, keys, some} from '../util';
 
@@ -16,7 +16,7 @@ import {EncodingQuery} from './encoding';
 
 export interface SpecQuery {
   data?: Data;
-  mark: Mark | Wildcard<Mark> | SHORT_WILDCARD;
+  mark: WildcardProperty<Mark>;
   transform?: TransformQuery;
   encodings: EncodingQuery[];
 

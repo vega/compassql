@@ -4,13 +4,14 @@ import {Schema} from './schema';
 import {extend, isArray} from './util';
 
 export const SHORT_WILDCARD: SHORT_WILDCARD = '?';
-
 export type SHORT_WILDCARD = '?';
 
 export interface Wildcard<T> {
   name?: string;
   enum?: T[];
 }
+
+export type WildcardProperty<T> = T | Wildcard<T> | SHORT_WILDCARD;
 
 export interface ExtendedWildcard<T> extends Wildcard<T> {
   [prop: string]: any;
