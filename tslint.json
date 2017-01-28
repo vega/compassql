@@ -11,7 +11,7 @@
     "jsdoc-format": true,
     "adjacent-overload-signatures": true,
     "member-access": true,
-    "semicolon": true,
+    "semicolon": [true, "always"],
     "no-duplicate-variable": true,
     "prefer-for-of": true,
     "no-conditional-assignment": true,
@@ -34,6 +34,7 @@
     "no-shadowed-variable": true,
     "no-trailing-whitespace": true,
     "no-unused-expression": true,
+    "no-unused-variable": [true, "check-parameters", {"ignore-pattern": "^_"}],
     "no-use-before-declare": true,
     "no-var-keyword": true,
     "one-line": [
