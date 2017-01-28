@@ -2,12 +2,13 @@ import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Axis} from 'vega-lite/src/axis';
 import {Bin} from 'vega-lite/src/bin';
 import {Channel} from 'vega-lite/src/channel';
-import {ScaleType} from 'vega-lite/src/scale';
 import {Scale} from 'vega-lite/src/scale';
 import {Legend} from 'vega-lite/src/legend';
 import {SortOrder, SortField} from 'vega-lite/src/sort';
-import {defaultScaleType, TimeUnit} from 'vega-lite/src/timeunit';
+import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
+
+import compileScaleType from 'vega-lite/src/compile/scale/type';
 
 import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
 import {contains} from '../util';
@@ -70,34 +71,52 @@ export function isMeasure(encQ: EncodingQuery) {
  */
 
 export function scaleType(encQ: EncodingQuery) {
-  const scale: ScaleQuery = encQ.scale === true || encQ.scale === SHORT_WILDCARD ? {} : encQ.scale;
+  const scale: ScaleQuery = encQ.scale === true || encQ.scale === SHORT_WILDCARD ? {} : encQ.scale || {};
   const type = encQ.type;
+  const channel = encQ.channel;
   const timeUnit = encQ.timeUnit;
 
-  if (scale && scale.type !== undefined) {
-    return scale.type;
-  }
-  if (isWildcard(type)) {
+  // HACK: All of markType, hasTopLevelSize, and scaleConfig only affect
+  // sub-type of ordinal to quantitative scales (point or band)
+  // Currently, most of scaleType usage in CompassQL doesn't care about this subtle difference.
+  // Thus, instead of making this method requiring the global mark and topLevelSize,
+  // we will just call it with mark = undefined and hasTopLevelSize = false.
+  // Thus, currently, we will always get a point scale unless a CompassQuery specifies band.
+  const markType = undefined;
+  const hasTopLevelSize = false;
+  const scaleConfig = {};
+
+  if (isWildcard(scale.type) || isWildcard(type) || isWildcard(channel) ) {
     return undefined;
   }
 
-  /* istanbul ignore else */
-  if (type === Type.QUANTITATIVE) {
-    return ScaleType.LINEAR;
-  } else if (type === Type.ORDINAL || type === Type.NOMINAL) {
-    return ScaleType.ORDINAL;
+  let rangeStep: number = undefined;
+  // Note: Range step currently does not matter as we don't pass mark into compileScaleType anyway.
+  // However, if we pass mark, we could use a rule like the following.
+  // I also have few test cases listed in encoding.test.ts
+  // if (channel === 'x' || channel === 'y') {
+  //   if (isWildcard(scale.rangeStep)) {
+  //     if (isShortWildcard(scale.rangeStep)) {
+  //       return undefined;
+  //     } else if (scale.rangeStep.enum) {
+  //       const e = scale.rangeStep.enum;
+  //       // if enumerated value contains enum then we can't be sure
+  //       if (contains(e, undefined) || contains(e, null)) {
+  //         return undefined;
+  //       }
+  //       rangeStep = e[0];
+  //     }
+  //   }
+  // }
 
-  } else if (type === Type.TEMPORAL) {
-    if (timeUnit !== undefined) {
-      if (isWildcard(timeUnit)) {
-        return undefined;
-      }
-      return defaultScaleType(timeUnit as TimeUnit);
-    } else {
-      return ScaleType.TIME;
-    }
-  } else {
-    throw new Error('Unsupported type: ' + type + ' in scaleType');
+  // if type is fixed and it's not temporal, we can ignore time unit.
+  if (type === 'temporal' && isWildcard(timeUnit)) {
+    return undefined;
   }
+
+  return compileScaleType(
+    scale.type, type, channel, timeUnit as TimeUnit, markType,
+    hasTopLevelSize, rangeStep, scaleConfig
+  );
 }
 
