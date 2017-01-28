@@ -1,6 +1,6 @@
 import {AxisOrient} from 'vega-lite/src/axis';
 import {Channel} from 'vega-lite/src/channel';
-import {ScaleType} from 'vega-lite/src/scale';
+import {ScaleType, hasDiscreteDomain} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
 import {QueryConfig} from './config';
@@ -110,7 +110,7 @@ export function xAxisOnTopForHighYCardinalityWithoutColumn(specM: SpecQueryModel
   if (encQIndex[Channel.COLUMN] === undefined) {
     const xEncQ = encQIndex[Channel.X];
     const yEncQ = encQIndex[Channel.Y];
-    if (yEncQ !== undefined && yEncQ.field && scaleType(yEncQ) === ScaleType.ORDINAL) {
+    if (yEncQ !== undefined && yEncQ.field && hasDiscreteDomain(scaleType(yEncQ))) {
       if (xEncQ !== undefined) {
         if (schema.cardinality(yEncQ) > opt.xAxisOnTopForHighYCardinalityWithoutColumn.maxCardinality) {
 
