@@ -1,6 +1,5 @@
 import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
-import {Property} from '../property';
 import {Schema} from '../schema';
 
 import {RankingScore, FeatureScore} from './ranking';
@@ -16,7 +15,7 @@ export const name = 'fieldOrder';
  * and only compare the field on the 1-th index only if the fields on the 0-th index are the same.
  */
 export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): RankingScore {
-  const fieldWildcardIndices = specM.wildcardIndex.encodingIndicesByProperty[Property.FIELD];
+  const fieldWildcardIndices = specM.wildcardIndex.encodingIndicesByProperty.get('field');
   if (!fieldWildcardIndices) {
     return {
       score: 0,
@@ -33,7 +32,7 @@ export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): Ra
   for (let i = fieldWildcardIndices.length - 1; i >= 0; i--) {
     const index = fieldWildcardIndices[i];
     const field = encodings[index].field as string;
-    const fieldWildcard = specM.wildcardIndex.encodings[index].field;
+    const fieldWildcard = specM.wildcardIndex.encodings[index].get('field');
     const fieldIndex = schema.fieldSchema(field).index;
      // reverse order field with lower index should get higher score and come first
     const score = - fieldIndex * base;

@@ -105,7 +105,7 @@
     });
 
     [TimeUnit.HOURS, TimeUnit.DAY, TimeUnit.MONTH, TimeUnit.QUARTER].forEach((timeUnit) => {
-      it('should return ScaleType.ORDINAL if type is temporal and TimeUnit is ' + timeUnit + ' and scale type is not specified', () => {
+      it('should return ScaleType.POINT if type is temporal and TimeUnit is ' + timeUnit + ' and scale type is not specified', () => {
         const sType = scaleType({
           channel: 'x',
           timeUnit: timeUnit,

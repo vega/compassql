@@ -7,9 +7,14 @@ import {SortOrder} from 'vega-lite/src/sort';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
+import {PropIndex} from '../../src/propindex';
 import {SHORT_WILDCARD} from '../../src/wildcard';
-import {parse, splitWithTail, shorthandParser, vlSpec, spec as specShorthand, encoding as encodingShorthand, fieldDef as fieldDefShorthand, calculate as calculateShorthand, INCLUDE_ALL, getReplacer} from '../../src/query/shorthand';
-import {extend} from '../../src/util';
+import {
+  parse, splitWithTail, shorthandParser, vlSpec, spec as specShorthand,
+  encoding as encodingShorthand, fieldDef as fieldDefShorthand, calculate as calculateShorthand,
+  INCLUDE_ALL, getReplacer, Replacer
+} from '../../src/query/shorthand';
+
 import {REPLACE_BLANK_FIELDS} from '../../src/query/groupby';
 import {EncodingQuery} from '../../src/query/encoding';
 import {SpecQuery} from '../../src/query/spec';
@@ -264,14 +269,14 @@ describe('query/shorthand', () => {
           ]
         },
         INCLUDE_ALL,
-        {
+        new PropIndex<Replacer>({
           channel: (channel: any) => {
             if (channel === Channel.X || channel === Channel.Y) {
               return 'xy';
             }
             return channel;
           }
-        }
+        })
       );
       assert.equal(str, 'point|color:b,q|xy:a,q');
     });
@@ -282,22 +287,22 @@ describe('query/shorthand', () => {
         encodings: [
           {channel: Channel.X, field: 'a', type: Type.QUANTITATIVE}
         ]
-      }, {channel: true, field: true, type: true});
+      }, new PropIndex<boolean>({channel: true, field: true, type: true}));
       assert.equal(str, 'x:a,q');
     });
 
     it('should return correct spec string for a histogram with autoCount=true when groupBy field with blank replacer.', () => {
       const str = specShorthand({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, bin: true, field: 'a', type: Type.QUANTITATIVE},
-          {channel: Channel.Y, autoCount: true, type: Type.QUANTITATIVE}
-        ]
-      }, { // include
-        field: true
-      }, { // replacer
-        field: getReplacer(REPLACE_BLANK_FIELDS)
-      });
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.X, bin: true, field: 'a', type: Type.QUANTITATIVE},
+            {channel: Channel.Y, autoCount: true, type: Type.QUANTITATIVE}
+          ]
+        },
+        new PropIndex<boolean>({field: true}), new PropIndex<Replacer>({ // replacer
+          field: getReplacer(REPLACE_BLANK_FIELDS)
+        })
+      );
       assert.equal(str, 'a');
     });
 
@@ -401,7 +406,7 @@ describe('query/shorthand', () => {
           {channel: Channel.Y, field: 'n', type: Type.NOMINAL},
           {channel: Channel.COLOR, field: 'n1', type: Type.NOMINAL}
         ]
-      }, extend({}, INCLUDE_ALL, {stack: false}));
+      }, INCLUDE_ALL.duplicate().set('stack', false));
       assert.equal(str, 'bar|color:n1,n|x:sum(q,q)|y:n,n');
     });
   });
@@ -425,9 +430,9 @@ describe('query/shorthand', () => {
     it('should return correct encoding string for raw field when channel is not included', () => {
        const str = encodingShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE
-       }, {
+       }, new PropIndex<boolean>({
          field: true, type: true
-       });
+       }));
        assert.equal(str, 'a,q');
     });
   });
@@ -444,7 +449,7 @@ describe('query/shorthand', () => {
     });
 
     it('should return correct fieldDefShorthand string for raw field when nothing is included', () => {
-       const str = fieldDefShorthand({channel: Channel.X, field: 'a', type: Type.QUANTITATIVE}, {});
+       const str = fieldDefShorthand({channel: Channel.X, field: 'a', type: Type.QUANTITATIVE}, new PropIndex<boolean>());
        assert.equal(str, '...');
     });
 
@@ -458,7 +463,7 @@ describe('query/shorthand', () => {
     it('should not include aggregate string for aggregate field when aggregate is not included', () => {
        const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN
-       }, {field: true, type: true});
+       }, new PropIndex<boolean>({field: true, type: true}));
        assert.equal(str, 'a,q');
     });
 
@@ -531,11 +536,11 @@ describe('query/shorthand', () => {
       assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"linear"})');
     });
 
-    it('should return correct fieldDefShorthand string for scale with scaleType ordinal and sort field definition object', () => {
+    it('should return correct fieldDefShorthand string for scale with scaleType point and sort field definition object', () => {
       const str = fieldDefShorthand({
-        channel: Channel.Y, field: 'a', type: Type.ORDINAL, scale: {type: ScaleType.ORDINAL}, sort: {op: AggregateOp.MEAN, field: 'b'}
+        channel: Channel.Y, field: 'a', type: Type.ORDINAL, scale: {type: ScaleType.POINT}, sort: {field: 'b', op: AggregateOp.MEAN}
       });
-      assert.equal(str, 'a,o,scale={"type":"ordinal"},sort={"field":"b","op":"mean"}');
+      assert.equal(str, 'a,o,scale={"type":"point"},sort={"field":"b","op":"mean"}');
     });
 
     it('should return correct fieldDefShorthand string for bin with maxbins, axis with orient, scale with scaleType ', () => {
@@ -572,7 +577,7 @@ describe('query/shorthand', () => {
           }
         ]
       });
-      assert.equal(str, 'point|color:a,n,legend={"orient":"right","labelAlign":"left","symbolSize":12,"title":"test title"}');
+      assert.equal(str, 'point|color:a,n,legend={"labelAlign":"left","orient":"right","symbolSize":12,"title":"test title"}');
     });
 
     it('should return a fieldDefShorthand string without incorrect legend', () => {
@@ -654,7 +659,7 @@ describe('query/shorthand', () => {
        const str = fieldDefShorthand({
          channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {extent: [0, 20]}
        });
-       assert.equal(str, 'bin(a,q,extent=[0, 20])');
+       assert.equal(str, 'bin(a,q,extent=[0,20])');
     });
 
     it('should return correct fieldDefShorthand string for bin field with base', () => {
@@ -701,7 +706,7 @@ describe('query/shorthand', () => {
     it('should return correct fieldDefShorthand string for bin field with maxbins and scale with scaleType linear when only field, bin, and type are included', () => {
       const str = fieldDefShorthand({
         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, bin: {maxbins: 20}, scale: {type: ScaleType.LINEAR}
-      }, {field: true, bin: true, type: true});
+      }, new PropIndex<boolean>({field: true, bin: true, type: true}));
       assert.equal(str, 'bin(a,q)');
     });
 

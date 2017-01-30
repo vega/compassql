@@ -1,13 +1,13 @@
 import {AxisOrient} from 'vega-lite/src/axis';
 import {Channel} from 'vega-lite/src/channel';
-import {ScaleType, hasDiscreteDomain} from 'vega-lite/src/scale';
+import {hasDiscreteDomain} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
 import {QueryConfig} from './config';
 import {SpecQueryModel} from './model';
 import {AxisQuery, EncodingQuery, ScaleQuery, scaleType} from './query/encoding';
 import {Schema} from './schema';
-import {contains, Dict} from './util';
+import {Dict} from './util';
 
 export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryConfig): SpecQueryModel[] {
   let encQIndex: Dict<EncodingQuery> = {};
@@ -50,7 +50,8 @@ export function smallRangeStepForHighCardinalityOrFacet(specM: SpecQueryModel, s
 
       // We do not want to assign a rangeStep if scale is set to false
       // and we only apply this if the scale is (or can be) an ordinal scale.
-      if (yEncQ.scale && contains([ScaleType.ORDINAL, undefined], scaleType(yEncQ))) {
+      const yScaleType = scaleType(yEncQ);
+      if (yEncQ.scale && (yScaleType === undefined || hasDiscreteDomain(yScaleType))) {
         if (!(yEncQ.scale as ScaleQuery).rangeStep) {
           (yEncQ.scale as ScaleQuery).rangeStep = 12;
         }
@@ -70,7 +71,8 @@ export function smallRangeStepForHighCardinalityOrFacet(specM: SpecQueryModel, s
 
       // We do not want to assign a rangeStep if scale is set to false
       // and we only apply this if the scale is (or can be) an ordinal scale.
-      if (xEncQ.scale && contains([ScaleType.ORDINAL, undefined], scaleType(xEncQ))) {
+      const xScaleType = scaleType(xEncQ);
+      if (xEncQ.scale && (xScaleType === undefined || hasDiscreteDomain(xScaleType))) {
         if (!(xEncQ.scale as ScaleQuery).rangeStep) {
           (xEncQ.scale as ScaleQuery).rangeStep = 12;
         }

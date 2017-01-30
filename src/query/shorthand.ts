@@ -5,22 +5,19 @@ import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {SINGLE_TIMEUNITS, MULTI_TIMEUNITS} from 'vega-lite/src/timeunit';
 import {Type, getFullName} from 'vega-lite/src/type';
 import {toMap, isString} from 'datalib/src/util';
-import {NESTED_ENCODING_PROPERTIES, hasNestedProperty} from '../property';
 
 import {EncodingQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
 
 import {isWildcard, isShortWildcard, SHORT_WILDCARD} from '../wildcard';
-import {getNestedEncodingPropertyChildren, Property, DEFAULT_PROPERTY_PRECEDENCE} from '../property';
-import {Dict, extend, keys, isArray} from '../util';
+import {getEncodingNestedProp, Property, hasNestedProperty, DEFAULT_PROP_PRECEDENCE, SORT_PROPS} from '../property';
+import {PropIndex} from '../propindex';
+import {Dict, keys, isArray, isBoolean} from '../util';
 
 export type Replacer = (s: string) => string;
 
-export function getReplacerIndex(replaceIndex: Dict<Dict<string>>): Dict<Replacer> {
-  return keys(replaceIndex).reduce((fnIndex, prop: string) => {
-    fnIndex[prop] = getReplacer(replaceIndex[prop]);
-    return fnIndex;
-  }, {});
+export function getReplacerIndex(replaceIndex: PropIndex<Dict<string>>): PropIndex<Replacer> {
+  return replaceIndex.map(r => getReplacer(r));
 }
 
 export function getReplacer(replace: Dict<string>): Replacer {
@@ -54,20 +51,20 @@ export function replace(v: any, replacer: Replacer): any {
   return v;
 }
 
-export const INCLUDE_ALL: Dict<boolean> =
-  // TODO: remove manual STACK, FILTER, CALCULATE concat once we really support enumerating it.
-  DEFAULT_PROPERTY_PRECEDENCE.concat([Property.CALCULATE, Property.FILTER, Property.FILTERINVALID, Property.STACK])
-    .reduce((m, prop) => {
-      m[prop] = true;
-      return m;
-    }, {} as Dict<boolean>);
+export const REPLACE_NONE = new PropIndex<Replacer>();
+
+export const INCLUDE_ALL: PropIndex<boolean> =
+  // FIXME: remove manual STACK, FILTER, CALCULATE concat once we really support enumerating it.
+  DEFAULT_PROP_PRECEDENCE
+    .concat(SORT_PROPS, [Property.CALCULATE, Property.FILTER, Property.FILTERINVALID, Property.STACK])
+    .reduce((pi, prop) => pi.set(prop, true), new PropIndex<boolean>());
 
 
 export function vlSpec(vlspec: ExtendedUnitSpec,
-    _: Dict<boolean> = INCLUDE_ALL,
-    __: Dict<Replacer> = {}) {
+    include: PropIndex<boolean> = INCLUDE_ALL,
+    replace: PropIndex<Replacer> = REPLACE_NONE) {
   const specQ = fromSpec(vlspec);
-  return spec(specQ);
+  return spec(specQ, include, replace);
 }
 
 export const PROPERTY_SUPPORTED_CHANNELS = {
@@ -84,29 +81,29 @@ export const PROPERTY_SUPPORTED_CHANNELS = {
  * @param replace Dictionary of replace function for values of a particular property type (key)
  */
 export function spec(specQ: SpecQuery,
-    include: Dict<boolean> = INCLUDE_ALL,
-    replace: Dict<Replacer> = {}
+    include: PropIndex<boolean> = INCLUDE_ALL,
+    replace: PropIndex<Replacer> = REPLACE_NONE
     ): string {
   const parts = [];
 
-  if (include[Property.MARK]) {
-    parts.push(value(specQ.mark, replace[Property.MARK]));
+  if (include.get(Property.MARK)) {
+    parts.push(value(specQ.mark, replace.get(Property.MARK)));
   }
 
   if (specQ.transform) {
-    if (include[Property.CALCULATE]) {
+    if (include.get(Property.CALCULATE)) {
       if (specQ.transform.calculate !== undefined) {
         parts.push('calculate:' + calculate(specQ.transform.calculate));
       }
     }
 
-    if (include[Property.FILTER]) {
+    if (include.get(Property.FILTER)) {
       if (specQ.transform.filter !== undefined) {
         parts.push('filter:' + JSON.stringify(specQ.transform.filter));
       }
     }
 
-    if (include[Property.FILTERINVALID]) {
+    if (include.get(Property.FILTERINVALID)) {
       if (specQ.transform.filterInvalid !== undefined) {
         parts.push('filterInvalid:' + specQ.transform.filterInvalid);
       }
@@ -114,13 +111,13 @@ export function spec(specQ: SpecQuery,
   }
 
   // TODO: extract this to its own stack method
-  if (include[Property.STACK]) {
+  if (include.get(Property.STACK)) {
     const _stack = stack(specQ);
     if (_stack) {
       // TODO: Refactor this once we have child stack property.
 
       // Exclude type since we don't care about type in stack
-      const includeExceptType = extend({}, include, {type: false});
+      const includeExceptType = include.duplicate().set('type', false);
 
       const field = fieldDef(_stack.fieldEncQ, includeExceptType, replace);
       const groupby = fieldDef(_stack.groupByEncQ, includeExceptType, replace);
@@ -171,13 +168,13 @@ export function calculate(formulaArr: Formula[]): string {
  * @param replace Dictionary of replace function for values of a particular property type (key)
  */
 export function encoding(encQ: EncodingQuery,
-    include: Dict<boolean> = INCLUDE_ALL,
-    replace: Dict<Replacer> = {}
+    include: PropIndex<boolean> = INCLUDE_ALL,
+    replace: PropIndex<Replacer> = REPLACE_NONE
     ): string {
 
   const parts = [];
-  if (include[Property.CHANNEL]) {
-    parts.push(value(encQ.channel, replace[Property.CHANNEL]));
+  if (include.get(Property.CHANNEL)) {
+    parts.push(value(encQ.channel, replace.get(Property.CHANNEL)));
   }
   const fieldDefStr = fieldDef(encQ, include, replace);
   if (fieldDefStr) {
@@ -193,115 +190,25 @@ export function encoding(encQ: EncodingQuery,
  * @param replace Dictionary of replace function for values of a particular property type (key)
  */
 export function fieldDef(encQ: EncodingQuery,
-    include: Dict<boolean> = INCLUDE_ALL,
-    replacer: Dict<Replacer> = {}): string {
+    include: PropIndex<boolean> = INCLUDE_ALL,
+    replacer: PropIndex<Replacer> = REPLACE_NONE): string {
 
-  let fn = null, fnEnumIndex = null;
-
-  /** Encoding properties e.g., Scale, Axis, Legend */
-  const props: {key: string, value: boolean | Object}[] = [];
-
-  if (include[Property.AGGREGATE] && encQ.autoCount === false) {
+  if (include.get(Property.AGGREGATE) && encQ.autoCount === false) {
     return '-';
-  } else if (include[Property.AGGREGATE] && encQ.aggregate && !isWildcard(encQ.aggregate)) {
-    fn = replace(encQ.aggregate, replacer[Property.AGGREGATE]);
-  } else if (include[Property.AGGREGATE] && encQ.autoCount && !isWildcard(encQ.autoCount)) {
-    fn = replace('count', replacer[Property.AGGREGATE]);;
-  } else if (include[Property.TIMEUNIT] && encQ.timeUnit && !isWildcard(encQ.timeUnit)) {
-    fn = replace(encQ.timeUnit, replacer[Property.TIMEUNIT]);
-  } else if (include[Property.BIN] && encQ.bin && !isWildcard(encQ.bin)) {
-    fn = 'bin';
-
-    NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
-      if (nestedProp && nestedProp.parent === fn) {
-        const  binTypeProp = nestedProp.property;
-        const  binTypeStr = nestedProp.child;
-        if (include[binTypeProp] && encQ.bin[binTypeStr]) {
-          props.push({
-            key: binTypeStr,
-            value: value(encQ.bin[binTypeStr], replacer[binTypeProp])
-          });
-        }
-      }
-    });
-  } else {
-    for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
-      const val = encQ[prop];
-      if (include[prop] && encQ[prop] && isWildcard(val)) {
-        fn = SHORT_WILDCARD + '';
-
-        // assign fnEnumIndex[prop] = array of enum values or just "?" if it is SHORT_WILDCARD
-        fnEnumIndex = fnEnumIndex || {};
-        fnEnumIndex[prop] = isShortWildcard(val) ? val : val.enum;
-
-        if (prop === Property.BIN) {
-          NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
-            const  binTypeProp = nestedProp.property;
-            const  binTypeStr = nestedProp.child;
-
-            if (include[binTypeProp] && encQ.bin[binTypeStr]) {
-              props.push({
-                key: binTypeStr,
-                value: value(encQ.bin[binTypeStr], replacer[binTypeProp])
-              });
-            }
-          });
-        }
-      }
-    }
-    if (fnEnumIndex && encQ.hasFn) {
-      fnEnumIndex.hasFn = true;
-    }
   }
 
-  for (const nestedPropParent of [Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND]) {
-    if (!isWildcard(encQ.channel) && !PROPERTY_SUPPORTED_CHANNELS[nestedPropParent][encQ.channel as Channel]) {
-      continue;
-    }
-
-    if (include[nestedPropParent]) {
-      if (encQ[nestedPropParent] && !isWildcard(encQ[nestedPropParent])) {
-        // `sort` can be a string (ascending/descending).
-        if (isString(encQ[nestedPropParent])) {
-          props.push({
-            key: nestedPropParent + '',
-            value: JSON.stringify(encQ[nestedPropParent])
-          });
-        } else {
-          const nestedProps = getNestedEncodingPropertyChildren(nestedPropParent);
-          const nestedPropChildren = nestedProps.reduce((p, nestedProp) => {
-            if (include[nestedProp.property] && encQ[nestedPropParent][nestedProp.child] !== undefined) {
-              p[nestedProp.child] = replace(encQ[nestedPropParent][nestedProp.child], replacer[nestedProp.property]);
-            }
-            return p;
-          }, {});
-
-          if(keys(nestedPropChildren).length > 0) {
-            props.push({
-              key: nestedPropParent + '',
-              value: JSON.stringify(nestedPropChildren)
-            });
-          }
-        }
-      } else if (encQ[nestedPropParent] === false || encQ[nestedPropParent] === null) {
-        // `scale`, `axis`, `legend` can be false/null.
-        props.push({
-          key: nestedPropParent + '',
-          value: false
-        });
-      }
-    }
-  }
+  const fn = func(encQ, include, replacer);
+  const props = fieldDefProps(encQ, include, replacer);
 
   // field
-  let fieldAndParams = include[Property.FIELD] ? value(encQ.field || '*', replacer[Property.FIELD]) : '...';
+  let fieldAndParams = include.get('field') ? value(encQ.field || '*', replacer.get('field')) : '...';
   // type
-  if (include[Property.TYPE]) {
+  if (include.get(Property.TYPE)) {
     if (isWildcard(encQ.type)) {
-      fieldAndParams += ',' + value(encQ.type, replacer[Property.TYPE]);
+      fieldAndParams += ',' + value(encQ.type, replacer.get(Property.TYPE));
     } else {
       const typeShort = ((encQ.type || Type.QUANTITATIVE)+'').substr(0,1);
-      fieldAndParams += ',' + value(typeShort, replacer[Property.TYPE]);
+      fieldAndParams += ',' + value(typeShort, replacer.get(Property.TYPE));
     }
   }
   // encoding properties
@@ -309,10 +216,117 @@ export function fieldDef(encQ: EncodingQuery,
     let val = p.value instanceof Array ? '[' + p.value + ']' : p.value;
     return ',' + p.key + '=' + val;
   }).join('');
+
   if (fn) {
-    return fn + (fnEnumIndex ? JSON.stringify(fnEnumIndex) : '') + '(' + fieldAndParams + ')';
+    let fnPrefix = isString(fn) ? fn : SHORT_WILDCARD +
+      (keys(fn).length > 0 ? JSON.stringify(fn) : '');
+
+    return fnPrefix + '(' + fieldAndParams + ')';
   }
   return fieldAndParams;
+}
+
+/**
+ * Return function part of
+ */
+function func(encQ: EncodingQuery, include: PropIndex<boolean>, replacer: PropIndex<Replacer>): string | Object {
+  if (include.get(Property.AGGREGATE) && encQ.aggregate && !isWildcard(encQ.aggregate)) {
+    return replace(encQ.aggregate, replacer.get(Property.AGGREGATE));
+  } else if (include.get(Property.AGGREGATE) && encQ.autoCount && !isWildcard(encQ.autoCount)) {
+    // autoCount is considered a part of aggregate
+    return replace('count', replacer.get(Property.AGGREGATE));;
+  } else if (include.get(Property.TIMEUNIT) && encQ.timeUnit && !isWildcard(encQ.timeUnit)) {
+    return replace(encQ.timeUnit, replacer.get(Property.TIMEUNIT));
+  } else if (include.get(Property.BIN) && encQ.bin && !isWildcard(encQ.bin)) {
+    return 'bin';
+  } else {
+    let fn: any = null;
+    for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
+      const val = encQ[prop];
+      if (include.get(prop) && encQ[prop] && isWildcard(val)) {
+
+        // assign fnEnumIndex[prop] = array of enum values or just "?" if it is SHORT_WILDCARD
+        fn = fn || {};
+        fn[prop] = isShortWildcard(val) ? val : val.enum;
+      }
+    }
+    if (fn && encQ.hasFn) {
+      fn.hasFn = true;
+    }
+    return fn;
+  }
+}
+
+function fieldDefProps(encQ: EncodingQuery, include: PropIndex<boolean>, replacer: PropIndex<Replacer>) {
+
+  /** Encoding properties e.g., Scale, Axis, Legend */
+  const props: {key: string, value: boolean | Object}[] = [];
+
+  // Parameters of function such as bin will be just top-level properties
+  if (!isBoolean(encQ.bin) && !isShortWildcard(encQ.bin)) {
+    const bin = encQ.bin;
+    for (const child in bin) {
+      const prop = getEncodingNestedProp('bin', child);
+      if (prop && include.get(prop) && bin[child] !== undefined) {
+        props.push({
+          key: child,
+          value: value(bin[child], replacer.get(prop))
+        });
+      }
+    }
+    // Sort to make sure that parameter are ordered consistently
+    props.sort((a, b) => a.key.localeCompare(b.key));
+  }
+
+  for (const parent of [Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND]) {
+    if (!isWildcard(encQ.channel) && !PROPERTY_SUPPORTED_CHANNELS[parent][encQ.channel as Channel]) {
+      continue;
+    }
+
+    if (include.get(parent) && encQ[parent] !== undefined) {
+      const parentValue = encQ[parent];
+      if (isBoolean(parentValue) || parentValue === null) {
+        // `scale`, `axis`, `legend` can be false/null.
+        props.push({
+          key: parent + '',
+          value: parentValue || false // return true or false (false if null)
+        });
+      } else if (isString(parentValue)) {
+
+        // `sort` can be a string (ascending/descending).
+        props.push({
+          key: parent + '',
+          value: replace(JSON.stringify(parentValue), replacer.get(parent))
+        });
+      } else {
+        let nestedPropChildren = [];
+        for (const child in parentValue) {
+          const nestedProp = getEncodingNestedProp(parent, child);
+          if (nestedProp && include.get(nestedProp) && parentValue[child] !== undefined) {
+            nestedPropChildren.push({
+              key: child,
+              value: value(parentValue[child], replacer.get(nestedProp))
+            });
+          }
+        }
+
+        if(nestedPropChildren.length > 0) {
+          const nestedPropObject = nestedPropChildren.sort((a, b) => a.key.localeCompare(b.key))
+            .reduce((o, item) => {
+              o[item.key] = item.value;
+              return o;
+            }, {});
+
+          // Sort to make sure that parameter are ordered consistently
+          props.push({
+            key: parent + '',
+            value: JSON.stringify(nestedPropObject)
+          });
+        }
+      }
+    }
+  }
+  return props;
 }
 
 const CHANNEL_INDEX = toMap(CHANNELS);
@@ -463,7 +477,7 @@ export namespace shorthandParser {
           );
         }
 
-        if (hasNestedProperty(prop as Property)) {
+        if (hasNestedProperty(prop)) {
           encQ[prop] = parsedValue;
         } else {
           // prop is a property of the aggregation function such as bin

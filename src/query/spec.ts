@@ -3,10 +3,10 @@ import {Config} from 'vega-lite/src/config';
 import {Data} from 'vega-lite/src/data';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {Mark} from 'vega-lite/src/mark';
-import {StackOffset, StackProperties, STACKABLE_MARKS} from 'vega-lite/src/stack';
+import {StackOffset, StackProperties} from 'vega-lite/src/stack';
 
 import {isWildcard, WildcardProperty} from '../wildcard';
-import {ENCODING_PROPERTIES, isNestedEncodingProperty, Property} from '../property';
+import {isEncodingTopLevelProperty, Property} from '../property';
 import {contains, extend, keys, some} from '../util';
 
 import {TransformQuery} from './transform';
@@ -39,16 +39,18 @@ export function fromSpec(spec: ExtendedUnitSpec): SpecQuery {
           let encQ: EncodingQuery = { channel: channel };
           let channelDef = spec.encoding[channel];
 
-          for (const prop of ENCODING_PROPERTIES) {
-            if (!isNestedEncodingProperty(prop) && channelDef[prop] !== undefined) {
-              encQ[prop] = channelDef[prop];
-            }
-            // Currently scale, axis, legend only support boolean, but not null.
-            // Therefore convert null to false.
-            if (contains([Property.SCALE, Property.AXIS, Property.LEGEND], prop) && encQ[prop] === null) {
-              encQ[prop] = false;
+          for (const prop in channelDef) {
+            if (isEncodingTopLevelProperty(prop as Property) && channelDef[prop] !== undefined) {
+              // Currently bin, scale, axis, legend only support boolean, but not null.
+              // Therefore convert null to false.
+              if (contains(['bin', 'scale', 'axis', 'legend'], prop) && channelDef[prop] === null) {
+                encQ[prop] = false;
+              } else {
+                encQ[prop] = channelDef[prop];
+              }
             }
           }
+
           return encQ;
         }
       )
@@ -76,7 +78,7 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
   }
 
   // Should have stackable mark
-  if (!contains(STACKABLE_MARKS, specQ.mark)) {
+  if (!contains(['bar', 'area'], specQ.mark)) {
     return null;
   }
 

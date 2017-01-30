@@ -13,8 +13,6 @@ import compileScaleType from 'vega-lite/src/compile/scale/type';
 import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
 import {contains} from '../util';
 
-export type Field = string;
-
 export interface EncodingQuery {
   channel: WildcardProperty<Channel>;
 
@@ -34,7 +32,7 @@ export interface EncodingQuery {
 
   sort?: SortOrder | SortField;
 
-  field?: WildcardProperty<Field>;
+  field?: WildcardProperty<string>;
   type?: WildcardProperty<Type>;
   // TODO: value
 
@@ -48,10 +46,12 @@ export type FlatQuery<T> = {
   [P in keyof T]: WildcardProperty<T[P]>
 };
 
-export type BinQuery = Wildcard<boolean> & FlatQuery<Bin>;
-export type ScaleQuery =  Wildcard<boolean> & FlatQuery<Scale>;
-export type AxisQuery =  Wildcard<boolean> & FlatQuery<Axis>;
-export type LegendQuery =  Wildcard<boolean> & FlatQuery<Legend>;
+export type FlatQueryWithEnableFlag<T> = (Wildcard<boolean> | {}) & FlatQuery<T>;
+
+export type BinQuery = FlatQueryWithEnableFlag<Bin>;
+export type ScaleQuery =  FlatQueryWithEnableFlag<Scale>;
+export type AxisQuery =  FlatQueryWithEnableFlag<Axis>;
+export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 
 export function isDimension(encQ: EncodingQuery) {
   return contains([Type.NOMINAL, Type.ORDINAL], encQ.type) ||

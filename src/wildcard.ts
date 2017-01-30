@@ -1,7 +1,23 @@
-import {QueryConfig} from './config';
-import {Property} from './property';
-import {Schema} from './schema';
-import {extend, isArray} from './util';
+import { QueryConfig } from './config';
+import {
+  Property, isEncodingNestedProp,
+  SCALE_CHILD_PROPS, AXIS_CHILD_PROPS, LEGEND_CHILD_PROPS
+} from './property';
+import { Schema } from './schema';
+import { extend, isArray } from './util';
+
+import {AggregateOp} from 'vega-lite/src/aggregate';
+import {Axis} from 'vega-lite/src/axis';
+import {Bin} from 'vega-lite/src/bin';
+import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR} from 'vega-lite/src/channel';
+import {FieldDef} from 'vega-lite/src/fielddef';
+import {Mark} from 'vega-lite/src/mark';
+import {Scale, ScaleType} from 'vega-lite/src/scale';
+import {Legend} from 'vega-lite/src/legend';
+import {SortField, SortOrder} from 'vega-lite/src/sort';
+import {TimeUnit} from 'vega-lite/src/timeunit';
+import {Type} from 'vega-lite/src/type';
+
 
 export const SHORT_WILDCARD: SHORT_WILDCARD = '?';
 export type SHORT_WILDCARD = '?';
@@ -32,431 +48,269 @@ export function initWildcard(prop: any, defaultName: string, defaultEnumValues: 
     }, prop === SHORT_WILDCARD ? {} : prop);
 }
 
-export function getDefaultName(prop: Property) {
-  switch (prop) {
-    case Property.MARK:
-      return 'm';
-    case Property.CHANNEL:
-      return 'c';
-    case Property.AGGREGATE:
-      return 'a';
-    case Property.AUTOCOUNT:
-      return '#';
-    case Property.BIN:
-      return 'b';
-    case Property.BIN_MAXBINS:
-      return 'b-mb';
-    case Property.BIN_MIN:
-      return 'b-min';
-    case Property.BIN_MAX:
-      return 'b-max';
-    case Property.BIN_BASE:
-      return 'b-base';
-    case Property.BIN_STEP:
-      return 'b-step';
-    case Property.BIN_STEPS:
-      return 'b-steps';
-    case Property.BIN_MINSTEP:
-      return 'b-mstep';
-    case Property.BIN_DIV:
-      return 'b-div';
-    case Property.SORT:
-      return 'so';
-    case Property.SORT_FIELD:
-      return 'so-f';
-    case Property.SORT_OP:
-      return 'so-op';
-    case Property.SORT_ORDER:
-      return 'so-or';
-    case Property.SCALE:
-      return 's';
-    case Property.SCALE_CLAMP:
-      return 's-c';
-    case Property.SCALE_DOMAIN:
-      return 's-d';
-    case Property.SCALE_EXPONENT:
-      return 's-e';
-    case Property.SCALE_NICE:
-      return 's-n';
-    case Property.SCALE_RANGE:
-      return 's-ra';
-    case Property.SCALE_RANGESTEP:
-      return 's-rs';
-    case Property.SCALE_ROUND:
-      return 's-r';
-    case Property.SCALE_TYPE:
-      return 's-t';
-    case Property.SCALE_USERAWDOMAIN:
-      return 's-u';
-    case Property.SCALE_ZERO:
-      return 's-z';
-    case Property.AXIS:
-      return 'ax';
-    case Property.AXIS_AXISCOLOR:
-      return 'ax-ac';
-    case Property.AXIS_AXISWIDTH:
-      return 'ax-aw';
-    case Property.AXIS_LAYER:
-      return 'ax-lay';
-    case Property.AXIS_OFFSET:
-      return 'ax-of';
-    case Property.AXIS_ORIENT:
-      return 'ax-or';
-    case Property.AXIS_GRID:
-      return 'ax-g';
-    case Property.AXIS_GRIDCOLOR:
-      return 'ax-gc';
-    case Property.AXIS_GRIDDASH:
-      return 'ax-gd';
-    case Property.AXIS_GRIDOPACITY:
-      return 'ax-go';
-    case Property.AXIS_GRIDWIDTH:
-      return 'ax-gw';
-    case Property.AXIS_LABELS:
-      return 'ax-lab';
-    case Property.AXIS_FORMAT:
-      return 'ax-f';
-    case Property.AXIS_LABELANGLE:
-      return 'ax-laba';
-    case Property.AXIS_LABELMAXLENGTH:
-      return 'ax-labm';
-    case Property.AXIS_SHORTTIMELABELS:
-      return 'ax-stl';
-    case Property.AXIS_SUBDIVIDE:
-      return 'ax-sub';
-    case Property.AXIS_TICKS:
-      return 'ax-t';
-    case Property.AXIS_TICKCOLOR:
-      return 'ax-tc';
-    case Property.AXIS_TICKLABELCOLOR:
-      return 'ax-tlc';
-    case Property.AXIS_TICKLABELFONT:
-      return 'ax-tlf';
-    case Property.AXIS_TICKLABELFONTSIZE:
-      return 'ax-tlfs';
-    case Property.AXIS_TICKPADDING:
-      return 'ax-tp';
-    case Property.AXIS_TICKSIZE:
-      return 'ax-ts';
-    case Property.AXIS_TICKSIZEMAJOR:
-      return 'ax-tsma';
-    case Property.AXIS_TICKSIZEMINOR:
-      return 'ax-tsmi';
-    case Property.AXIS_TICKSIZEEND:
-      return 'ax-tse';
-    case Property.AXIS_TICKWIDTH:
-      return 'ax-tw';
-    case Property.AXIS_VALUES:
-      return 'ax-v';
-    case Property.AXIS_TITLE:
-      return 'ax-ti';
-    case Property.AXIS_TITLECOLOR:
-      return 'ax-tic';
-    case Property.AXIS_TITLEFONT:
-      return 'ax-tif';
-    case Property.AXIS_TITLEFONTSIZE:
-      return 'ax-tifs';
-    case Property.AXIS_TITLEFONTWEIGHT:
-      return 'ax-tifw';
-    case Property.AXIS_TITLEOFFSET:
-      return 'ax-tio';
-    case Property.AXIS_TITLEMAXLENGTH:
-      return 'ax-timl';
-    case Property.AXIS_CHARACTERWIDTH:
-      return 'ax-cw';
-    case Property.LEGEND:
-      return 'l';
-    case Property.LEGEND_ORIENT:
-      return 'l-or';
-    case Property.LEGEND_OFFSET:
-      return 'l-of';
-    case Property.LEGEND_VALUES:
-      return 'l-v';
-    case Property.LEGEND_FORMAT:
-      return 'l-f';
-    case Property.LEGEND_LABELALIGN:
-      return 'l-la';
-    case Property.LEGEND_LABELBASELINE:
-      return 'l-lb';
-    case Property.LEGEND_LABELCOLOR:
-      return 'l-lc';
-    case Property.LEGEND_LABELFONT:
-      return 'l-lf';
-    case Property.LEGEND_LABELFONTSIZE:
-      return 'l-lfs';
-    case Property.LEGEND_SHORTTIMELABELS:
-      return 'l-stl';
-    case Property.LEGEND_SYMBOLCOLOR:
-      return 'l-syc';
-    case Property.LEGEND_SYMBOLSHAPE:
-      return 'l-sysh';
-    case Property.LEGEND_SYMBOLSIZE:
-      return 'l-sysi';
-    case Property.LEGEND_SYMBOLSTROKEWIDTH:
-      return 'l-sysw';
-    case Property.LEGEND_TITLE:
-      return 'l-ti';
-    case Property.LEGEND_TITLECOLOR:
-      return 'l-tic';
-    case Property.LEGEND_TITLEFONT:
-      return 'l-tif';
-    case Property.LEGEND_TITLEFONTSIZE:
-      return 'l-tifs';
-    case Property.LEGEND_TITLEFONTWEIGHT:
-      return 'l-tifw';
-    case Property.TIMEUNIT:
-      return 'tu';
-    case Property.FIELD:
-      return 'f';
-    case Property.TYPE:
-      return 't';
+/**
+ * Initial short names from list of full camelCaseNames.
+ * For each camelCaseNames, return unique short names based on initial (e.g., `ccn`)
+ */
+function initNestedPropName(fullNames: string[]) {
+  let index = {};
+  let has = {};
+  for (const fullName of fullNames) {
+    const initialIndices = [0];
+    for (let i = 0; i < fullName.length ; i++) {
+      if (fullName.charAt(i).toUpperCase() === fullName.charAt(i)) {
+        initialIndices.push(i);
+      }
+    }
+    let shortName = initialIndices.map(i => fullName.charAt(i)).join('').toLowerCase();
+    if (!has[shortName]) {
+      index[fullName] = shortName;
+      has[shortName] = true;
+      continue;
+    }
+    // If duplicate, add last character and try again!
+    if (initialIndices[initialIndices.length - 1] !== fullName.length - 1) {
+      shortName = initialIndices.concat([fullName.length - 1]).map(i => fullName.charAt(i)).join('').toLowerCase();
+      if (!has[shortName]) {
+        index[fullName] = shortName;
+        has[shortName] = true;
+        continue;
+      }
+    }
+    for (let i = 1; !index[fullName]; i++) {
+      let shortNameWithNo = shortName + '_' + i;
+      if (!has[shortNameWithNo]) {
+        index[fullName] = shortNameWithNo;
+        has[shortNameWithNo] = true;
+        break;
+      }
+    }
   }
-  /* istanbul ignore next */
-  throw new Error('Default name undefined');
+  return index;
 }
 
-export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryConfig): any[] {
-  switch (prop) {
-    case Property.FIELD:       // For field, by default enumerate all fields
-    case Property.SORT_FIELD:
-      return schema.fields();
-
-    // True, False for boolean values
-    case Property.AXIS:
-    case Property.AXIS_GRID:
-    case Property.AXIS_LABELS:
-    case Property.AXIS_SHORTTIMELABELS:
-    case Property.BIN:
-    case Property.LEGEND:
-    case Property.LEGEND_SHORTTIMELABELS:
-    case Property.SCALE:
-    case Property.SCALE_CLAMP:
-    case Property.SCALE_NICE:
-    case Property.SCALE_ROUND:
-    case Property.SCALE_USERAWDOMAIN:
-    case Property.SCALE_ZERO:
-    case Property.AUTOCOUNT:
-      return [false, true];
-
-
-    // For other properties, take default enumValues from config.
-    // The config name for each prop is a plural form of the prop.
-    case Property.AGGREGATE:
-      return opt.aggregates;
-
-    case Property.AXIS_AXISCOLOR:
-      return opt.axisAxisColors;
-
-    case Property.AXIS_AXISWIDTH:
-      return opt.axisAxisWidths;
-
-    case Property.AXIS_LAYER:
-      return opt.axisLayers;
-
-    case Property.AXIS_OFFSET:
-      return opt.axisOffsets;
-
-    case Property.AXIS_ORIENT:
-      return opt.axisOrients;
-
-    case Property.AXIS_GRIDCOLOR:
-      return opt.axisGridColors;
-
-    case Property.AXIS_GRIDDASH:
-      return opt.axisGridDashes;
-
-    case Property.AXIS_GRIDOPACITY:
-      return opt.axisGridOpacities;
-
-    case Property.AXIS_GRIDWIDTH:
-      return opt.axisGridWidths;
-
-    case Property.AXIS_FORMAT:
-      return opt.axisFormats;
-
-    case Property.AXIS_LABELANGLE:
-      return opt.axisLabelAngles;
-
-    case Property.AXIS_LABELMAXLENGTH:
-      return opt.axisLabelMaxLengths;
-
-    case Property.AXIS_SUBDIVIDE:
-      return opt.axisSubDivides;
-
-    case Property.AXIS_TICKS:
-      return opt.axisTicks;
-
-    case Property.AXIS_TICKCOLOR:
-      return opt.axisTickColors;
-
-    case Property.AXIS_TICKLABELCOLOR:
-      return opt.axisTickLabelColors;
-
-    case Property.AXIS_TICKLABELFONT:
-      return opt.axisTickLabelFonts;
-
-    case Property.AXIS_TICKLABELFONTSIZE:
-      return opt.axisTickLabelFontSizes;
-
-    case Property.AXIS_TICKPADDING:
-      return opt.axisTickPaddings;
-
-    case Property.AXIS_TICKSIZE:
-      return opt.axisTickSizes;
-
-    case Property.AXIS_TICKSIZEMAJOR:
-      return opt.axisTickSizeMajors;
-
-    case Property.AXIS_TICKSIZEMINOR:
-      return opt.axisTickSizeMinors;
-
-    case Property.AXIS_TICKSIZEEND:
-      return opt.axisTickSizeEnds;
-
-    case Property.AXIS_TICKWIDTH:
-      return opt.axisTickWidths;
-
-    case Property.AXIS_VALUES:
-      return opt.axisValuesList;
-
-    case Property.AXIS_TITLE:
-      return opt.axisTitles;
-
-    case Property.AXIS_TITLECOLOR:
-      return opt.axisTitleColors;
-
-    case Property.AXIS_TITLEFONT:
-      return opt.axisTitleFonts;
-
-    case Property.AXIS_TITLEFONTWEIGHT:
-      return opt.axisTitleFontWeights;
-
-    case Property.AXIS_TITLEFONTSIZE:
-      return opt.axisTitleFontSizes;
-
-    case Property.AXIS_TITLEOFFSET:
-      return opt.axisTitleOffsets;
-
-    case Property.AXIS_TITLEMAXLENGTH:
-      return opt.axisTitleMaxLengths;
-
-    case Property.AXIS_CHARACTERWIDTH:
-      return opt.axisCharacterWidths;
-
-    case Property.BIN_MAXBINS:
-      return opt.maxBinsList;
-
-    case Property.BIN_MIN:
-      return opt.binMinList;
-
-    case Property.BIN_MAX:
-      return opt.binMaxList;
-
-    case Property.BIN_BASE:
-      return opt.binBaseList;
-
-    case Property.BIN_STEP:
-      return opt.binStepList;
-
-    case Property.BIN_STEPS:
-      return opt.binStepsList;
-
-    case Property.BIN_MINSTEP:
-      return opt.binMinstepList;
-
-    case Property.BIN_DIV:
-      return opt.binDivList;
-
-    case Property.CHANNEL:
-      return opt.channels;
-
-    case Property.MARK:
-      return opt.marks;
-
-    case Property.LEGEND_ORIENT:
-      return opt.legendOrients;
-
-    case Property.LEGEND_OFFSET:
-      return opt.legendOffsets;
-
-    case Property.LEGEND_VALUES:
-      return opt.legendValuesList;
-
-    case Property.LEGEND_FORMAT:
-      return opt.legendFormats;
-
-    case Property.LEGEND_LABELALIGN:
-      return opt.legendLabelAligns;
-
-    case Property.LEGEND_LABELBASELINE:
-      return opt.legendLabelBaselines;
-
-    case Property.LEGEND_LABELCOLOR:
-      return opt.legendLabelColors;
-
-    case Property.LEGEND_LABELFONT:
-      return opt.legendLabelFonts;
-
-    case Property.LEGEND_LABELFONTSIZE:
-      return opt.legendLabelFontSizes;
-
-    case Property.LEGEND_SYMBOLCOLOR:
-      return opt.legendSymbolColors;
-
-    case Property.LEGEND_SYMBOLSHAPE:
-      return opt.legendSymbolShapes;
-
-    case Property.LEGEND_SYMBOLSIZE:
-      return opt.legendSymbolSizes;
-
-    case Property.LEGEND_SYMBOLSTROKEWIDTH:
-      return opt.legendSymbolStrokeWidths;
-
-    case Property.LEGEND_TITLE:
-      return opt.legendTitles;
-
-    case Property.LEGEND_TITLECOLOR:
-      return opt.legendTitleColors;
-
-    case Property.LEGEND_TITLEFONT:
-      return opt.legendTitleFonts;
-
-    case Property.LEGEND_TITLEFONTSIZE:
-      return opt.legendTitleFontSizes;
-
-    case Property.LEGEND_TITLEFONTWEIGHT:
-      return opt.legendTitleFontWeights;
-
-    case Property.SORT:
-      return opt.sorts;
-
-    case Property.SORT_OP:
-      return opt.sortOps;
-
-    case Property.SORT_ORDER:
-      return opt.sortOrders;
-
-    case Property.SCALE_RANGESTEP:
-      return opt.scaleRangeSteps;
-
-    case Property.SCALE_DOMAIN:
-      return opt.scaleDomains;
-
-    case Property.SCALE_EXPONENT:
-      return opt.scaleExponents;
-
-    case Property.SCALE_RANGE:
-      return opt.scaleRanges;
-
-    case Property.SCALE_TYPE:
-      return opt.scaleTypes;
-
-    case Property.TIMEUNIT:
-      return opt.timeUnits;
-
-    case Property.TYPE:
-      return opt.types;
+export const DEFAULT_NAME = {
+  mark: 'm',
+  channel: 'c',
+  aggregate: 'a',
+  autoCount: '#',
+  hasFn: 'h',
+  bin: 'b',
+  sort: 'so',
+  scale: 's',
+  axis: 'ax',
+  legend: 'l',
+
+  timeUnit: 'tu',
+  field: 'f',
+  type: 't',
+
+  binProps: {
+    maxbins: 'mb',
+    min: 'mi',
+    max: 'ma',
+    base: 'b',
+    step: 's',
+    steps: 'ss',
+    minstep: 'ms',
+    divide: 'd'
+  },
+  sortProps: {
+    field: 'f',
+    op: 'o',
+    order: 'or'
+  },
+  scaleProps: initNestedPropName(SCALE_CHILD_PROPS),
+  axisProps: initNestedPropName(AXIS_CHILD_PROPS),
+  legendProps: initNestedPropName(LEGEND_CHILD_PROPS)
+};
+
+export function getDefaultName(prop: Property) {
+  if (isEncodingNestedProp(prop)) {
+    return DEFAULT_NAME[prop.parent] + '-' + DEFAULT_NAME[prop.parent + 'Props'][prop.child];
   }
+  if (DEFAULT_NAME[prop]) {
+    return DEFAULT_NAME[prop];
+  }
+  /* istanbul ignore next */
+  throw new Error('Default name undefined for ' + prop);
+}
+
+/**
+ * Generic index for default enum (values to enumerate) of a particular definition type.
+ */
+type DefEnumIndex<T> = { [P in keyof T]: T[P][]};
+
+const DEFAULT_BOOLEAN_ENUM = [false, true];
+
+export type EnumIndex =
+  {
+    mark: Mark[];
+    channel: Channel[],
+    autoCount: boolean[],
+    hasFn: boolean[],
+  } &
+  DefEnumIndex<FieldDef> &
+  {
+    sort: (SortField | SortOrder)[],
+    scale: boolean[],
+    axis: boolean[],
+    legend: boolean[],
+
+    binProps: Partial<DefEnumIndex<Bin>>,
+    sortProps: Partial<DefEnumIndex<SortField>>,
+    scaleProps: Partial<DefEnumIndex<Scale>>,
+    axisProps: Partial<DefEnumIndex<Axis>>,
+    legendProps: Partial<DefEnumIndex<Legend>>
+  };
+
+
+const DEFAULT_BIN_PROPS_ENUM: DefEnumIndex<Bin> = {
+  maxbins: [5, 10, 20],
+  extent: [undefined],
+  base: [10],
+  step: [undefined],
+  steps: [undefined],
+  minstep: [undefined],
+  divide: [[5, 2]]
+};
+
+const DEFAULT_SORT_PROPS: DefEnumIndex<SortField> = {
+  field: [undefined], // This should be never call and instead read from the schema
+  op: [AggregateOp.MIN, AggregateOp.MEAN],
+  order: [SortOrder.ASCENDING, SortOrder.DESCENDING]
+};
+
+const DEFAULT_SCALE_PROPS_ENUM: DefEnumIndex<Scale> = {
+  type: [undefined, ScaleType.LOG],
+  domain: [undefined],
+  exponent: [1, 2],
+
+  clamp: DEFAULT_BOOLEAN_ENUM,
+  nice: DEFAULT_BOOLEAN_ENUM,
+  round: DEFAULT_BOOLEAN_ENUM,
+  useRawDomain: DEFAULT_BOOLEAN_ENUM,
+  zero: DEFAULT_BOOLEAN_ENUM,
+
+  range: [undefined],
+  rangeStep: [17, 21],
+};
+
+
+const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
+  axisColor: [undefined],
+  axisWidth: [undefined],
+  zindex: [1, 0],
+  offset: [undefined],
+  orient: [undefined],
+  shortTimeLabels: DEFAULT_BOOLEAN_ENUM,
+  subdivide: [undefined],
+  values: [undefined],
+
+  grid: DEFAULT_BOOLEAN_ENUM,
+  gridColor: [undefined],
+  gridDash: [undefined],
+  gridOpacity: [undefined],
+  gridWidth: [undefined],
+
+  format: [undefined],
+  labels: DEFAULT_BOOLEAN_ENUM,
+  labelAngle: [undefined],
+  labelMaxLength: [undefined],
+
+
+  ticks: DEFAULT_BOOLEAN_ENUM,
+  tickColor: [undefined],
+  tickLabelColor: [undefined],
+  tickLabelFont: [undefined],
+  tickLabelFontSize: [undefined],
+  tickPadding: [undefined],
+  tickSize: [undefined],
+  tickSizeMajor: [undefined],
+  tickSizeMinor: [undefined],
+  tickSizeEnd: [undefined],
+  tickWidth: [undefined],
+
+  title: [undefined],
+  titleColor: [undefined],
+  titleFont: [undefined],
+  titleFontWeight: [undefined],
+  titleFontSize: [undefined],
+  titleOffset: [undefined],
+  titleMaxLength: [undefined]
+};
+
+const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
+  orient: ['left', 'right'],
+  offset: [undefined],
+  format: [undefined],
+  shortTimeLabels: DEFAULT_BOOLEAN_ENUM,
+  values: [undefined],
+
+  labelAlign: [undefined],
+  labelBaseline: [undefined],
+  labelColor: [undefined],
+  labelFont: [undefined],
+  labelFontSize: [undefined],
+
+  symbolColor: [undefined],
+  symbolShape: [undefined],
+  symbolSize: [undefined],
+  symbolStrokeWidth:[undefined],
+
+  title: [undefined],
+  titleColor: [undefined],
+  titleFont: [undefined],
+  titleFontSize: [undefined],
+  titleFontWeight: [undefined],
+};
+
+// Use FullEnumIndex to make sure we have all properties specified here!
+export const DEFAULT_ENUM_INDEX: EnumIndex = {
+  mark: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK], // Mark.TEXT
+  channel: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT
+
+  aggregate: [undefined, AggregateOp.MEAN],
+  autoCount: DEFAULT_BOOLEAN_ENUM,
+  bin: DEFAULT_BOOLEAN_ENUM,
+  hasFn: DEFAULT_BOOLEAN_ENUM,
+  timeUnit: [undefined, TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.MINUTES, TimeUnit.SECONDS],
+
+  field: [undefined], // This is not used as field should be read from schema
+  type: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
+
+  sort: [SortOrder.ASCENDING, SortOrder.DESCENDING],
+
+  scale: [true],
+  axis: DEFAULT_BOOLEAN_ENUM,
+  legend: DEFAULT_BOOLEAN_ENUM,
+
+  binProps: DEFAULT_BIN_PROPS_ENUM,
+  sortProps: DEFAULT_SORT_PROPS,
+  scaleProps: DEFAULT_SCALE_PROPS_ENUM,
+  axisProps: DEFAULT_AXIS_PROPS_ENUM,
+  legendProps: DEFAULT_LEGEND_PROPS_ENUM
+};
+
+
+// TODO: rename this to getDefaultEnum
+export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryConfig): any[] {
+  if (prop === 'field' || (isEncodingNestedProp(prop) && prop.parent === 'sort' && prop.child === 'field')) {
+    // For field, by default enumerate all fields
+    return schema.fields();
+  }
+
+  let val;
+  if (isEncodingNestedProp(prop)) {
+    val = opt.enum[prop.parent + 'Props'][prop.child];
+  } else {
+    val = opt.enum[prop];
+  }
+
+  if (val !== undefined) {
+    return val;
+  }
+
   /* istanbul ignore next */
   throw new Error('No default enumValues for ' + prop);
 }

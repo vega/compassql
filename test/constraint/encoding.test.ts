@@ -7,10 +7,11 @@ import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
 import {Property} from '../../src/property';
+import {PropIndex} from '../../src/propindex';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {EncodingConstraintModel, ENCODING_CONSTRAINTS, ENCODING_CONSTRAINT_INDEX} from '../../src/constraint/encoding';
 import {EncodingQuery, ScaleQuery} from '../../src/query/encoding';
-import {SHORT_WILDCARD} from '../../src/wildcard';
+import {SHORT_WILDCARD, Wildcard} from '../../src/wildcard';
 import {duplicate, extend} from '../../src/util';
 
 import {schema} from '../fixture';
@@ -34,7 +35,7 @@ describe('constraints/encoding', () => {
       {
         name: 'TestEncoding for hasAllRequiredProperties class method',
         description: 'TestEncoding for hasAllRequirdProperties class method',
-        properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, Property.SCALE_TYPE],
+        properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, {parent: 'scale', child: 'type'}],
         allowWildcardForProperties: false,
         strict: true,
         satisfy: undefined
@@ -95,7 +96,7 @@ describe('constraints/encoding', () => {
     it('should return false if aggregate is applied to non-quantitative type', () => {
       [Type.NOMINAL, Type.ORDINAL].forEach((type) => {
         encQ.type = type;
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['aggregateOpSupportedByType'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['aggregateOpSupportedByType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
     });
 
@@ -103,7 +104,7 @@ describe('constraints/encoding', () => {
       // TODO: verify if this really works with temporal
       [Type.QUANTITATIVE, Type.TEMPORAL].forEach((type) => {
         encQ.type = type;
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['aggregateOpSupportedByType'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['aggregateOpSupportedByType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
     });
   });
@@ -113,7 +114,7 @@ describe('constraints/encoding', () => {
       assert.isTrue(
         ENCODING_CONSTRAINT_INDEX['asteriskFieldWithCountOnly'].satisfy(
           { channel: Channel.X, aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE },
-          schema, {}, defaultOpt
+          schema, new PropIndex<Wildcard<any>>(), defaultOpt
         )
       );
     });
@@ -122,7 +123,7 @@ describe('constraints/encoding', () => {
       assert.isFalse(
         ENCODING_CONSTRAINT_INDEX['asteriskFieldWithCountOnly'].satisfy(
           { channel: Channel.X, field: '*', type: Type.QUANTITATIVE },
-          schema, {}, defaultOpt
+          schema, new PropIndex<Wildcard<any>>(), defaultOpt
         )
       );
     });
@@ -131,7 +132,7 @@ describe('constraints/encoding', () => {
       assert.isFalse(
         ENCODING_CONSTRAINT_INDEX['asteriskFieldWithCountOnly'].satisfy(
           { channel: Channel.X, aggregate: AggregateOp.COUNT, field: 'haha', type: Type.QUANTITATIVE },
-          schema, {}, defaultOpt
+          schema, new PropIndex<Wildcard<any>>(), defaultOpt
         )
       );
     });
@@ -148,20 +149,20 @@ describe('constraints/encoding', () => {
     it('should return false if bin is applied to non-quantitative type', () => {
       [Type.NOMINAL, Type.ORDINAL, Type.TEMPORAL].forEach((type) => {
         encQ.type = type;
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['binAppliedForQuantitative'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['binAppliedForQuantitative'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
     });
 
     it('should return true if bin is applied to quantitative type', () => {
       encQ.type = Type.QUANTITATIVE;
-      assert.isTrue(ENCODING_CONSTRAINT_INDEX['binAppliedForQuantitative'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['binAppliedForQuantitative'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
     it('should return true for any non-binned field', () => {
       encQ.bin = undefined;
       [Type.NOMINAL, Type.ORDINAL, Type.TEMPORAL, Type.QUANTITATIVE].forEach((type) => {
         encQ.type = type;
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['binAppliedForQuantitative'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['binAppliedForQuantitative'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
     });
   });
@@ -170,111 +171,111 @@ describe('constraints/encoding', () => {
     [Channel.X, Channel.Y, Channel.COLOR, Channel.OPACITY, Channel.DETAIL].forEach((channel) => {
       it(channel + ' supports raw measure.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports aggregate measure.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports raw temporal measure.', () => {
         const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports timeUnit temporal dimension.', () => {
         const encQ = {channel: channel, field: 'T', type: Type.QUANTITATIVE, timeUnit: TimeUnit.MONTH};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports binned quantitative dimension.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports ordinal dimension.', () => {
         const encQ = {channel: channel, field: 'O', type: Type.ORDINAL};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports nominal dimension.', () => {
         const encQ = {channel: channel, field: 'N', type: Type.NOMINAL};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
     [Channel.ROW, Channel.COLUMN, Channel.SHAPE].forEach((channel) => {
       it(channel + ' does not support raw measure.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' does not support aggregate measure.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' does not support raw temporal measure.', () => {
         const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports timeUnit temporal dimension.', () => {
         const encQ = {channel: channel, field: 'T', type: Type.QUANTITATIVE, timeUnit: TimeUnit.MONTH};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports binned quantitative dimension.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports ordinal dimension.', () => {
         const encQ = {channel: channel, field: 'O', type: Type.ORDINAL};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports nominal dimension.', () => {
         const encQ = {channel: channel, field: 'N', type: Type.NOMINAL};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
     [Channel.SIZE, Channel.TEXT].forEach((channel) => {
       it(channel + ' supports raw measure.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports aggregate measure.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports raw temporal measure.', () => {
         const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL};
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' does not support timeUnit temporal dimension.', () => {
         const encQ = {channel: channel, field: 'T', type: Type.QUANTITATIVE, timeUnit: TimeUnit.MONTH};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' does not support binned quantitative dimension.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' does not support ordinal dimension.', () => {
         const encQ = {channel: channel, field: 'O', type: Type.ORDINAL};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' does not support  nominal dimension.', () => {
         const encQ = {channel: channel, field: 'N', type: Type.NOMINAL};
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
   });
@@ -286,7 +287,7 @@ describe('constraints/encoding', () => {
         field: 'Q',
         type: Type.QUANTITATIVE
       };
-      assert.isTrue(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
     it('should return false if encQ has hasFn = true and has no function', () => {
@@ -296,7 +297,7 @@ describe('constraints/encoding', () => {
         field: 'Q',
         type: Type.QUANTITATIVE
       };
-      assert.isFalse(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
     it('should return true if encQ has hasFn = true and has aggregate', () => {
@@ -307,7 +308,7 @@ describe('constraints/encoding', () => {
         field: 'Q',
         type: Type.QUANTITATIVE
       };
-      assert.isTrue(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
     it('should return true if encQ has hasFn = true and has bin', () => {
@@ -318,7 +319,7 @@ describe('constraints/encoding', () => {
         field: 'Q',
         type: Type.QUANTITATIVE
       };
-      assert.isTrue(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
     it('should return true if encQ has hasFn = true and has timeUnit', () => {
@@ -329,7 +330,7 @@ describe('constraints/encoding', () => {
         field: 'T',
         type: Type.TEMPORAL
       };
-      assert.isTrue(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
   });
 
@@ -341,7 +342,7 @@ describe('constraints/encoding', () => {
           field: field,
           type: Type.NOMINAL
         };
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['maxCardinalityForCategoricalColor'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['maxCardinalityForCategoricalColor'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
     });
 
@@ -352,7 +353,7 @@ describe('constraints/encoding', () => {
           field: field,
           type: Type.NOMINAL
         };
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['maxCardinalityForCategoricalColor'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['maxCardinalityForCategoricalColor'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
     });
 
@@ -371,7 +372,7 @@ describe('constraints/encoding', () => {
             field: field,
             type: Type.NOMINAL
           };
-          assert.isTrue(ENCODING_CONSTRAINT_INDEX['maxCardinalityForFacet'].satisfy(encQ, schema, {}, defaultOpt));
+          assert.isTrue(ENCODING_CONSTRAINT_INDEX['maxCardinalityForFacet'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
         });
       });
     });
@@ -384,7 +385,7 @@ describe('constraints/encoding', () => {
             field: field,
             type: Type.NOMINAL
           };
-          assert.isFalse(ENCODING_CONSTRAINT_INDEX['maxCardinalityForFacet'].satisfy(encQ, schema, {}, defaultOpt));
+          assert.isFalse(ENCODING_CONSTRAINT_INDEX['maxCardinalityForFacet'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
         });
       });
     });
@@ -402,7 +403,7 @@ describe('constraints/encoding', () => {
           field: field,
           type: Type.NOMINAL
         };
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['maxCardinalityForShape'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['maxCardinalityForShape'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
     });
 
@@ -413,7 +414,7 @@ describe('constraints/encoding', () => {
           field: field,
           type: Type.NOMINAL
         };
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['maxCardinalityForShape'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['maxCardinalityForShape'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
     });
 
@@ -431,7 +432,7 @@ describe('constraints/encoding', () => {
         scale: {type: ScaleType.LOG},
         type: Type.QUANTITATIVE
       };
-      assert.isFalse(ENCODING_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
   });
 
@@ -446,41 +447,42 @@ describe('constraints/encoding', () => {
 
     it('should return false if scale zero is used with binned field', () => {
       (encQ.scale as ScaleQuery).zero = true;
-      assert.isFalse(ENCODING_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
     it('should return true if scale zero is not used with binned field', () => {
       (encQ.scale as ScaleQuery).zero = false;
-      assert.isTrue(ENCODING_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['omitScaleZeroWithBinnedField'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
   });
 
   describe('dataTypeAndFunctionMatchScaleType', () => {
-   [ScaleType.ORDINAL].forEach((scaleType) => {
+   [ScaleType.ORDINAL, ScaleType.POINT, ScaleType.BAND].forEach((scaleType) => {
      it('scaleType of ' + scaleType + ' matches data type ordinal with timeUnit', () => {
        const encQ: EncodingQuery = {channel: Channel.X, field: 'O', scale: {type: scaleType}, type: Type.ORDINAL, timeUnit: TimeUnit.MINUTES};
-       assert.isTrue(ENCODING_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(encQ, schema, {}, defaultOpt));
+       assert.isTrue(ENCODING_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
      });
    });
 
-   [ScaleType.ORDINAL].forEach((scaleType) => {
+   [ScaleType.ORDINAL, ScaleType.POINT, ScaleType.BAND].forEach((scaleType) => {
      it('scaleType of ' + scaleType + ' matches data type nominal', () => {
        const encQ: EncodingQuery = {channel: Channel.X, field: 'N', scale: {type: scaleType}, type: Type.NOMINAL, timeUnit: TimeUnit.MINUTES};
-       assert.isTrue(ENCODING_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(encQ, schema, {}, defaultOpt));
+       assert.isTrue(ENCODING_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
      });
    });
 
-   [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL].forEach((scaleType) => {
-     it('scaleType of ' + scaleType + ' matches data type temporal', () => {
-       const encQ: EncodingQuery = {channel: Channel.X, field: 'T', scale: {type: scaleType}, type: Type.TEMPORAL, timeUnit: TimeUnit.MINUTES};
-       assert.isTrue(ENCODING_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(encQ, schema, {}, defaultOpt));
-     });
-   });
+   [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, ScaleType.POINT, ScaleType.BAND]
+      .forEach((scaleType) => {
+        it('scaleType of ' + scaleType + ' matches data type temporal', () => {
+          const encQ: EncodingQuery = {channel: Channel.X, field: 'T', scale: {type: scaleType}, type: Type.TEMPORAL, timeUnit: TimeUnit.MINUTES};
+          assert.isTrue(ENCODING_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+        });
+      });
 
    [ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.LINEAR].forEach((scaleType) => {
      it('scaleType of ' + scaleType + ' matches data type quantitative', () => {
        const encQ: EncodingQuery = {channel: Channel.X, field: 'Q', scale: {type: scaleType}, type: Type.QUANTITATIVE};
-       assert.isTrue(ENCODING_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(encQ, schema, {}, defaultOpt));
+       assert.isTrue(ENCODING_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
      });
    });
   });
@@ -493,7 +495,7 @@ describe('constraints/encoding', () => {
       };
 
     it('should return true if there is no function', () => {
-      assert.isTrue(ENCODING_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
     it('should return true if there is only one function', () => {
@@ -502,7 +504,7 @@ describe('constraints/encoding', () => {
       ].forEach((tuple: any) => {
         let modifiedEncQ = duplicate(encQ);
         modifiedEncQ[tuple[0]] = tuple[1];
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
 
     });
@@ -520,7 +522,7 @@ describe('constraints/encoding', () => {
         encQ.bin = tuple[2];
         encQ.autoCount = tuple[3];
 
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
     });
   });
@@ -536,14 +538,14 @@ describe('constraints/encoding', () => {
     it('should return false if timeUnit is applied to non-temporal type', () => {
       [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE].forEach((type) => {
         encQ.type = type;
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['timeUnitAppliedForTemporal'].satisfy(encQ, schema, {}, defaultOpt));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['timeUnitAppliedForTemporal'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
     });
 
     it('should return true if aggregate is applied to quantitative field', () => {
       // TODO: verify if this really works with temporal
       encQ.type = Type.TEMPORAL;
-      assert.isTrue(ENCODING_CONSTRAINT_INDEX['timeUnitAppliedForTemporal'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['timeUnitAppliedForTemporal'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
   });
 
@@ -555,7 +557,7 @@ describe('constraints/encoding', () => {
         type: '?'
       };
 
-      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
     it('should return true if scaleType is still ambiguous.', () => {
@@ -567,7 +569,7 @@ describe('constraints/encoding', () => {
         scale: {}
       };
 
-      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
     it('should return false if scale property is not supported by the scale type', () => {
@@ -582,7 +584,7 @@ describe('constraints/encoding', () => {
         }
       };
 
-      assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
     it('should return false if scale property is not supported by the scale type', () => {
@@ -597,7 +599,7 @@ describe('constraints/encoding', () => {
         }
       };
 
-      assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
     it('should return true if scale property is supported', () => {
@@ -612,7 +614,7 @@ describe('constraints/encoding', () => {
         }
       };
 
-      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
     it('should return true if scale type is point and a property is supported by band', () => {
@@ -628,7 +630,7 @@ describe('constraints/encoding', () => {
         }
       };
 
-      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, {}, defaultOpt));
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
   });
 
@@ -642,20 +644,20 @@ describe('constraints/encoding', () => {
     it('should return false if type does not match schema\'s type', () => {
       [Type.TEMPORAL, Type.QUANTITATIVE, Type.NOMINAL].forEach((type) => {
         encQ.type = type;
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
     it('should return true if string matches schema\'s type ', () => {
       [Type.ORDINAL].forEach((type) => {
         encQ.type = type;
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
     it('should return false if field does not exist', () => {
       const invalidFieldEncQ = {channel: Channel.X, field: 'random', type: Type.NOMINAL};
-      assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(invalidFieldEncQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(invalidFieldEncQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
     });
 
     it('should return false if field="*" has non-quantitative type', () => {
@@ -666,7 +668,7 @@ describe('constraints/encoding', () => {
           field: '*',
           type: type
         };
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(countEncQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(countEncQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
@@ -677,7 +679,7 @@ describe('constraints/encoding', () => {
         field: '*',
         type: Type.QUANTITATIVE
       };
-      assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(countEncQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(countEncQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
     });
   });
 
@@ -691,20 +693,20 @@ describe('constraints/encoding', () => {
     it('should return false if string is used as quantitative or temporal', () => {
       [Type.TEMPORAL, Type.QUANTITATIVE].forEach((type) => {
         encQ.type = type;
-        assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
     it('should return true if string is used as ordinal or nominal ', () => {
       [Type.NOMINAL, Type.ORDINAL].forEach((type) => {
         encQ.type = type;
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(encQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
     it('should return false if field does not exist', () => {
       const invalidFieldEncQ = {channel: Channel.X, field: 'random', type: Type.NOMINAL};
-      assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(invalidFieldEncQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(invalidFieldEncQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
     });
 
     it('should return true if field="*" has non-quantitative type', () => {
@@ -715,7 +717,7 @@ describe('constraints/encoding', () => {
           field: '*',
           type: type
         };
-        assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(countEncQ, schema, {}, CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(ENCODING_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(countEncQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
   });

@@ -63,7 +63,7 @@ describe('constraints/spec', () => {
       {
         name: 'Test SpecModel for hasAllRequiredPropertiesSpecific class method',
         description: 'Test SpecModel for hasAllRequiredPropertiesSpecific class method',
-        properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, Property.SCALE_TYPE, Property.MARK],
+        properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, {parent:'scale', child: 'type'}, Property.MARK],
         allowWildcardForProperties: false,
         strict: true,
         satisfy: undefined
@@ -833,8 +833,10 @@ describe('constraints/spec', () => {
 
   describe('omitNonLinearScaleTypeWithStack', () => {
     it('should return false for stack with non linear scale type', () => {
-      [ScaleType.LOG, ScaleType.ORDINAL, ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE,
-       ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
+      [
+        ScaleType.LOG, ScaleType.POINT, ScaleType.BAND, ScaleType.POINT, ScaleType.POW,
+        ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC
+      ].forEach((scaleType) => {
         const specM = buildSpecQueryModel({
           mark: Mark.BAR,
           encodings: [
@@ -843,7 +845,10 @@ describe('constraints/spec', () => {
             {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
           ]
         });
-        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+        assert.isFalse(
+          SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG),
+          'for '+ scaleType
+        );
       });
     });
 

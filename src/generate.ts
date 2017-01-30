@@ -1,7 +1,8 @@
-import {ENUMERATOR_INDEX} from '../src/enumerator';
 
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
+import {getEnumerator} from './enumerator';
 import {SpecQueryModel} from './model';
+import {fromKey} from'./property';
 import {SpecQuery} from './query/spec';
 import {Schema} from './schema';
 import {stylize} from './stylize';
@@ -14,11 +15,13 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
   // 2. Enumerate each of the properties based on propPrecedence.
 
   let answerSet = [specM]; // Initialize Answer Set with only the input spec query.
-  opt.propertyPrecedence.forEach((prop) => {
+  opt.propertyPrecedence.forEach((propKey) => {
+    const prop = fromKey(propKey);
     // If the original specQuery contains wildcard for this prop
     if (wildcardIndex.hasProperty(prop)) {
       // update answerset
-      const reducer = ENUMERATOR_INDEX[prop](wildcardIndex, schema, opt);
+      const enumerator = getEnumerator(prop);
+      const reducer = enumerator(wildcardIndex, schema, opt);
       answerSet = answerSet.reduce(reducer, []);
     }
   });

@@ -8,12 +8,12 @@ import {Type} from 'vega-lite/src/type';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 
 import {QueryConfig} from './config';
-import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES, hasNestedProperty, getNestedEncodingProperty} from './property';
+import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, hasNestedProperty} from './property';
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
-import {GroupBy, ExtendedGroupBy, parse as parseGroupBy} from './query/groupby';
+import {GroupBy, GroupByProp, ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
@@ -47,7 +47,7 @@ export class SpecQueryModel {
     // mark
     if (isWildcard(specQ.mark)) {
       const name = getDefaultName(Property.MARK);
-      specQ.mark = initWildcard(specQ.mark, name, opt.marks);
+      specQ.mark = initWildcard(specQ.mark, name, opt.enum.mark);
       wildcardIndex.setMark(specQ.mark);
     }
 
@@ -68,7 +68,7 @@ export class SpecQueryModel {
       }
 
       // For each property of the encodingQuery, enumerate
-      ENCODING_PROPERTIES.forEach((prop) => {
+      ENCODING_TOPLEVEL_PROPS.forEach((prop) => {
         if(isWildcard(encQ[prop])) {
           // Assign default wildcard name and enum values.
           const defaultWildcardName = getDefaultName(prop) + index;
@@ -81,11 +81,10 @@ export class SpecQueryModel {
       });
 
       // For each nested property of the encoding query  (e.g., encQ.bin.maxbins)
-      NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
-        const propObj = encQ[nestedProp.parent]; // the property object e.g., encQ.bin
+      ENCODING_NESTED_PROPS.forEach((prop) => {
+        const propObj = encQ[prop.parent]; // the property object e.g., encQ.bin
         if (propObj) {
-          const prop = nestedProp.property;
-          const child = nestedProp.child;
+          const child = prop.child;
           if (isWildcard(propObj[child])) {
 
             // Assign default wildcard name and enum values.
@@ -173,23 +172,23 @@ export class SpecQueryModel {
 
   public getEncodingProperty(index: number, prop: Property) {
     const encQ = this._spec.encodings[index];
-    const nestedProp = getNestedEncodingProperty(prop);
-    if (nestedProp) { // nested encoding property
-      return encQ[nestedProp.parent][nestedProp.child];
+    if (isEncodingNestedProp(prop)) { // nested encoding property
+      return encQ[prop.parent][prop.child];
     }
     return encQ[prop]; // encoding property (non-nested)
   }
 
   public setEncodingProperty(index: number, prop: Property, value: any, wildcard: Wildcard<any>) {
     const encQ = this._spec.encodings[index];
-    const nestedProp = getNestedEncodingProperty(prop);
+
     if (prop === Property.CHANNEL && encQ.channel && !isWildcard(encQ.channel)) {
       // If there is an old channel
       this._channelCount[encQ.channel as Channel]--;
     }
 
-    if (nestedProp) { // nested encoding property
-      encQ[nestedProp.parent][nestedProp.child] = value;
+
+    if (isEncodingNestedProp(prop)) { // nested encoding property
+      encQ[prop.parent][prop.child] = value;
     } else if (hasNestedProperty(prop) && value === true) {
       encQ[prop] = extend({},
         encQ[prop], // copy all existing properties
@@ -209,14 +208,13 @@ export class SpecQueryModel {
 
   public resetEncodingProperty(index: number, prop: Property, wildcard: Wildcard<any>) {
     const encQ = this._spec.encodings[index];
-    const nestedProp = getNestedEncodingProperty(prop);
     if (prop === Property.CHANNEL) {
       this._channelCount[encQ.channel as Channel]--;
     }
 
     // reset it to wildcard
-    if (nestedProp) { // nested encoding property
-      encQ[nestedProp.parent][nestedProp.child] = wildcard;
+    if (isEncodingNestedProp(prop)) { // nested encoding property
+      encQ[prop.parent][prop.child] = wildcard;
     } else { // encoding property (non-nested)
       encQ[prop] = wildcard;
     }
@@ -266,11 +264,10 @@ export class SpecQueryModel {
     return isAggregate(this._spec);
   }
 
-  public toShorthand(groupBy?: (Property | ExtendedGroupBy)[]): string {
+  public toShorthand(groupBy?: (GroupByProp | ExtendedGroupBy)[]): string {
     if (groupBy) {
-      let include: Dict<boolean> = {}, replace: Dict<Dict<string>> = {};
-      const parsedGroupBy = parseGroupBy(groupBy, include, replace);
-      return specShorthand(this._spec, include, parsedGroupBy.replacer);
+      const parsedGroupBy = parseGroupBy(groupBy);
+      return specShorthand(this._spec, parsedGroupBy.include, parsedGroupBy.replacer);
     }
     return specShorthand(this._spec);
   }

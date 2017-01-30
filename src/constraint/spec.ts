@@ -9,7 +9,8 @@ import {AbstractConstraint, AbstractConstraintModel} from './base';
 import {QueryConfig} from '../config';
 import {isWildcard, Wildcard} from '../wildcard';
 import {SpecQueryModel} from '../model';
-import {getNestedEncodingProperty, Property, isEncodingProperty} from '../property';
+import {isEncodingNestedProp, getEncodingNestedProp, Property, isEncodingProperty} from '../property';
+import {PropIndex} from '../propindex';
 import {isDimension} from '../query/encoding';
 import {Schema} from '../schema';
 import {contains, every, some} from '../util';
@@ -38,11 +39,9 @@ export class SpecConstraintModel extends AbstractConstraintModel {
 
         // TODO: transform
 
-        const nestedEncProp = getNestedEncodingProperty(prop);
-
-        if (nestedEncProp) {
-          let parent = nestedEncProp.parent;
-          let child = nestedEncProp.child;
+        if (isEncodingNestedProp(prop)) {
+          let parent = prop.parent;
+          let child = prop.child;
 
           return every(specM.getEncodings(), (encQ) => {
             if (!encQ[parent]) {
@@ -110,7 +109,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'alwaysIncludeZeroInScaleWithBarMark',
     description: 'Do not recommend bar mark if scale does not start at zero',
-    properties: [Property.MARK, Property.SCALE, Property.SCALE_ZERO, Property.CHANNEL, Property.TYPE],
+    properties: [Property.MARK, Property.SCALE, getEncodingNestedProp('scale', 'zero'), Property.CHANNEL, Property.TYPE],
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
@@ -159,7 +158,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           throw new Error('Unsupported Type');
         });
       } else {
-        const neverHaveAutoCount = every(specM.wildcardIndex.encodingIndicesByProperty['autoCount'], (index: number) => {
+        const neverHaveAutoCount = every(specM.wildcardIndex.encodingIndicesByProperty.get('autoCount'), (index: number) => {
           return !isWildcard(specM.getEncodingQueryByIndex(index).autoCount);
         });
         if (neverHaveAutoCount) {
@@ -354,7 +353,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'omitBarAreaForLogScale',
     description: 'Do not use bar and area mark for x and y\'s log scale',
-    properties: [Property.MARK, Property.CHANNEL, Property.SCALE, Property.SCALE_TYPE, Property.TYPE],
+    properties: [Property.MARK, Property.CHANNEL, Property.SCALE, getEncodingNestedProp('scale', 'type'), Property.TYPE],
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
@@ -645,7 +644,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'omitNonLinearScaleTypeWithStack',
     description: 'Stacked plot should only use linear scale',
-    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, Property.SCALE_TYPE, Property.TYPE],
+    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, getEncodingNestedProp('scale', 'type'), Property.TYPE],
     // TODO: Property.STACK
     allowWildcardForProperties: false,
     strict: true,
@@ -708,16 +707,15 @@ export const SPEC_CONSTRAINT_INDEX: {[name: string]: SpecConstraintModel} =
     return m;
   }, {});
 
-//
-export const SPEC_CONSTRAINTS_BY_PROPERTY: {[prop: string]: SpecConstraintModel[]} =
-   SPEC_CONSTRAINTS.reduce((m, c: SpecConstraintModel) => {
-    c.properties().forEach((prop) => {
-      m[prop] = m[prop] || [];
-      m[prop].push(c);
-    });
-    return m;
-  }, {});
-
+const SPEC_CONSTRAINTS_BY_PROPERTY =
+  SPEC_CONSTRAINTS.reduce((index, c) => {
+    for (const prop of c.properties()) {
+      // Initialize array and use it
+      index.set(prop, index.get(prop) || []);
+      index.get(prop).push(c);
+    }
+    return index;
+  }, new PropIndex<SpecConstraintModel[]>());
 
 /**
  * Check all encoding constraints for a particular property and index tuple
@@ -726,7 +724,7 @@ export function checkSpec(prop: Property, wildcard: Wildcard<any>,
   specM: SpecQueryModel, schema: Schema, opt: QueryConfig): string {
 
   // Check encoding constraint
-  const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY[prop] || [];
+  const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY.get(prop) || [];
 
   for (const c of specConstraints) {
     // Check if the constraint is enabled
