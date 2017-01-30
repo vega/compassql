@@ -54,6 +54,7 @@ export function toString(groupBy: GroupBy): string {
       if (isExtendedGroupBy(g)) {
         if (g.replace) {
           let replaceIndex = keys(g.replace).reduce((index, valFrom) => {
+          // FIXME?
           const valTo = g.replace[valFrom];
             (index[valTo] = index[valTo] || []).push(valFrom);
             return index;

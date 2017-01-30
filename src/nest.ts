@@ -57,6 +57,7 @@ export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModel
         let parsedGroupBy = parseGroupBy(groupBy, includes[l], replaces[l]);
         replacers.push(parsedGroupBy.replacer);
       }
+      // FIXME: something seems still wrong here
     }
 
     // With includes and replacers, now we can construct the nesting tree
