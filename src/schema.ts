@@ -95,11 +95,11 @@ export class Schema {
     // calculate preset bins for quantitative and temporal data
     for (let fieldSchema of fieldSchemas) {
       if (fieldSchema.type === Type.QUANTITATIVE) {
-        for (let maxbins of opt.maxBinsList) {
+        for (let maxbins of opt.enum.binProps.maxbins) {
           fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
         }
       } else if (fieldSchema.type === Type.TEMPORAL) {
-        for (let unit of opt.timeUnits) {
+        for (let unit of opt.enum.timeUnit) {
           if (unit !== undefined) {
             fieldSchema.timeStats[unit] = timeSummary(unit, fieldSchema.stats);
           }

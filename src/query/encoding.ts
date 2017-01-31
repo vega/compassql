@@ -1,15 +1,17 @@
 import {AggregateOp} from 'vega-lite/src/aggregate';
-import {AxisOrient} from 'vega-lite/src/axis';
+import {Axis} from 'vega-lite/src/axis';
+import {Bin} from 'vega-lite/src/bin';
 import {Channel} from 'vega-lite/src/channel';
-import {ScaleType} from 'vega-lite/src/scale';
+import {Scale} from 'vega-lite/src/scale';
+import {Legend} from 'vega-lite/src/legend';
 import {SortOrder, SortField} from 'vega-lite/src/sort';
-import {defaultScaleType, TimeUnit} from 'vega-lite/src/timeunit';
+import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
+
+import compileScaleType from 'vega-lite/src/compile/scale/type';
 
 import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
 import {contains} from '../util';
-
-export type Field = string;
 
 export interface EncodingQuery {
   channel: WildcardProperty<Channel>;
@@ -30,7 +32,7 @@ export interface EncodingQuery {
 
   sort?: SortOrder | SortField;
 
-  field?: WildcardProperty<Field>;
+  field?: WildcardProperty<string>;
   type?: WildcardProperty<Type>;
   // TODO: value
 
@@ -38,107 +40,18 @@ export interface EncodingQuery {
   legend?: boolean | LegendQuery | SHORT_WILDCARD;
 }
 
-export interface AxisQuery extends Wildcard<boolean> {
-  // General Axis Properties
-  axisColor?: WildcardProperty<string>;
-  axisWidth?: WildcardProperty<number>;
-  layer?: WildcardProperty<string>;
-  offset?: WildcardProperty<number>;
-  orient?: WildcardProperty<AxisOrient>;
+// Using Mapped Type from TS2.1 to declare query for an object without nested property
+// https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-1.html#mapped-types
+export type FlatQuery<T> = {
+  [P in keyof T]: WildcardProperty<T[P]>
+};
 
-  // Axis_Grid Properties
-  grid?: WildcardProperty<boolean>;
-  gridColor?: WildcardProperty<string>;
-  gridDash?: WildcardProperty<number>;
-  gridOpacity?: WildcardProperty<number>;
-  gridWidth?: WildcardProperty<number>;
+export type FlatQueryWithEnableFlag<T> = (Wildcard<boolean> | {}) & FlatQuery<T>;
 
-  // Axis_Label Properties
-  labels?: WildcardProperty<boolean>;
-  format?: WildcardProperty<string>;
-  labelAngle?: WildcardProperty<number>;
-  labelMaxLength?: WildcardProperty<number>;
-  shortTimeLabels?: WildcardProperty<boolean>;
-
-  // Axis_Tick Properties
-  subdivide?: WildcardProperty<number>;
-  ticks?: WildcardProperty<number>;
-  tickColor?: WildcardProperty<string>;
-  tickLabelColor?: WildcardProperty<string>;
-  tickLabelFont?: WildcardProperty<string>;
-  ticklabelFontSize?: WildcardProperty<number>;
-  tickPadding?: WildcardProperty<number>;
-  tickSize?: WildcardProperty<number>;
-  tickSizeMajor?: WildcardProperty<number>;
-  tickSizeMinor?: WildcardProperty<number>;
-  tickSizeEnd?: WildcardProperty<number>;
-  tickWidth?: WildcardProperty<number>;
-  values?: WildcardProperty<number>;
-
-  // Axis_Title Properties
-  title?: WildcardProperty<string>;
-  titleColor?: WildcardProperty<string>;
-  titleFont?: WildcardProperty<string>;
-  titleFontWeight?: WildcardProperty<string>;
-  titleFontSize?: WildcardProperty<number>;
-  titleOffset?: WildcardProperty<number>;
-  titleMaxLength?: WildcardProperty<number>;
-  characterWidth?: WildcardProperty<number>;
-}
-
-export interface BinQuery extends Wildcard<boolean> {
-  maxbins?: WildcardProperty<number>;
-  min?: WildcardProperty<number>;
-  max?: WildcardProperty<number>;
-  base?: WildcardProperty<number>;
-  step?: WildcardProperty<number>;
-  steps?: WildcardProperty<number>;
-  minstep?: WildcardProperty<number>;
-  div?: WildcardProperty<number>;
-}
-
-export interface LegendQuery extends Wildcard<boolean> {
-  // General Legend Properties
-  orient?: WildcardProperty<string>;
-  offset?: WildcardProperty<number>;
-  values?: WildcardProperty<any>;
-
-  // Legend_Label Properties
-  format?: WildcardProperty<string>;
-  labelAlign?: WildcardProperty<string>;
-  labelBaseline?:string | Wildcard<string> | SHORT_WILDCARD;
-  labelColor?: WildcardProperty<string>;
-  labelFont?: WildcardProperty<string>;
-  labelFontSize?: WildcardProperty<number>;
-  shortTimeLabels?: WildcardProperty<boolean>;
-
-  // Legend_Symbol Properties
-  symbolColor?: WildcardProperty<string>;
-  symbolShape?: WildcardProperty<string>;
-  symbolSize?: WildcardProperty<number>;
-  symbolStrokeWidth?: WildcardProperty<number>;
-
-  // Legend_Title Properties
-  title?: WildcardProperty<string>;
-  titleColor?: WildcardProperty<string>;
-  titleFont?: WildcardProperty<string>;
-  titleFontSize?: WildcardProperty<number>;
-  titleFontWeight?: WildcardProperty<string>;
-}
-
-export interface ScaleQuery extends Wildcard<boolean> {
-  bandSize?: WildcardProperty<number>;
-  clamp?: WildcardProperty<boolean>;
-  domain?: number[] | string[] | Wildcard<number[] | string[]> | SHORT_WILDCARD;
-  exponent?: WildcardProperty<number>;
-  nice?: WildcardProperty<boolean>;
-  range?: string | number[] | string[] | Wildcard<string | number[] | string[]> | SHORT_WILDCARD;
-  round?: WildcardProperty<boolean>;
-  type?: WildcardProperty<ScaleType>;
-  useRawDomain?: WildcardProperty<boolean>;
-  zero?: WildcardProperty<boolean>;
-
-}
+export type BinQuery = FlatQueryWithEnableFlag<Bin>;
+export type ScaleQuery =  FlatQueryWithEnableFlag<Scale>;
+export type AxisQuery =  FlatQueryWithEnableFlag<Axis>;
+export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 
 export function isDimension(encQ: EncodingQuery) {
   return contains([Type.NOMINAL, Type.ORDINAL], encQ.type) ||
@@ -158,34 +71,52 @@ export function isMeasure(encQ: EncodingQuery) {
  */
 
 export function scaleType(encQ: EncodingQuery) {
-  const scale: ScaleQuery = encQ.scale === true || encQ.scale === SHORT_WILDCARD ? {} : encQ.scale;
+  const scale: ScaleQuery = encQ.scale === true || encQ.scale === SHORT_WILDCARD ? {} : encQ.scale || {};
   const type = encQ.type;
+  const channel = encQ.channel;
   const timeUnit = encQ.timeUnit;
 
-  if (scale && scale.type !== undefined) {
-    return scale.type;
-  }
-  if (isWildcard(type)) {
+  // HACK: All of markType, hasTopLevelSize, and scaleConfig only affect
+  // sub-type of ordinal to quantitative scales (point or band)
+  // Currently, most of scaleType usage in CompassQL doesn't care about this subtle difference.
+  // Thus, instead of making this method requiring the global mark and topLevelSize,
+  // we will just call it with mark = undefined and hasTopLevelSize = false.
+  // Thus, currently, we will always get a point scale unless a CompassQuery specifies band.
+  const markType = undefined;
+  const hasTopLevelSize = false;
+  const scaleConfig = {};
+
+  if (isWildcard(scale.type) || isWildcard(type) || isWildcard(channel) ) {
     return undefined;
   }
 
-  /* istanbul ignore else */
-  if (type === Type.QUANTITATIVE) {
-    return ScaleType.LINEAR;
-  } else if (type === Type.ORDINAL || type === Type.NOMINAL) {
-    return ScaleType.ORDINAL;
+  let rangeStep: number = undefined;
+  // Note: Range step currently does not matter as we don't pass mark into compileScaleType anyway.
+  // However, if we pass mark, we could use a rule like the following.
+  // I also have few test cases listed in encoding.test.ts
+  // if (channel === 'x' || channel === 'y') {
+  //   if (isWildcard(scale.rangeStep)) {
+  //     if (isShortWildcard(scale.rangeStep)) {
+  //       return undefined;
+  //     } else if (scale.rangeStep.enum) {
+  //       const e = scale.rangeStep.enum;
+  //       // if enumerated value contains enum then we can't be sure
+  //       if (contains(e, undefined) || contains(e, null)) {
+  //         return undefined;
+  //       }
+  //       rangeStep = e[0];
+  //     }
+  //   }
+  // }
 
-  } else if (type === Type.TEMPORAL) {
-    if (timeUnit !== undefined) {
-      if (isWildcard(timeUnit)) {
-        return undefined;
-      }
-      return defaultScaleType(timeUnit as TimeUnit);
-    } else {
-      return ScaleType.TIME;
-    }
-  } else {
-    throw new Error('Unsupported type: ' + type + ' in scaleType');
+  // if type is fixed and it's not temporal, we can ignore time unit.
+  if (type === 'temporal' && isWildcard(timeUnit)) {
+    return undefined;
   }
+
+  return compileScaleType(
+    scale.type, type, channel, timeUnit as TimeUnit, markType,
+    hasTopLevelSize, rangeStep, scaleConfig
+  );
 }
 

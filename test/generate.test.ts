@@ -300,7 +300,7 @@ describe('generate', function () {
     });
   });
 
-  describe('axis-layer', () => {
+  describe('axis-zindex', () => {
     it('should enumerate default axisLayers', () => {
       const specQ = {
         mark: Mark.POINT,
@@ -309,27 +309,27 @@ describe('generate', function () {
             channel: Channel.X,
             field: 'Q',
             type: Type.QUANTITATIVE,
-            axis: {layer: SHORT_WILDCARD}
+            axis: {zindex: SHORT_WILDCARD}
           }
         ]
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).axis as AxisQuery).layer, 'front');
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).axis as AxisQuery).layer, 'back');
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).axis as AxisQuery).zindex, 1);
+      assert.equal((answerSet[1].getEncodingQueryByIndex(0).axis as AxisQuery).zindex, 0);
     });
   });
 
-  describe('scale-bandSize', () => {
-    it('should enumerate correct scaleType with bandSize', () => {
+  describe('scale-rangeStep', () => {
+    it('should enumerate correct scaleType with rangeStep', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
           {
             channel: Channel.X,
             scale: {
-              bandSize: 10,
-              type: {enum: [undefined, ScaleType.LOG, ScaleType.TIME, ScaleType.ORDINAL]}
+              rangeStep: 10,
+              type: {enum: [undefined, ScaleType.LOG, ScaleType.TIME, ScaleType.POINT]}
             },
             field: 'Q',
             type: Type.NOMINAL
@@ -339,7 +339,7 @@ describe('generate', function () {
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
+      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POINT);
     });
   });
 
@@ -353,9 +353,10 @@ describe('generate', function () {
             scale: {
               clamp: true,
               exponent: [1,2],
-              type: {enum: [undefined, ScaleType.LINEAR, ScaleType.LOG, ScaleType.ORDINAL,
-                              ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.SQRT,
-                              ScaleType.TIME, ScaleType.UTC]}
+              type: {enum: [undefined, ScaleType.LINEAR, ScaleType.LOG, ScaleType.POINT,
+                            ScaleType.POW, ScaleType.SQRT,
+                            // TODO: add these back ScaleType.QUANTILE, ScaleType.QUANTIZE,
+                            ScaleType.TIME, ScaleType.UTC]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -370,7 +371,7 @@ describe('generate', function () {
   });
 
   describe('scale-nice', () => {
-    it('should enuemrate correct scale type when scale nice is used with scale round and Type.QUANTITATIVE', () => {
+    it('should enumerate correct scale type when scale nice is used with scale round and Type.QUANTITATIVE', () => {
       const specQ = {
         mark: Mark.POINT,
         encodings: [
@@ -379,9 +380,10 @@ describe('generate', function () {
             scale: {
               nice: true,
               round: true,
-              type: {enum: [undefined, ScaleType.LINEAR, ScaleType.LOG, ScaleType.ORDINAL,
-                              ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.SQRT,
-                              ScaleType.TIME, ScaleType.UTC]}
+              type: {enum: [undefined, ScaleType.LINEAR, ScaleType.LOG, ScaleType.POINT,
+                            ScaleType.POW, ScaleType.SQRT,
+                            // TODO: add these back ScaleType.QUANTILE, ScaleType.QUANTIZE,
+                            ScaleType.TIME, ScaleType.UTC] as ScaleType[]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -389,11 +391,12 @@ describe('generate', function () {
         ]
       };
       const answerSet = generate(specQ, schema);
-      assert.equal(answerSet.length, 4);
+      assert.equal(answerSet.length, 5);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LINEAR);
       assert.equal((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
       assert.equal((answerSet[3].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POW);
+      assert.equal((answerSet[4].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.SQRT);
     });
   });
 
@@ -406,7 +409,7 @@ describe('generate', function () {
             channel: Channel.X,
             scale: {
               zero: true,
-              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
+              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.POINT, ScaleType.TIME, ScaleType.UTC]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -427,7 +430,7 @@ describe('generate', function () {
             channel: Channel.X,
             scale: {
               zero: true,
-              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
+              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.POINT, ScaleType.TIME, ScaleType.UTC]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -449,7 +452,7 @@ describe('generate', function () {
             channel: Channel.X,
             scale: {
               zero: true,
-              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
+              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.POINT, ScaleType.TIME, ScaleType.UTC]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -476,7 +479,7 @@ describe('generate', function () {
             channel: Channel.X,
             scale: {
               zero: true,
-              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.ORDINAL, ScaleType.TIME, ScaleType.UTC]}
+              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.POINT, ScaleType.TIME, ScaleType.UTC]}
             },
             field: 'Q',
             type: Type.QUANTITATIVE
@@ -538,7 +541,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {enum: [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined, ScaleType.LOG]}},
+            scale: {type: {enum: [ScaleType.TIME, ScaleType.UTC, ScaleType.POINT, undefined, ScaleType.LOG]}},
             field: 'T',
             type: Type.TEMPORAL
           }
@@ -558,7 +561,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {enum: [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, undefined, ScaleType.LOG]}},
+            scale: {type: {enum: [ScaleType.TIME, ScaleType.UTC, ScaleType.POINT, undefined, ScaleType.LOG]}},
             field: 'T',
             type: Type.TEMPORAL,
             timeUnit: TimeUnit.MINUTES
@@ -570,7 +573,7 @@ describe('generate', function () {
       assert.equal(answerSet.length, 4);
       assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.TIME);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.UTC);
-      assert.equal((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
+      assert.equal((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POINT);
       assert.equal((answerSet[3].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
@@ -580,7 +583,7 @@ describe('generate', function () {
         encodings: [
           {
             channel: Channel.X,
-            scale: {type: {enum: [ScaleType.ORDINAL, undefined, ScaleType.LOG]}},
+            scale: {type: {enum: [ScaleType.POINT, undefined, ScaleType.LOG]}},
             field: 'O',
             type: Type.ORDINAL,
             timeUnit: TimeUnit.MINUTES
@@ -590,7 +593,7 @@ describe('generate', function () {
 
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POINT);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
@@ -599,8 +602,8 @@ describe('generate', function () {
         mark: Mark.POINT,
         encodings: [
           {
-            channel: Channel.X,
-            scale: {type: {enum: [ScaleType.ORDINAL, ScaleType.QUANTILE, undefined, ScaleType.LOG]}},
+            channel: 'x',
+            scale: {type: {enum: [ScaleType.POINT, undefined, ScaleType.LOG]}},
             field: 'O',
             type: Type.ORDINAL
           }
@@ -609,7 +612,7 @@ describe('generate', function () {
 
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.ORDINAL);
+      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POINT);
       assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
     });
 
@@ -751,7 +754,7 @@ describe('generate', function () {
       };
 
       const CONFIG_WITHOUT_HIGH_CARDINALITY_OR_FACET = extend(
-        {}, DEFAULT_QUERY_CONFIG, {nominalColorScaleForHighCardinality: null}, {smallBandSizeForHighCardinalityOrFacet: null});
+        {}, DEFAULT_QUERY_CONFIG, {nominalColorScaleForHighCardinality: null}, {smallRangeStepForHighCardinalityOrFacet: null});
 
       const answerSet = generate(specQ, schema, CONFIG_WITHOUT_HIGH_CARDINALITY_OR_FACET);
       assert.equal(answerSet.length, 1);
@@ -776,8 +779,8 @@ describe('generate', function () {
       });
     });
 
-    describe('smallBandSizeForHighCardinalityOrFacet', () => {
-      it('should output bandSize = 12', () => {
+    describe('smallRangeStepForHighCardinalityOrFacet', () => {
+      it('should output rangeStep = 12', () => {
         const specQ = {
           mark: Mark.BAR,
           encodings: [
@@ -791,10 +794,10 @@ describe('generate', function () {
         };
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).bandSize, 12);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).rangeStep, 12);
       });
 
-      it('should output bandSize = 12', () => {
+      it('should output rangeStep = 12', () => {
         const specQ = {
           mark: Mark.BAR,
           encodings: [
@@ -813,7 +816,7 @@ describe('generate', function () {
         };
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).bandSize, 12);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).rangeStep, 12);
       });
     });
   });

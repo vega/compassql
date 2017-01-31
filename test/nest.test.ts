@@ -10,6 +10,7 @@ import {generate} from '../src/generate';
 import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
 import {nest, FIELD, FIELD_TRANSFORM, ENCODING, TRANSPOSE} from '../src/nest';
 import {Property} from '../src/property';
+import {Query} from '../src/query/query';
 import {REPLACE_BLANK_FIELDS, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS} from '../src/query/groupby';
 
 import {SHORT_WILDCARD} from '../src/wildcard';
@@ -21,7 +22,7 @@ describe('nest', () => {
   describe('group by properties', () => {
     describe('field ignoring function', () => {
       it('should group visualization with same fields', () => {
-        const query = {
+        const query: Query = {
           spec: {
             mark: SHORT_WILDCARD,
             encodings: [{
@@ -52,7 +53,7 @@ describe('nest', () => {
       });
 
       it('should group histogram and raw plots in the same group', () => {
-        const query = {
+        const query: Query = {
           spec: {
             mark: SHORT_WILDCARD,
             encodings: [{
@@ -87,7 +88,7 @@ describe('nest', () => {
       });
 
       it('should group stacked and non-stacked plots of same fields in the same group', () => {
-        const query = {
+        const query: Query = {
           spec: {
             mark: SHORT_WILDCARD,
             encodings: [{
@@ -119,7 +120,7 @@ describe('nest', () => {
 
   describe('field, aggregate, bin, timeUnit', () => {
     it('should group visualization with same fields and transformations', () => {
-      const query = {
+      const query: Query = {
         spec: {
         mark: SHORT_WILDCARD,
           encodings: [{
@@ -161,7 +162,7 @@ describe('nest', () => {
 
   describe('field, aggregate, bin, timeUnit, channel, type', () => {
     it('should group visualizations with different retinal variables if has proper replace', () => {
-      const query = {
+      const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
           encodings: [{
@@ -198,7 +199,7 @@ describe('nest', () => {
     });
 
     it('should group visualizations with different retinal variables', () => {
-      const query = {
+      const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
           encodings: [{
@@ -235,7 +236,7 @@ describe('nest', () => {
     });
 
     it('should group visualizations with different retinal variables or transposed', () => {
-      const query = {
+      const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
           encodings: [{
@@ -272,7 +273,7 @@ describe('nest', () => {
     });
 
     it('should separate different types of stacked and non-stacked visualizations', () => {
-      const query = {
+      const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
           encodings: [{
@@ -319,7 +320,7 @@ describe('nest', () => {
     });
 
     it('should separate different types of stacked and non-stacked visualizations even if it is nested ', () => {
-      const query = {
+      const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
           encodings: [{
@@ -372,7 +373,7 @@ describe('nest', () => {
 
   describe('field', () => {
     it('should group visualization with same fields', () => {
-      const query = {
+      const query: Query = {
         spec: {
         mark: SHORT_WILDCARD,
           encodings: [{
@@ -402,7 +403,7 @@ describe('nest', () => {
     });
 
     it('should group histogram and raw plots in the same group', () => {
-      const query = {
+      const query: Query = {
         spec: {
         mark: SHORT_WILDCARD,
           encodings: [{
@@ -429,7 +430,7 @@ describe('nest', () => {
 
   describe('fieldTransform', () => {
     it('should group visualization with same fields and transformations', () => {
-      const query = {
+      const query: Query = {
         spec: {
         mark: SHORT_WILDCARD,
           encodings: [{
@@ -462,7 +463,7 @@ describe('nest', () => {
 
   describe('encoding', () => {
     it('should group visualizations with different retinal variables', () => {
-      const query = {
+      const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
           encodings: [{
@@ -489,7 +490,7 @@ describe('nest', () => {
     });
 
     it('should group visualizations with different retinal variables', () => {
-      const query = {
+      const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
           encodings: [{
@@ -516,7 +517,7 @@ describe('nest', () => {
     });
 
     it('should group visualizations with different retinal variables or transposed', () => {
-      const query = {
+      const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
           encodings: [{
@@ -543,7 +544,7 @@ describe('nest', () => {
     });
 
     it('should separate different types of stacked and non-stacked visualizations', () => {
-      const query = {
+      const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
           encodings: [{
@@ -580,7 +581,7 @@ describe('nest', () => {
     });
 
     it('should separate different types of stacked and non-stacked visualizations even if it is nested ', () => {
-      const query = {
+      const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
           encodings: [{
@@ -620,7 +621,7 @@ describe('nest', () => {
   describe('encoding/transpose', () => {
     [ENCODING, TRANSPOSE].forEach((groupBy) => {
         it(groupBy + ' should group transposed visualizations', () => {
-        const query = {
+        const query: Query = {
           spec: {
             mark: SHORT_WILDCARD,
             encodings: [{
@@ -643,7 +644,7 @@ describe('nest', () => {
       });
 
       it(groupBy + ' should group transposed facets visualizations', () => {
-        const query = {
+        const query: Query = {
           spec: {
             mark: SHORT_WILDCARD,
             encodings: [{
@@ -675,7 +676,7 @@ describe('nest', () => {
 
 
       it(groupBy + ' should not group visualizations that map same variable to y and color', () => {
-        const query = {
+        const query: Query = {
           spec: {
             mark: Mark.POINT,
             encodings: [{
@@ -701,7 +702,7 @@ describe('nest', () => {
 
   describe('fieldTransform, encoding', () => {
     it('should group visualization with same fields and transformations, then by encoding', () => {
-      const query = {
+      const query: Query = {
         spec: {
           mark: Mark.POINT,
           encodings: [{

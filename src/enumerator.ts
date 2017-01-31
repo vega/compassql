@@ -5,21 +5,26 @@ import {checkEncoding} from './constraint/encoding';
 import {checkSpec} from './constraint/spec';
 import {WildcardIndex} from './wildcardindex';
 import {SpecQueryModel} from './model';
-import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from './property';
+import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS} from './property';
+import {PropIndex} from './propindex';
 import {Wildcard} from './wildcard';
 import {Schema} from './schema';
 
-export let ENUMERATOR_INDEX: {[prop: string]: EnumeratorFactory} = {};
+const ENUMERATOR_INDEX = new PropIndex<EnumeratorFactory>();
 
 export interface Enumerator {
   (answerSets: SpecQueryModel[], specM: SpecQueryModel): SpecQueryModel[];
+}
+
+export function getEnumerator(prop: Property) {
+  return ENUMERATOR_INDEX.get(prop);
 }
 
 export interface EnumeratorFactory {
   (wildcardIndex: WildcardIndex, schema: Schema, opt: QueryConfig): Enumerator;
 }
 
-ENUMERATOR_INDEX[Property.MARK] = (wildcardIndex: WildcardIndex, schema: Schema, opt: QueryConfig): Enumerator => {
+ENUMERATOR_INDEX.set('mark', (wildcardIndex: WildcardIndex, schema: Schema, opt: QueryConfig): Enumerator => {
   return (answerSet, specM: SpecQueryModel) => {
     const markWildcard = specM.getMark() as Wildcard<Mark>;
 
@@ -27,7 +32,7 @@ ENUMERATOR_INDEX[Property.MARK] = (wildcardIndex: WildcardIndex, schema: Schema,
     markWildcard.enum.forEach((mark) => {
       specM.setMark(mark);
       // Check spec constraint
-      const violatedSpecConstraint = checkSpec(Property.MARK, wildcardIndex.mark, specM, schema, opt);
+      const violatedSpecConstraint = checkSpec('mark', wildcardIndex.mark, specM, schema, opt);
       if (!violatedSpecConstraint) {
         // emit
         answerSet.push(specM.duplicate());
@@ -39,14 +44,14 @@ ENUMERATOR_INDEX[Property.MARK] = (wildcardIndex: WildcardIndex, schema: Schema,
 
     return answerSet;
   };
-};
-
-ENCODING_PROPERTIES.forEach((prop) => {
-  ENUMERATOR_INDEX[prop] = EncodingPropertyGeneratorFactory(prop);
 });
 
-NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
-  ENUMERATOR_INDEX[nestedProp.property] = EncodingPropertyGeneratorFactory(nestedProp.property);
+ENCODING_TOPLEVEL_PROPS.forEach((prop) => {
+  ENUMERATOR_INDEX.set(prop, EncodingPropertyGeneratorFactory(prop));
+});
+
+ENCODING_NESTED_PROPS.forEach((nestedProp) => {
+  ENUMERATOR_INDEX.set(nestedProp, EncodingPropertyGeneratorFactory(nestedProp));
 });
 
 /**
@@ -61,7 +66,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
 
     return (answerSet: SpecQueryModel[], specM: SpecQueryModel) => {
       // index of encoding mappings that require enumeration
-      const indices = wildcardIndex.encodingIndicesByProperty[prop];
+      const indices = wildcardIndex.encodingIndicesByProperty.get(prop);
 
       function enumerate(jobIndex: number) {
         if (jobIndex === indices.length) {
@@ -70,7 +75,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
           return;
         }
         const index = indices[jobIndex];
-        const wildcard: Wildcard<any> = wildcardIndex.encodings[index][prop];
+        const wildcard: Wildcard<any> = wildcardIndex.encodings[index].get(prop);
         const encQ = specM.getEncodingQueryByIndex(index);
         const propWildcard = specM.getEncodingProperty(index, prop);
 

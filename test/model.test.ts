@@ -9,8 +9,8 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel} from '../src/model';
-import {Property, DEFAULT_PROPERTY_PRECEDENCE, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from '../src/property';
-import {SHORT_WILDCARD, isWildcard, getDefaultName, getDefaultEnumValues} from '../src/wildcard';
+import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, toKey} from '../src/property';
+import {SHORT_WILDCARD, isWildcard, getDefaultEnumValues} from '../src/wildcard';
 import {SpecQuery} from '../src/query/spec';
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
@@ -24,17 +24,6 @@ describe('SpecQueryModel', () => {
     return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
   }
 
-  describe('getDefaultName', () => {
-    it('should have no duplicate default names.', () => {
-      let defaultNameIndex = {};
-
-      for (let prop of DEFAULT_PROPERTY_PRECEDENCE) {
-        assert.equal((getDefaultName(prop) in defaultNameIndex), false);
-        defaultNameIndex[getDefaultName(prop)] = prop;
-      }
-    });
-  });
-
   describe('build', () => {
     // Mark
     it('should have mark wildcardIndex if mark is a ShortWildcard.', () => {
@@ -45,7 +34,7 @@ describe('SpecQueryModel', () => {
       const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
       assert.deepEqual(wildcardIndex.mark, {
         name: 'm',
-        enum: DEFAULT_QUERY_CONFIG.marks
+        enum: DEFAULT_QUERY_CONFIG.enum.mark
       });
     });
 
@@ -88,7 +77,7 @@ describe('SpecQueryModel', () => {
         // check if type is wildcard
         assert.isTrue(isWildcard(specM.getEncodingQueryByIndex(0).type));
         // check if enumeration specifier index has an index for type
-        assert.isOk(specM.wildcardIndex.encodings[0].type);
+        assert.isOk(specM.wildcardIndex.encodings[0].get('type'));
       });
     });
 
@@ -99,15 +88,15 @@ describe('SpecQueryModel', () => {
       ]
     };
 
-    ENCODING_PROPERTIES.forEach((prop) => {
+    ENCODING_TOPLEVEL_PROPS.forEach((prop) => {
       it('should have ' + prop + ' wildcardIndex if it is a ShortWildcard.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a short wildcard
         specQ.encodings[0][prop] = SHORT_WILDCARD;
 
         const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
-        assert.isOk(wildcardIndex.encodingIndicesByProperty[prop]);
-        assert.isOk(wildcardIndex.encodings[0][prop]);
+        assert.isOk(wildcardIndex.encodingIndicesByProperty.get(prop));
+        assert.isOk(wildcardIndex.encodings[0].get(prop));
       });
 
       it('should have ' + prop + ' wildcardIndex if it is an Wildcard.', () => {
@@ -121,8 +110,8 @@ describe('SpecQueryModel', () => {
         };
 
         const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
-        assert.isOk(wildcardIndex.encodingIndicesByProperty[prop]);
-        assert.isOk(wildcardIndex.encodings[0][prop]);
+        assert.isOk(wildcardIndex.encodingIndicesByProperty.get(prop));
+        assert.isOk(wildcardIndex.encodings[0].get(prop));
       });
 
       it('should not have ' + prop + ' wildcardIndex if it is specific.', () => {
@@ -130,44 +119,44 @@ describe('SpecQueryModel', () => {
         // do not set to wildcard = make it specific
 
         const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
-        assert.isNotOk(wildcardIndex.encodingIndicesByProperty[prop]);
+        assert.isNotOk(wildcardIndex.encodingIndicesByProperty.get(prop));
         assert.isNotOk(wildcardIndex.encodings[0]);
       });
     });
 
-    NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
-      const prop = nestedProp.property;
+    ENCODING_NESTED_PROPS.forEach((nestedProp) => {
+      const propKey = toKey(nestedProp);
       const parent = nestedProp.parent;
       const child = nestedProp.child;
 
-      it('should have ' + prop + ' wildcardIndex if it is a ShortWildcard.', () => {
+      it('should have ' + propKey + ' wildcardIndex if it is a ShortWildcard.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a short wildcard
         specQ.encodings[0][parent] = {};
         specQ.encodings[0][parent][child] = SHORT_WILDCARD;
 
         const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
-        assert.isOk(wildcardIndex.encodingIndicesByProperty[prop]);
-        assert.isOk(wildcardIndex.encodings[0][prop]);
+        assert.isOk(wildcardIndex.encodingIndicesByProperty.get(nestedProp));
+        assert.isOk(wildcardIndex.encodings[0].get(nestedProp));
       });
 
-      it('should have ' + prop + ' wildcardIndex if it is an Wildcard.', () => {
+      it('should have ' + propKey + ' wildcardIndex if it is an Wildcard.', () => {
         let specQ = duplicate(templateSpecQ);
         specQ.encodings[0][parent] = {};
         specQ.encodings[0][parent][child] = {
-          enum: getDefaultEnumValues(prop, schema, DEFAULT_QUERY_CONFIG)
+          enum: getDefaultEnumValues(nestedProp, schema, DEFAULT_QUERY_CONFIG)
         };
 
         const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
-        assert.isOk(wildcardIndex.encodingIndicesByProperty[prop]);
-        assert.isOk(wildcardIndex.encodings[0][prop]);
+        assert.isOk(wildcardIndex.encodingIndicesByProperty.get(nestedProp));
+        assert.isOk(wildcardIndex.encodings[0].get(nestedProp));
       });
 
-      it('should not have ' + prop + ' wildcardIndex if it is specific.', () => {
+      it('should not have ' + propKey + ' wildcardIndex if it is specific.', () => {
         let specQ = duplicate(templateSpecQ);
 
         const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
-        assert.isNotOk(wildcardIndex.encodingIndicesByProperty[prop]);
+        assert.isNotOk(wildcardIndex.encodingIndicesByProperty.get(nestedProp));
         assert.isNotOk(wildcardIndex.encodings[0]);
       });
     });
@@ -185,8 +174,8 @@ describe('SpecQueryModel', () => {
       });
 
       it('should add new channel and autoCount to the wildcard', () => {
-        assert.equal(model.wildcardIndex.encodingIndicesByProperty['autoCount'][0], 1);
-        assert.equal(model.wildcardIndex.encodingIndicesByProperty['channel'][0], 1);
+        assert.equal(model.wildcardIndex.encodingIndicesByProperty.get('autoCount')[0], 1);
+        assert.equal(model.wildcardIndex.encodingIndicesByProperty.get('channel')[0], 1);
       });
     });
   });

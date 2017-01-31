@@ -1,14 +1,8 @@
-import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR} from 'vega-lite/src/channel';
-import {AggregateOp} from 'vega-lite/src/aggregate';
-import {AxisOrient} from 'vega-lite/src/axis';
+import {Channel} from 'vega-lite/src/channel';
 import {Config} from 'vega-lite/src/config';
-import {Mark} from 'vega-lite/src/mark';
-import {ScaleType} from 'vega-lite/src/scale';
-import {SortOrder} from 'vega-lite/src/sort';
-import {TimeUnit} from 'vega-lite/src/timeunit';
-import {Type} from 'vega-lite/src/type';
 
-import {Property, DEFAULT_PROPERTY_PRECEDENCE} from './property';
+import {toKey, DEFAULT_PROP_PRECEDENCE} from './property';
+import {DEFAULT_ENUM_INDEX, EnumIndex} from './wildcard';
 
 // We name this QueryConfig to avoid confusion with Vega-Lite's Config
 export interface QueryConfig {
@@ -16,159 +10,15 @@ export interface QueryConfig {
 
   defaultSpecConfig?: Config;
 
-  propertyPrecedence?: Property[];
+  propertyPrecedence?: string[];
 
-  /** Default marks to enumerate. */
-  marks?: Mark[];
-
-  /** Default channels to enumerate. */
-  channels?: Channel[];
-
-  /** Default aggregate ops to enumerate. */
-  aggregates?: AggregateOp[];
-
-  /** Default time units to enumerate */
-  timeUnits?: TimeUnit[];
-
-  /** Default types to enumerate */
-  types?: Type[];
+  enum?: Partial<EnumIndex>;
 
   /** Default ratio for number fields to be considered ordinal */
   numberNominalProportion?: number;
 
   /** Default cutoff for not applying the numberOrdinalProportion inference */
   numberNominalLimit?: number;
-
-  /** Default maxbins to enumerate */
-  maxBinsList?: number[];
-  binMinList?: number[];
-  binMaxList?: number[];
-  binBaseList?: number[];
-  binStepList?: number[];
-  binStepsList?: number[];
-  binMinstepList?: number[];
-  binDivList?: number[];
-
-  axisAxisColors?: string[];
-
-  axisAxisWidths?: number[];
-
-  axisLayers?: string[];
-
-  axisOffsets?: number[];
-
-  axisOrients?: AxisOrient[];
-
-  axisGridColors?: string[];
-
-  axisGridDashes?: number[];
-
-  axisGridOpacities?: number[];
-
-  axisGridWidths?: number[];
-
-  axisFormats?: string[];
-
-  axisLabelAngles?: number[];
-
-  axisLabelMaxLengths?: number[];
-
-  axisSubDivides?: number[];
-
-  axisTicks?: number[];
-
-  axisTickColors?: string[];
-
-  axisTickLabelColors?: string[];
-
-  axisTickLabelFonts?: string[];
-
-  axisTickLabelFontSizes?: number[];
-
-  axisTickPaddings?: number[];
-
-  axisTickSizes?: number[];
-
-  axisTickSizeMajors?: number[];
-
-  axisTickSizeMinors?: number[];
-
-  axisTickSizeEnds?: number[];
-
-  axisTickWidths?: number[];
-
-  axisValuesList?: number[];
-
-  axisTitles?: string[];
-
-  axisTitleColors?: string[];
-
-  axisTitleFonts?: string[];
-
-  axisTitleFontWeights?: number[];
-
-  axisTitleFontSizes?: number[];
-
-  axisTitleOffsets?: number[];
-
-  axisTitleMaxLengths?: number[];
-
-  axisCharacterWidths?: number[];
-
-  legendOrients?: string[];
-
-  legendOffsets?: number[];
-
-  legendValuesList?: any[];
-
-  legendFormats?: string[];
-
-  legendLabelAligns?: string[];
-
-  legendLabelBaselines?: string[];
-
-  legendLabelColors?: string[];
-
-  legendLabelFonts?: string[];
-
-  legendLabelFontSizes?: number[];
-
-  legendSymbolColors?: string[];
-
-  legendSymbolShapes?: string[];
-
-  legendSymbolSizes?: number[];
-
-  legendSymbolStrokeWidths?: number[];
-
-  legendTitles?: string[];
-
-  legendTitleColors?: string[];
-
-  legendTitleFonts?: string[];
-
-  legendTitleFontSizes?: number[];
-
-  legendTitleFontWeights?: string[];
-
-  // TODO: Come back and implement correctly when designing sort enumeration.
-  sorts?: SortOrder[];
-
-  sortFields?: string[];
-
-  sortOps?: AggregateOp[];
-
-  sortOrders?: SortOrder[];
-
-  scaleBandSizes?: number[];
-
-  scaleDomains?: Array<number[] | string[]>;
-
-  scaleExponents?: number[];
-
-  scaleRanges?: Array<string | number[] | string[]>;
-
-  scaleTypes?: ScaleType[];
 
   // SPECIAL MODE
   /**
@@ -213,7 +63,7 @@ export interface QueryConfig {
 
   // STYLIZE
   stylize?: boolean;
-  smallBandSizeForHighCardinalityOrFacet?: {maxCardinality: number, bandSize: number};
+  smallRangeStepForHighCardinalityOrFacet?: {maxCardinality: number, rangeStep: number};
   nominalColorScaleForHighCardinality?: {maxCardinality: number, palette: string};
   xAxisOnTopForHighYCardinalityWithoutColumn?: {maxCardinality: number};
 
@@ -228,90 +78,8 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
     overlay: {line: true},
     scale: {useRawDomain: true}
   },
-  propertyPrecedence: DEFAULT_PROPERTY_PRECEDENCE,
-
-  marks: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK], // Mark.TEXT
-  channels: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT
-  aggregates: [undefined, AggregateOp.MEAN],
-  timeUnits: [undefined, TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.MINUTES, TimeUnit.SECONDS],
-  types: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
-
-  maxBinsList: [5, 10, 20],
-  binMinList: [undefined],
-  binMaxList: [undefined],
-  binBaseList: [10],
-  binStepList: [undefined],
-  binStepsList: [undefined],
-  binMinstepList: [undefined],
-  binDivList: [5, 2],
-
-  axisAxisColors: [undefined],
-  axisAxisWidths: [undefined],
-  axisLayers: ['front', 'back'],
-  axisOffsets: [undefined],
-  axisOrients: [undefined],
-
-  axisGridColors: [undefined],
-  axisGridDashes: [undefined],
-  axisGridOpacities: [undefined],
-  axisGridWidths: [undefined],
-
-  axisFormats: [undefined],
-  axisLabelAngles: [undefined],
-  axisLabelMaxLengths: [undefined],
-
-  axisSubDivides: [undefined],
-  axisTicks: [undefined],
-  axisTickColors: [undefined],
-  axisTickLabelColors: [undefined],
-  axisTickLabelFonts: [undefined],
-  axisTickLabelFontSizes: [undefined],
-  axisTickPaddings: [undefined],
-  axisTickSizes: [undefined],
-  axisTickSizeMajors: [undefined],
-  axisTickSizeMinors: [undefined],
-  axisTickSizeEnds: [undefined],
-  axisTickWidths: [undefined],
-  axisValuesList: [undefined],
-
-  axisTitles: [undefined],
-  axisTitleColors: [undefined],
-  axisTitleFonts: [undefined],
-  axisTitleFontWeights: [undefined],
-  axisTitleFontSizes: [undefined],
-  axisTitleOffsets: [undefined],
-  axisTitleMaxLengths: [undefined],
-  axisCharacterWidths: [undefined],
-
-  legendOrients: ['left', 'right'],
-  legendOffsets: [undefined],
-  legendValuesList: [undefined],
-  legendFormats: [undefined],
-  legendLabelAligns: [undefined],
-  legendLabelBaselines: [undefined],
-  legendLabelColors: [undefined],
-  legendLabelFonts: [undefined],
-  legendLabelFontSizes: [undefined],
-  legendSymbolColors: [undefined],
-  legendSymbolShapes: [undefined],
-  legendSymbolSizes: [undefined],
-  legendSymbolStrokeWidths:[undefined],
-  legendTitles: [undefined],
-  legendTitleColors: [undefined],
-  legendTitleFonts: [undefined],
-  legendTitleFontSizes: [undefined],
-  legendTitleFontWeights: [undefined],
-
-  // TODO: Come back and implement correctly when designing sort enumeration.
-  sorts: [SortOrder.ASCENDING, SortOrder.DESCENDING],
-  sortOps: [AggregateOp.MIN, AggregateOp.MEAN],
-  sortOrders: [SortOrder.ASCENDING, SortOrder.DESCENDING],
-
-  scaleBandSizes: [17, 21],
-  scaleDomains: [undefined],
-  scaleExponents: [1],
-  scaleRanges: [undefined],
-  scaleTypes: [undefined, ScaleType.LOG],
+  propertyPrecedence: DEFAULT_PROP_PRECEDENCE.map(toKey),
+  enum: DEFAULT_ENUM_INDEX,
 
   numberNominalProportion: 0.05,
   numberNominalLimit: 40,
@@ -351,7 +119,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
   // STYLIZE
   stylize: true,
-  smallBandSizeForHighCardinalityOrFacet: {maxCardinality: 10, bandSize: 12},
+  smallRangeStepForHighCardinalityOrFacet: {maxCardinality: 10, rangeStep: 12},
   nominalColorScaleForHighCardinality: {maxCardinality: 10, palette: 'category20'},
   xAxisOnTopForHighYCardinalityWithoutColumn: {maxCardinality: 30},
 
@@ -359,3 +127,30 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   maxGoodCardinalityForFacet: 5, // FIXME: revise
   maxGoodCardinalityForColor: 7, // FIXME: revise
 };
+
+export function extendConfig(opt: QueryConfig) {
+  return {
+    ...DEFAULT_QUERY_CONFIG,
+    ...opt,
+    enum: extendEnumIndex(opt.enum)
+  };
+}
+
+function extendEnumIndex(enumIndex: Partial<EnumIndex>) {
+  const enumOpt: EnumIndex = {
+    ...DEFAULT_ENUM_INDEX,
+    ...enumIndex,
+    binProps: extendNestedEnumIndex(enumIndex, 'bin'),
+    scaleProps: extendNestedEnumIndex(enumIndex, 'scale'),
+    axisProps: extendNestedEnumIndex(enumIndex, 'axis'),
+    legendProps: extendNestedEnumIndex(enumIndex, 'legend')
+  };
+  return enumOpt;
+}
+
+function extendNestedEnumIndex(enumIndex: Partial<EnumIndex>, prop: 'bin' | 'scale' | 'axis' | 'legend') {
+  return {
+    ...DEFAULT_ENUM_INDEX[prop + 'Props'],
+    ...enumIndex[prop + 'Props']
+  };
+}

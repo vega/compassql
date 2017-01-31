@@ -6,40 +6,85 @@
   import {scaleType} from '../../src/query/encoding';
   import {SHORT_WILDCARD} from '../../src/wildcard';
 
-  describe('scaleType', () => {
-    it('should return specified as scale type', () => {
+  describe('query/encoding/scaleType', () => {
+    it('should return specified scale type if it is valid', () => {
       const sType = scaleType({
-        channel: SHORT_WILDCARD,
+        channel: 'x',
         scale: {type: ScaleType.LINEAR},
-        type: SHORT_WILDCARD
+        type: 'quantitative'
       });
       assert.equal(sType, ScaleType.LINEAR);
     });
 
-    it('should return undefined if scale type is not specified and type is a Wildcard', () => {
+    it('should return undefined if scale.type is a wildcard', () => {
       const sType = scaleType({
-        channel: SHORT_WILDCARD,
-        type: SHORT_WILDCARD
+        channel: 'x',
+        scale: {type: '?'},
+        type: 'quantitative'
       });
       assert.equal(sType, undefined);
     });
 
-    it('should return ScaleType.LINEAR if type is quantitative and scale type is not specified', () => {
+    it('should return undefined if type is a wildcard', () => {
       const sType = scaleType({
-        channel: SHORT_WILDCARD,
+        channel: 'x',
+        type: '?'
+      });
+      assert.equal(sType, undefined);
+    });
+
+    it('should return undefined if channel is a wildcard', () => {
+      const sType = scaleType({
+        channel: '?',
+        type: 'quantitative'
+      });
+      assert.equal(sType, undefined);
+    });
+
+    // These tests are for the commented rule in the scaleType() function.
+    // it('should return undefined if channel is x/y and scale.rangeStep is a short wildcard', () => {
+    //   const sType = scaleType({
+    //     channel: 'x',
+    //     type: 'quantitative',
+    //     scale: {rangeStep: '?'}
+    //   });
+    //   assert.equal(sType, undefined);
+    // });
+
+    // it('should return undefined if channel is x/y and scale.rangeStep is a wildcard that contains undefined', () => {
+    //   const sType = scaleType({
+    //     channel: 'x',
+    //     type: 'quantitative',
+    //     scale: {rangeStep: {enum: [undefined, 21]}}
+    //   });
+    //   assert.equal(sType, undefined);
+    // });
+
+    // it('should not return undefined if channel is x/y and scale.rangeStep is a wildcard that contain only number', () => {
+    //   const sType = scaleType({
+    //     channel: 'x',
+    //     type: 'quantitative',
+    //     scale: {rangeStep: {enum: [17, 21]}}
+    //   });
+    //   assert.notEqual(sType, undefined);
+    // });
+
+    it('should return undefined if timeUnit is a wildcard for a temporal field', () => {
+      const sType = scaleType({
+        channel: 'x',
+        timeUnit: '?',
+        type: 'temporal',
+      });
+      assert.equal(sType, undefined);
+    });
+
+
+    it('should return ScaleType.LINEAR if type is quantitative for x and scale type is not specified', () => {
+      const sType = scaleType({
+        channel: 'x',
         type: Type.QUANTITATIVE
       });
       assert.equal(sType, ScaleType.LINEAR);
-    });
-
-    [Type.ORDINAL, Type.NOMINAL].forEach((type) => {
-      it('should return ScaleType.ORDINAL if type is ' + type + ' and scale type is not specified', () => {
-        const sType = scaleType({
-          channel: SHORT_WILDCARD,
-          type: type
-        });
-        assert.equal(sType, ScaleType.ORDINAL);
-      });
     });
 
     it('should return undefined if scale type is not specified, type is temporal, and TimeUnit is a Wildcard', () => {
@@ -53,20 +98,20 @@
 
     it('should return ScaleType.TIME if type is temporal and scale type and TimeUnit are not specified', () => {
       const sType = scaleType({
-        channel: SHORT_WILDCARD,
+        channel: 'x',
         type: Type.TEMPORAL
       });
       assert.equal(sType, ScaleType.TIME);
     });
 
     [TimeUnit.HOURS, TimeUnit.DAY, TimeUnit.MONTH, TimeUnit.QUARTER].forEach((timeUnit) => {
-      it('should return ScaleType.ORDINAL if type is temporal and TimeUnit is ' + timeUnit + ' and scale type is not specified', () => {
+      it('should return ScaleType.POINT if type is temporal and TimeUnit is ' + timeUnit + ' and scale type is not specified', () => {
         const sType = scaleType({
-          channel: SHORT_WILDCARD,
+          channel: 'x',
           timeUnit: timeUnit,
           type: Type.TEMPORAL
         });
-        assert.equal(sType, ScaleType.ORDINAL);
+        assert.equal(sType, ScaleType.POINT);
       });
     });
 
@@ -76,7 +121,7 @@
      TimeUnit.YEARQUARTER, TimeUnit.QUARTERMONTH, TimeUnit.YEARQUARTERMONTH].forEach((timeUnit) => {
        it('should return ScaleType.TIME if type is temporal and TimeUnit is ' + timeUnit + ' and scale type is not specified', () => {
          const sType = scaleType({
-          channel: SHORT_WILDCARD,
+          channel: 'x',
           timeUnit: timeUnit,
           type: Type.TEMPORAL
          });
@@ -86,7 +131,7 @@
 
      it('should return ScaleType.TIME if type is temporal, TimeUnit is undefined, and scale type is not defined', () => {
        const sType = scaleType({
-         channel: SHORT_WILDCARD,
+         channel: 'x',
          type: Type.TEMPORAL
        });
        assert.equal(sType, ScaleType.TIME);
