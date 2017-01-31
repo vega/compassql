@@ -23,8 +23,9 @@ npm run clean       // useful for wiping out js files that's created from other 
 
 (See package.json for Full list of commands.)
 
+To play with latest CompassQL in the vega-editor, use branch [`cql-vl2`](https://github.com/vega/vega-editor/tree/cql-vl2), which has been updated to use Vega-Lite 2 and Vega 3.
+(For CompassQL 0.7 or older, use branch [`compassql`](https://github.com/vega/vega-editor/tree/compassql), which uses Vega-Lite 1.x).
 
-You can use [this branch of vega-editor](https://github.com/vega/vega-editor/tree/compassql) to play with CompassQL.
 Make sure to link CompassQL to the editor
 
 
