@@ -28,7 +28,7 @@ export class SpecQueryModel {
   /** channel => EncodingQuery */
   private _channelCount: Dict<number>;
   private _wildcardIndex: WildcardIndex;
-  private _wildcardAssignment: Dict<any>;
+  private _assignedWildcardIndex: Dict<any>;
   private _schema: Schema;
   private _opt: QueryConfig;
 
@@ -135,7 +135,7 @@ export class SpecQueryModel {
     }, {} as Dict<number>);
 
     this._wildcardIndex = wildcardIndex;
-    this._wildcardAssignment = wildcardAssignment;
+    this._assignedWildcardIndex = wildcardAssignment;
     this._opt = opt;
     this._schema = schema;
   }
@@ -153,17 +153,17 @@ export class SpecQueryModel {
   }
 
   public duplicate(): SpecQueryModel {
-    return new SpecQueryModel(duplicate(this._spec), this._wildcardIndex, this._schema, this._opt, duplicate(this._wildcardAssignment));
+    return new SpecQueryModel(duplicate(this._spec), this._wildcardIndex, this._schema, this._opt, duplicate(this._assignedWildcardIndex));
   }
 
   public setMark(mark: Mark) {
     const name = (this._spec.mark as Wildcard<Mark>).name;
-    this._wildcardAssignment[name] = this._spec.mark = mark;
+    this._assignedWildcardIndex[name] = this._spec.mark = mark;
   }
 
   public resetMark() {
     const wildcard = this._spec.mark = this._wildcardIndex.mark;
-    delete this._wildcardAssignment[wildcard.name];
+    delete this._assignedWildcardIndex[wildcard.name];
   }
 
   public getMark() {
@@ -198,7 +198,7 @@ export class SpecQueryModel {
       encQ[prop] = value;
     }
 
-    this._wildcardAssignment[wildcard.name] = value;
+    this._assignedWildcardIndex[wildcard.name] = value;
 
     if (prop === Property.CHANNEL) {
       // If there is a new channel, make sure it exists and add it to the count.
@@ -220,7 +220,7 @@ export class SpecQueryModel {
     }
 
     // add remove value that is reset from the assignment map
-    delete this._wildcardAssignment[wildcard.name];
+    delete this._assignedWildcardIndex[wildcard.name];
   }
 
   public channelUsed(channel: Channel) {
