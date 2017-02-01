@@ -31,6 +31,10 @@ export class PropIndex<T> implements PropIndexReader<T> {
     return this;
   }
 
+  public setByKey(key: string, value: T) {
+    this.index[key] = value;
+  }
+
   public map<U>(f: (t: T) => U): PropIndex<U> {
     const i = new PropIndex<U>();
     for (const k in this.index) {

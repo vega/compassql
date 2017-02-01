@@ -13,7 +13,7 @@ import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getD
 import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
-import {GroupBy, GroupByProp, ExtendedGroupBy, parseGroupBy} from './query/groupby';
+import {GroupBy, ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
@@ -264,7 +264,7 @@ export class SpecQueryModel {
     return isAggregate(this._spec);
   }
 
-  public toShorthand(groupBy?: (GroupByProp | ExtendedGroupBy)[]): string {
+  public toShorthand(groupBy?: (string | ExtendedGroupBy)[]): string {
     if (groupBy) {
       const parsedGroupBy = parseGroupBy(groupBy);
       return specShorthand(this._spec, parsedGroupBy.include, parsedGroupBy.replacer);
