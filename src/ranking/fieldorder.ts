@@ -1,15 +1,22 @@
 import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
-import {Property} from '../property';
 import {Schema} from '../schema';
 
 import {RankingScore, FeatureScore} from './ranking';
 
 export const name = 'fieldOrder';
 
-export function score(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): RankingScore {
-  const fieldEnumSpecIndices = specM.enumSpecIndex.encodingIndicesByProperty[Property.FIELD];
-  if (!fieldEnumSpecIndices) {
+/**
+ * Return ranking score based on indices of encoded fields in the schema.
+ * If there are multiple fields, prioritize field on the lower indices of encodings.
+ *
+ * For example, to compare two specs with two encodings each,
+ * first we compare the field on the 0-th index
+ * and only compare the field on the 1-th index only if the fields on the 0-th index are the same.
+ */
+export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): RankingScore {
+  const fieldWildcardIndices = specM.wildcardIndex.encodingIndicesByProperty.get('field');
+  if (!fieldWildcardIndices) {
     return {
       score: 0,
       features: []
@@ -22,10 +29,10 @@ export function score(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): 
   const features: FeatureScore[] = [];
   let totalScore = 0, base = 1;
 
-  for (let i = fieldEnumSpecIndices.length - 1; i >= 0; i--) {
-    const index = fieldEnumSpecIndices[i];
+  for (let i = fieldWildcardIndices.length - 1; i >= 0; i--) {
+    const index = fieldWildcardIndices[i];
     const field = encodings[index].field as string;
-    const fieldEnumSpec = specM.enumSpecIndex.encodings[index].field;
+    const fieldWildcard = specM.wildcardIndex.encodings[index].get('field');
     const fieldIndex = schema.fieldSchema(field).index;
      // reverse order field with lower index should get higher score and come first
     const score = - fieldIndex * base;
@@ -34,7 +41,7 @@ export function score(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): 
     features.push({
       score: score,
       type: 'fieldOrder',
-      feature: `field ${fieldEnumSpec.name} is ${field} (#${fieldIndex} in the schema)`
+      feature: `field ${fieldWildcard.name} is ${field} (#${fieldIndex} in the schema)`
     });
 
     base *= numFields;

@@ -6,7 +6,7 @@ import {assert} from 'chai';
 import {schema} from '../fixture';
 
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
-import {EnumSpec, SHORT_ENUM_SPEC} from '../../src/enumspec';
+import {Wildcard, SHORT_WILDCARD} from '../../src/wildcard';
 import {SpecQueryModel, SpecQueryModelGroup} from '../../src/model';
 import {Property} from '../../src/property';
 import {normalize, query, Query} from '../../src/query/query';
@@ -23,15 +23,15 @@ describe('query/query', () => {
             encodings:[
               {
                 channel: Channel.X,
-                bin: SHORT_ENUM_SPEC,
-                aggregate: SHORT_ENUM_SPEC,
+                bin: SHORT_WILDCARD,
+                aggregate: SHORT_WILDCARD,
                 field: 'Q',
                 type: Type.QUANTITATIVE
               },
               {
                 channel: Channel.Y,
-                bin: SHORT_ENUM_SPEC,
-                aggregate: SHORT_ENUM_SPEC,
+                bin: SHORT_WILDCARD,
+                aggregate: SHORT_WILDCARD,
                 field: 'Q1',
                 type: Type.QUANTITATIVE
               }
@@ -57,15 +57,15 @@ describe('query/query', () => {
             encodings:[
               {
               channel: Channel.X,
-              bin: SHORT_ENUM_SPEC,
-              aggregate: SHORT_ENUM_SPEC,
+              bin: SHORT_WILDCARD,
+              aggregate: SHORT_WILDCARD,
               field: 'Q',
               type: Type.QUANTITATIVE
               },
               {
               channel: Channel.Y,
-              bin: SHORT_ENUM_SPEC,
-              aggregate: SHORT_ENUM_SPEC,
+              bin: SHORT_WILDCARD,
+              aggregate: SHORT_WILDCARD,
               field: 'Q1',
               type: Type.QUANTITATIVE
               }
@@ -113,8 +113,8 @@ describe('query/query', () => {
         }
       });
 
-      it('should augment enumSpec name for enum specs', () => {
-        assert.isDefined((output.query.spec.mark as EnumSpec<Mark>).name);
+      it('should augment wildcard name for wildcards', () => {
+        assert.isDefined((output.query.spec.mark as Wildcard<Mark>).name);
       });
 
       it('should not cause side effect to the original query object.', () => {

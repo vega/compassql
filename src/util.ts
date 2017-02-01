@@ -1,5 +1,5 @@
 import {isArray} from 'datalib/src/util';
-export {cmp, keys, duplicate, extend, isObject, isArray} from 'datalib/src/util';
+export {cmp, keys, duplicate, extend, isObject, isArray, isBoolean, toMap} from 'datalib/src/util';
 
 export interface Dict<T> {
   [key: string]: T;
@@ -9,8 +9,8 @@ export function contains(array: any[], item: any) {
   return array.indexOf(item) !== -1;
 };
 
-export function every(arr, f) {
-    var i = 0, k;
+export function every<T>(arr: T[], f: (item: T, key: number, i: number) => boolean) {
+    let i = 0, k;
     for (k in arr) {
       if (!f(arr[k], k, i++)) {
         return false;
@@ -23,14 +23,14 @@ export function forEach(obj, f, thisArg?) {
   if (obj.forEach) {
     obj.forEach.call(thisArg, f);
   } else {
-    for (var k in obj) {
+    for (let k in obj) {
       f.call(thisArg, obj[k], k, obj);
     }
   }
 };
 
 export function some(arr, f) {
-    var i = 0, k;
+    let i = 0, k;
     for (k in arr) {
       if (f(arr[k], k, i++)) {
         return true;

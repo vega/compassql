@@ -16,48 +16,63 @@ import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, ExtendedType, getExtendedType
  */
 export namespace TypeChannelScore {
   export const TYPE_CHANNEL = 'typeChannel';
+  export const TERRIBLE = -10;
 
   export function init() {
     let SCORE = {} as Dict<number>;
 
-    const ORDERED_TYPE_CHANNEL_SCORE = {
+
+    // Continuous Quantitative / Temporal Fields
+
+    const CONTINUOUS_TYPE_CHANNEL_SCORE = {
       x: 0,
       y: 0,
-      size: -0.575,  // TODO: penalize ordinal
-      color: -0.725,
-      opacity: -0.85,
-      text: -0.875, // FIXME revise
-      row: -0.9,
-      column: -0.9,
-      shape: -2.5,
-      detail: -3
+      size: -0.575,
+      color: -0.725,  // Middle between -0.7 and -0.75
+      text: -2,
+      opacity: -3,
+
+      shape: TERRIBLE,
+      row: TERRIBLE,
+      column: TERRIBLE,
+      detail: 2 * TERRIBLE
     };
 
-    [Q, BIN_Q, T, TIMEUNIT_T, TIMEUNIT_O, O].forEach((type) => {
-      keys(ORDERED_TYPE_CHANNEL_SCORE).forEach((channel) => {
-        SCORE[featurize(type, channel)] = ORDERED_TYPE_CHANNEL_SCORE[channel];
+    [Q, T, TIMEUNIT_T].forEach((type) => {
+      keys(CONTINUOUS_TYPE_CHANNEL_SCORE).forEach((channel) => {
+        SCORE[featurize(type, channel)] = CONTINUOUS_TYPE_CHANNEL_SCORE[channel];
       });
     });
 
-    // Penalize row/column for bin quantitative / timeUnit_temporal / O less
-    [BIN_Q ,TIMEUNIT_T, TIMEUNIT_O, O].forEach((type) => {
-      [Channel.ROW, Channel.COLUMN].forEach((channel) => {
-        SCORE[featurize(type, channel)] += 0.15;
+    // Discretized Quantitative / Temporal Fields / Ordinal
+
+    const ORDERED_TYPE_CHANNEL_SCORE = extend({}, CONTINUOUS_TYPE_CHANNEL_SCORE, {
+      row: -0.75,
+      column: -0.75,
+
+      shape: -3.1,
+      text: -3.2,
+      detail: -4
+    });
+
+    [BIN_Q, TIMEUNIT_O, O].forEach((type) => {
+      keys(ORDERED_TYPE_CHANNEL_SCORE).forEach((channel) => {
+        SCORE[featurize(type, channel)] = ORDERED_TYPE_CHANNEL_SCORE[channel];
       });
     });
 
     const NOMINAL_TYPE_CHANNEL_SCORE = {
       x: 0,
       y: 0,
-      color: -0.6, // TODO: make it adjustable based on preference
+      color: -0.6, // TODO: make it adjustable based on preference (shape is better for black and white)
       shape: -0.65,
       row: -0.7,
       column: -0.7,
       text: -0.8,
 
-      size: -1.8,
       detail: -2,
-      opacity: -2.1
+      size: -3,
+      opacity: -3.1,
     };
 
     keys(NOMINAL_TYPE_CHANNEL_SCORE).forEach((channel) => {
@@ -71,7 +86,7 @@ export namespace TypeChannelScore {
     return type + '_' + channel;
   }
 
-  export function getScore(specM: SpecQueryModel, schema: Schema, opt: QueryConfig) {
+  export function getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig) {
     const encodingQueryByField = specM.getEncodings().reduce((m, encQ) => {
       const fieldKey = fieldDefShorthand(encQ);
       (m[fieldKey] = m[fieldKey] || []).push(encQ);
@@ -144,7 +159,7 @@ export namespace PreferredAxisScore {
     return type + '_' + channel;
   }
 
-  export function getScore(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore[] {
+  export function getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     return specM.getEncodings().reduce((features, encQ: EncodingQuery) => {
       const type = getExtendedType(encQ);
       const feature = featurize(type, encQ.channel);
@@ -176,7 +191,7 @@ export namespace PreferredFacetScore {
     return score;
   }
 
-  export function getScore(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore[] {
+  export function getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     return specM.getEncodings().reduce((features, encQ: EncodingQuery) => {
       const featureScore = getFeatureScore(PREFERRED_FACET, encQ.channel as string);
       if (featureScore) {
@@ -198,7 +213,7 @@ export namespace MarkChannelScore {
     } as Dict<number>;
   }
 
-  export function getScore(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore[] {
+  export function getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     const mark = specM.getMark();
     return specM.getEncodings().reduce((featureScores, encQ) => {
       const feature = mark + '_' + encQ.channel;
@@ -228,7 +243,7 @@ export namespace DimensionScore {
     } as Dict<number>;
   }
 
-  export function getScore(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore[] {
+  export function getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     if (specM.isAggregate()) {
       specM.getEncodings().reduce((maxFScore, encQ: EncodingQuery) => {
         if (!encQ.aggregate && !encQ.autoCount) { //isDimension

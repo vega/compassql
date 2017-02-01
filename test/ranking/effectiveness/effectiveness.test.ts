@@ -15,7 +15,7 @@ function build(specQ) {
   return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
 }
 
-const POINTS = [POINT, SQUARE, CIRCLE];
+const POINTS = [POINT, SQUARE, CIRCLE] as Mark[];
 
 
 export const SET_1D: RuleSet<SpecQueryModel> = {
@@ -214,7 +214,7 @@ export const SET_3D: RuleSet<SpecQueryModel> = {
           {channel: Y, field: 'N', type: Type.NOMINAL}
         ]
       },
-      [COLOR, SIZE].map((qChannel) => {
+      [COLOR, SIZE].map((_) => {
         return {
           mark: POINT,
           encodings: [
@@ -306,7 +306,7 @@ export const SET_FACET_PREFERENCE: RuleSet<SpecQueryModel> = {
   name: 'Facet Preference',
   rules: function() {
     const rules: Rule<SpecQueryModel>[] = [];
-    function facetedPlot(mark: Mark, facet: Channel) {
+    function facetedPlot(_: Mark, facet: Channel) {
       return build({
         mark: 'point',
         encodings: [
@@ -317,7 +317,7 @@ export const SET_FACET_PREFERENCE: RuleSet<SpecQueryModel> = {
       });
     }
 
-    POINTS.concat([BAR, TICK, LINE, AREA]).forEach((mark) => {
+    POINTS.concat([BAR, TICK, LINE, AREA]).forEach((mark: Mark) => {
       rules.push({
         name: 'Row over column',
         items: [facetedPlot(mark, Channel.ROW), facetedPlot(mark, Channel.COLUMN)]

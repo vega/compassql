@@ -24,14 +24,14 @@ export class Schema {
     opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
 
     // create profiles for each variable
-    var summaries: Summary[] = summary(data);
-    var types = inferAll(data); // inferAll does stronger type inference than summary
+    let summaries: Summary[] = summary(data);
+    let types = inferAll(data); // inferAll does stronger type inference than summary
 
-    var fieldSchemas: FieldSchema[] = summaries.map(function(summary) {
-      var field: string = summary.field;
-      var primitiveType: PrimitiveType = types[field] as any;
-      var distinct: number = summary.distinct;
-      var type: Type;
+    let fieldSchemas: FieldSchema[] = summaries.map(function(summary) {
+      let field: string = summary.field;
+      let primitiveType: PrimitiveType = types[field] as any;
+      let distinct: number = summary.distinct;
+      let type: Type;
 
       if (primitiveType === PrimitiveType.NUMBER) {
         type = Type.QUANTITATIVE;
@@ -48,8 +48,8 @@ export class Schema {
         // calculate this correctly for date types.
         summary.min = new Date(data[0][field]);
         summary.max = new Date(data[0][field]);
-        for (var i = 0; i < data.length; i++) {
-          const time = new Date(data[i][field]).getTime();
+        for (const dataEntry of data) {
+          const time = new Date(dataEntry[field]).getTime();
           if (time < (summary.min as Date).getTime()) {
             summary.min = new Date(time);
           }
@@ -95,11 +95,11 @@ export class Schema {
     // calculate preset bins for quantitative and temporal data
     for (let fieldSchema of fieldSchemas) {
       if (fieldSchema.type === Type.QUANTITATIVE) {
-        for (let maxbins of opt.maxBinsList) {
+        for (let maxbins of opt.enum.binProps.maxbins) {
           fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
         }
       } else if (fieldSchema.type === Type.TEMPORAL) {
-        for (let unit of opt.timeUnits) {
+        for (let unit of opt.enum.timeUnit) {
           if (unit !== undefined) {
             fieldSchema.timeStats[unit] = timeSummary(unit, fieldSchema.stats);
           }
@@ -155,9 +155,9 @@ export class Schema {
       return 1;
     } else if (encQ.bin) {
       // encQ.bin will either be a boolean or a BinQuery
-      var bin: BinQuery;
+      let bin: BinQuery;
       if (typeof encQ.bin === 'boolean') {
-        // autoMaxBins defaults to 10 if channel is EnumSpec
+        // autoMaxBins defaults to 10 if channel is Wildcard
         bin = {
           maxbins: autoMaxBins(encQ.channel as Channel)
         };
@@ -185,8 +185,8 @@ export class Schema {
           case TimeUnit.MILLISECONDS: return 1000;
         }
       }
-      var unit = encQ.timeUnit as string;
-      var timeStats = fieldSchema.timeStats;
+      let unit = encQ.timeUnit as string;
+      let timeStats = fieldSchema.timeStats;
       // if the cardinality for the timeUnit is not cached, calculate it
       if (!timeStats[unit]) {
         timeStats[unit] = timeSummary(encQ.timeUnit as TimeUnit, fieldSchema.stats);
@@ -247,7 +247,7 @@ export class Schema {
   public domain(encQ: EncodingQuery): any[] {
     // TODO: differentiate for field with bin / timeUnit
     const fieldSchema = this._fieldSchemaIndex[encQ.field as string];
-    var domain: any[] = keys(fieldSchema.stats.unique);
+    let domain: any[] = keys(fieldSchema.stats.unique);
     if (fieldSchema.type === Type.QUANTITATIVE) {
       // return [min, max], coerced into number types
       return [+fieldSchema.stats.min, +fieldSchema.stats.max];
@@ -304,7 +304,7 @@ function binSummary(maxbins: number, summary: Summary): Summary {
 function timeSummary(timeunit: TimeUnit, summary: Summary): Summary {
   const result = extend({}, summary);
 
-  var unique: {[value: string]: number} = {};
+  let unique: {[value: string]: number} = {};
   keys(summary.unique).forEach(function(dateString) {
     // don't convert null value because the Date constructor will actually convert it to a date
     let date: Date = (dateString === 'null') ? null : new Date(dateString);
@@ -331,7 +331,7 @@ function timeSummary(timeunit: TimeUnit, summary: Summary): Summary {
  */
 function binUnique(bin, oldUnique) {
   const newUnique = {};
-  for (var value in oldUnique) {
+  for (let value in oldUnique) {
     let bucket: number;
     if (value === null) {
       bucket = null;

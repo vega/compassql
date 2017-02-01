@@ -8,13 +8,13 @@ import {schema} from './fixture';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel} from '../src/model';
 import {AxisQuery, ScaleQuery} from '../src/query/encoding';
-import {smallBandSizeForHighCardinalityOrFacet, nominalColorScaleForHighCardinality, xAxisOnTopForHighYCardinalityWithoutColumn} from '../src/stylize';
+import {smallRangeStepForHighCardinalityOrFacet, nominalColorScaleForHighCardinality, xAxisOnTopForHighYCardinalityWithoutColumn} from '../src/stylize';
 
 import {assert} from 'chai';
 
 describe('stylize', () => {
-  describe('smallBandSizeForHighCardinalityOrFacet', () => {
-    it('should not assign a bandSize of 12 if cardinality of Y is under 10', () => {
+  describe('smallRangeStepForHighCardinalityOrFacet', () => {
+    it('should not assign a rangeStep of 12 if cardinality of Y is under 10', () => {
       let specM = SpecQueryModel.build({
           mark: Mark.BAR,
           encodings: [
@@ -22,23 +22,23 @@ describe('stylize', () => {
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, undefined);
+      specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
+      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, undefined);
     });
 
-    it('should not assign a bandSize of 12 if cardinality of Y is over 10 and bandSize is already set', () => {
+    it('should not assign a rangeStep of 12 if cardinality of Y is over 10 and rangeStep is already set', () => {
       let specM = SpecQueryModel.build({
           mark: Mark.BAR,
           encodings: [
-            {channel: Channel.Y, field: 'O_100', scale: {bandSize: 21}, type: Type.ORDINAL}
+            {channel: Channel.Y, field: 'O_100', scale: {rangeStep: 21}, type: Type.ORDINAL}
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 21);
+      specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
+      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, 21);
     });
 
-    it('should assign a bandSize of 12 if cardinality of Y is over 10 and bandSize is not already set', () => {
+    it('should assign a rangeStep of 12 if cardinality of Y is over 10 and rangeStep is not already set', () => {
       let specM = SpecQueryModel.build({
           mark: Mark.BAR,
           encodings: [
@@ -46,24 +46,24 @@ describe('stylize', () => {
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 12);
+      specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
+      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, 12);
     });
 
-    it('should not assign a bandSize of 12 if there is a row channel and bandSize is already set', () => {
+    it('should not assign a rangeStep of 12 if there is a row channel and rangeStep is already set', () => {
       let specM = SpecQueryModel.build({
           mark: Mark.BAR,
           encodings: [
-            {channel: Channel.Y, field: 'A', scale: {bandSize: 21}, type: Type.ORDINAL},
+            {channel: Channel.Y, field: 'A', scale: {rangeStep: 21}, type: Type.ORDINAL},
             {channel: Channel.ROW, field: 'A', type: Type.ORDINAL}
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 21);
+      specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
+      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, 21);
     });
 
-    it('should assign a bandSize of 12 if there is a row channel and bandSize is not already set', () => {
+    it('should assign a rangeStep of 12 if there is a row channel and rangeStep is not already set', () => {
       let specM = SpecQueryModel.build({
           mark: Mark.BAR,
           encodings: [
@@ -72,11 +72,11 @@ describe('stylize', () => {
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 12);
+      specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
+      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, 12);
     });
 
-    it('should not assign a bandSize if scale is false', () => {
+    it('should not assign a rangeStep if scale is false', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.BAR,
             encodings: [
@@ -84,11 +84,11 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-        assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, undefined);
+        specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
+        assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, undefined);
     });
 
-    it('should assign a bandSize if scale is an EnumSpec', () => {
+    it('should assign a rangeStep if scale is an Wildcard', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.BAR,
             encodings: [
@@ -96,20 +96,20 @@ describe('stylize', () => {
             ]
           }, schema, DEFAULT_QUERY_CONFIG);
 
-        specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-        assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, 12);
+        specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
+        assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, 12);
     });
 
-    it('should not assign a bandSize if bandSize is an EnumSpec', () => {
+    it('should not assign a rangeStep if rangeStep is a Wildcard', () => {
       let specM = SpecQueryModel.build({
           mark: Mark.BAR,
           encodings: [
-            {channel: Channel.Y, field: 'O_100', scale: {bandSize: {name: 'scaleBandSize', enum: [17, 21]}}, type: Type.ORDINAL}
+            {channel: Channel.Y, field: 'O_100', scale: {rangeStep: {name: 'scaleRangeStep', enum: [17, 21]}}, type: Type.ORDINAL}
           ]
         }, schema, DEFAULT_QUERY_CONFIG);
 
-      specM = smallBandSizeForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).bandSize, {name: 'scaleBandSize', enum: [17, 21]});
+      specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
+      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, {name: 'scaleRangeStep', enum: [17, 21]});
     });
   });
 
@@ -162,7 +162,7 @@ describe('stylize', () => {
         assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, undefined);
     });
 
-    it('should assign a range if cardinality of color is over 10 and scale is an EnumSpec', () => {
+    it('should assign a range if cardinality of color is over 10 and scale is a Wildcard', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.POINT,
             encodings: [
@@ -174,7 +174,7 @@ describe('stylize', () => {
         assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, 'category20');
     });
 
-    it('should not assign a range if cardinality of color is over 10 and scale.range is an Enum Spec', () => {
+    it('should not assign a range if cardinality of color is over 10 and scale.range is wildcard', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.POINT,
             encodings: [

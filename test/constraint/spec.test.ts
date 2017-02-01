@@ -9,7 +9,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX, SpecConstraintModel} from '../../src/constraint/spec';
-import {SHORT_ENUM_SPEC} from '../../src/enumspec';
+import {SHORT_WILDCARD} from '../../src/wildcard';
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {SpecQuery} from '../../src/query/spec';
@@ -63,8 +63,8 @@ describe('constraints/spec', () => {
       {
         name: 'Test SpecModel for hasAllRequiredPropertiesSpecific class method',
         description: 'Test SpecModel for hasAllRequiredPropertiesSpecific class method',
-        properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, Property.SCALE_TYPE, Property.MARK],
-        allowEnumSpecForProperties: false,
+        properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, {parent:'scale', child: 'type'}, Property.MARK],
+        allowWildcardForProperties: false,
         strict: true,
         satisfy: undefined
       }
@@ -90,21 +90,21 @@ describe('constraints/spec', () => {
       assert.isTrue(specCModel.hasAllRequiredPropertiesSpecific(specQM));
     });
 
-    it('should return false if a required property is an enum spec', () => {
+    it('should return false if a required property is a wildcard', () => {
       const specQM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: SHORT_ENUM_SPEC, type: Type.QUANTITATIVE}
+          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: SHORT_WILDCARD, type: Type.QUANTITATIVE}
         ]
       });
       assert.isFalse(specCModel.hasAllRequiredPropertiesSpecific(specQM));
     });
 
-    it('should return false if a nested required property is an enum spec', () => {
+    it('should return false if a nested required property is a wildcard', () => {
       const specQM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: {type: SHORT_ENUM_SPEC}, type: Type.QUANTITATIVE}
+          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: {type: SHORT_WILDCARD}, type: Type.QUANTITATIVE}
         ]
       });
       assert.isFalse(specCModel.hasAllRequiredPropertiesSpecific(specQM));
@@ -833,8 +833,10 @@ describe('constraints/spec', () => {
 
   describe('omitNonLinearScaleTypeWithStack', () => {
     it('should return false for stack with non linear scale type', () => {
-      [ScaleType.LOG, ScaleType.ORDINAL, ScaleType.POW, ScaleType.QUANTILE, ScaleType.QUANTIZE,
-       ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC].forEach((scaleType) => {
+      [
+        ScaleType.LOG, ScaleType.POINT, ScaleType.BAND, ScaleType.POINT, ScaleType.POW,
+        ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC
+      ].forEach((scaleType) => {
         const specM = buildSpecQueryModel({
           mark: Mark.BAR,
           encodings: [
@@ -843,7 +845,10 @@ describe('constraints/spec', () => {
             {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
           ]
         });
-        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+        assert.isFalse(
+          SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG),
+          'for '+ scaleType
+        );
       });
     });
 
@@ -905,7 +910,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true for stack with autoCount.', () => {
-      SUM_OPS.forEach((aggregate) => {
+      SUM_OPS.forEach((_) => {
         [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
           const specM = buildSpecQueryModel({
             mark: Mark.BAR,
@@ -1080,21 +1085,21 @@ describe('constraints/spec', () => {
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('It should return true if there is an enum spec aggregate', () => {
+    it('It should return true if there is a wildcard aggregate', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {aggregate: SHORT_ENUM_SPEC, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+          {aggregate: SHORT_WILDCARD, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('It should return true if there is an enum spec autoCount', () => {
+    it('It should return true if there is a wildcard autoCount', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {autoCount: SHORT_ENUM_SPEC, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+          {autoCount: SHORT_WILDCARD, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
@@ -1162,7 +1167,7 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should return true if the aggregate plot groups by a temporal field with timeUnit as enumSpec', () => {
+    it('should return true if the aggregate plot groups by a temporal field with timeUnit as Wildcard', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
@@ -1224,7 +1229,7 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRawContinuousFieldForAggregatePlot'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should return true if the aggregate plot groups by a quantitative field with bin as enumSpec', () => {
+    it('should return true if the aggregate plot groups by a quantitative field with bin as Wildcard', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [

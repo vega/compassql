@@ -2,11 +2,11 @@ import {Channel, X, Y, STACK_GROUP_CHANNELS} from 'vega-lite/src/channel';
 import {Config} from 'vega-lite/src/config';
 import {Data} from 'vega-lite/src/data';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
-import {Mark, BAR, AREA} from 'vega-lite/src/mark';
+import {Mark} from 'vega-lite/src/mark';
 import {StackOffset, StackProperties} from 'vega-lite/src/stack';
 
-import {EnumSpec, ShortEnumSpec, isEnumSpec} from '../enumspec';
-import {ENCODING_PROPERTIES, isNestedEncodingProperty, Property} from '../property';
+import {isWildcard, WildcardProperty} from '../wildcard';
+import {isEncodingTopLevelProperty, Property} from '../property';
 import {contains, extend, keys, some} from '../util';
 
 import {TransformQuery} from './transform';
@@ -16,7 +16,7 @@ import {EncodingQuery} from './encoding';
 
 export interface SpecQuery {
   data?: Data;
-  mark: Mark | EnumSpec<Mark> | ShortEnumSpec;
+  mark: WildcardProperty<Mark>;
   transform?: TransformQuery;
   encodings: EncodingQuery[];
 
@@ -39,16 +39,18 @@ export function fromSpec(spec: ExtendedUnitSpec): SpecQuery {
           let encQ: EncodingQuery = { channel: channel };
           let channelDef = spec.encoding[channel];
 
-          for (const prop of ENCODING_PROPERTIES) {
-            if (!isNestedEncodingProperty(prop) && channelDef[prop] !== undefined) {
-              encQ[prop] = channelDef[prop];
-            }
-            // Currently scale, axis, legend only support boolean, but not null.
-            // Therefore convert null to false.
-            if (contains([Property.SCALE, Property.AXIS, Property.LEGEND], prop) && encQ[prop] === null) {
-              encQ[prop] = false;
+          for (const prop in channelDef) {
+            if (isEncodingTopLevelProperty(prop as Property) && channelDef[prop] !== undefined) {
+              // Currently bin, scale, axis, legend only support boolean, but not null.
+              // Therefore convert null to false.
+              if (contains(['bin', 'scale', 'axis', 'legend'], prop) && channelDef[prop] === null) {
+                encQ[prop] = false;
+              } else {
+                encQ[prop] = channelDef[prop];
+              }
             }
           }
+
           return encQ;
         }
       )
@@ -59,7 +61,7 @@ export function fromSpec(spec: ExtendedUnitSpec): SpecQuery {
 
 export function isAggregate(specQ: SpecQuery) {
   return some(specQ.encodings, (encQ: EncodingQuery) => {
-    return (!isEnumSpec(encQ.aggregate) && !!encQ.aggregate) || encQ.autoCount === true;
+    return (!isWildcard(encQ.aggregate) && !!encQ.aggregate) || encQ.autoCount === true;
   });
 }
 
@@ -76,7 +78,7 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
   }
 
   // Should have stackable mark
-  if (!contains([BAR, AREA], specQ.mark)) {
+  if (!contains(['bar', 'area'], specQ.mark)) {
     return null;
   }
 
@@ -85,14 +87,17 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
     return null;
   }
 
-  const stackByChannels = specQ.encodings.reduce((sc, encQ: EncodingQuery) => {
+  const stackBy = specQ.encodings.reduce((sc, encQ: EncodingQuery) => {
     if (contains(STACK_GROUP_CHANNELS, encQ.channel) && !encQ.aggregate) {
-      sc.push(encQ.channel);
+      sc.push({
+        channel: encQ.channel,
+        fieldDef: encQ
+      });
     }
     return sc;
   }, []);
 
-  if (stackByChannels.length === 0) {
+  if (stackBy.length === 0) {
     return null;
   }
 
@@ -112,7 +117,7 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
       groupByEncQ: xIsAggregate ? yEncQ : xEncQ,
       fieldChannel: xIsAggregate ? X : Y,
       fieldEncQ: xIsAggregate ? xEncQ : yEncQ,
-      stackByChannels: stackByChannels,
+      stackBy: stackBy,
       offset: stacked || StackOffset.ZERO
     };
   }

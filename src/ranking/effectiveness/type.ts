@@ -1,4 +1,4 @@
-import {ScaleType} from 'vega-lite/src/scale';
+import {hasDiscreteDomain} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
 import {EncodingQuery, scaleType} from '../../query/encoding';
@@ -36,7 +36,8 @@ export function getExtendedType(encQ: EncodingQuery): ExtendedType {
   if (encQ.bin) {
     return ExtendedType.BIN_Q;
   } else if (encQ.timeUnit) {
-    return scaleType(encQ) === ScaleType.ORDINAL ? ExtendedType.TIMEUNIT_O : ExtendedType.TIMEUNIT_T;
+    const sType = scaleType(encQ);
+    return hasDiscreteDomain(sType) ? ExtendedType.TIMEUNIT_O : ExtendedType.TIMEUNIT_T;
   }
   return encQ.type as ExtendedType;
 }

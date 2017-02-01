@@ -11,7 +11,7 @@ export interface Rule<T> {
   items: (T|T[])[];
 }
 
-export function testRuleSet(ruleSet: RuleSet<any>, getScore: {(item: any): number}, stringify = JSON.stringify) {
+export function testRuleSet(ruleSet: RuleSet<any>, getScore: {(_: any): number}, stringify = JSON.stringify) {
   ruleSet.rules.forEach((rule) => {
     it('should preserve ranking order for ' + rule.name, () => {
       const items = rule.items;
@@ -24,8 +24,8 @@ export function testRuleSet(ruleSet: RuleSet<any>, getScore: {(item: any): numbe
             const rScore = getScore(right) || 0;
             assert.isTrue(
               lScore > rScore,
-              'Score for ' + stringify(left) + ' (' + lScore + ') ' +
-              'should > ' + stringify(right) + ' (' + rScore + ')'
+              'Score for ' + stringify(left) + ' (' + lScore.toFixed(3) + ') ' +
+              'should > ' + stringify(right) + ' (' + rScore.toFixed(3) + ')'
             );
           });
         });

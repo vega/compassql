@@ -3,31 +3,36 @@ import {Mark} from 'vega-lite/src/mark';
 import {QueryConfig} from './config';
 import {checkEncoding} from './constraint/encoding';
 import {checkSpec} from './constraint/spec';
-import {EnumSpecIndex} from './enumspecindex';
+import {WildcardIndex} from './wildcardindex';
 import {SpecQueryModel} from './model';
-import {Property, ENCODING_PROPERTIES, NESTED_ENCODING_PROPERTIES} from './property';
-import {EnumSpec} from './enumspec';
+import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS} from './property';
+import {PropIndex} from './propindex';
+import {Wildcard} from './wildcard';
 import {Schema} from './schema';
 
-export let ENUMERATOR_INDEX: {[prop: string]: EnumeratorFactory} = {};
+const ENUMERATOR_INDEX = new PropIndex<EnumeratorFactory>();
 
 export interface Enumerator {
   (answerSets: SpecQueryModel[], specM: SpecQueryModel): SpecQueryModel[];
 }
 
-export interface EnumeratorFactory {
-  (enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig): Enumerator;
+export function getEnumerator(prop: Property) {
+  return ENUMERATOR_INDEX.get(prop);
 }
 
-ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig): Enumerator => {
+export interface EnumeratorFactory {
+  (wildcardIndex: WildcardIndex, schema: Schema, opt: QueryConfig): Enumerator;
+}
+
+ENUMERATOR_INDEX.set('mark', (wildcardIndex: WildcardIndex, schema: Schema, opt: QueryConfig): Enumerator => {
   return (answerSet, specM: SpecQueryModel) => {
-    const markEnumSpec = specM.getMark() as EnumSpec<Mark>;
+    const markWildcard = specM.getMark() as Wildcard<Mark>;
 
     // enumerate the value
-    markEnumSpec.enum.forEach((mark) => {
+    markWildcard.enum.forEach((mark) => {
       specM.setMark(mark);
       // Check spec constraint
-      const violatedSpecConstraint = checkSpec(Property.MARK, enumSpecIndex.mark, specM, schema, opt);
+      const violatedSpecConstraint = checkSpec('mark', wildcardIndex.mark, specM, schema, opt);
       if (!violatedSpecConstraint) {
         // emit
         answerSet.push(specM.duplicate());
@@ -39,14 +44,14 @@ ENUMERATOR_INDEX[Property.MARK] = (enumSpecIndex: EnumSpecIndex, schema: Schema,
 
     return answerSet;
   };
-};
-
-ENCODING_PROPERTIES.forEach((prop) => {
-  ENUMERATOR_INDEX[prop] = EncodingPropertyGeneratorFactory(prop);
 });
 
-NESTED_ENCODING_PROPERTIES.forEach((nestedProp) => {
-  ENUMERATOR_INDEX[nestedProp.property] = EncodingPropertyGeneratorFactory(nestedProp.property);
+ENCODING_TOPLEVEL_PROPS.forEach((prop) => {
+  ENUMERATOR_INDEX.set(prop, EncodingPropertyGeneratorFactory(prop));
+});
+
+ENCODING_NESTED_PROPS.forEach((nestedProp) => {
+  ENUMERATOR_INDEX.set(nestedProp, EncodingPropertyGeneratorFactory(nestedProp));
 });
 
 /**
@@ -57,11 +62,11 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
   /**
    * @return as reducer that takes a specQueryModel as input and output an answer set array.
    */
-  return (enumSpecIndex: EnumSpecIndex, schema: Schema, opt: QueryConfig): Enumerator => {
+  return (wildcardIndex: WildcardIndex, schema: Schema, opt: QueryConfig): Enumerator => {
 
     return (answerSet: SpecQueryModel[], specM: SpecQueryModel) => {
       // index of encoding mappings that require enumeration
-      const indices = enumSpecIndex.encodingIndicesByProperty[prop];
+      const indices = wildcardIndex.encodingIndicesByProperty.get(prop);
 
       function enumerate(jobIndex: number) {
         if (jobIndex === indices.length) {
@@ -70,9 +75,9 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
           return;
         }
         const index = indices[jobIndex];
-        const enumSpec: EnumSpec<any> = enumSpecIndex.encodings[index][prop];
+        const wildcard: Wildcard<any> = wildcardIndex.encodings[index].get(prop);
         const encQ = specM.getEncodingQueryByIndex(index);
-        const propEnumSpec = specM.getEncodingProperty(index, prop);
+        const propWildcard = specM.getEncodingProperty(index, prop);
 
         if (
             // TODO: encQ.exclude
@@ -82,25 +87,25 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
             encQ.autoCount === false ||
             // nested encoding property might have its parent set to false
             // therefore, we no longer have to enumerate them
-            !propEnumSpec
+            !propWildcard
           ) { // TODO: encQ.excluded
           enumerate(jobIndex + 1);
         } else {
-          enumSpec.enum.forEach((propVal) => {
+          wildcard.enum.forEach((propVal) => {
             if (propVal === null) {
               // our duplicate() method use JSON.stringify, parse and thus can accidentally
               // convert undefined in an array into null
               propVal = undefined;
             }
-            specM.setEncodingProperty(index, prop, propVal, enumSpec);
+            specM.setEncodingProperty(index, prop, propVal, wildcard);
 
             // Check encoding constraint
-            const violatedEncodingConstraint = checkEncoding(prop, enumSpec, index, specM, schema, opt);
+            const violatedEncodingConstraint = checkEncoding(prop, wildcard, index, specM, schema, opt);
             if (violatedEncodingConstraint) {
               return; // do not keep searching
             }
             // Check spec constraint
-            const violatedSpecConstraint = checkSpec(prop, enumSpec, specM, schema, opt);
+            const violatedSpecConstraint = checkSpec(prop, wildcard, specM, schema, opt);
             if (violatedSpecConstraint) {
               return; // do not keep searching
             }
@@ -109,7 +114,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
           });
 
           // Reset to avoid side effect
-          specM.resetEncodingProperty(index, prop, enumSpec);
+          specM.resetEncodingProperty(index, prop, wildcard);
         }
       }
 
