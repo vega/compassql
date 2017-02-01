@@ -13,7 +13,23 @@ import compileScaleType from 'vega-lite/src/compile/scale/type';
 import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
 import {contains} from '../util';
 
-export interface EncodingQuery {
+export type EncodingQuery = FieldQuery | ValueQuery;
+
+export interface ValueQuery {
+  channel: WildcardProperty<Channel>;
+  value: WildcardProperty<boolean | number | string>;
+}
+
+export function isValueQuery(encQ: EncodingQuery): encQ is ValueQuery {
+  return encQ['value'];
+}
+
+export function isFieldQuery(encQ: EncodingQuery): encQ is FieldQuery {
+  return encQ['field'];
+}
+
+// TODO: split this into FieldDefQuery and AutoCountQuery
+export interface FieldQuery {
   channel: WildcardProperty<Channel>;
 
   // FieldDef
@@ -53,15 +69,15 @@ export type ScaleQuery =  FlatQueryWithEnableFlag<Scale>;
 export type AxisQuery =  FlatQueryWithEnableFlag<Axis>;
 export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 
-export function isDimension(encQ: EncodingQuery) {
-  return contains([Type.NOMINAL, Type.ORDINAL], encQ.type) ||
-      (!isWildcard(encQ.bin) && !!encQ.bin) ||          // surely Q type
-      (!isWildcard(encQ.timeUnit) && !!encQ.timeUnit);  // surely T type
+export function isDimension(fieldQ: FieldQuery) {
+  return contains([Type.NOMINAL, Type.ORDINAL], fieldQ.type) ||
+      (!isWildcard(fieldQ.bin) && !!fieldQ.bin) ||          // surely Q type
+      (!isWildcard(fieldQ.timeUnit) && !!fieldQ.timeUnit);  // surely T type
 }
 
-export function isMeasure(encQ: EncodingQuery) {
-  return (encQ.type === Type.QUANTITATIVE && !encQ.bin) ||
-      (encQ.type === Type.TEMPORAL && !encQ.timeUnit);
+export function isMeasure(fieldQ: FieldQuery) {
+  return (fieldQ.type === Type.QUANTITATIVE && !fieldQ.bin) ||
+      (fieldQ.type === Type.TEMPORAL && !fieldQ.timeUnit);
 }
 
 /**
@@ -70,11 +86,11 @@ export function isMeasure(encQ: EncodingQuery) {
  *  @returns {undefined} If the scale type was not specified and Type (or TimeUnit if applicable) is a Wildcard, there is no clear scale type
  */
 
-export function scaleType(encQ: EncodingQuery) {
-  const scale: ScaleQuery = encQ.scale === true || encQ.scale === SHORT_WILDCARD ? {} : encQ.scale || {};
-  const type = encQ.type;
-  const channel = encQ.channel;
-  const timeUnit = encQ.timeUnit;
+export function scaleType(fieldQ: FieldQuery) {
+  const scale: ScaleQuery = fieldQ.scale === true || fieldQ.scale === SHORT_WILDCARD ? {} : fieldQ.scale || {};
+  const type = fieldQ.type;
+  const channel = fieldQ.channel;
+  const timeUnit = fieldQ.timeUnit;
 
   // HACK: All of markType, hasTopLevelSize, and scaleConfig only affect
   // sub-type of ordinal to quantitative scales (point or band)
