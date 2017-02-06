@@ -1,6 +1,6 @@
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel, getSupportedRole} from 'vega-lite/src/channel';
-import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain} from 'vega-lite/src/scale';
+import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain, channelScalePropertyIncompatability} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -233,6 +233,28 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
             }
           } else if (!scaleTypeSupportProperty(sType, scaleProp)) {
             return false;
+          }
+        }
+      }
+      return true;
+    }
+  },{
+    name: 'scalePropertiesSupportedByChannel',
+    description: 'Not all scale properties are supported by all encoding channels',
+    properties: [Property.CHANNEL, Property.SCALE],
+    allowWildcardForProperties: false, // unsure about this
+    strict: true,
+    satisfy: (encQ: EncodingQuery) => {
+      if (encQ) {
+        let channel = encQ.channel as Channel;
+        let scale = encQ.scale;
+        if (channel && scale) {
+          let scaleProps = Object.keys(scale);
+          for (let scaleProp in scaleProps) {
+            let isSupported = channelScalePropertyIncompatability(channel, scaleProp) === undefined;
+            if (!isSupported) {
+              return false;
+            }
           }
         }
       }
