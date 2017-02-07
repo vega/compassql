@@ -18,9 +18,8 @@ export interface FieldSchema {
   title?: string;
   index?: number;
 
-
   stats: DLFieldProfile;
-  binStats?: {[key: string]: DLFieldProfile};
+  binStats?: {[maxbins: string]: DLFieldProfile};
   timeStats?: {[timeUnit: string]: DLFieldProfile};
 }
 
@@ -132,7 +131,7 @@ export class Schema {
     }, {});
   }
 
-  /** @return a list of the field names. */
+  /** @return a list of the field names (for enumerating). */
   public fields() {
     return this._fieldSchemas.map((fieldSchema) => fieldSchema.field);
   }
