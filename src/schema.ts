@@ -10,6 +10,18 @@ import {BinQuery, EncodingQuery} from './query/encoding';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {cmp, extend, keys} from './util';
 
+export interface FieldSchema {
+  field: string;
+  type?: Type;
+  /** number, integer, string, date  */
+  primitiveType: PrimitiveType;
+  stats: Summary;
+  binStats?: {[key: string]: Summary};
+  timeStats?: {[timeUnit: string]: Summary};
+  title?: string;
+  index?: number;
+}
+
 export class Schema {
   private _fieldSchemas: FieldSchema[];
   private _fieldSchemaIndex: {[field: string]: FieldSchema};
@@ -360,14 +372,3 @@ export enum PrimitiveType {
   DATE = 'date' as any
 }
 
-export interface FieldSchema {
-  field: string;
-  type?: Type;
-  /** number, integer, string, date  */
-  primitiveType: PrimitiveType;
-  stats: Summary;
-  binStats?: {[key: string]: Summary};
-  timeStats?: {[timeUnit: string]: Summary};
-  title?: string;
-  index?: number;
-}
