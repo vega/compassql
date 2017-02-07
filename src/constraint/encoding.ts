@@ -246,13 +246,12 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     strict: true,
     satisfy: (encQ: EncodingQuery) => {
       if (encQ) {
-        let channel = encQ.channel as Channel;
-        let scale = encQ.scale;
+        let channel: Channel = encQ.channel as Channel;
+        let scale: ScaleQuery = encQ.scale as ScaleQuery;
         if (channel && scale) {
-          let scaleProps = Object.keys(scale);
-          for (let scaleProp in scaleProps) {
+          for (let scaleProp in scale) {
 
-            if (!scaleProps.hasOwnProperty(scaleProp)) continue;
+            if (!scale.hasOwnProperty(scaleProp)) continue;
 
             if (scaleProp === 'type' || scaleProp === 'name' || scaleProp === 'enum') {
               // ignore type and properties of wildcards
