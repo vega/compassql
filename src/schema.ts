@@ -13,8 +13,11 @@ import {cmp, extend, keys} from './util';
 export interface FieldSchema {
   field: string;
   type?: Type;
+
   /** number, integer, string, date  */
   primitiveType: PrimitiveType;
+
+
   title?: string;
   index?: number;
 
@@ -30,7 +33,15 @@ export class Schema {
   /**
    * Build a Schema object.
    *
-   * @param data - a set of raw data
+   * @param data - a set of raw data in the same format that Vega-Lite / Vega takes
+   * Basically, it's an array in the form of:
+   *
+   * [
+   *   {a: 1, b:2},
+   *   {a: 2, b:3},
+   *   ...
+   * ]
+   *
    * @return a Schema object
    */
   public static build(data: any, opt: QueryConfig = {}): Schema {
@@ -40,17 +51,17 @@ export class Schema {
     let summaries: DLFieldProfile[] = summary(data);
     let types = inferAll(data); // inferAll does stronger type inference than summary
 
-    let fieldSchemas: FieldSchema[] = summaries.map(function(summary) {
-      let field: string = summary.field;
+    let fieldSchemas: FieldSchema[] = summaries.map(function(fieldProfile) {
+      let field: string = fieldProfile.field;
       let primitiveType: PrimitiveType = types[field] as any;
-      let distinct: number = summary.distinct;
+      let distinct: number = fieldProfile.distinct;
       let type: Type;
 
       if (primitiveType === PrimitiveType.NUMBER) {
         type = Type.QUANTITATIVE;
       } else if (primitiveType === PrimitiveType.INTEGER) {
         // use ordinal or nominal when cardinality of integer type is relatively low and the distinct values are less than an amount specified in options
-        if ((distinct < opt.numberNominalLimit) && (distinct / summary.count < opt.numberNominalProportion)) {
+        if ((distinct < opt.numberNominalLimit) && (distinct / fieldProfile.count < opt.numberNominalProportion)) {
           type = Type.NOMINAL;
         } else {
           type = Type.QUANTITATIVE;
@@ -59,25 +70,26 @@ export class Schema {
         type = Type.TEMPORAL;
         // need to get correct min/max of date data because datalib's summary method does not
         // calculate this correctly for date types.
-        summary.min = new Date(data[0][field]);
-        summary.max = new Date(data[0][field]);
+        fieldProfile.min = new Date(data[0][field]);
+        fieldProfile.max = new Date(data[0][field]);
         for (const dataEntry of data) {
           const time = new Date(dataEntry[field]).getTime();
-          if (time < (summary.min as Date).getTime()) {
-            summary.min = new Date(time);
+          if (time < (fieldProfile.min as Date).getTime()) {
+            fieldProfile.min = new Date(time);
           }
-          if (time > (summary.max as Date).getTime()) {
-            summary.max = new Date(time);
+          if (time > (fieldProfile.max as Date).getTime()) {
+            fieldProfile.max = new Date(time);
           }
         }
       } else {
         type = Type.NOMINAL;
       }
+
       return {
         field: field,
         type: type,
         primitiveType: primitiveType,
-        stats: summary,
+        stats: fieldProfile,
         timeStats: {} as {[timeUnit: string]: DLFieldProfile},
         binStats: {} as {[key: string]: DLFieldProfile}
       };
@@ -372,4 +384,3 @@ export enum PrimitiveType {
   BOOLEAN = 'boolean' as any,
   DATE = 'date' as any
 }
-
