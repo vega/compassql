@@ -10,13 +10,13 @@ import {Schema} from '../../schema';
 import {FeatureScore} from '../ranking';
 import {getFeatureScore} from './effectiveness';
 import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, ExtendedType, getExtendedType} from './type';
+export const TERRIBLE = -10;
 
 /**
  * Field Type (with Bin and TimeUnit) and Channel Score (Cleveland / Mackinlay based)
  */
 export namespace TypeChannelScore {
   export const TYPE_CHANNEL = 'typeChannel';
-  export const TERRIBLE = -10;
 
   export function init() {
     let SCORE = {} as Dict<number>;
@@ -66,6 +66,7 @@ export namespace TypeChannelScore {
       y: 0,
       color: -0.6, // TODO: make it adjustable based on preference (shape is better for black and white)
       shape: -0.65,
+      strokeDash: -0.65,
       row: -0.7,
       column: -0.7,
       text: -0.8,
@@ -208,8 +209,8 @@ export namespace MarkChannelScore {
 
   export function init() {
     return {
-      bar_size: -2,
-      tick_size: -2
+      bar_size: -TERRIBLE,
+      tick_size: -TERRIBLE
     } as Dict<number>;
   }
 
@@ -246,7 +247,7 @@ export namespace DimensionScore {
   export function getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     if (specM.isAggregate()) {
       specM.getEncodings().reduce((maxFScore, encQ: EncodingQuery) => {
-        if (!encQ.aggregate && !encQ.autoCount) { //isDimension
+        if (!encQ.aggregate && !encQ.autoCount) { // isDimension
           const featureScore = getFeatureScore(DIMENSION, encQ.channel + '');
           if (featureScore.score > maxFScore.score) {
             return featureScore;

@@ -17,7 +17,7 @@ export const CC_RULESET = {
     const _rules = [];
     [Q, T].forEach((xType) => {
       [Q, T].forEach((yType) => {
-        const continuousRank = [POINT, TEXTMARK, TICK, [BAR, LINE, AREA], RULE];
+        const continuousRank = [POINT, TEXTMARK, TICK, [BAR, LINE, AREA, RULE], 'rect'];
         _rules.push({
           name: xType + ' x ' + yType + ' (with occlusion)',
           items: nestedMap(continuousRank, (mark) => {
