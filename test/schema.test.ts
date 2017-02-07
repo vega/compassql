@@ -462,12 +462,12 @@ describe('schema', () => {
 
   describe('stats', () => {
     it('should return null for an EncodingQuery whose field does not exist in the schema', () => {
-      const summary: Summary = schema.stats({field: 'foo', channel: Channel.X});
+      const summary: DLFieldProfile = schema.stats({field: 'foo', channel: Channel.X});
       assert.isNull(summary);
     });
 
     it('should return the correct summary for a valid EncodingQuery', () => {
-      const summary: Summary = schema.stats({field: 'a', channel: Channel.X});
+      const summary: DLFieldProfile = schema.stats({field: 'a', channel: Channel.X});
       assert.isNotNull(summary);
       assert.equal(summary.count, 2);
       assert.equal(summary.distinct, 2);

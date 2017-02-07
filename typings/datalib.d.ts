@@ -22,7 +22,7 @@ declare module 'datalib/src/import/readers' {
   export function json(param:any): any;
 }
 
-interface Summary {
+interface DLFieldProfile {
   field: string;
   type: string;
   unique: { [value: string] : number };
@@ -41,7 +41,7 @@ interface Summary {
 }
 
 declare module 'datalib/src/stats' {
-  export function summary(data:any): Summary[];
+  export function summary(data:any): DLFieldProfile[];
 }
 
 declare module 'datalib/src/import/type' {
