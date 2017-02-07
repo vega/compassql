@@ -10,6 +10,19 @@ import {BinQuery, EncodingQuery} from './query/encoding';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {cmp, extend, keys} from './util';
 
+export interface FieldSchema {
+  field: string;
+  type?: Type;
+  /** number, integer, string, date  */
+  primitiveType: PrimitiveType;
+  title?: string;
+  index?: number;
+
+  stats: DLFieldProfile;
+  binStats?: {[maxbins: string]: DLFieldProfile};
+  timeStats?: {[timeUnit: string]: DLFieldProfile};
+}
+
 export class Schema {
   private _fieldSchemas: FieldSchema[];
   private _fieldSchemaIndex: {[field: string]: FieldSchema};
@@ -24,7 +37,7 @@ export class Schema {
     opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
 
     // create profiles for each variable
-    let summaries: Summary[] = summary(data);
+    let summaries: DLFieldProfile[] = summary(data);
     let types = inferAll(data); // inferAll does stronger type inference than summary
 
     let fieldSchemas: FieldSchema[] = summaries.map(function(summary) {
@@ -65,8 +78,8 @@ export class Schema {
         type: type,
         primitiveType: primitiveType,
         stats: summary,
-        timeStats: {} as {[timeUnit: string]: Summary},
-        binStats: {} as {[key: string]: Summary}
+        timeStats: {} as {[timeUnit: string]: DLFieldProfile},
+        binStats: {} as {[key: string]: DLFieldProfile}
       };
     });
 
@@ -118,7 +131,7 @@ export class Schema {
     }, {});
   }
 
-  /** @return a list of the field names. */
+  /** @return a list of the field names (for enumerating). */
   public fields() {
     return this._fieldSchemas.map((fieldSchema) => fieldSchema.field);
   }
@@ -281,7 +294,7 @@ export class Schema {
 /**
  * @return a summary of the binning scheme determined from the given max number of bins
  */
-function binSummary(maxbins: number, summary: Summary): Summary {
+function binSummary(maxbins: number, summary: DLFieldProfile): DLFieldProfile {
   const bin = dlBin({
     min: summary.min,
     max: summary.max,
@@ -301,7 +314,7 @@ function binSummary(maxbins: number, summary: Summary): Summary {
 /** @return a modified version of the passed summary with unique and distinct set according to the timeunit.
  *  Maps 'null' (string) keys to the null value and invalid dates to 'Invalid Date' in the unique dictionary.
  */
-function timeSummary(timeunit: TimeUnit, summary: Summary): Summary {
+function timeSummary(timeunit: TimeUnit, summary: DLFieldProfile): DLFieldProfile {
   const result = extend({}, summary);
 
   let unique: {[value: string]: number} = {};
@@ -360,14 +373,3 @@ export enum PrimitiveType {
   DATE = 'date' as any
 }
 
-export interface FieldSchema {
-  field: string;
-  type?: Type;
-  /** number, integer, string, date  */
-  primitiveType: PrimitiveType;
-  stats: Summary;
-  binStats?: {[key: string]: Summary};
-  timeStats?: {[timeUnit: string]: Summary};
-  title?: string;
-  index?: number;
-}
