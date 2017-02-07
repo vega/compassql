@@ -251,6 +251,14 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
         if (channel && scale) {
           let scaleProps = Object.keys(scale);
           for (let scaleProp in scaleProps) {
+
+            if (!scaleProps.hasOwnProperty(scaleProp)) continue;
+
+            if (scaleProp === 'type' || scaleProp === 'name' || scaleProp === 'enum') {
+              // ignore type and properties of wildcards
+              continue;
+            }
+
             let isSupported = channelScalePropertyIncompatability(channel, scaleProp) === undefined;
             if (!isSupported) {
               return false;
