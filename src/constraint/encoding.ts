@@ -241,7 +241,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
   },{
     name: 'scalePropertiesSupportedByChannel',
     description: 'Not all scale properties are supported by all encoding channels',
-    properties: [Property.CHANNEL, Property.SCALE],
+    properties: [SCALE_PROPS, Property.SCALE, Property.CHANNEL],
     allowWildcardForProperties: true,
     strict: true,
     satisfy: (encQ: EncodingQuery) => {
