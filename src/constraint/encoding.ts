@@ -242,13 +242,13 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     name: 'scalePropertiesSupportedByChannel',
     description: 'Not all scale properties are supported by all encoding channels',
     properties: [Property.CHANNEL, Property.SCALE],
-    allowWildcardForProperties: false, // unsure about this
+    allowWildcardForProperties: true,
     strict: true,
     satisfy: (encQ: EncodingQuery) => {
       if (encQ) {
         let channel: Channel = encQ.channel as Channel;
         let scale: ScaleQuery = encQ.scale as ScaleQuery;
-        if (channel && scale) {
+        if (channel && !isWildcard(channel) && scale) {
           for (let scaleProp in scale) {
 
             if (!scale.hasOwnProperty(scaleProp)) continue;
