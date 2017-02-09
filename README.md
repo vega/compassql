@@ -1,6 +1,7 @@
 # CompassQL
 CompassQL Query Language for visualization recommendation.
 
+
 ## Development Instructions
 
 You can install npm dependency with:
