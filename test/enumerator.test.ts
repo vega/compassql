@@ -387,9 +387,9 @@ describe('enumerator', () => {
           mark: Mark.POINT,
           encodings: [
             {
-              channel: Channel.X,
+              channel: Channel.COLOR,
               scale: {
-                range: {enum: [undefined, ['cats', 'dogs'], ['chickens', 'pigs']]}
+                range: {enum: [undefined, ['red', 'blue'], ['green', 'black']]}
               },
               field: 'N',
               type: Type.NOMINAL
@@ -401,8 +401,8 @@ describe('enumerator', () => {
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
         assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).range, undefined);
-        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).range, ['cats', 'dogs']);
-        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).range, ['chickens', 'pigs']);
+        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).range, ['red', 'blue']);
+        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).range, ['green', 'black']);
       });
 
       it('should correctly enumerate scaleRange with number[] values', () => {
@@ -410,7 +410,7 @@ describe('enumerator', () => {
           mark: Mark.POINT,
           encodings: [
             {
-              channel: Channel.X,
+              channel: Channel.SIZE,
               scale: {
                 range: {enum: [undefined, [1,3], [5,7]]}
               },
