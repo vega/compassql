@@ -3,19 +3,25 @@ declare module 'datalib/src/import/load' {
   export = load;
 }
 
+declare module 'datalib/src/bins/bins' {
+  function bins(param: any): any;
+  namespace bins {} // https://github.com/Microsoft/TypeScript/issues/5073
+  export = bins;
+}
+
 declare module 'datalib/src/util' {
-  export function cmp(a, b): number;
-  export function keys(a): Array<string>;
-  export function extend(a, b, ...rest);
+  export function cmp(a: any, b: any): number;
+  export function keys(a: any): Array<string>;
+  export function extend(a: any, b: any, ...rest: any[]): any;
   export function duplicate<T>(a: T): T;
   export function isArray(a: any | any[]): a is any[];
-  export function vals(a);
+  export function vals(a: any): any[];
   export function truncate(a: string, length: number): string;
-  export function toMap(a);
-  export function isObject(a): a is any;
-  export function isString(a): a is string;
-  export function isNumber(a): a is number;
-  export function isBoolean(a): a is boolean;
+  export function toMap(a: any): {[key: string]: 1};
+  export function isObject(a: any): a is any;
+  export function isString(a: any): a is string;
+  export function isNumber(a: any): a is number;
+  export function isBoolean(a: any): a is boolean;
 }
 
 declare module 'datalib/src/import/readers' {

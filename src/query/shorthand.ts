@@ -10,7 +10,7 @@ import {EncodingQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
 
 import {isWildcard, isShortWildcard, SHORT_WILDCARD} from '../wildcard';
-import {getEncodingNestedProp, Property, hasNestedProperty, DEFAULT_PROP_PRECEDENCE, SORT_PROPS} from '../property';
+import {getEncodingNestedProp, Property, hasNestedProperty, DEFAULT_PROP_PRECEDENCE, SORT_PROPS, EncodingNestedChildProp} from '../property';
 import {PropIndex} from '../propindex';
 import {Dict, keys, isArray, isBoolean} from '../util';
 
@@ -266,7 +266,7 @@ function fieldDefProps(encQ: EncodingQuery, include: PropIndex<boolean>, replace
   if (!isBoolean(encQ.bin) && !isShortWildcard(encQ.bin)) {
     const bin = encQ.bin;
     for (const child in bin) {
-      const prop = getEncodingNestedProp('bin', child);
+      const prop = getEncodingNestedProp('bin', child as EncodingNestedChildProp);
       if (prop && include.get(prop) && bin[child] !== undefined) {
         props.push({
           key: child,
@@ -301,7 +301,7 @@ function fieldDefProps(encQ: EncodingQuery, include: PropIndex<boolean>, replace
       } else {
         let nestedPropChildren = [];
         for (const child in parentValue) {
-          const nestedProp = getEncodingNestedProp(parent, child);
+          const nestedProp = getEncodingNestedProp(parent, child as EncodingNestedChildProp);
           if (nestedProp && include.get(nestedProp) && parentValue[child] !== undefined) {
             nestedPropChildren.push({
               key: child,

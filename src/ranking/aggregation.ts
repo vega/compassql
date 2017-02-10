@@ -22,7 +22,7 @@ export function score(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): 
 function aggregationQualityFeature (specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore {
   const encodings = specM.getEncodings();
   if (specM.isAggregate()) {
-    const isRawContinuous = (encQ) => {
+    const isRawContinuous = (encQ: EncodingQuery) => {
       return (encQ.type === Type.QUANTITATIVE && !encQ.bin && !encQ.aggregate && !encQ.autoCount) ||
         (encQ.type === Type.TEMPORAL && !encQ.timeUnit);
     };

@@ -6,12 +6,15 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../../../src/config';
 import {SpecQueryModel} from '../../../src/model';
+import {EncodingQuery} from '../../../src/query/encoding';
+import {SpecQuery} from '../../../src/query/spec';
 import {extend, nestedMap} from '../../../src/util';
 import effectiveness from '../../../src/ranking/effectiveness/effectiveness';
+import {ExtendedType} from '../../../src/ranking/effectiveness/type';
 import {schema} from '../../fixture';
 import {RuleSet, Rule, testRuleSet} from '../rule';
 
-function build(specQ) {
+function build(specQ: SpecQuery) {
   return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
 }
 
@@ -23,7 +26,7 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
   rules: function() {
     const rules: Rule<SpecQueryModel>[] = [];
 
-    function plot1d(mark: Mark, channel, type) {
+    function plot1d(mark: Mark, channel: Channel, type: ExtendedType) {
       return SpecQueryModel.build({
         mark: mark,
         encodings: [
@@ -39,11 +42,11 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
     rules.push({
       name: 'N with varying mark',
       items: nestedMap([[POINT /*, RECT */], TICK, [LINE, BAR, AREA], RULE], (mark) => {
-        return plot1d(mark, X, Type.NOMINAL);
+        return plot1d(mark, X, ExtendedType.N);
       })
     });
 
-    function countplot(mark: Mark, field, type: Type) {
+    function countplot(mark: Mark, field: string, type: Type) {
       return SpecQueryModel.build({
         mark: mark,
         encodings: [
@@ -78,11 +81,11 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
     rules.push({
       name: 'Q dot plot with varying mark',
       items: nestedMap([TICK, POINT, [LINE, BAR, AREA], RULE], (mark) => {
-        return plot1d(mark, X, Type.QUANTITATIVE);
+        return plot1d(mark, X, ExtendedType.Q);
       })
     });
 
-    function histogram(mark: Mark, xEncQ) {
+    function histogram(mark: Mark, xEncQ: EncodingQuery) {
       return SpecQueryModel.build({
         mark: mark,
         encodings: [
@@ -111,7 +114,7 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
     rules.push({
       name: 'T dot plot with varying mark',
       items: nestedMap([TICK, POINT, [LINE, BAR, AREA], RULE], (mark) => {
-        return plot1d(mark, X, Type.TEMPORAL);
+        return plot1d(mark, X, ExtendedType.T);
       })
     });
 
@@ -265,7 +268,7 @@ export const SET_AXIS_PREFERRENCE: RuleSet<SpecQueryModel> = {
   rules: function() {
     const rules: Rule<SpecQueryModel>[] = [];
 
-    function countplot(dimType: Type, dimChannel: Channel, countChannel: Channel, dimMixins?) {
+    function countplot(dimType: Type, dimChannel: Channel, countChannel: Channel, dimMixins?: any) {
       return build({
         mark: 'point',
         encodings: [
@@ -366,22 +369,22 @@ function getScore(specM: SpecQueryModel) {
 
 describe('effectiveness', () => {
   describe(SET_1D.name, () => {
-    testRuleSet(SET_1D, getScore, (specM) => specM.toShorthand()) ;
+    testRuleSet(SET_1D, getScore, (specM: SpecQueryModel) =>  specM.toShorthand()) ;
   });
 
   describe(SET_2D.name, () => {
-    testRuleSet(SET_2D, getScore, (specM) => specM.toShorthand()) ;
+    testRuleSet(SET_2D, getScore, (specM: SpecQueryModel) =>  specM.toShorthand()) ;
   });
 
   describe(SET_3D.name, () => {
-    testRuleSet(SET_3D, getScore, (specM) => specM.toShorthand()) ;
+    testRuleSet(SET_3D, getScore, (specM: SpecQueryModel) =>  specM.toShorthand()) ;
   });
 
   describe(SET_AXIS_PREFERRENCE.name, () => {
-    testRuleSet(SET_AXIS_PREFERRENCE, getScore, (specM) => specM.toShorthand()) ;
+    testRuleSet(SET_AXIS_PREFERRENCE, getScore, (specM: SpecQueryModel) =>  specM.toShorthand()) ;
   });
 
   describe(SET_FACET_PREFERENCE.name, () => {
-    testRuleSet(SET_FACET_PREFERENCE, getScore, (specM) => specM.toShorthand()) ;
+    testRuleSet(SET_FACET_PREFERENCE, getScore, (specM: SpecQueryModel) =>  specM.toShorthand()) ;
   });
 });

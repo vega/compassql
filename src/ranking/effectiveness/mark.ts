@@ -8,12 +8,12 @@ import {Schema} from '../../schema';
 
 import {FeatureScore} from '../ranking';
 import {getFeatureScore} from './effectiveness';
-import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, NONE, getExtendedType} from './type';
+import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, NONE, ExtendedType, getExtendedType} from './type';
 
 export namespace MarkScore {
   export const MARK_SCORE = 'markScore';
 
-  export function featurize(xType, yType, hasOcclusion: boolean, mark: Mark) {
+  export function featurize(xType: ExtendedType, yType: ExtendedType, hasOcclusion: boolean, mark: Mark) {
     return xType + '_' + yType + '_' + hasOcclusion + '_' + mark;
   }
 
@@ -37,7 +37,7 @@ export namespace MarkScore {
           area: -2,
           rule: -2.5
         };
-        forEach(occludedQQMark, (score, mark) => {
+        forEach(occludedQQMark, (score, mark: Mark) => {
           const feature = featurize(xType, yType, true, mark);
           SCORE[feature] = score;
         });
@@ -53,7 +53,7 @@ export namespace MarkScore {
           area: -2,
           rule: -2.5
         };
-        forEach(noOccludedQQMark, (score, mark) => {
+        forEach(noOccludedQQMark, (score, mark: Mark) => {
           const feature = featurize(xType, yType, false, mark);
           SCORE[feature] = score;
         });
@@ -74,7 +74,7 @@ export namespace MarkScore {
           area: -2,
           rule: -2.5
         };
-        forEach(occludedDimensionMeasureMark, (score, mark) => {
+        forEach(occludedDimensionMeasureMark, (score, mark: Mark) => {
           const feature = featurize(xType, yType, true, mark);
           SCORE[feature] = score;
           // also do the inverse
@@ -94,7 +94,7 @@ export namespace MarkScore {
           area: -2,
           rule: -2.5
         };
-        forEach(occludedDimensionMeasureMark, (score, mark) => {
+        forEach(occludedDimensionMeasureMark, (score, mark: Mark) => {
           const feature = featurize(xType, yType, true, mark);
           SCORE[feature] = score;
           // also do the inverse
@@ -116,7 +116,7 @@ export namespace MarkScore {
           // Non-sense to use rule here
           rule: -2.5
         };
-        forEach(noOccludedQxN, (score, mark) => {
+        forEach(noOccludedQxN, (score, mark: Mark) => {
           const feature = featurize(xType, yType, false, mark);
           SCORE[feature] = score;
 
@@ -138,7 +138,7 @@ export namespace MarkScore {
           // Non-sense to use rule here
           rule: -2.5
         };
-        forEach(noOccludedQxBinQ, (score, mark) => {
+        forEach(noOccludedQxBinQ, (score, mark: Mark) => {
           const feature = featurize(xType, yType, false, mark);
           SCORE[feature] = score;
 
@@ -161,7 +161,7 @@ export namespace MarkScore {
           // Non-sense to use rule here
           rule: -2.5
         };
-        forEach(noOccludedQxBinQ, (score, mark) => {
+        forEach(noOccludedQxBinQ, (score, mark: Mark) => {
           const feature = featurize(xType, yType, false, mark);
           SCORE[feature] = score;
 
@@ -187,11 +187,11 @@ export namespace MarkScore {
         };
         // No difference between has occlusion and no occlusion
         // as most of the time, it will be the occluded case.
-        forEach(ttMark, (score, mark) => {
+        forEach(ttMark, (score, mark: Mark) => {
           const feature = featurize(xType, yType, true, mark);
           SCORE[feature] = score;
         });
-        forEach(ttMark, (score, mark) => {
+        forEach(ttMark, (score, mark: Mark) => {
           const feature = featurize(xType, yType, false, mark);
           SCORE[feature] = score;
         });
@@ -211,19 +211,19 @@ export namespace MarkScore {
         };
         // No difference between has occlusion and no occlusion
         // as most of the time, it will be the occluded case.
-        forEach(tdMark, (score, mark) => {
+        forEach(tdMark, (score, mark: Mark) => {
           const feature = featurize(xType, yType, true, mark);
           SCORE[feature] = score;
         });
-        forEach(tdMark, (score, mark) => {
+        forEach(tdMark, (score, mark: Mark) => {
           const feature = featurize(yType, xType, true, mark);
           SCORE[feature] = score;
         });
-        forEach(tdMark, (score, mark) => {
+        forEach(tdMark, (score, mark: Mark) => {
           const feature = featurize(xType, yType, false, mark);
           SCORE[feature] = score;
         });
-        forEach(tdMark, (score, mark) => {
+        forEach(tdMark, (score, mark: Mark) => {
           const feature = featurize(yType, xType, false, mark);
           SCORE[feature] = score;
         });
@@ -245,11 +245,11 @@ export namespace MarkScore {
           rule: -2.5
         };
         // No difference between has occlusion and no occlusion
-        forEach(ddMark, (score, mark) => {
+        forEach(ddMark, (score, mark: Mark) => {
           const feature = featurize(xType, yType, true, mark);
           SCORE[feature] = score;
         });
-        forEach(ddMark, (score, mark) => {
+        forEach(ddMark, (score, mark: Mark) => {
           const feature = featurize(xType, yType, false, mark);
           SCORE[feature] = score;
         });

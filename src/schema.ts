@@ -354,7 +354,7 @@ function timeSummary(timeunit: TimeUnit, summary: DLFieldProfile): DLFieldProfil
 /**
  * @return a new unique object based off of the old unique count and a binning scheme
  */
-function binUnique(bin, oldUnique) {
+function binUnique(bin: any, oldUnique: any) {
   const newUnique = {};
   for (let value in oldUnique) {
     let bucket: number;

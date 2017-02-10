@@ -98,7 +98,7 @@ export function groupComparatorFactory(name: string | string[], schema: Schema, 
   };
 }
 
-function getScoreDifference(name: string[], m1: SpecQueryModel, m2: SpecQueryModel, schema, opt): number {
+function getScoreDifference(name: string[], m1: SpecQueryModel, m2: SpecQueryModel, schema: Schema, opt: QueryConfig): number {
   for (let rankingName of name) {
     let scoreDifference = getScore(m2, rankingName, schema, opt).score - getScore(m1, rankingName, schema, opt).score;
     if (scoreDifference !== 0) {

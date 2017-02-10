@@ -2,6 +2,7 @@ import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Axis} from 'vega-lite/src/axis';
 import {Bin} from 'vega-lite/src/bin';
 import {Channel} from 'vega-lite/src/channel';
+import {Mark} from 'vega-lite/src/mark';
 import {Scale} from 'vega-lite/src/scale';
 import {Legend} from 'vega-lite/src/legend';
 import {SortOrder, SortField} from 'vega-lite/src/sort';
@@ -82,7 +83,7 @@ export function scaleType(encQ: EncodingQuery) {
   // Thus, instead of making this method requiring the global mark and topLevelSize,
   // we will just call it with mark = undefined and hasTopLevelSize = false.
   // Thus, currently, we will always get a point scale unless a CompassQuery specifies band.
-  const markType = undefined;
+  const markType: Mark = undefined;
   const hasTopLevelSize = false;
   const scaleConfig = {};
 

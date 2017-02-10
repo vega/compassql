@@ -11,7 +11,7 @@ describe('schema', () => {
 
   describe('build', () => {
     it('should correctly create a Schema object with empty data', () => {
-      const data = [];
+      const data: any[] = [];
       let schema = Schema.build(data);
 
       assert.isNotNull(schema);
@@ -451,7 +451,7 @@ describe('schema', () => {
     });
 
     it('should return undefined when timeUnit is undefined', () => {
-      const variationData = [];
+      const variationData: any[] = [];
       const variationSchema = Schema.build(variationData);
       assert.isUndefined(variationSchema.timeUnitHasVariation({
         field: 'a',

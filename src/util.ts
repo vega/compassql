@@ -9,17 +9,16 @@ export function contains(array: any[], item: any) {
   return array.indexOf(item) !== -1;
 };
 
-export function every<T>(arr: T[], f: (item: T, key: number, i: number) => boolean) {
-    let i = 0, k;
-    for (k in arr) {
-      if (!f(arr[k], k, i++)) {
-        return false;
-      }
+export function every<T>(arr: T[], f: (item: T, key: number) => boolean) {
+  for (let i = 0; i < arr.length; i++) {
+    if (!f(arr[i], i)) {
+      return false;
     }
-    return true;
+  }
+  return true;
 };
 
-export function forEach(obj, f, thisArg?) {
+export function forEach(obj: any, f: (item: any, key: number|string, i: number)=>void, thisArg?: any) {
   if (obj.forEach) {
     obj.forEach.call(thisArg, f);
   } else {
@@ -29,17 +28,17 @@ export function forEach(obj, f, thisArg?) {
   }
 };
 
-export function some(arr, f) {
-    let i = 0, k;
-    for (k in arr) {
-      if (f(arr[k], k, i++)) {
-        return true;
-      }
+export function some<T>(arr: T[], f: (item: T, key: number|string, i: number)=>boolean) {
+  let i = 0, k;
+  for (k in arr) {
+    if (f(arr[k], k, i++)) {
+      return true;
     }
-    return false;
+  }
+  return false;
 };
 
-export function nestedMap(array: any[], f): any[] {
+export function nestedMap(array: any[], f: (item: any)=>any): any[] {
   return array.map((a) => {
     if (isArray(a)) {
       return nestedMap(a, f);

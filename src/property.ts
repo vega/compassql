@@ -16,6 +16,8 @@ export type TransformProp = keyof TransformQuery;
 export type EncodingTopLevelProp = keyof EncodingQuery;
 export type EncodingNestedProp = BinProp | SortProp | ScaleProp | AxisProp | LegendProp;
 
+export type EncodingNestedChildProp = keyof Bin | keyof SortField | keyof Scale | keyof Axis | keyof Legend;
+
 type BaseEncodingNestedProp<P, T> = {
   parent: P,
   child: keyof T
@@ -133,7 +135,7 @@ const ENCODING_NESTED_PROP_INDEX = ENCODING_NESTED_PROPS.reduce((i, prop: Encodi
 }, {});
 
 // FIXME consider using a more general method
-export function getEncodingNestedProp(parent: EncodingTopLevelProp, child) {
+export function getEncodingNestedProp(parent: EncodingTopLevelProp, child: EncodingNestedChildProp) {
   return (ENCODING_NESTED_PROP_INDEX[parent] || {})[child];
 }
 

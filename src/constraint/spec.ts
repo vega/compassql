@@ -158,7 +158,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           throw new Error('Unsupported Type');
         });
       } else {
-        const neverHaveAutoCount = every(specM.wildcardIndex.encodingIndicesByProperty.get('autoCount'), (index: number) => {
+        const autoCountEncIndex = specM.wildcardIndex.encodingIndicesByProperty.get('autoCount') || [];
+        const neverHaveAutoCount = every(autoCountEncIndex, (index: number) => {
           return !isWildcard(specM.getEncodingQueryByIndex(index).autoCount);
         });
         if (neverHaveAutoCount) {
@@ -234,7 +235,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
                  specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
       }
       /* istanbul ignore next */
-      throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
+      throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + JSON.stringify(mark));
     }
   },
   {
