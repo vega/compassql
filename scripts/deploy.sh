@@ -35,6 +35,8 @@ npm run build
 
 # add the compiled files, commit and tag!
 git add compassql* -f
+git add src/**/*.js -f
+
 git commit -m "release $version $gitsha"
 git tag -am "Release v$version." "v$version"
 
