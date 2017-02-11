@@ -11,7 +11,7 @@ function getScore(feature: string) {
   return MARK_SCORE[feature];
 }
 
-interface Rule {
+export interface Rule {
   name: string;
   items: string[];
 }

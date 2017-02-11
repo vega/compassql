@@ -139,7 +139,7 @@ export function getDefaultName(prop: Property) {
 /**
  * Generic index for default enum (values to enumerate) of a particular definition type.
  */
-type DefEnumIndex<T> = { [P in keyof T]: T[P][]};
+export type DefEnumIndex<T> = { [P in keyof T]: T[P][]};
 
 const DEFAULT_BOOLEAN_ENUM = [false, true];
 

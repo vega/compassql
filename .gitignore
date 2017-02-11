@@ -10,4 +10,5 @@ demo/**/*.js
 src/**/*.js
 test/**/*.js
 **/*.js.map
+**/*.d.ts
 .nyc_output/

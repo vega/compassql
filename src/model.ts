@@ -6,6 +6,7 @@ import {FieldDef} from 'vega-lite/src/fielddef';
 import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 import {ExtendedUnitSpec} from 'vega-lite/src/spec';
+import {StackProperties} from 'vega-lite/src/stack';
 
 import {QueryConfig} from './config';
 import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, hasNestedProperty} from './property';
@@ -228,7 +229,7 @@ export class SpecQueryModel {
     return this._channelCount[channel] > 0;
   }
 
-  public stack() {
+  public stack(): StackProperties {
     return stack(this._spec);
   }
 

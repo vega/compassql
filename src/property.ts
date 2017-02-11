@@ -18,16 +18,16 @@ export type EncodingNestedProp = BinProp | SortProp | ScaleProp | AxisProp | Leg
 
 export type EncodingNestedChildProp = keyof Bin | keyof SortField | keyof Scale | keyof Axis | keyof Legend;
 
-type BaseEncodingNestedProp<P, T> = {
+export type BaseEncodingNestedProp<P, T> = {
   parent: P,
   child: keyof T
 };
 
-type BinProp = BaseEncodingNestedProp<'bin', Bin>;
-type SortProp = BaseEncodingNestedProp<'sort', SortField>;
-type ScaleProp = BaseEncodingNestedProp<'scale', Scale>;
-type AxisProp = BaseEncodingNestedProp<'axis', Axis>;
-type LegendProp = BaseEncodingNestedProp<'legend', Legend>;
+export type BinProp = BaseEncodingNestedProp<'bin', Bin>;
+export type SortProp = BaseEncodingNestedProp<'sort', SortField>;
+export type ScaleProp = BaseEncodingNestedProp<'scale', Scale>;
+export type AxisProp = BaseEncodingNestedProp<'axis', Axis>;
+export type LegendProp = BaseEncodingNestedProp<'legend', Legend>;
 
 export function isEncodingNestedProp(p: Property): p is EncodingNestedProp {
   return !!p['parent'];
