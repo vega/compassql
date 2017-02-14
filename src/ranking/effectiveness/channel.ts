@@ -3,7 +3,7 @@ import {Channel} from 'vega-lite/src/channel';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../../config';
 import {SpecQueryModel} from '../../model';
 import {fieldDef as fieldDefShorthand} from '../../query/shorthand';
-import {EncodingQuery} from '../../query/encoding';
+import {EncodingQuery, isFieldQuery} from '../../query/encoding';
 import {Dict, extend, forEach, keys} from '../../util';
 
 import {Schema} from '../../schema';
@@ -39,7 +39,7 @@ export namespace TypeChannelScore {
     };
 
     [Q, T, TIMEUNIT_T].forEach((type) => {
-      keys(CONTINUOUS_TYPE_CHANNEL_SCORE).forEach((channel: Channel) => {
+      keys(CONTINUOUS_TYPE_CHANNEL_SCORE).forEach((channel) => {
         SCORE[featurize(type, channel)] = CONTINUOUS_TYPE_CHANNEL_SCORE[channel];
       });
     });
@@ -56,7 +56,7 @@ export namespace TypeChannelScore {
     });
 
     [BIN_Q, TIMEUNIT_O, O].forEach((type) => {
-      keys(ORDERED_TYPE_CHANNEL_SCORE).forEach((channel: Channel) => {
+      keys(ORDERED_TYPE_CHANNEL_SCORE).forEach((channel) => {
         SCORE[featurize(type, channel)] = ORDERED_TYPE_CHANNEL_SCORE[channel];
       });
     });
@@ -75,14 +75,14 @@ export namespace TypeChannelScore {
       opacity: -3.1,
     };
 
-    keys(NOMINAL_TYPE_CHANNEL_SCORE).forEach((channel: Channel) => {
+    keys(NOMINAL_TYPE_CHANNEL_SCORE).forEach((channel) => {
       SCORE[featurize(N, channel)] = NOMINAL_TYPE_CHANNEL_SCORE[channel];
     });
 
     return SCORE;
   }
 
-  export function featurize(type: ExtendedType, channel: Channel) {
+  export function featurize(type: ExtendedType, channel) {
     return type + '_' + channel;
   }
 
@@ -98,7 +98,7 @@ export namespace TypeChannelScore {
     forEach(encodingQueryByField, (encQs: EncodingQuery[]) => {
       const bestFieldFeature = encQs.reduce((best: FeatureScore, encQ) => {
         const type = getExtendedType(encQ);
-        const feature = featurize(type, encQ.channel as Channel);
+        const feature = featurize(type, encQ.channel);
         const featureScore = getFeatureScore(TYPE_CHANNEL, feature);
         if (best === null || featureScore.score > best.score) {
           return featureScore;
@@ -155,14 +155,14 @@ export namespace PreferredAxisScore {
     return score;
   }
 
-  export function featurize(type: ExtendedType, channel: Channel) {
+  export function featurize(type, channel) {
     return type + '_' + channel;
   }
 
   export function getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     return specM.getEncodings().reduce((features, encQ: EncodingQuery) => {
       const type = getExtendedType(encQ);
-      const feature = featurize(type, encQ.channel as Channel);
+      const feature = featurize(type, encQ.channel);
       const featureScore = getFeatureScore(PREFERRED_AXIS, feature);
       if (featureScore) {
         features.push(featureScore);
@@ -246,7 +246,8 @@ export namespace DimensionScore {
   export function getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     if (specM.isAggregate()) {
       specM.getEncodings().reduce((maxFScore, encQ: EncodingQuery) => {
-        if (!encQ.aggregate && !encQ.autoCount) { // isDimension
+        // TODO(akshatsh): should be fieldQuery? 
+        if (isFieldQuery(encQ) && !encQ.aggregate && !encQ.autoCount) { // isDimension
           const featureScore = getFeatureScore(DIMENSION, encQ.channel + '');
           if (featureScore.score > maxFScore.score) {
             return featureScore;

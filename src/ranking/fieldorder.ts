@@ -1,6 +1,7 @@
 import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
 import {Schema} from '../schema';
+import {isValueQuery} from '../query/encoding';
 
 import {RankingScore, FeatureScore} from './ranking';
 
@@ -31,7 +32,11 @@ export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): Ra
 
   for (let i = fieldWildcardIndices.length - 1; i >= 0; i--) {
     const index = fieldWildcardIndices[i];
-    const field = encodings[index].field as string;
+    const encoding = encodings[index];
+
+    // TODO(akshatsh): check this
+    if (isValueQuery(encoding)) continue;
+    const field = encoding.field as string;
     const fieldWildcard = specM.wildcardIndex.encodings[index].get('field');
     const fieldIndex = schema.fieldSchema(field).index;
      // reverse order field with lower index should get higher score and come first

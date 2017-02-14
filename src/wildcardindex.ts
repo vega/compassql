@@ -59,7 +59,7 @@ export class WildcardIndex {
     return !this.mark && this.encodingIndicesByProperty.size() === 0;
   }
 
-  public setMark(mark: Wildcard<Mark>) {
+  public setMark(mark) {
     this._mark = mark;
     return this;
   }

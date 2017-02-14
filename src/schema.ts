@@ -6,25 +6,9 @@ import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 import * as dlBin from 'datalib/src/bins/bins';
 
-import {BinQuery, EncodingQuery} from './query/encoding';
+import {BinQuery, EncodingQuery, FieldQuery} from './query/encoding';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {cmp, extend, keys} from './util';
-
-export interface FieldSchema {
-  field: string;
-  type?: Type;
-
-  /** number, integer, string, date  */
-  primitiveType: PrimitiveType;
-
-
-  title?: string;
-  index?: number;
-
-  stats: DLFieldProfile;
-  binStats?: {[maxbins: string]: DLFieldProfile};
-  timeStats?: {[timeUnit: string]: DLFieldProfile};
-}
 
 export class Schema {
   private _fieldSchemas: FieldSchema[];
@@ -33,35 +17,27 @@ export class Schema {
   /**
    * Build a Schema object.
    *
-   * @param data - a set of raw data in the same format that Vega-Lite / Vega takes
-   * Basically, it's an array in the form of:
-   *
-   * [
-   *   {a: 1, b:2},
-   *   {a: 2, b:3},
-   *   ...
-   * ]
-   *
+   * @param data - a set of raw data
    * @return a Schema object
    */
   public static build(data: any, opt: QueryConfig = {}): Schema {
     opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
 
     // create profiles for each variable
-    let summaries: DLFieldProfile[] = summary(data);
+    let summaries: Summary[] = summary(data);
     let types = inferAll(data); // inferAll does stronger type inference than summary
 
-    let fieldSchemas: FieldSchema[] = summaries.map(function(fieldProfile) {
-      let field: string = fieldProfile.field;
+    let fieldSchemas: FieldSchema[] = summaries.map(function(summary) {
+      let field: string = summary.field;
       let primitiveType: PrimitiveType = types[field] as any;
-      let distinct: number = fieldProfile.distinct;
+      let distinct: number = summary.distinct;
       let type: Type;
 
       if (primitiveType === PrimitiveType.NUMBER) {
         type = Type.QUANTITATIVE;
       } else if (primitiveType === PrimitiveType.INTEGER) {
         // use ordinal or nominal when cardinality of integer type is relatively low and the distinct values are less than an amount specified in options
-        if ((distinct < opt.numberNominalLimit) && (distinct / fieldProfile.count < opt.numberNominalProportion)) {
+        if ((distinct < opt.numberNominalLimit) && (distinct / summary.count < opt.numberNominalProportion)) {
           type = Type.NOMINAL;
         } else {
           type = Type.QUANTITATIVE;
@@ -70,28 +46,27 @@ export class Schema {
         type = Type.TEMPORAL;
         // need to get correct min/max of date data because datalib's summary method does not
         // calculate this correctly for date types.
-        fieldProfile.min = new Date(data[0][field]);
-        fieldProfile.max = new Date(data[0][field]);
+        summary.min = new Date(data[0][field]);
+        summary.max = new Date(data[0][field]);
         for (const dataEntry of data) {
           const time = new Date(dataEntry[field]).getTime();
-          if (time < (fieldProfile.min as Date).getTime()) {
-            fieldProfile.min = new Date(time);
+          if (time < (summary.min as Date).getTime()) {
+            summary.min = new Date(time);
           }
-          if (time > (fieldProfile.max as Date).getTime()) {
-            fieldProfile.max = new Date(time);
+          if (time > (summary.max as Date).getTime()) {
+            summary.max = new Date(time);
           }
         }
       } else {
         type = Type.NOMINAL;
       }
-
       return {
         field: field,
         type: type,
         primitiveType: primitiveType,
-        stats: fieldProfile,
-        timeStats: {} as {[timeUnit: string]: DLFieldProfile},
-        binStats: {} as {[key: string]: DLFieldProfile}
+        stats: summary,
+        timeStats: {} as {[timeUnit: string]: Summary},
+        binStats: {} as {[key: string]: Summary}
       };
     });
 
@@ -143,7 +118,7 @@ export class Schema {
     }, {});
   }
 
-  /** @return a list of the field names (for enumerating). */
+  /** @return a list of the field names. */
   public fields() {
     return this._fieldSchemas.map((fieldSchema) => fieldSchema.field);
   }
@@ -171,23 +146,23 @@ export class Schema {
     return this._fieldSchemaIndex[field] ? this._fieldSchemaIndex[field].type : null;
   }
 
-  /** @return cardinality of the field associated with encQ, null if it doesn't exist.
+  /** @return cardinality of the field associated with fieldQ, null if it doesn't exist.
    *  @param augmentTimeUnitDomain - TimeUnit field domains will not be augmented if explicitly set to false.
    */
-  public cardinality(encQ: EncodingQuery, augmentTimeUnitDomain: boolean = true, excludeInvalid: boolean = false) {
-    const fieldSchema = this._fieldSchemaIndex[encQ.field as string];
-    if (encQ.aggregate || encQ.autoCount) {
+  public cardinality(fieldQ: FieldQuery, augmentTimeUnitDomain: boolean = true, excludeInvalid: boolean = false) {
+    const fieldSchema = this._fieldSchemaIndex[fieldQ.field as string];
+    if (fieldQ.aggregate || fieldQ.autoCount) {
       return 1;
-    } else if (encQ.bin) {
+    } else if (fieldQ.bin) {
       // encQ.bin will either be a boolean or a BinQuery
       let bin: BinQuery;
-      if (typeof encQ.bin === 'boolean') {
+      if (typeof fieldQ.bin === 'boolean') {
         // autoMaxBins defaults to 10 if channel is Wildcard
         bin = {
-          maxbins: autoMaxBins(encQ.channel as Channel)
+          maxbins: autoMaxBins(fieldQ.channel as Channel)
         };
       } else {
-        bin = encQ.bin;
+        bin = fieldQ.bin;
       }
       const maxbins: any = bin.maxbins;
       if (!fieldSchema.binStats[maxbins]) {
@@ -196,9 +171,9 @@ export class Schema {
       }
       // don't need to worry about excludeInvalid here because invalid values don't affect linearly binned field's cardinality
       return fieldSchema.binStats[maxbins].distinct;
-    } else if (encQ.timeUnit) {
+    } else if (fieldQ.timeUnit) {
       if (augmentTimeUnitDomain) {
-        switch (encQ.timeUnit) {
+        switch (fieldQ.timeUnit) {
           // TODO: this should not always be the case once Vega-Lite supports turning off domain augmenting (VL issue #1385)
           case TimeUnit.SECONDS: return 60;
           case TimeUnit.MINUTES: return 60;
@@ -210,11 +185,11 @@ export class Schema {
           case TimeUnit.MILLISECONDS: return 1000;
         }
       }
-      let unit = encQ.timeUnit as string;
+      let unit = fieldQ.timeUnit as string;
       let timeStats = fieldSchema.timeStats;
       // if the cardinality for the timeUnit is not cached, calculate it
       if (!timeStats[unit]) {
-        timeStats[unit] = timeSummary(encQ.timeUnit as TimeUnit, fieldSchema.stats);
+        timeStats[unit] = timeSummary(fieldQ.timeUnit as TimeUnit, fieldSchema.stats);
       }
 
       if (excludeInvalid) {
@@ -243,24 +218,24 @@ export class Schema {
    * ('yearmonth', [Jan 1 2000, Feb 2 2000] returns false)
    * ('yearmonth', [Jan 1 2000, Feb 2 2001] returns true)
    */
-  public timeUnitHasVariation(encQ: EncodingQuery): boolean {
-    if (!encQ.timeUnit) {
+  public timeUnitHasVariation(fieldQ: FieldQuery): boolean {
+    if (!fieldQ.timeUnit) {
       return;
     }
 
     // if there is no variation in `date`, there should not be variation in `day`
-    if (encQ.timeUnit === TimeUnit.DAY) {
-      const dateEncQ: EncodingQuery = extend({}, encQ, {timeUnit: TimeUnit.DATE});
+    if (fieldQ.timeUnit === TimeUnit.DAY) {
+      const dateEncQ: EncodingQuery = extend({}, fieldQ, {timeUnit: TimeUnit.DATE});
       if (this.cardinality(dateEncQ, false, true) <= 1) {
         return false;
       }
     }
 
-    let fullTimeUnit = encQ.timeUnit;
+    let fullTimeUnit = fieldQ.timeUnit;
     for (let singleUnit of SINGLE_TIMEUNITS) {
       if (containsTimeUnit(fullTimeUnit as TimeUnit, singleUnit)) {
         // Create a clone of encQ, but with singleTimeUnit
-        const singleUnitEncQ = extend({}, encQ, {timeUnit: singleUnit});
+        const singleUnitEncQ = extend({}, fieldQ, {timeUnit: singleUnit});
         if (this.cardinality(singleUnitEncQ, false, true) <= 1) {
           return false;
         }
@@ -269,9 +244,9 @@ export class Schema {
     return true;
   }
 
-  public domain(encQ: EncodingQuery): any[] {
-    // TODO: differentiate for field with bin / timeUnit
-    const fieldSchema = this._fieldSchemaIndex[encQ.field as string];
+  public domain(fieldQ: FieldQuery): any[] {
+    // TODO: differentiate for field witht bin / timeUnit
+    const fieldSchema = this._fieldSchemaIndex[fieldQ.field as string];
     let domain: any[] = keys(fieldSchema.stats.unique);
     if (fieldSchema.type === Type.QUANTITATIVE) {
       // return [min, max], coerced into number types
@@ -294,11 +269,11 @@ export class Schema {
   }
 
   /**
-   * @return a Summary corresponding to the field of the given EncodingQuery
+   * @return a Summary corresponding to the field of the given fieldQUery
    */
-  public stats(encQ: EncodingQuery) {
+  public stats(fieldQ: FieldQuery) {
     // TODO: differentiate for field with bin / timeUnit vs without
-    const fieldSchema = this._fieldSchemaIndex[encQ.field as string];
+    const fieldSchema = this._fieldSchemaIndex[fieldQ.field as string];
     return fieldSchema ? fieldSchema.stats : null;
   }
 }
@@ -306,7 +281,7 @@ export class Schema {
 /**
  * @return a summary of the binning scheme determined from the given max number of bins
  */
-function binSummary(maxbins: number, summary: DLFieldProfile): DLFieldProfile {
+function binSummary(maxbins: number, summary: Summary): Summary {
   const bin = dlBin({
     min: summary.min,
     max: summary.max,
@@ -326,7 +301,7 @@ function binSummary(maxbins: number, summary: DLFieldProfile): DLFieldProfile {
 /** @return a modified version of the passed summary with unique and distinct set according to the timeunit.
  *  Maps 'null' (string) keys to the null value and invalid dates to 'Invalid Date' in the unique dictionary.
  */
-function timeSummary(timeunit: TimeUnit, summary: DLFieldProfile): DLFieldProfile {
+function timeSummary(timeunit: TimeUnit, summary: Summary): Summary {
   const result = extend({}, summary);
 
   let unique: {[value: string]: number} = {};
@@ -354,7 +329,7 @@ function timeSummary(timeunit: TimeUnit, summary: DLFieldProfile): DLFieldProfil
 /**
  * @return a new unique object based off of the old unique count and a binning scheme
  */
-function binUnique(bin: any, oldUnique: any) {
+function binUnique(bin, oldUnique) {
   const newUnique = {};
   for (let value in oldUnique) {
     let bucket: number;
@@ -383,4 +358,16 @@ export enum PrimitiveType {
   INTEGER = 'integer' as any,
   BOOLEAN = 'boolean' as any,
   DATE = 'date' as any
+}
+
+export interface FieldSchema {
+  field: string;
+  type?: Type;
+  /** number, integer, string, date  */
+  primitiveType: PrimitiveType;
+  stats: Summary;
+  binStats?: {[key: string]: Summary};
+  timeStats?: {[timeUnit: string]: Summary};
+  title?: string;
+  index?: number;
 }
