@@ -244,7 +244,7 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
     properties: [].concat(SCALE_PROPS, [Property.SCALE, Property.CHANNEL]),
     allowWildcardForProperties: true,
     strict: true,
-    satisfy: (encQ: EncodingQuery) => {
+    satisfy: (encQ: EncodingQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
       if (encQ) {
         let channel: Channel = encQ.channel as Channel;
         let scale: ScaleQuery = encQ.scale as ScaleQuery;
