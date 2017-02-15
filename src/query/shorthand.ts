@@ -9,7 +9,7 @@ import {toMap, isString} from 'datalib/src/util';
 import {EncodingQuery, isFieldQuery, FieldQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
 
-import {isWildcard, isShortWildcard, SHORT_WILDCARD} from '../wildcard';
+import {isWildcard, isShortWildcard, Wildcard, SHORT_WILDCARD} from '../wildcard';
 import {getEncodingNestedProp, Property, hasNestedProperty, DEFAULT_PROP_PRECEDENCE, SORT_PROPS} from '../property';
 import {PropIndex} from '../propindex';
 import {Dict, keys, isArray, isBoolean} from '../util';
@@ -29,7 +29,7 @@ export function getReplacer(replace: Dict<string>): Replacer {
   };
 }
 
-export function value(v: any, replacer: Replacer): any {
+export function value(v: boolean | string | number | Wildcard<any>, replacer: Replacer): string {
   if (isWildcard(v)) {
     // Return the enum array if it's a full wildcard, or just return SHORT_WILDCARD for short ones.
     if (!isShortWildcard(v) && v.enum) {
@@ -39,9 +39,9 @@ export function value(v: any, replacer: Replacer): any {
     }
   }
   if (replacer) {
-    return replacer(v);
+    return replacer(v + '');
   }
-  return v;
+  return v + '';
 }
 
 export function replace(v: any, replacer: Replacer): any {
@@ -257,7 +257,9 @@ function func(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer: PropInd
   }
 }
 
-// TODO(akshatsh): Should be fieldQuery? 
+/**
+ * Return key-value of parameters of field defs
+ */
 function fieldDefProps(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer: PropIndex<Replacer>) {
 
   /** Encoding properties e.g., Scale, Axis, Legend */
@@ -502,7 +504,7 @@ export namespace shorthandParser {
     }
   }
 
-  // TODO(akshatsh): fieldQuery? 
+  // TODO(akshatsh): fieldQuery?
   export function fn(fieldQ: FieldQuery, fieldDefShorthand: string): EncodingQuery {
     // Aggregate, Bin, TimeUnit as wildcard case
     if (fieldDefShorthand[0] === '?') {
