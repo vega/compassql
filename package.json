@@ -1,6 +1,6 @@
 {
   "name": "compassql",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "CompassQL visualization query language",
   "main": "build/src/cql.js",
   "directories": {
@@ -64,7 +64,7 @@
   },
   "dependencies": {
     "datalib": "~1.7.0",
-    "vega-lite": "2.0.0-alpha.2",
+    "vega-lite": "2.0.0-alpha.1",
     "typescript-json-schema": "^0.9.0"
   },
   "browserify": {
