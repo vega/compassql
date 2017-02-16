@@ -3,8 +3,6 @@
 /test
 /.*
 
-**/*.ts
-!**/*.d.ts
 codecov.yml
 tsconfig.json
 tslint.json

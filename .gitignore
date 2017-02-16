@@ -6,9 +6,5 @@ compassql-schema.json
 compassql.js
 bower_components
 coverage
-demo/**/*.js
-src/**/*.js
-test/**/*.js
-**/*.js.map
-**/*.d.ts
+build
 .nyc_output/
