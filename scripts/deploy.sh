@@ -34,7 +34,8 @@ git checkout head
 npm run build
 
 # add the compiled files, commit and tag!
-git add build/**.* -f
+git add build/compassql* -f
+git add build/src/**/*.js -f
 
 git commit -m "release $version $gitsha"
 git tag -am "Release v$version." "v$version"
