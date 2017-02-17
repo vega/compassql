@@ -1,6 +1,6 @@
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel, getSupportedRole} from 'vega-lite/src/channel';
-import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain} from 'vega-lite/src/scale';
+import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain, channelScalePropertyIncompatability} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -233,6 +233,35 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
             }
           } else if (!scaleTypeSupportProperty(sType, scaleProp)) {
             return false;
+          }
+        }
+      }
+      return true;
+    }
+  },{
+    name: 'scalePropertiesSupportedByChannel',
+    description: 'Not all scale properties are supported by all encoding channels',
+    properties: [].concat(SCALE_PROPS, [Property.SCALE, Property.CHANNEL]),
+    allowWildcardForProperties: true,
+    strict: true,
+    satisfy: (encQ: EncodingQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
+      if (encQ) {
+        let channel: Channel = encQ.channel as Channel;
+        let scale: ScaleQuery = encQ.scale as ScaleQuery;
+        if (channel && !isWildcard(channel) && scale) {
+          for (let scaleProp in scale) {
+
+            if (!scale.hasOwnProperty(scaleProp)) continue;
+
+            if (scaleProp === 'type' || scaleProp === 'name' || scaleProp === 'enum') {
+              // ignore type and properties of wildcards
+              continue;
+            }
+
+            let isSupported = channelScalePropertyIncompatability(channel, scaleProp) === undefined;
+            if (!isSupported) {
+              return false;
+            }
           }
         }
       }
