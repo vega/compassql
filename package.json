@@ -3,6 +3,7 @@
   "version": "0.9.4",
   "description": "CompassQL visualization query language",
   "main": "build/src/cql.js",
+  "typings": "./build/src/cql",
   "directories": {
     "test": "test"
   },
