@@ -648,7 +648,7 @@ describe('constraints/encoding', () => {
       assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('incompatible scale property range with channel x', () => {
+    it('should return false when scale property range with channel x', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
@@ -662,7 +662,7 @@ describe('constraints/encoding', () => {
       assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('incompatible scale property range with channel y', () => {
+    it('should return false when scale property range with channel y', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'y',
@@ -676,7 +676,7 @@ describe('constraints/encoding', () => {
       assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('incompatible scale property range with channel row', () => {
+    it('should return false when scale property range with channel row', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'row',
@@ -690,7 +690,7 @@ describe('constraints/encoding', () => {
       assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('incompatible scale property range with channel column', () => {
+    it('should return false when scale property range with channel column', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'column',
@@ -704,7 +704,7 @@ describe('constraints/encoding', () => {
       assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('compatible scale property range with channel x2', () => {
+    it('should return true when scale property range with channel x2', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x2',
@@ -718,7 +718,7 @@ describe('constraints/encoding', () => {
       assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('incompatible scale property rangeStep with channel row', () => {
+    it('should return false when scale property rangeStep with channel row', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'row',
@@ -732,7 +732,7 @@ describe('constraints/encoding', () => {
       assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('incompatible scale property rangeStep with channel column', () => {
+    it('should return false when scale property rangeStep with channel column', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'column',
@@ -746,7 +746,7 @@ describe('constraints/encoding', () => {
       assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('compatible scale property rangeStep with channel column', () => {
+    it('should return true when scale property rangeStep with channel column', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
@@ -760,7 +760,7 @@ describe('constraints/encoding', () => {
       assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('compatible scale property rangeStep with channel column', () => {
+    it('should return true when scale property rangeStep with channel column', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
@@ -774,7 +774,7 @@ describe('constraints/encoding', () => {
       assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('compatible scale property type with channel x with name, enum scale props', () => {
+    it('should return true when scale property type with channel x with name, enum scale props', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
@@ -790,7 +790,7 @@ describe('constraints/encoding', () => {
       assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('compatible scale property padding with channel x', () => {
+    it('should return true when scale property padding with channel x', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
@@ -804,7 +804,7 @@ describe('constraints/encoding', () => {
       assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('returns true if missing scale', () => {
+    it('should return true when encoding query is missing scale prop', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
