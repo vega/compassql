@@ -11,10 +11,14 @@ script:
   - npm run clean && npm run build
 after_success:
 - bash <(curl -s https://codecov.io/bash)
+cache: yarn
+cache:
+  directories:
+  - $HOME/.yarn-cache
 notifications:
-  email:
-    on_success: never
-    on_failure: change
+  email: never
   slack:
+    rooms:
+      - vega-js:3wQHcSva0iAMeHF2x30X2oGJ
     on_success: never
     on_failure: change
