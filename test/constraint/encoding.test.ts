@@ -633,6 +633,189 @@ describe('constraints/encoding', () => {
       assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
   });
+  
+  describe('scalePropertiesSupportedByChannel', () => {
+    it('should return true when channel is a wildcard', () => {
+      let encQ: EncodingQuery = {
+        channel: '?',
+        field: 'A',
+        type: '?',
+        scale: {
+          paddingInner: 20
+        }
+      };
+
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+    });
+
+    it('should return false when scale property range with channel x', () => {
+      let encQ: EncodingQuery = {
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'x',
+        field: 'A',
+        type: 'quantitative',
+        scale: {
+          range: [0, 10]
+        }
+      };
+
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+    });
+
+    it('should return false when scale property range with channel y', () => {
+      let encQ: EncodingQuery = {
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'y',
+        field: 'A',
+        type: 'quantitative',
+        scale: {
+          range: [0, 10]
+        }
+      };
+
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+    });
+
+    it('should return false when scale property range with channel row', () => {
+      let encQ: EncodingQuery = {
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'row',
+        field: 'A',
+        type: 'quantitative',
+        scale: {
+          range: [0, 10]
+        }
+      };
+
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+    });
+
+    it('should return false when scale property range with channel column', () => {
+      let encQ: EncodingQuery = {
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'column',
+        field: 'A',
+        type: 'quantitative',
+        scale: {
+          range: [0, 10]
+        }
+      };
+
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+    });
+
+    it('should return true when scale property range with channel x2', () => {
+      let encQ: EncodingQuery = {
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'x2',
+        field: 'A',
+        type: 'quantitative',
+        scale: {
+          range: [0, 10]
+        }
+      };
+
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+    });
+
+    it('should return false when scale property rangeStep with channel row', () => {
+      let encQ: EncodingQuery = {
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'row',
+        field: 'A',
+        type: 'quantitative',
+        scale: {
+          rangeStep: 20
+        }
+      };
+
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+    });
+
+    it('should return false when scale property rangeStep with channel column', () => {
+      let encQ: EncodingQuery = {
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'column',
+        field: 'A',
+        type: 'quantitative',
+        scale: {
+          rangeStep: 20
+        }
+      };
+
+      assert.isFalse(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+    });
+
+    it('should return true when scale property rangeStep with channel column', () => {
+      let encQ: EncodingQuery = {
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'x',
+        field: 'A',
+        type: 'quantitative',
+        scale: {
+          rangeStep: 20
+        }
+      };
+
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+    });
+
+    it('should return true when scale property rangeStep with channel column', () => {
+      let encQ: EncodingQuery = {
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'x',
+        field: 'A',
+        type: 'quantitative',
+        scale: {
+          rangeStep: 20
+        }
+      };
+
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+    });
+
+    it('should return true when scale property type with channel x with name, enum scale props', () => {
+      let encQ: EncodingQuery = {
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'x',
+        field: 'A',
+        type: 'quantitative',
+        scale: {
+          type: 'linear',
+          name: '?',
+          enum: '?'
+        }
+      };
+
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+    });
+
+    it('should return true when scale property padding with channel x', () => {
+      let encQ: EncodingQuery = {
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'x',
+        field: 'A',
+        type: 'quantitative',
+        scale: {
+          padding: 1.0,
+        }
+      };
+
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+    });
+
+    it('should return true when encoding query is missing scale prop', () => {
+      let encQ: EncodingQuery = {
+        // Scale type depends on channel, so this will make scale type ambiguous.
+        channel: 'x',
+        field: 'A',
+        type: 'quantitative'
+      };
+
+      assert.isTrue(ENCODING_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+    });
+
+  });
 
   describe('typeMatchesSchemaType', () => {
     let encQ: FieldQuery = {
