@@ -3,7 +3,7 @@ import {Channel} from 'vega-lite/src/channel';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../../config';
 import {SpecQueryModel} from '../../model';
 import {fieldDef as fieldDefShorthand} from '../../query/shorthand';
-import {EncodingQuery} from '../../query/encoding';
+import {EncodingQuery, isFieldQuery} from '../../query/encoding';
 import {Dict, extend, forEach, keys} from '../../util';
 
 import {Schema} from '../../schema';
@@ -246,7 +246,7 @@ export namespace DimensionScore {
   export function getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     if (specM.isAggregate()) {
       specM.getEncodings().reduce((maxFScore, encQ: EncodingQuery) => {
-        if (!encQ.aggregate && !encQ.autoCount) { // isDimension
+        if (isFieldQuery(encQ) && !encQ.aggregate && !encQ.autoCount) { // isDimension
           const featureScore = getFeatureScore(DIMENSION, encQ.channel + '');
           if (featureScore.score > maxFScore.score) {
             return featureScore;

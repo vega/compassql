@@ -9,7 +9,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
-import {AxisQuery, ScaleQuery} from '../src/query/encoding';
+import {AxisQuery, ScaleQuery, FieldQuery, isFieldQuery} from '../src/query/encoding';
 import {SHORT_WILDCARD} from '../src/wildcard';
 import {extend, some} from '../src/util';
 
@@ -139,7 +139,7 @@ describe('generate', function () {
         const CONFIG_WITH_OMIT_AGGREGATE = extend({}, DEFAULT_QUERY_CONFIG, {omitAggregate: true});
         const answerSet = generate(specQ, schema, CONFIG_WITH_OMIT_AGGREGATE);
         assert.equal(answerSet.length, 1);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, undefined);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).aggregate, undefined);
       });
     });
   });
@@ -156,7 +156,7 @@ describe('generate', function () {
         const CONFIG_WITH_OMIT_RAW = extend({}, DEFAULT_QUERY_CONFIG, {omitRaw: true});
         const answerSet = generate(specQ, schema, CONFIG_WITH_OMIT_RAW);
         assert.equal(answerSet.length, 1);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEAN);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).aggregate, AggregateOp.MEAN);
       });
     });
   });
@@ -183,7 +183,7 @@ describe('generate', function () {
         assert.isTrue(answerSet.length > 0);
         answerSet.forEach((specM) => {
           assert.isTrue(some(specM.getEncodings(), (encQ) => {
-            return encQ.autoCount === true;
+            return isFieldQuery(encQ) && encQ.autoCount === true;
           }));
         });
       });
@@ -212,8 +212,8 @@ describe('generate', function () {
       it('should generate a table with x and y as dimensions with autocount turned off', () => {
         answerSet.forEach((specM) => {
           assert.isTrue(
-            specM.getEncodingQueryByChannel(Channel.X).type === Type.NOMINAL &&
-            specM.getEncodingQueryByChannel(Channel.Y).type === Type.ORDINAL
+            (specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).type === Type.NOMINAL &&
+            (specM.getEncodingQueryByChannel(Channel.Y) as FieldQuery).type === Type.ORDINAL
           );
         });
       });
@@ -292,8 +292,8 @@ describe('generate', function () {
       it('should not generate a plot with both x and y as dimensions with auto add count enabled', () => {
         answerSet.forEach((specM) => {
           assert.isFalse(
-            specM.getEncodingQueryByChannel(Channel.X).type === Type.NOMINAL &&
-            specM.getEncodingQueryByChannel(Channel.Y).type === Type.NOMINAL
+            (specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).type === Type.NOMINAL &&
+            (specM.getEncodingQueryByChannel(Channel.Y) as FieldQuery).type === Type.NOMINAL
           );
         });
       });
@@ -315,8 +315,8 @@ describe('generate', function () {
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).axis as AxisQuery).zindex, 1);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).axis as AxisQuery).zindex, 0);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).axis as AxisQuery).zindex, 1);
+      assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).axis as AxisQuery).zindex, 0);
     });
   });
 
@@ -338,8 +338,8 @@ describe('generate', function () {
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POINT);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
+      assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.POINT);
     });
   });
 
@@ -365,8 +365,8 @@ describe('generate', function () {
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POW);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.LOG);
+      assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.POW);
     });
   });
 
@@ -392,11 +392,11 @@ describe('generate', function () {
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 5);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LINEAR);
-      assert.equal((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
-      assert.equal((answerSet[3].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POW);
-      assert.equal((answerSet[4].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.SQRT);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
+      assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.LINEAR);
+      assert.equal(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.LOG);
+      assert.equal(((answerSet[3].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.POW);
+      assert.equal(((answerSet[4].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.SQRT);
     });
   });
 
@@ -418,8 +418,8 @@ describe('generate', function () {
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.SQRT);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
+      assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.SQRT);
     });
 
     it('should enumerate correct scale properties with mark bar', () => {
@@ -439,8 +439,8 @@ describe('generate', function () {
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.SQRT);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
+      assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.SQRT);
     });
 
     it('should enumerate correct scale properties with binned field and scale zero', () => {
@@ -467,7 +467,7 @@ describe('generate', function () {
         if at least one of the properties is enumerated. Since they're true values they don't run through.
       */
       assert.equal(answerSet.length, 1);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
     });
 
     it('should enumerate correct scale properties with binned field, scale zero, and bar mark', () => {
@@ -488,7 +488,7 @@ describe('generate', function () {
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 1);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
     });
   });
 
@@ -511,9 +511,9 @@ describe('generate', function () {
 
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 3);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
-      assert.equal(answerSet[2].getEncodingQueryByIndex(0).scale, false);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
+      assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.LOG);
+      assert.equal((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale, false);
     });
 
     it('should enumerate correct scale type for quantitative field', () => {
@@ -531,8 +531,8 @@ describe('generate', function () {
 
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
+      assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.LOG);
     });
 
     it('should enumerate correct scale type for temporal field without timeunit', () => {
@@ -550,9 +550,9 @@ describe('generate', function () {
 
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 3);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.TIME);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.UTC);
-      assert.equal((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.TIME);
+      assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.UTC);
+      assert.equal(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
     });
 
     it('should enumerate correct scale type for temporal field with timeunit', () => {
@@ -571,10 +571,10 @@ describe('generate', function () {
 
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 4);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.TIME);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.UTC);
-      assert.equal((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POINT);
-      assert.equal((answerSet[3].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.TIME);
+      assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.UTC);
+      assert.equal(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.POINT);
+      assert.equal(((answerSet[3].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
     });
 
     it('should enumerate correct scale type for ordinal field with timeunit', () => {
@@ -593,8 +593,8 @@ describe('generate', function () {
 
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POINT);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.POINT);
+      assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
     });
 
     it('should enumerate correct scale type for ordinal field', () => {
@@ -612,8 +612,8 @@ describe('generate', function () {
 
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POINT);
-      assert.equal((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.POINT);
+      assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
     });
 
     it('should enumerate correct scale type for nominal field', () => {
@@ -631,7 +631,7 @@ describe('generate', function () {
 
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 1);
-      assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
     });
   });
 
@@ -652,9 +652,9 @@ describe('generate', function () {
 
         const answerSet = generate(specQ, schema);
         assert.equal(answerSet.length, 3);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).bin['maxbins'], 10);
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin['maxbins'], 20);
-        assert.equal(answerSet[2].getEncodingQueryByIndex(0).bin['maxbins'], 30);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).bin['maxbins'], 10);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).bin['maxbins'], 20);
+        assert.equal((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).bin['maxbins'], 30);
       });
 
       it('should support enumerating both bin enabling and maxbins parameter', () => {
@@ -675,10 +675,10 @@ describe('generate', function () {
 
         const answerSet = generate(specQ, schema);
         assert.equal(answerSet.length, 4);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).bin['maxbins'], 10);
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin['maxbins'], 20);
-        assert.equal(answerSet[2].getEncodingQueryByIndex(0).bin['maxbins'], 30);
-        assert.equal(answerSet[3].getEncodingQueryByIndex(0).bin, false);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).bin['maxbins'], 10);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).bin['maxbins'], 20);
+        assert.equal((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).bin['maxbins'], 30);
+        assert.equal((answerSet[3].getEncodingQueryByIndex(0) as FieldQuery).bin, false);
       });
     });
   });
@@ -694,7 +694,7 @@ describe('generate', function () {
         };
         const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
         assert.equal(answerSet.length, 1);
-        assert.isTrue(answerSet[0].getEncodings()[1].autoCount);
+        assert.isTrue((answerSet[0].getEncodings()[1] as FieldQuery).autoCount);
       });
     });
 
@@ -708,7 +708,7 @@ describe('generate', function () {
       const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
 
       it('should output autoCount=false', () => {
-        assert.isFalse(answerSet[0].getEncodingQueryByIndex(1).autoCount);
+        assert.isFalse((answerSet[0].getEncodingQueryByIndex(1) as FieldQuery).autoCount);
       });
 
       it('should not output duplicate results in the answer set', () => {
@@ -775,7 +775,7 @@ describe('generate', function () {
         };
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).range, 'category20');
+        assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).range, 'category20');
       });
     });
 
@@ -794,7 +794,7 @@ describe('generate', function () {
         };
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).rangeStep, 12);
+        assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
       });
 
       it('should output rangeStep = 12', () => {
@@ -816,7 +816,7 @@ describe('generate', function () {
         };
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).rangeStep, 12);
+        assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
       });
     });
   });

@@ -3,7 +3,6 @@ import {assert} from 'chai';
 import {Mark} from 'vega-lite/src/mark';
 import {AggregateOp, SUM_OPS} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
-// import * as log from 'vega-lite/src/log';
 import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
@@ -113,23 +112,15 @@ describe('constraints/spec', () => {
   });
 
   describe('autoAddCount', () => {
-    function autoCountShouldBe(expectedAutoCount: boolean, when: string, baseSpecQ: SpecQuery) {
+    function autoCountShouldBe(autoCount: boolean, when: string, baseSpecQ: SpecQuery) {
       [true, false].forEach((satisfy) => {
-        const autoCount = satisfy ? expectedAutoCount : !expectedAutoCount;
-
-        it(`should return ${satisfy} when autoCount is ${autoCount} and ${when}.`, () => {
+        it('should be ' + (satisfy ? autoCount + ' when ' : !autoCount + ' when (opposite of) ') + when, () => {
           const specQ = duplicate(baseSpecQ);
-          const model = SpecQueryModel.build(specQ, schema, {
-            ...DEFAULT_QUERY_CONFIG,
-            autoAddCount: true
+          specQ.encodings.push({
+            channel: Channel.Y,
+            autoCount: satisfy ? autoCount : !autoCount
           });
-          const autoCountIndex = model.getEncodings().length - 1;
-          model.setEncodingProperty(
-            autoCountIndex, 'autoCount',
-            autoCount,
-            model.getEncodingQueryByIndex(autoCountIndex).autoCount
-          );
-
+          const model = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
           assert.equal(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(model, schema, DEFAULT_QUERY_CONFIG), satisfy);
         });
       });
