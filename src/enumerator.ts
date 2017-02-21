@@ -80,7 +80,6 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
         const encQ = specM.getEncodingQueryByIndex(index);
         const propWildcard = specM.getEncodingProperty(index, prop);
 
-        // TODO(akshatsh): Same issue as earlier (not really a solution)
         if (
             isValueQuery(encQ) || (
             // TODO: encQ.exclude

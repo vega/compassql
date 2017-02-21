@@ -3,6 +3,7 @@ import {assert} from 'chai';
 import {Mark} from 'vega-lite/src/mark';
 import {AggregateOp, SUM_OPS} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
+// import * as log from 'vega-lite/src/log';
 import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
@@ -13,6 +14,7 @@ import {SHORT_WILDCARD} from '../../src/wildcard';
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {SpecQuery} from '../../src/query/spec';
+import {FieldQuery} from '../../src/query/encoding'
 import {Property} from '../../src/property';
 import {duplicate, extend} from '../../src/util';
 
@@ -112,15 +114,23 @@ describe('constraints/spec', () => {
   });
 
   describe('autoAddCount', () => {
-    function autoCountShouldBe(autoCount: boolean, when: string, baseSpecQ: SpecQuery) {
+    function autoCountShouldBe(expectedAutoCount: boolean, when: string, baseSpecQ: SpecQuery) {
       [true, false].forEach((satisfy) => {
-        it('should be ' + (satisfy ? autoCount + ' when ' : !autoCount + ' when (opposite of) ') + when, () => {
+        const autoCount = satisfy ? expectedAutoCount : !expectedAutoCount;
+
+        it(`should return ${satisfy} when autoCount is ${autoCount} and ${when}.`, () => {
           const specQ = duplicate(baseSpecQ);
-          specQ.encodings.push({
-            channel: Channel.Y,
-            autoCount: satisfy ? autoCount : !autoCount
+          const model = SpecQueryModel.build(specQ, schema, {
+            ...DEFAULT_QUERY_CONFIG,
+            autoAddCount: true
           });
-          const model = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
+          const autoCountIndex = model.getEncodings().length - 1;
+          model.setEncodingProperty(
+            autoCountIndex, 'autoCount',
+            autoCount,
+            (model.getEncodingQueryByIndex(autoCountIndex) as FieldQuery).autoCount
+          );
+
           assert.equal(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(model, schema, DEFAULT_QUERY_CONFIG), satisfy);
         });
       });

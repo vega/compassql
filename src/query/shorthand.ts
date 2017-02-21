@@ -176,6 +176,7 @@ export function encoding(encQ: EncodingQuery,
   if (include.get(Property.CHANNEL)) {
     parts.push(value(encQ.channel, replace.get(Property.CHANNEL)));
   }
+
   const fieldDefStr = fieldDef(encQ, include, replace);
   if (fieldDefStr) {
     parts.push(fieldDefStr);
@@ -504,7 +505,6 @@ export namespace shorthandParser {
     }
   }
 
-  // TODO(akshatsh): fieldQuery?
   export function fn(fieldQ: FieldQuery, fieldDefShorthand: string): EncodingQuery {
     // Aggregate, Bin, TimeUnit as wildcard case
     if (fieldDefShorthand[0] === '?') {

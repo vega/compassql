@@ -27,7 +27,7 @@ export class SpecQueryModel {
   private _spec: SpecQuery;
 
   /** channel => EncodingQuery */
-  private _channelCount: Dict<number>;
+  private _channelFieldCount: Dict<number>;
   private _wildcardIndex: WildcardIndex;
   private _assignedWildcardIndex: Dict<any>;
   private _schema: Schema;
@@ -128,9 +128,9 @@ export class SpecQueryModel {
 
   constructor(spec: SpecQuery, wildcardIndex: WildcardIndex, schema: Schema, opt: QueryConfig, wildcardAssignment: Dict<any>) {
     this._spec = spec;
-    this._channelCount = spec.encodings.reduce((m, encQ) => {
-      // TODO(akshatsh): allow value query? 
-      if (!isWildcard(encQ.channel) && (isValueQuery(encQ) || encQ.autoCount !== false)) {
+    this._channelFieldCount = spec.encodings.reduce((m, encQ) => {
+      // TODO(akshatsh): add a test case
+      if (isFieldQuery(encQ) && !isWildcard(encQ.channel) && encQ.autoCount !== false) {
         m[encQ.channel + ''] = 1;
       }
       return m;
@@ -185,7 +185,7 @@ export class SpecQueryModel {
 
     if (prop === Property.CHANNEL && encQ.channel && !isWildcard(encQ.channel)) {
       // If there is an old channel
-      this._channelCount[encQ.channel as Channel]--;
+      this._channelFieldCount[encQ.channel as Channel]--;
     }
 
 
@@ -204,14 +204,14 @@ export class SpecQueryModel {
 
     if (prop === Property.CHANNEL) {
       // If there is a new channel, make sure it exists and add it to the count.
-      this._channelCount[value] = (this._channelCount[value] || 0) + 1;
+      this._channelFieldCount[value] = (this._channelFieldCount[value] || 0) + 1;
     }
   }
 
   public resetEncodingProperty(index: number, prop: Property, wildcard: Wildcard<any>) {
     const encQ = this._spec.encodings[index];
     if (prop === Property.CHANNEL) {
-      this._channelCount[encQ.channel as Channel]--;
+      this._channelFieldCount[encQ.channel as Channel]--;
     }
 
     // reset it to wildcard
@@ -227,7 +227,7 @@ export class SpecQueryModel {
 
   public channelUsed(channel: Channel) {
     // do not include encoding that has autoCount = false because it is not a part of the output spec.
-    return this._channelCount[channel] > 0;
+    return this._channelFieldCount[channel] > 0;
   }
 
   public stack() : StackProperties {
@@ -236,7 +236,6 @@ export class SpecQueryModel {
 
   public getEncodings() {
     // do not include encoding that has autoCount = false because it is not a part of the output spec.
-    // TODO(akshatsh): is value query included?
     return this._spec.encodings.filter((encQ) => (isValueQuery(encQ) || encQ.autoCount !== false));
   }
 

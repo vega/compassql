@@ -33,6 +33,8 @@ export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): Ra
   for (let i = fieldWildcardIndices.length - 1; i >= 0; i--) {
     const index = fieldWildcardIndices[i];
     const encoding = encodings[index];
+
+    // Skip ValueQuery as we only care about order of fields.
     if (isValueQuery(encoding)) continue;
     const field = encoding.field as string;
     const fieldWildcard = specM.wildcardIndex.encodings[index].get('field');

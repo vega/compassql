@@ -35,7 +35,6 @@ export function smallRangeStepForHighCardinalityOrFacet(specM: SpecQueryModel, s
   });
 
   const yEncQ = encQIndex[Channel.Y];
-  // TODO(akshatsh): check this
   if (yEncQ !== undefined && isFieldQuery(yEncQ)) {
     if (encQIndex[Channel.ROW] ||
         schema.cardinality(yEncQ) > opt.smallRangeStepForHighCardinalityOrFacet.maxCardinality) {
@@ -61,8 +60,7 @@ export function smallRangeStepForHighCardinalityOrFacet(specM: SpecQueryModel, s
   }
 
   const xEncQ = encQIndex[Channel.X];
-  // TODO(akshatsh): check this
-  if (xEncQ !== undefined && isFieldQuery(xEncQ)) {
+  if (isFieldQuery(xEncQ)) {
     if (encQIndex[Channel.COLUMN] ||
         schema.cardinality(xEncQ) > opt.smallRangeStepForHighCardinalityOrFacet.maxCardinality) {
 
@@ -112,10 +110,9 @@ export function xAxisOnTopForHighYCardinalityWithoutColumn(specM: SpecQueryModel
   });
 
   if (encQIndex[Channel.COLUMN] === undefined) {
-    // TODO(akshatsh): valid way to solve this?
-    const xEncQ = encQIndex[Channel.X] as FieldQuery;
-    const yEncQ = encQIndex[Channel.Y] as FieldQuery;
-    if (yEncQ !== undefined && yEncQ.field && hasDiscreteDomain(scaleType(yEncQ))) {
+    const xEncQ = encQIndex[Channel.X];
+    const yEncQ = encQIndex[Channel.Y];
+    if (isFieldQuery(xEncQ) && isFieldQuery(yEncQ) && yEncQ !== undefined && yEncQ.field && hasDiscreteDomain(scaleType(yEncQ))) {
       if (xEncQ !== undefined) {
         if (schema.cardinality(yEncQ) > opt.xAxisOnTopForHighYCardinalityWithoutColumn.maxCardinality) {
 
