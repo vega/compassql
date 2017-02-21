@@ -6,7 +6,7 @@ import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 import * as dlBin from 'datalib/src/bins/bins';
 
-import {BinQuery, EncodingQuery} from './query/encoding';
+import {BinQuery, EncodingQuery, FieldQuery} from './query/encoding';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {cmp, extend, keys} from './util';
 
@@ -174,20 +174,20 @@ export class Schema {
   /** @return cardinality of the field associated with encQ, null if it doesn't exist.
    *  @param augmentTimeUnitDomain - TimeUnit field domains will not be augmented if explicitly set to false.
    */
-  public cardinality(encQ: EncodingQuery, augmentTimeUnitDomain: boolean = true, excludeInvalid: boolean = false) {
-    const fieldSchema = this._fieldSchemaIndex[encQ.field as string];
-    if (encQ.aggregate || encQ.autoCount) {
+  public cardinality(fieldQ: FieldQuery, augmentTimeUnitDomain: boolean = true, excludeInvalid: boolean = false) {
+    const fieldSchema = this._fieldSchemaIndex[fieldQ.field as string];
+    if (fieldQ.aggregate || fieldQ.autoCount) {
       return 1;
-    } else if (encQ.bin) {
+    } else if (fieldQ.bin) {
       // encQ.bin will either be a boolean or a BinQuery
       let bin: BinQuery;
-      if (typeof encQ.bin === 'boolean') {
+      if (typeof fieldQ.bin === 'boolean') {
         // autoMaxBins defaults to 10 if channel is Wildcard
         bin = {
-          maxbins: autoMaxBins(encQ.channel as Channel)
+          maxbins: autoMaxBins(fieldQ.channel as Channel)
         };
       } else {
-        bin = encQ.bin;
+        bin = fieldQ.bin;
       }
       const maxbins: any = bin.maxbins;
       if (!fieldSchema.binStats[maxbins]) {
@@ -196,9 +196,9 @@ export class Schema {
       }
       // don't need to worry about excludeInvalid here because invalid values don't affect linearly binned field's cardinality
       return fieldSchema.binStats[maxbins].distinct;
-    } else if (encQ.timeUnit) {
+    } else if (fieldQ.timeUnit) {
       if (augmentTimeUnitDomain) {
-        switch (encQ.timeUnit) {
+        switch (fieldQ.timeUnit) {
           // TODO: this should not always be the case once Vega-Lite supports turning off domain augmenting (VL issue #1385)
           case TimeUnit.SECONDS: return 60;
           case TimeUnit.MINUTES: return 60;
@@ -210,11 +210,11 @@ export class Schema {
           case TimeUnit.MILLISECONDS: return 1000;
         }
       }
-      let unit = encQ.timeUnit as string;
+      let unit = fieldQ.timeUnit as string;
       let timeStats = fieldSchema.timeStats;
       // if the cardinality for the timeUnit is not cached, calculate it
       if (!timeStats[unit]) {
-        timeStats[unit] = timeSummary(encQ.timeUnit as TimeUnit, fieldSchema.stats);
+        timeStats[unit] = timeSummary(fieldQ.timeUnit as TimeUnit, fieldSchema.stats);
       }
 
       if (excludeInvalid) {
@@ -243,24 +243,24 @@ export class Schema {
    * ('yearmonth', [Jan 1 2000, Feb 2 2000] returns false)
    * ('yearmonth', [Jan 1 2000, Feb 2 2001] returns true)
    */
-  public timeUnitHasVariation(encQ: EncodingQuery): boolean {
-    if (!encQ.timeUnit) {
+  public timeUnitHasVariation(fieldQ: FieldQuery): boolean {
+    if (!fieldQ.timeUnit) {
       return;
     }
 
     // if there is no variation in `date`, there should not be variation in `day`
-    if (encQ.timeUnit === TimeUnit.DAY) {
-      const dateEncQ: EncodingQuery = extend({}, encQ, {timeUnit: TimeUnit.DATE});
+    if (fieldQ.timeUnit === TimeUnit.DAY) {
+      const dateEncQ: EncodingQuery = extend({}, fieldQ, {timeUnit: TimeUnit.DATE});
       if (this.cardinality(dateEncQ, false, true) <= 1) {
         return false;
       }
     }
 
-    let fullTimeUnit = encQ.timeUnit;
+    let fullTimeUnit = fieldQ.timeUnit;
     for (let singleUnit of SINGLE_TIMEUNITS) {
       if (containsTimeUnit(fullTimeUnit as TimeUnit, singleUnit)) {
         // Create a clone of encQ, but with singleTimeUnit
-        const singleUnitEncQ = extend({}, encQ, {timeUnit: singleUnit});
+        const singleUnitEncQ = extend({}, fieldQ, {timeUnit: singleUnit});
         if (this.cardinality(singleUnitEncQ, false, true) <= 1) {
           return false;
         }
@@ -269,9 +269,9 @@ export class Schema {
     return true;
   }
 
-  public domain(encQ: EncodingQuery): any[] {
+  public domain(fieldQ: FieldQuery): any[] {
     // TODO: differentiate for field with bin / timeUnit
-    const fieldSchema = this._fieldSchemaIndex[encQ.field as string];
+    const fieldSchema = this._fieldSchemaIndex[fieldQ.field as string];
     let domain: any[] = keys(fieldSchema.stats.unique);
     if (fieldSchema.type === Type.QUANTITATIVE) {
       // return [min, max], coerced into number types
@@ -296,9 +296,9 @@ export class Schema {
   /**
    * @return a Summary corresponding to the field of the given EncodingQuery
    */
-  public stats(encQ: EncodingQuery) {
+  public stats(fieldQ: FieldQuery) {
     // TODO: differentiate for field with bin / timeUnit vs without
-    const fieldSchema = this._fieldSchemaIndex[encQ.field as string];
+    const fieldSchema = this._fieldSchemaIndex[fieldQ.field as string];
     return fieldSchema ? fieldSchema.stats : null;
   }
 }

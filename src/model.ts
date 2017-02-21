@@ -13,7 +13,7 @@ import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNest
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
-import {isDimension, isMeasure, EncodingQuery} from './query/encoding';
+import {isDimension, isMeasure, EncodingQuery, isFieldQuery, isValueQuery} from './query/encoding';
 import {GroupBy, ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
@@ -56,14 +56,14 @@ export class SpecQueryModel {
 
     // encodings
     specQ.encodings.forEach((encQ, index) => {
-      if (encQ.autoCount !== undefined) {
+      if (isFieldQuery(encQ) && encQ.autoCount !== undefined) {
         // This is only for testing purpose
         console.warn('A field with autoCount should not be included as autoCount meant to be an internal object.');
 
         encQ.type = Type.QUANTITATIVE; // autoCount is always quantitative
       }
 
-      if (encQ.type === undefined) {
+      if (isFieldQuery(encQ) && encQ.type === undefined) {
         // type is optional -- we automatically augment wildcard if not specified
         encQ.type = SHORT_WILDCARD;
       }
@@ -129,7 +129,8 @@ export class SpecQueryModel {
   constructor(spec: SpecQuery, wildcardIndex: WildcardIndex, schema: Schema, opt: QueryConfig, wildcardAssignment: Dict<any>) {
     this._spec = spec;
     this._channelCount = spec.encodings.reduce((m, encQ) => {
-      if (!isWildcard(encQ.channel) && encQ.autoCount !== false) {
+      // TODO(akshatsh): allow value query? 
+      if (!isWildcard(encQ.channel) && (isValueQuery(encQ) || encQ.autoCount !== false)) {
         m[encQ.channel + ''] = 1;
       }
       return m;
@@ -229,13 +230,14 @@ export class SpecQueryModel {
     return this._channelCount[channel] > 0;
   }
 
-  public stack(): StackProperties {
+  public stack() : StackProperties {
     return stack(this._spec);
   }
 
   public getEncodings() {
     // do not include encoding that has autoCount = false because it is not a part of the output spec.
-    return this._spec.encodings.filter((encQ) => encQ.autoCount !== false);
+    // TODO(akshatsh): is value query included?
+    return this._spec.encodings.filter((encQ) => (isValueQuery(encQ) || encQ.autoCount !== false));
   }
 
   public getEncodingQueryByChannel(channel: Channel) {
@@ -280,11 +282,11 @@ export class SpecQueryModel {
       let fieldDef: FieldDef = {};
 
       // For count field that is automatically added, convert to correct vega-lite fieldDef
-      if (encQ.autoCount === true) {
+      if (isFieldQuery(encQ) && encQ.autoCount === true) {
         fieldDef.aggregate = AggregateOp.COUNT;
         fieldDef.field = '*';
         fieldDef.type = Type.QUANTITATIVE;
-      } else if (encQ.autoCount === false) {
+      } else if (isValueQuery(encQ) || encQ.autoCount === false) {
         continue; // Do not include this in the output.
       }
 
