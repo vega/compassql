@@ -6,7 +6,7 @@ import {SINGLE_TIMEUNITS, MULTI_TIMEUNITS} from 'vega-lite/src/timeunit';
 import {Type, getFullName} from 'vega-lite/src/type';
 import {toMap, isString} from 'datalib/src/util';
 
-import {EncodingQuery, isFieldQuery, FieldQuery} from './encoding';
+import {EncodingQuery, isFieldQuery, FieldQuery, isValueQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
 
 import {isWildcard, isShortWildcard, Wildcard, SHORT_WILDCARD} from '../wildcard';
@@ -177,10 +177,15 @@ export function encoding(encQ: EncodingQuery,
     parts.push(value(encQ.channel, replace.get(Property.CHANNEL)));
   }
 
-  const fieldDefStr = fieldDef(encQ, include, replace);
-  if (fieldDefStr) {
-    parts.push(fieldDefStr);
+  if (isFieldQuery(encQ)) {
+    const fieldDefStr = fieldDef(encQ, include, replace);
+    if (fieldDefStr) {
+      parts.push(fieldDefStr);
+    }
+  } else if (isValueQuery(encQ)) {
+    parts.push(encQ.value);
   }
+
   return parts.join(':');
 }
 

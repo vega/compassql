@@ -20,57 +20,57 @@ import {scaleType, FieldQuery, isDimension, isMeasure, ScaleQuery} from '../quer
  */
 
 /** A method for satisfying whether the provided encoding query satisfy the constraint. */
-export interface EncodingConstraintChecker {
-  (fieldQ: FieldQuery, schema: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig): boolean;
+export interface EncodingConstraintChecker<E> {
+  (query: E, schema: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig): boolean;
 }
 
-export class EncodingConstraintModel extends AbstractConstraintModel {
-  constructor(constraint: EncodingConstraint) {
+export class EncodingConstraintModel<E> extends AbstractConstraintModel {
+  constructor(constraint: EncodingConstraint<E>) {
     super(constraint);
   }
 
-  public hasAllRequiredPropertiesSpecific(fieldQ: FieldQuery): boolean {
+  public hasAllRequiredPropertiesSpecific(query: E): boolean {
     return every(this.constraint.properties, (prop: Property) => {
 
       if (isEncodingNestedProp(prop)) {
         let parent = prop.parent;
         let child = prop.child;
 
-        if (!fieldQ[parent]) {
+        if (!query[parent]) {
           return true;
         }
 
-        return !isWildcard(fieldQ[parent][child]);
+        return !isWildcard(query[parent][child]);
       }
 
-      if (!fieldQ[prop]) {
+      if (!query[prop]) {
         return true;
       }
 
-      return !isWildcard(fieldQ[prop]);
+      return !isWildcard(query[prop]);
     });
   }
 
-  public satisfy(fieldQ: FieldQuery, schema: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig): boolean {
+  public satisfy(query: E, schema: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig): boolean {
     // TODO: Re-order logic to optimize the "allowWildcardForProperties" check
     if (!this.constraint.allowWildcardForProperties) {
       // TODO: extract as a method and do unit test
 
-      if (!this.hasAllRequiredPropertiesSpecific(fieldQ)) {
+      if (!this.hasAllRequiredPropertiesSpecific(query)) {
         return true;
       }
     }
-    return (this.constraint as EncodingConstraint).satisfy(fieldQ, schema, encWildcardIndex, opt);
+    return (this.constraint as EncodingConstraint<E>).satisfy(query, schema, encWildcardIndex, opt);
   }
 }
 
 /** Constraint for a single encoding mapping */
-export interface EncodingConstraint extends AbstractConstraint {
+export interface EncodingConstraint<E> extends AbstractConstraint {
   /** Method for checking if the encoding query satisfies this constraint. */
-  satisfy: EncodingConstraintChecker;
+  satisfy: EncodingConstraintChecker<E>;
 }
 
-export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
+export const ENCODING_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
   {
     name: 'aggregateOpSupportedByType',
     description: 'Aggregate function should be supported by data type.',
@@ -385,10 +385,10 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel[] = [
       return true;
     }
   }
-].map((ec: EncodingConstraint) => new EncodingConstraintModel(ec));
+].map((ec: EncodingConstraint<FieldQuery>) => new EncodingConstraintModel<FieldQuery>(ec));
 
-export const ENCODING_CONSTRAINT_INDEX: {[name: string]: EncodingConstraintModel} =
-  ENCODING_CONSTRAINTS.reduce((m, ec: EncodingConstraintModel) => {
+export const ENCODING_CONSTRAINT_INDEX: {[name: string]: EncodingConstraintModel<FieldQuery>} =
+  ENCODING_CONSTRAINTS.reduce((m, ec: EncodingConstraintModel<FieldQuery>) => {
     m[ec.name()] = ec;
     return m;
   }, {});
@@ -401,7 +401,7 @@ const ENCODING_CONSTRAINTS_BY_PROPERTY =
       index.get(prop).push(c);
     }
     return index;
-  }, new PropIndex<EncodingConstraintModel[]>());
+  }, new PropIndex<EncodingConstraintModel<FieldQuery>[]>());
 
 /**
  * Check all encoding constraints for a particular property and index tuple
@@ -411,14 +411,14 @@ export function checkEncoding(prop: Property, wildcard: Wildcard<any>, index: nu
 
   // Check encoding constraint
   const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY.get(prop) || [];
-  const fieldQ = specM.getEncodingQueryByIndex(index);
+  const encQ = specM.getEncodingQueryByIndex(index);
 
   for (const c of encodingConstraints) {
     // Check if the constraint is enabled
     if (c.strict() || !!opt[c.name()]) {
       // For strict constraint, or enabled non-strict, check the constraints
 
-      const satisfy = c.satisfy(fieldQ, schema, specM.wildcardIndex.encodings[index], opt);
+      const satisfy = c.satisfy(encQ, schema, specM.wildcardIndex.encodings[index], opt);
       if (!satisfy) {
         let violatedConstraint = '(enc) ' + c.name();
         /* istanbul ignore if */
