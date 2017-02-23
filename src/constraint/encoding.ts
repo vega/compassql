@@ -13,7 +13,7 @@ import {isWildcard, Wildcard} from '../wildcard';
 import {PrimitiveType, Schema} from '../schema';
 import {contains, every} from '../util';
 
-import {scaleType, FieldQuery, isDimension, isMeasure, ScaleQuery} from '../query/encoding';
+import {scaleType, FieldQuery, isDimension, isMeasure, ScaleQuery, ValueQuery, isValueQuery} from '../query/encoding';
 
 /**
  * Collection of constraints for a single encoding mapping.
@@ -70,7 +70,7 @@ export interface EncodingConstraint<E> extends AbstractConstraint {
   satisfy: EncodingConstraintChecker<E>;
 }
 
-export const ENCODING_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
+export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
   {
     name: 'aggregateOpSupportedByType',
     description: 'Aggregate function should be supported by data type.',
@@ -387,14 +387,14 @@ export const ENCODING_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
   }
 ].map((ec: EncodingConstraint<FieldQuery>) => new EncodingConstraintModel<FieldQuery>(ec));
 
-export const ENCODING_CONSTRAINT_INDEX: {[name: string]: EncodingConstraintModel<FieldQuery>} =
-  ENCODING_CONSTRAINTS.reduce((m, ec: EncodingConstraintModel<FieldQuery>) => {
+export const FIELD_CONSTRAINT_INDEX: {[name: string]: EncodingConstraintModel<FieldQuery>} =
+  FIELD_CONSTRAINTS.reduce((m, ec: EncodingConstraintModel<FieldQuery>) => {
     m[ec.name()] = ec;
     return m;
   }, {});
 
-const ENCODING_CONSTRAINTS_BY_PROPERTY =
-  ENCODING_CONSTRAINTS.reduce((index, c) => {
+const FIELD_CONSTRAINTS_BY_PROPERTY =
+  FIELD_CONSTRAINTS.reduce((index, c) => {
     for (const prop of c.properties()) {
       // Initialize array and use it
       index.set(prop, index.get(prop) || []);
@@ -403,6 +403,24 @@ const ENCODING_CONSTRAINTS_BY_PROPERTY =
     return index;
   }, new PropIndex<EncodingConstraintModel<FieldQuery>[]>());
 
+export const VALUE_CONSTRAINTS: EncodingConstraintModel<ValueQuery>[] = [].map((ec: EncodingConstraint<ValueQuery>) => new EncodingConstraintModel<ValueQuery>(ec));
+
+export const VALUE_CONSTRAINT_INDEX : {[name: string]: EncodingConstraintModel<ValueQuery>} =
+  VALUE_CONSTRAINTS.reduce((m, ec: EncodingConstraintModel<ValueQuery>) => {
+    m[ec.name()] = ec;
+    return m;
+  }, {});
+
+const VALUE_CONSTRAINTS_BY_PROPERTY =
+  FIELD_CONSTRAINTS.reduce((index, c) => {
+    for (const prop of c.properties()) {
+      index.set(prop, index.get(prop) || []);
+      index.get(prop).push(c);
+    }
+
+    return index;
+  }, new PropIndex<EncodingConstraintModel<ValueQuery>[]>());
+
 /**
  * Check all encoding constraints for a particular property and index tuple
  */
@@ -410,7 +428,7 @@ export function checkEncoding(prop: Property, wildcard: Wildcard<any>, index: nu
   specM: SpecQueryModel, schema: Schema, opt: QueryConfig): string {
 
   // Check encoding constraint
-  const encodingConstraints = ENCODING_CONSTRAINTS_BY_PROPERTY.get(prop) || [];
+  const encodingConstraints = FIELD_CONSTRAINTS_BY_PROPERTY.get(prop) || [];
   const encQ = specM.getEncodingQueryByIndex(index);
 
   for (const c of encodingConstraints) {
@@ -418,6 +436,24 @@ export function checkEncoding(prop: Property, wildcard: Wildcard<any>, index: nu
     if (c.strict() || !!opt[c.name()]) {
       // For strict constraint, or enabled non-strict, check the constraints
 
+      const satisfy = c.satisfy(encQ, schema, specM.wildcardIndex.encodings[index], opt);
+      if (!satisfy) {
+        let violatedConstraint = '(enc) ' + c.name();
+        /* istanbul ignore if */
+        if (opt.verbose) {
+          console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + wildcard.name);
+        }
+        return violatedConstraint;
+      }
+    }
+  }
+
+  const valueContraints = VALUE_CONSTRAINTS_BY_PROPERTY.get(prop) || [];
+
+  for (const c of valueContraints) {
+    // Check if the constraint is enabled
+    if ((c.strict() || !!opt[c.name()]) && isValueQuery(encQ)) {
+      // For strict constraint, or enabled non-strict, check the constraints
       const satisfy = c.satisfy(encQ, schema, specM.wildcardIndex.encodings[index], opt);
       if (!satisfy) {
         let violatedConstraint = '(enc) ' + c.name();
