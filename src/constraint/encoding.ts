@@ -13,59 +13,59 @@ import {isWildcard, Wildcard} from '../wildcard';
 import {PrimitiveType, Schema} from '../schema';
 import {contains, every} from '../util';
 
-import {scaleType, FieldQuery, isDimension, isMeasure, ScaleQuery} from '../query/encoding';
+import {scaleType, FieldQuery, isDimension, isMeasure, ScaleQuery, EncodingQueryBase} from '../query/encoding';
 
 /**
  * Collection of constraints for a single encoding mapping.
  */
 
 /** A method for satisfying whether the provided encoding query satisfy the constraint. */
-export interface EncodingConstraintChecker<E> {
-  (query: E, schema: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig): boolean;
+export interface EncodingConstraintChecker<E extends EncodingQueryBase> {
+  (encQ: E, schema: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig): boolean;
 }
 
-export class EncodingConstraintModel<E> extends AbstractConstraintModel {
+export class EncodingConstraintModel<E extends EncodingQueryBase> extends AbstractConstraintModel {
   constructor(constraint: EncodingConstraint<E>) {
     super(constraint);
   }
 
-  public hasAllRequiredPropertiesSpecific(query: E): boolean {
+  public hasAllRequiredPropertiesSpecific(encQ: E): boolean {
     return every(this.constraint.properties, (prop: Property) => {
 
       if (isEncodingNestedProp(prop)) {
         let parent = prop.parent;
         let child = prop.child;
 
-        if (!query[parent]) {
+        if (!encQ[parent]) {
           return true;
         }
 
-        return !isWildcard(query[parent][child]);
+        return !isWildcard(encQ[parent][child]);
       }
 
-      if (!query[prop]) {
+      if (!encQ[prop]) {
         return true;
       }
 
-      return !isWildcard(query[prop]);
+      return !isWildcard(encQ[prop]);
     });
   }
 
-  public satisfy(query: E, schema: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig): boolean {
+  public satisfy(encQ: E, schema: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig): boolean {
     // TODO: Re-order logic to optimize the "allowWildcardForProperties" check
     if (!this.constraint.allowWildcardForProperties) {
       // TODO: extract as a method and do unit test
 
-      if (!this.hasAllRequiredPropertiesSpecific(query)) {
+      if (!this.hasAllRequiredPropertiesSpecific(encQ)) {
         return true;
       }
     }
-    return (this.constraint as EncodingConstraint<E>).satisfy(query, schema, encWildcardIndex, opt);
+    return (this.constraint as EncodingConstraint<E>).satisfy(encQ, schema, encWildcardIndex, opt);
   }
 }
 
 /** Constraint for a single encoding mapping */
-export interface EncodingConstraint<E> extends AbstractConstraint {
+export interface EncodingConstraint<E extends EncodingQueryBase> extends AbstractConstraint {
   /** Method for checking if the encoding query satisfies this constraint. */
   satisfy: EncodingConstraintChecker<E>;
 }
