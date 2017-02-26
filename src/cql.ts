@@ -1,7 +1,7 @@
 export const version = '__VERSION__';
 
 export import config = require('./config');
-export import constraint = require('./constraint/constraint');
+export import constraint = require('./constraint');
 export import enumerate = require('./enumerator');
 export import wildcard = require('./wildcard');
 export {generate} from './generate';
