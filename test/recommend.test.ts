@@ -6,11 +6,11 @@ import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
-import {SHORT_WILDCARD, Wildcard} from '../src/wildcard';
 import {Property} from '../src/property';
 import {Query} from '../src/query/query';
-import {getScore} from '../src/ranking/ranking';
 import {recommend} from '../src/recommend';
+import {getScore} from '../src/ranking/ranking';
+import {SHORT_WILDCARD, Wildcard} from '../src/wildcard';
 import {duplicate} from '../src/util';
 
 import {schema} from './fixture';

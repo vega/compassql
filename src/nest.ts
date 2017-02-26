@@ -7,9 +7,9 @@ import {PropIndex} from './propindex';
 import {Dict} from './util';
 
 import {parseGroupBy, GROUP_BY_FIELD_TRANSFORM, GROUP_BY_ENCODING} from './query/groupby';
-import {Query} from './query/query';
 import {fieldDef as fieldDefShorthand, spec as specShorthand, Replacer} from './query/shorthand';
 import {stack} from './query/spec';
+import {Nest} from './query/groupby';
 
 
 /**
@@ -35,8 +35,8 @@ export const SPEC = 'spec';
  * Group the input spec query model by a key function registered in the group registry
  * @return
  */
-export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModelGroup {
-  if (query.nest) {
+export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQueryModelGroup {
+  if (queryNest) {
     const rootGroup: SpecQueryModelGroup = new SpecQueryModelGroup();
     let groupIndex: Dict<SpecQueryModelGroup> = {};
 
@@ -47,11 +47,11 @@ export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModel
     let replaces: Array<PropIndex<Dict<string>>> = [];
     let replacers: Array<PropIndex<Replacer>> = [];
 
-    for (let l = 0 ; l < query.nest.length; l++) {
+    for (let l = 0 ; l < queryNest.length; l++) {
       includes.push(l > 0 ? includes[l-1].duplicate() : new PropIndex<boolean>());
       replaces.push(l > 0 ? replaces[l-1].duplicate() : new PropIndex<Dict<string>>());
 
-      const groupBy = query.nest[l].groupBy;
+      const groupBy = queryNest[l].groupBy;
       if (isArray(groupBy)) {
         // If group is array, it's an array of extended group by that need to be parsed
         let parsedGroupBy = parseGroupBy(groupBy, includes[l], replaces[l]);
@@ -63,9 +63,9 @@ export function nest(specModels: SpecQueryModel[], query: Query): SpecQueryModel
     specModels.forEach((specM) => {
       let path = '';
       let group: SpecQueryModelGroup = rootGroup;
-      for (let l = 0 ; l < query.nest.length; l++) {
-        const groupBy = group.groupBy = query.nest[l].groupBy;
-        group.orderGroupBy = query.nest[l].orderGroupBy;
+      for (let l = 0 ; l < queryNest.length; l++) {
+        const groupBy = group.groupBy = queryNest[l].groupBy;
+        group.orderGroupBy = queryNest[l].orderGroupBy;
 
         const key = isArray(groupBy) ?
           specShorthand(specM.specQuery, includes[l], replacers[l]) :
