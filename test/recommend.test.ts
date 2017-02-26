@@ -7,7 +7,7 @@ import {Property} from '../src/property';
 import {recommend} from '../src/recommend';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {schema} from './fixture';
-import {Query} from '../src/query/index';
+import {Query} from '../src/query/query';
 import {SpecQueryModelGroup, SpecQueryModel} from '../src/model';
 import {getScore} from '../src/ranking/ranking';
 import {duplicate} from '../src/util';

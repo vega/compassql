@@ -22,6 +22,12 @@ export function isExtendedGroupBy(g: string | ExtendedGroupBy): g is ExtendedGro
 
 export type GroupBy = string | Array<string | ExtendedGroupBy>;
 
+export interface Nest {
+  groupBy: GroupBy;
+  orderGroupBy?: string | string[];
+}
+
+
 export function parseGroupBy(groupBy: Array<string | ExtendedGroupBy>,
     include?: PropIndex<boolean>,
     replaceIndex?: PropIndex<Dict<string>>

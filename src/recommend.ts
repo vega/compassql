@@ -1,12 +1,13 @@
 import {Config} from 'vega-lite/src/config';
 
-import {Query, normalize} from './query';
+import {normalize} from './query';
 import {DEFAULT_QUERY_CONFIG} from './config';
 import {Schema} from './schema';
 import {SpecQueryModelGroup} from './model';
 import {generate} from './generate';
 import {nest} from './nest';
 import {rank} from './ranking/ranking';
+import {Query} from './query/query';
 
 export function recommend(q: Query, schema: Schema, config?: Config): {query: Query, result: SpecQueryModelGroup} {
   // 1. Normalize non-nested `groupBy` to always have `groupBy` inside `nest`
@@ -23,7 +24,7 @@ export function recommend(q: Query, schema: Schema, config?: Config): {query: Qu
 
   // 2. Generate
   const answerSet = generate(q.spec, schema, q.config);
-  const nestedAnswerSet = nest(answerSet, q);
+  const nestedAnswerSet = nest(answerSet, q.nest);
   const result = rank(nestedAnswerSet, q, schema, 0);
 
   return {

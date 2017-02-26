@@ -1,8 +1,6 @@
-import {SpecQuery} from './spec';
-import {GroupBy} from './groupby';
-
-import {QueryConfig} from '../config';
 import {duplicate} from '../util';
+import {Query} from './query';
+import {Nest} from './groupby';
 
 export import encoding = require('./encoding');
 export import groupBy = require('./groupby');
@@ -39,18 +37,4 @@ export function normalize(q: Query): Query {
     return normalizedQ;
   }
   return duplicate(q); // We will cause side effect to q.spec in SpecQueryModel.build
-}
-
-export interface Query {
-  spec: SpecQuery;
-  nest?: Nest[];
-  groupBy?: GroupBy;
-  orderBy?: string | string[];
-  chooseBy?: string | string[];
-  config?: QueryConfig;
-}
-
-export interface Nest {
-  groupBy: GroupBy;
-  orderGroupBy?: string | string[];
 }

@@ -2,7 +2,8 @@ import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
 import {assert} from 'chai';
-import {normalize, Query} from '../../src/query';
+import {normalize} from '../../src/query';
+import {Query} from '../../src/query/query';
 
 describe('query/query', () => {
   describe('normalize', () => {
