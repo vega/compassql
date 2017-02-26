@@ -3,8 +3,10 @@ import {SpecQueryModel, SpecQueryModelGroup} from '../model';
 import {Query} from '../query/query';
 import {Dict} from '../util';
 import {Schema} from '../schema';
+import {effectiveness} from './effectiveness';
 
-export import effectiveness = require('./effectiveness/effectiveness');
+
+export * from './effectiveness';
 export import aggregation = require('./aggregation');
 export import fieldOrder = require('./fieldorder');
 
@@ -119,7 +121,7 @@ export function getScore(model: SpecQueryModel, rankingName: string, schema: Sch
 }
 
 export const EFFECTIVENESS = 'effectiveness';
-register(EFFECTIVENESS, effectiveness.default);
+register(EFFECTIVENESS, effectiveness);
 
 register(aggregation.name, aggregation.score);
 register(fieldOrder.name, fieldOrder.score);

@@ -18,6 +18,7 @@
     "schema": "npm run prebuild && typescript-json-schema --required true src/query.ts Query > build/compassql-schema.json",
     "tsc": "tsc",
     "test": "tsc && npm run test:only",
+    "posttest": "npm run lint",
     "test:only": "nyc --reporter=html --reporter=text-summary mocha build/test",
     "codecov": "nyc report --reporter=json && codecov -f coverage/*.json",
     "test:debug": "mocha --debug-brk build/test"
