@@ -1,11 +1,10 @@
-import {AxisOrient} from 'vega-lite/src/axis';
 import {Channel} from 'vega-lite/src/channel';
 import {hasDiscreteDomain} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
 import {QueryConfig} from './config';
 import {SpecQueryModel} from './model';
-import {AxisQuery, EncodingQuery, ScaleQuery, scaleType, isFieldQuery, FieldQuery} from './query/encoding';
+import {AxisQuery, EncodingQuery, ScaleQuery, scaleType, isFieldQuery} from './query/encoding';
 import {Schema} from './schema';
 import {Dict} from './util';
 
@@ -121,7 +120,7 @@ export function xAxisOnTopForHighYCardinalityWithoutColumn(specM: SpecQueryModel
           }
 
           if (xEncQ.axis && !(xEncQ.axis as AxisQuery).orient) {
-            (xEncQ.axis as AxisQuery).orient = AxisOrient.TOP;
+            (xEncQ.axis as AxisQuery).orient = 'top';
           }
         }
       }

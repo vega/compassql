@@ -1,6 +1,6 @@
 import {assert} from 'chai';
 
-import {AggregateOp} from 'vega-lite/src/aggregate';
+
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
@@ -31,7 +31,7 @@ describe('nest', () => {
               type: Type.QUANTITATIVE,
               aggregate: {
                 name: 'a0',
-                enum: [AggregateOp.MEAN, AggregateOp.MEDIAN]
+                enum: ['mean', 'median']
               }
             }, {
               channel: SHORT_WILDCARD,
@@ -129,7 +129,7 @@ describe('nest', () => {
             type: Type.QUANTITATIVE,
             aggregate: {
               name: 'a0',
-              enum: [AggregateOp.MEAN, AggregateOp.MEDIAN]
+              enum: ['mean', 'median']
             }
           }, {
             channel: SHORT_WILDCARD,
@@ -278,7 +278,7 @@ describe('nest', () => {
           mark: SHORT_WILDCARD,
           encodings: [{
             channel: Channel.X,
-            aggregate: AggregateOp.SUM,
+            aggregate: 'sum',
             field: 'Q',
             type: Type.QUANTITATIVE
           }, {
@@ -325,7 +325,7 @@ describe('nest', () => {
           mark: SHORT_WILDCARD,
           encodings: [{
             channel: Channel.X,
-            aggregate: AggregateOp.SUM,
+            aggregate: 'sum',
             field: 'Q',
             type: Type.QUANTITATIVE
           }, {
@@ -382,7 +382,7 @@ describe('nest', () => {
             type: Type.QUANTITATIVE,
             aggregate: {
               name: 'a0',
-              enum: [AggregateOp.MEAN, AggregateOp.MEDIAN]
+              enum: ['mean', 'median']
             }
           }, {
             channel: SHORT_WILDCARD,
@@ -439,7 +439,7 @@ describe('nest', () => {
             type: Type.QUANTITATIVE,
             aggregate: {
               name: 'a0',
-              enum: [AggregateOp.MEAN, AggregateOp.MEDIAN]
+              enum: ['mean', 'median']
             }
           }, {
             channel: SHORT_WILDCARD,
@@ -549,7 +549,7 @@ describe('nest', () => {
           mark: SHORT_WILDCARD,
           encodings: [{
             channel: Channel.X,
-            aggregate: AggregateOp.SUM,
+            aggregate: 'sum',
             field: 'Q',
             type: Type.QUANTITATIVE
           }, {
@@ -586,7 +586,7 @@ describe('nest', () => {
           mark: SHORT_WILDCARD,
           encodings: [{
             channel: Channel.X,
-            aggregate: AggregateOp.SUM,
+            aggregate: 'sum',
             field: 'Q',
             type: Type.QUANTITATIVE
           }, {
@@ -711,7 +711,7 @@ describe('nest', () => {
             type: Type.QUANTITATIVE,
             aggregate: {
               name: 'a0',
-              enum: [AggregateOp.MEAN, AggregateOp.MEDIAN]
+              enum: ['mean', 'median']
             }
           }, {
             channel: {enum: [Channel.X, Channel.Y]},

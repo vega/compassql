@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 
 import {Mark} from 'vega-lite/src/mark';
-import {AggregateOp, SUM_OPS} from 'vega-lite/src/aggregate';
+import {SUM_OPS} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 // import * as log from 'vega-lite/src/log';
 import {ScaleType} from 'vega-lite/src/scale';
@@ -76,7 +76,7 @@ describe('constraints/spec', () => {
       const specQM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: {type: ScaleType.LOG}, type: Type.QUANTITATIVE}
+          {aggregate: 'mean', channel: Channel.X, field: 'A', scale: {type: ScaleType.LOG}, type: Type.QUANTITATIVE}
         ]
       });
       assert.isTrue(specCModel.hasAllRequiredPropertiesSpecific(specQM));
@@ -86,7 +86,7 @@ describe('constraints/spec', () => {
       const specQM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A',  type: Type.QUANTITATIVE}
+          {aggregate: 'mean', channel: Channel.X, field: 'A',  type: Type.QUANTITATIVE}
         ]
       });
       assert.isTrue(specCModel.hasAllRequiredPropertiesSpecific(specQM));
@@ -96,7 +96,7 @@ describe('constraints/spec', () => {
       const specQM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: SHORT_WILDCARD, type: Type.QUANTITATIVE}
+          {aggregate: 'mean', channel: Channel.X, field: 'A', scale: SHORT_WILDCARD, type: Type.QUANTITATIVE}
         ]
       });
       assert.isFalse(specCModel.hasAllRequiredPropertiesSpecific(specQM));
@@ -106,7 +106,7 @@ describe('constraints/spec', () => {
       const specQM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', scale: {type: SHORT_WILDCARD}, type: Type.QUANTITATIVE}
+          {aggregate: 'mean', channel: Channel.X, field: 'A', scale: {type: SHORT_WILDCARD}, type: Type.QUANTITATIVE}
         ]
       });
       assert.isFalse(specCModel.hasAllRequiredPropertiesSpecific(specQM));
@@ -417,7 +417,7 @@ describe('constraints/spec', () => {
             mark: mark,
             encodings: [
               {channel: Channel.X, field: 'N', type: Type.ORDINAL},
-              {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+              {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'}
             ]
           });
           assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
@@ -431,7 +431,7 @@ describe('constraints/spec', () => {
             mark: mark,
             encodings: [
               {channel: Channel.X, field: 'N', type: Type.NOMINAL},
-              {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+              {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'}
             ]
           });
           assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
@@ -444,7 +444,7 @@ describe('constraints/spec', () => {
             mark: mark,
             encodings: [
               {channel: Channel.X, field: 'Q1', type: Type.QUANTITATIVE},
-              {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+              {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'}
             ]
           });
           assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
@@ -458,7 +458,7 @@ describe('constraints/spec', () => {
             encodings: [
               {channel: Channel.X, field: 'N', type: Type.NOMINAL},
               {channel: Channel.Y, field: 'N20', type: Type.NOMINAL},
-              {channel: Channel.SIZE, field:'*', aggregate: AggregateOp.COUNT, type: Type.QUANTITATIVE}
+              {channel: Channel.SIZE, field:'*', aggregate: 'count', type: Type.QUANTITATIVE}
             ]
           });
           assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
@@ -507,7 +507,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+          {aggregate: 'mean', channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregate'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
@@ -519,8 +519,8 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
-          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'},
+          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: 'mean'},
           {channel: {enum: [Channel.ROW]}, field: 'N', type: Type.NOMINAL}
         ]
       });
@@ -532,8 +532,8 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
-          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'},
+          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: 'mean'},
           {channel: Channel.ROW, field: 'N', type: Type.NOMINAL}
         ]
       });
@@ -544,8 +544,8 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
-          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'},
+          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: 'mean'},
           {channel: Channel.ROW, field: 'N', type: Type.NOMINAL}
         ]
       });
@@ -556,8 +556,8 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
-          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'},
+          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: 'mean'},
           {channel: Channel.SHAPE, field: 'N', type: Type.NOMINAL}
         ]
       });
@@ -568,8 +568,8 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
-          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'},
+          {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: 'mean'},
           {channel: Channel.ROW, field: 'N', type: Type.NOMINAL},
           {channel: Channel.SHAPE, field: 'N', type: Type.NOMINAL}
         ]
@@ -583,7 +583,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'}
         ]
       });
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitAggregatePlotWithoutDimension'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
@@ -593,7 +593,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, field: 'Q', type: Type.NOMINAL, aggregate: AggregateOp.MEAN},
+          {channel: Channel.X, field: 'Q', type: Type.NOMINAL, aggregate: 'mean'},
           {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
         ]
       });
@@ -629,7 +629,7 @@ describe('constraints/spec', () => {
         const specM = buildSpecQueryModel({
           mark: mark,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Channel.X, aggregate: 'mean', field: 'Q', type: Type.QUANTITATIVE},
             {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
           ]
         });
@@ -655,7 +655,7 @@ describe('constraints/spec', () => {
         const specM = buildSpecQueryModel({
           mark: mark,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'Q', type: Type.QUANTITATIVE},
+            {channel: Channel.X, aggregate: 'mean', field: 'Q', type: Type.QUANTITATIVE},
             {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
           ]
         });
@@ -672,8 +672,8 @@ describe('constraints/spec', () => {
           mark: mark,
           encodings: [
             {channel: Channel.X, field: 'N', type: Type.NOMINAL},
-            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
-            {channel: {enum: [Channel.SIZE]}, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'},
+            {channel: {enum: [Channel.SIZE]}, field: 'Q1', type: Type.QUANTITATIVE, aggregate: 'mean'}
           ]
         });
 
@@ -689,8 +689,8 @@ describe('constraints/spec', () => {
           mark: mark,
           encodings: [
             {channel: Channel.X, field: 'N', type: Type.NOMINAL},
-            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
-            {channel: Channel.SIZE, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'},
+            {channel: Channel.SIZE, field: 'Q1', type: Type.QUANTITATIVE, aggregate: 'mean'}
           ]
         });
 
@@ -704,8 +704,8 @@ describe('constraints/spec', () => {
           mark: mark,
           encodings: [
             {channel: Channel.X, field: 'N', type: Type.NOMINAL},
-            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
-            {channel: Channel.SIZE, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'},
+            {channel: Channel.SIZE, field: 'Q1', type: Type.QUANTITATIVE, aggregate: 'mean'}
           ]
         });
 
@@ -719,7 +719,7 @@ describe('constraints/spec', () => {
           mark: mark,
           encodings: [
             {channel: Channel.X, field: 'N', type: Type.NOMINAL},
-            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN}
+            {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'}
           ]
         });
 
@@ -850,7 +850,7 @@ describe('constraints/spec', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.BAR,
           encodings: [
-            {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: scaleType}, aggregate: AggregateOp.SUM},
+            {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: scaleType}, aggregate: 'sum'},
             {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
             {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
           ]
@@ -866,7 +866,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: ScaleType.LINEAR}, aggregate: AggregateOp.SUM},
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: ScaleType.LINEAR}, aggregate: 'sum'},
           {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
           {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
         ]
@@ -878,7 +878,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.SUM},
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: 'sum'},
           {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
           {channel: Channel.COLOR, field: 'C', type: Type.QUANTITATIVE, scale: {type: ScaleType.POW}},
           {channel: Channel.DETAIL, field: 'A', type: Type.NOMINAL}
@@ -936,7 +936,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return false if non-summative aggregate (e.g., mean, median) is used.', () => {
-      [AggregateOp.MAX, AggregateOp.MEAN, AggregateOp.MEDIAN].forEach((aggregate) => {
+      ['max', 'mean', 'median'].forEach((aggregate) => {
         [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
           const specM = buildSpecQueryModel({
             mark: Mark.BAR,
@@ -1119,7 +1119,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
+          {aggregate: 'mean', channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ]
       });
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
@@ -1131,7 +1131,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+            {channel: Channel.X, aggregate: 'mean', field: 'A', type: Type.NOMINAL},
             {channel: Channel.Y, field: 'C', type: Type.TEMPORAL, timeUnit: {enum: [undefined]}}
           ]
         });
@@ -1145,7 +1145,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+            {channel: Channel.X, aggregate: 'mean', field: 'A', type: Type.NOMINAL},
             {channel: Channel.Y, field: 'C', type: Type.TEMPORAL}
           ]
         });
@@ -1157,7 +1157,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+            {channel: Channel.X, aggregate: 'mean', field: 'A', type: Type.NOMINAL},
             {channel: Channel.Y, field: 'C', type: Type.TEMPORAL}
           ]
         });
@@ -1169,7 +1169,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.X, aggregate: 'mean', field: 'A', type: Type.NOMINAL},
           {channel: Channel.Y, timeUnit: TimeUnit.MONTH, field: 'C', type: Type.TEMPORAL}
         ]
       });
@@ -1181,7 +1181,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.X, aggregate: 'mean', field: 'A', type: Type.NOMINAL},
           {channel: Channel.Y, timeUnit: {enum: [TimeUnit.MONTH, undefined]}, field: 'C', type: Type.TEMPORAL}
         ]
       });
@@ -1193,7 +1193,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+            {channel: Channel.X, aggregate: 'mean', field: 'A', type: Type.NOMINAL},
             {channel: Channel.Y, field: 'C', type: Type.QUANTITATIVE}
           ]
         });
@@ -1205,7 +1205,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+            {channel: Channel.X, aggregate: 'mean', field: 'A', type: Type.NOMINAL},
             {channel: Channel.Y, field: 'C', type: Type.QUANTITATIVE}
           ]
         });
@@ -1217,7 +1217,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
-            {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+            {channel: Channel.X, aggregate: 'mean', field: 'A', type: Type.NOMINAL},
             {channel: Channel.Y, aggregate: {enum: [undefined]}, field: 'C', type: Type.QUANTITATIVE}
           ]
         });
@@ -1231,7 +1231,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.X, aggregate: 'mean', field: 'A', type: Type.NOMINAL},
           {channel: Channel.Y, bin: true, field: 'C', type: Type.QUANTITATIVE}
         ]
       });
@@ -1243,7 +1243,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
+          {channel: Channel.X, aggregate: 'mean', field: 'A', type: Type.NOMINAL},
           {channel: Channel.Y, bin: {enum: [true, false]}, field: 'C', type: Type.QUANTITATIVE}
         ]
       });
@@ -1255,7 +1255,7 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.QUANTITATIVE}
+          {channel: Channel.X, aggregate: 'mean', field: 'A', type: Type.QUANTITATIVE}
         ]
       });
 
@@ -1327,8 +1327,8 @@ describe('constraints/spec', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.DETAIL, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL},
-          {channel: Channel.X, aggregate: AggregateOp.MEAN, field: 'A', type: Type.NOMINAL}
+          {channel: Channel.DETAIL, aggregate: 'mean', field: 'A', type: Type.NOMINAL},
+          {channel: Channel.X, aggregate: 'mean', field: 'A', type: Type.NOMINAL}
         ]
       });
 

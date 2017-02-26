@@ -1,4 +1,4 @@
-import {AggregateOp} from 'vega-lite/src/aggregate';
+
 import {Channel, X, Y, SIZE, COLOR, OPACITY, ROW, COLUMN, SHAPE} from 'vega-lite/src/channel';
 import {AREA, BAR, POINT, SQUARE, CIRCLE, TICK, LINE, RULE, Mark} from 'vega-lite/src/mark';
 import {TimeUnit} from 'vega-lite/src/timeunit';
@@ -56,7 +56,7 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
             type: type
           },{
             channel: X,
-            aggregate: AggregateOp.COUNT,
+            aggregate: 'count',
             field: '*',
             type: Type.QUANTITATIVE
           }
@@ -91,7 +91,7 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
         encodings: [
           xEncQ,{
             channel: Y,
-            aggregate: AggregateOp.COUNT,
+            aggregate: 'count',
             field: '*',
             type: Type.QUANTITATIVE
           }
@@ -146,14 +146,14 @@ export const SET_2D: RuleSet<SpecQueryModel> = {
         encodings: [
           {channel: X, field: 'N', type: Type.NOMINAL},
           {channel: Y, field: 'N', type: Type.NOMINAL},
-          {channel: SIZE, aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE}
+          {channel: SIZE, aggregate: 'count', field: '*', type: Type.QUANTITATIVE}
         ]
       },{
         mark: BAR,
         encodings: [
           {channel: X, field: 'N', type: Type.NOMINAL},
           {channel: COLOR, field: 'N1', type: Type.NOMINAL},
-          {channel: Y, aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE}
+          {channel: Y, aggregate: 'count', field: '*', type: Type.QUANTITATIVE}
         ]
       }], (specQ) => SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG))
     });
@@ -175,7 +175,7 @@ export const SET_2D: RuleSet<SpecQueryModel> = {
 
     rules.push({
       name: 'NxA(Q) Strip Plot',
-      items: nestedMap([BAR, POINTS, TICK, [LINE, AREA], RULE], (mark) => stripplot(mark, {aggregate: AggregateOp.MEAN}))
+      items: nestedMap([BAR, POINTS, TICK, [LINE, AREA], RULE], (mark) => stripplot(mark, {aggregate: 'mean'}))
     });
 
     // TODO: O
@@ -272,7 +272,7 @@ export const SET_AXIS_PREFERRENCE: RuleSet<SpecQueryModel> = {
       return build({
         mark: 'point',
         encodings: [
-          {channel: countChannel, aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE},
+          {channel: countChannel, aggregate: 'count', field: '*', type: Type.QUANTITATIVE},
           extend({channel: dimChannel, field: 'N', type: dimType}, dimMixins)
         ]
       });
@@ -340,8 +340,8 @@ export const DIMENSION_PREFERENCE: RuleSet<SpecQueryModel> = {
       return build({
         mark: mark,
         encodings: [
-          {channel: X, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
-          {channel: Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN},
+          {channel: X, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'},
+          {channel: Y, field: 'Q1', type: Type.QUANTITATIVE, aggregate: 'mean'},
           {channel: dim, field: 'N', type: Type.NOMINAL}
         ]
       });

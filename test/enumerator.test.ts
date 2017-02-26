@@ -1,6 +1,5 @@
 import {assert} from 'chai';
 
-import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
@@ -104,7 +103,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              aggregate: {enum: [AggregateOp.MEAN, AggregateOp.MEDIAN, undefined]},
+              aggregate: {enum: ['mean', 'median', undefined]},
               field: 'Q',
               type: Type.QUANTITATIVE
             }
@@ -114,8 +113,8 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).aggregate, AggregateOp.MEAN);
-        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).aggregate, AggregateOp.MEDIAN);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).aggregate, 'mean');
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).aggregate, 'median');
         assert.equal((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).aggregate, undefined);
       });
 
@@ -125,7 +124,7 @@ describe('enumerator', () => {
           encodings: [
             {
               channel: Channel.X,
-              aggregate: {enum: [AggregateOp.MEAN, AggregateOp.MEDIAN, undefined]},
+              aggregate: {enum: ['mean', 'median', undefined]},
               field: 'N',
               type: Type.NOMINAL
             }
@@ -476,31 +475,6 @@ describe('enumerator', () => {
         assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
         assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.LOG);
         assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.POW);
-      });
-    });
-
-    describe('scaleUseRawDomain', () => {
-      it('should correctly enumerate scaleUseRawDomain', () => {
-        const specM = buildSpecQueryModel({
-          mark: Mark.POINT,
-          encodings: [
-            {
-              channel: Channel.X,
-              scale: {
-                useRawDomain: {enum: [true, false, undefined]}
-              },
-              field: 'Q',
-              type: Type.QUANTITATIVE
-            }
-          ]
-        });
-        const enumerator = getEnumerator({parent: 'scale', child: 'useRawDomain'})(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
-
-        const answerSet = enumerator([], specM);
-        assert.equal(answerSet.length, 3);
-        assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).useRawDomain, true);
-        assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).useRawDomain, false);
-        assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).useRawDomain, undefined);
       });
     });
 

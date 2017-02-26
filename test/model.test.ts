@@ -1,10 +1,10 @@
 import {assert} from 'chai';
 
-import {AggregateOp} from 'vega-lite/src/aggregate';
-import {AxisOrient} from 'vega-lite/src/axis';
+
+
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
-import {SortOrder} from 'vega-lite/src/sort';
+
 import {Type} from 'vega-lite/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
@@ -186,7 +186,7 @@ describe('SpecQueryModel', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.MAX}
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: 'max'}
         ]
       });
       assert.isTrue(specM.channelUsed(Channel.X));
@@ -196,7 +196,7 @@ describe('SpecQueryModel', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.MAX}
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: 'max'}
         ]
       });
       assert.isFalse(specM.channelUsed(Channel.Y));
@@ -229,7 +229,7 @@ describe('SpecQueryModel', () => {
       const specM = buildSpecQueryModel({
         mark: Mark.BAR,
         encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: AggregateOp.MAX}
+          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: 'max'}
         ]
       });
 
@@ -259,7 +259,7 @@ describe('SpecQueryModel', () => {
             channel: Channel.X,
             field: 'A',
             type: Type.QUANTITATIVE,
-            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'},
+            axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'},
           },
           {
             channel: Channel.COLOR,
@@ -276,7 +276,7 @@ describe('SpecQueryModel', () => {
         transform: {filter: 'datum.A===1'},
         mark: Mark.BAR,
         encoding: {
-          x: {field: 'A', type: Type.QUANTITATIVE, axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
+          x: {field: 'A', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
           color: {field: 'B', type: Type.QUANTITATIVE, legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}}
         },
         config: DEFAULT_SPEC_CONFIG
@@ -293,7 +293,7 @@ describe('SpecQueryModel', () => {
             channel: Channel.X,
             field: 'A',
             type: Type.QUANTITATIVE,
-            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'},
+            axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'},
             legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'},
           }
         ]
@@ -305,7 +305,7 @@ describe('SpecQueryModel', () => {
         transform: {filter: 'datum.A===1'},
         mark: Mark.BAR,
         encoding: {
-          x: {field: 'A', type: Type.QUANTITATIVE, axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
+          x: {field: 'A', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
         },
         config: DEFAULT_SPEC_CONFIG
       });
@@ -321,7 +321,7 @@ describe('SpecQueryModel', () => {
             channel: Channel.COLOR,
             field: 'B',
             type: Type.QUANTITATIVE,
-            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'},
+            axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'},
             legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'},
           }
         ]
@@ -385,8 +385,8 @@ describe('SpecQueryModel', () => {
         transform: {filter: 'datum.A===1'},
         mark: Mark.BAR,
         encodings: [
-          {channel: Channel.X, field: 'A', sort: SortOrder.ASCENDING, type: Type.QUANTITATIVE},
-          {channel: Channel.Y, field: 'A', sort: {field: 'A', op: AggregateOp.MEAN, order: SortOrder.ASCENDING}, type: Type.QUANTITATIVE}
+          {channel: Channel.X, field: 'A', sort: 'ascending', type: Type.QUANTITATIVE},
+          {channel: Channel.Y, field: 'A', sort: {field: 'A', op: 'mean', order: 'ascending'}, type: Type.QUANTITATIVE}
 
         ]
       });
@@ -397,8 +397,8 @@ describe('SpecQueryModel', () => {
         transform: {filter: 'datum.A===1'},
         mark: Mark.BAR,
         encoding: {
-          x: {field: 'A', sort: SortOrder.ASCENDING, type: Type.QUANTITATIVE},
-          y: {field: 'A', sort: {field: 'A', op: AggregateOp.MEAN, order: SortOrder.ASCENDING}, type: Type.QUANTITATIVE}
+          x: {field: 'A', sort: 'ascending', type: Type.QUANTITATIVE},
+          y: {field: 'A', sort: {field: 'A', op: 'mean', order: 'ascending'}, type: Type.QUANTITATIVE}
         },
         config: DEFAULT_SPEC_CONFIG
       });
@@ -418,7 +418,7 @@ describe('SpecQueryModel', () => {
         mark: Mark.BAR,
         encoding: {
           x: {field: 'A', type: Type.ORDINAL},
-          y: {aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE}
+          y: {aggregate: 'count', field: '*', type: Type.QUANTITATIVE}
         },
         config: DEFAULT_SPEC_CONFIG
       });

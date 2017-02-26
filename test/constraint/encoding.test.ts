@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 
 import {Channel} from 'vega-lite/src/channel';
-import {AggregateOp} from 'vega-lite/src/aggregate';
+
 import {ScaleType} from 'vega-lite/src/scale';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
@@ -45,7 +45,7 @@ describe('constraints/encoding', () => {
     it('should return true if all properties is defined', () => {
       let encQ: EncodingQuery = {
         channel: Channel.X,
-        aggregate: AggregateOp.MEAN,
+        aggregate: 'mean',
         field: 'A',
         scale: {type: ScaleType.LOG},
         type: Type.QUANTITATIVE
@@ -76,7 +76,7 @@ describe('constraints/encoding', () => {
     it('should return false if a nested required property is a wildcard', () => {
       let encQ: EncodingQuery = {
         channel: Channel.X,
-        aggregate: AggregateOp.MEAN,
+        aggregate: 'mean',
         field: 'A',
         scale: {type: SHORT_WILDCARD},
         type: Type.QUANTITATIVE
@@ -88,7 +88,7 @@ describe('constraints/encoding', () => {
   describe('aggregateOpSupportedByType', () => {
     let encQ: FieldQuery = {
         channel: Channel.X,
-        aggregate: AggregateOp.MEAN,
+        aggregate: 'mean',
         field: 'A',
         type: undefined
       };
@@ -113,7 +113,7 @@ describe('constraints/encoding', () => {
     it('should return true for field=* and aggregate=COUNT', () => {
       assert.isTrue(
         FIELD_CONSTRAINT_INDEX['asteriskFieldWithCountOnly'].satisfy(
-          { channel: Channel.X, aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE },
+          { channel: Channel.X, aggregate: 'count', field: '*', type: Type.QUANTITATIVE },
           schema, new PropIndex<Wildcard<any>>(), defaultOpt
         )
       );
@@ -131,7 +131,7 @@ describe('constraints/encoding', () => {
     it('should return false for aggregate=COUNT without field=*', () => {
       assert.isFalse(
         FIELD_CONSTRAINT_INDEX['asteriskFieldWithCountOnly'].satisfy(
-          { channel: Channel.X, aggregate: AggregateOp.COUNT, field: 'haha', type: Type.QUANTITATIVE },
+          { channel: Channel.X, aggregate: 'count', field: 'haha', type: Type.QUANTITATIVE },
           schema, new PropIndex<Wildcard<any>>(), defaultOpt
         )
       );
@@ -175,7 +175,7 @@ describe('constraints/encoding', () => {
       });
 
       it(channel + ' supports aggregate measure.', () => {
-        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN};
+        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
@@ -212,7 +212,7 @@ describe('constraints/encoding', () => {
       });
 
       it(channel + ' does not support aggregate measure.', () => {
-        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN};
+        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'};
         assert.isFalse(FIELD_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
@@ -249,7 +249,7 @@ describe('constraints/encoding', () => {
       });
 
       it(channel + ' supports aggregate measure.', () => {
-        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN};
+        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelSupportsRole'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
@@ -304,7 +304,7 @@ describe('constraints/encoding', () => {
       const encQ: EncodingQuery = {
         hasFn: true,
         channel: Channel.COLOR,
-        aggregate: AggregateOp.MEAN,
+        aggregate: 'mean',
         field: 'Q',
         type: Type.QUANTITATIVE
       };
@@ -500,7 +500,7 @@ describe('constraints/encoding', () => {
 
     it('should return true if there is only one function', () => {
       [
-        ['aggregate', AggregateOp.MEAN], ['timeUnit', TimeUnit.MONTH], ['bin', true], , ['autoCount', true]
+        ['aggregate', 'mean'], ['timeUnit', TimeUnit.MONTH], ['bin', true], , ['autoCount', true]
       ].forEach((tuple: any) => {
         let modifiedEncQ = duplicate(encQ);
         modifiedEncQ[tuple[0]] = tuple[1];
@@ -511,11 +511,11 @@ describe('constraints/encoding', () => {
 
     it('should return false if there are multiple functions', () => {
       [
-        [AggregateOp.MEAN, TimeUnit.MONTH, true, undefined],
-        [AggregateOp.MEAN, undefined, true, undefined],
-        [AggregateOp.MEAN, TimeUnit.MONTH, undefined, undefined],
+        ['mean', TimeUnit.MONTH, true, undefined],
+        ['mean', undefined, true, undefined],
+        ['mean', TimeUnit.MONTH, undefined, undefined],
         [undefined, TimeUnit.MONTH, true, undefined],
-        [AggregateOp.MEAN, undefined, undefined, true],
+        ['mean', undefined, undefined, true],
       ].forEach((tuple) => {
         encQ.aggregate = tuple[0];
         encQ.timeUnit = tuple[1];
@@ -847,7 +847,7 @@ describe('constraints/encoding', () => {
       [Type.TEMPORAL, Type.ORDINAL, Type.NOMINAL].forEach((type) => {
         const countEncQ: EncodingQuery = {
           channel: Channel.X,
-          aggregate: AggregateOp.COUNT,
+          aggregate: 'count',
           field: '*',
           type: type
         };
@@ -858,7 +858,7 @@ describe('constraints/encoding', () => {
     it('should return true if field="*" has quantitative type', () => {
       const countEncQ: EncodingQuery = {
         channel: Channel.X,
-        aggregate: AggregateOp.COUNT,
+        aggregate: 'count',
         field: '*',
         type: Type.QUANTITATIVE
       };
@@ -896,7 +896,7 @@ describe('constraints/encoding', () => {
       [Type.TEMPORAL, Type.ORDINAL, Type.NOMINAL, Type.QUANTITATIVE].forEach((type) => {
         const countEncQ: EncodingQuery = {
           channel: Channel.X,
-          aggregate: AggregateOp.COUNT,
+          aggregate: 'count',
           field: '*',
           type: type
         };

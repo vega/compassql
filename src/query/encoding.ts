@@ -1,4 +1,4 @@
-import {AggregateOp} from 'vega-lite/src/aggregate';
+
 import {Axis} from 'vega-lite/src/axis';
 import {Bin} from 'vega-lite/src/bin';
 import {Channel} from 'vega-lite/src/channel';
@@ -14,6 +14,7 @@ import compileScaleType from 'vega-lite/src/compile/scale/type';
 
 import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
 import {contains} from '../util';
+import {AggregateOp} from 'vega-lite/src/aggregate';
 
 export type EncodingQuery = FieldQuery | ValueQuery;
 

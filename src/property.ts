@@ -1,7 +1,7 @@
-import {Axis} from 'vega-lite/src/axis';
+import {Axis, AXIS_PROPERTIES} from 'vega-lite/src/axis';
 import {Bin} from 'vega-lite/src/bin';
-import {Scale} from 'vega-lite/src/scale';
-import {Legend} from 'vega-lite/src/legend';
+import {Scale, SCALE_PROPERTIES} from 'vega-lite/src/scale';
+import {Legend, LEGEND_PROPERTIES} from 'vega-lite/src/legend';
 import {SortField} from 'vega-lite/src/sort';
 
 import {toMap} from './util';
@@ -65,20 +65,7 @@ export function hasNestedProperty(prop: string) {
 export const BIN_CHILD_PROPS: (keyof Bin)[] = ['maxbins', 'divide', 'extent', 'base', 'step', 'steps', 'minstep'];
 export const SORT_CHILD_PROPS: (keyof SortField)[] = ['field', 'op', 'order'];
 export const SCALE_CHILD_PROPS: (keyof Scale)[] =
-  ['clamp', 'domain', 'exponent', 'nice', 'range', 'rangeStep', 'round', 'type', 'useRawDomain', 'zero'];
-
-export const AXIS_CHILD_PROPS: (keyof Axis)[] =
-  ['axisColor', 'axisWidth', 'format', 'offset', 'orient', 'shortTimeLabels', 'subdivide', 'values', 'zindex',
-  'grid', 'gridColor', 'gridDash', 'gridOpacity', 'gridWidth',
-  'labels', 'labelAngle', 'labelMaxLength',
-  'ticks', 'tickColor', 'tickLabelColor', 'tickLabelFont', 'tickLabelFontSize', 'tickPadding', 'tickSize', 'tickSizeMajor', 'tickSizeMinor', 'tickSizeEnd', 'tickWidth',
-  'title', 'titleColor', 'titleFont', 'titleFontSize', 'titleFontWeight', 'titleOffset', 'titleMaxLength'];
-
-export const LEGEND_CHILD_PROPS: (keyof Legend)[] =
-  ['format', 'orient', 'offset', 'shortTimeLabels', 'values',
-  'labelAlign', 'labelBaseline', 'labelColor', 'labelFont', 'labelFontSize',
-  'symbolColor', 'symbolShape', 'symbolSize', 'symbolStrokeWidth',
-  'title', 'titleColor', 'titleFont', 'titleFontSize', 'titleFontWeight'];
+  ['clamp', 'domain', 'exponent', 'nice', 'range', 'rangeStep', 'round', 'type', 'zero'];
 
 const BIN_PROPS = BIN_CHILD_PROPS.map((c): BinProp => {
   return {parent: 'bin', child: c};
@@ -88,15 +75,15 @@ export const SORT_PROPS = SORT_CHILD_PROPS.map((c): SortProp => {
   return {parent: 'sort', child: c};
 });
 
-export const SCALE_PROPS = SCALE_CHILD_PROPS.map((c): ScaleProp => {
+export const SCALE_PROPS = SCALE_PROPERTIES.map((c): ScaleProp => {
   return {parent: 'scale', child: c};
 });
 
-const AXIS_PROPS = AXIS_CHILD_PROPS.map((c): AxisProp => {
+const AXIS_PROPS = AXIS_PROPERTIES.map((c): AxisProp => {
   return {parent: 'axis', child: c};
 });
 
-const LEGEND_PROPS = LEGEND_CHILD_PROPS.map((c): LegendProp => {
+const LEGEND_PROPS = LEGEND_PROPERTIES.map((c): LegendProp => {
   return {parent: 'legend', child: c};
 });
 

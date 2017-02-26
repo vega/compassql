@@ -1,19 +1,15 @@
 import { QueryConfig } from './config';
-import {
-  Property, isEncodingNestedProp,
-  SCALE_CHILD_PROPS, AXIS_CHILD_PROPS, LEGEND_CHILD_PROPS
-} from './property';
+import {Property, isEncodingNestedProp} from './property';
 import { Schema } from './schema';
 import { extend, isArray } from './util';
 
-import {AggregateOp} from 'vega-lite/src/aggregate';
-import {Axis} from 'vega-lite/src/axis';
+import {Axis, AXIS_PROPERTIES} from 'vega-lite/src/axis';
 import {Bin} from 'vega-lite/src/bin';
 import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR} from 'vega-lite/src/channel';
 import {FieldDef} from 'vega-lite/src/fielddef';
 import {Mark} from 'vega-lite/src/mark';
-import {Scale, ScaleType} from 'vega-lite/src/scale';
-import {Legend} from 'vega-lite/src/legend';
+import {Scale, ScaleType, SCALE_PROPERTIES} from 'vega-lite/src/scale';
+import {Legend, LEGEND_PROPERTIES} from 'vega-lite/src/legend';
 import {SortField, SortOrder} from 'vega-lite/src/sort';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
@@ -120,9 +116,9 @@ export const DEFAULT_NAME = {
     op: 'o',
     order: 'or'
   },
-  scaleProps: initNestedPropName(SCALE_CHILD_PROPS),
-  axisProps: initNestedPropName(AXIS_CHILD_PROPS),
-  legendProps: initNestedPropName(LEGEND_CHILD_PROPS)
+  scaleProps: initNestedPropName(SCALE_PROPERTIES),
+  axisProps: initNestedPropName(AXIS_PROPERTIES),
+  legendProps: initNestedPropName(LEGEND_PROPERTIES)
 };
 
 export function getDefaultName(prop: Property) {
@@ -177,8 +173,8 @@ const DEFAULT_BIN_PROPS_ENUM: DefEnumIndex<Bin> = {
 
 const DEFAULT_SORT_PROPS: DefEnumIndex<SortField> = {
   field: [undefined], // This should be never call and instead read from the schema
-  op: [AggregateOp.MIN, AggregateOp.MEAN],
-  order: [SortOrder.ASCENDING, SortOrder.DESCENDING]
+  op: ['min', 'mean'],
+  order: ['ascending', 'descending']
 };
 
 const DEFAULT_SCALE_PROPS_ENUM: DefEnumIndex<Scale> = {
@@ -189,80 +185,62 @@ const DEFAULT_SCALE_PROPS_ENUM: DefEnumIndex<Scale> = {
   clamp: DEFAULT_BOOLEAN_ENUM,
   nice: DEFAULT_BOOLEAN_ENUM,
   round: DEFAULT_BOOLEAN_ENUM,
-  useRawDomain: DEFAULT_BOOLEAN_ENUM,
   zero: DEFAULT_BOOLEAN_ENUM,
+
+  padding: [undefined],
+  paddingInner: [undefined],
+  paddingOuter: [undefined],
+
+  interpolate: [undefined],
 
   range: [undefined],
   rangeStep: [17, 21],
+  scheme: [undefined],
+
+
 };
 
 
 const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
-  axisColor: [undefined],
-  axisWidth: [undefined],
   zindex: [1, 0],
   offset: [undefined],
   orient: [undefined],
-  shortTimeLabels: DEFAULT_BOOLEAN_ENUM,
-  subdivide: [undefined],
   values: [undefined],
 
+  domain: DEFAULT_BOOLEAN_ENUM,
+
   grid: DEFAULT_BOOLEAN_ENUM,
-  gridColor: [undefined],
-  gridDash: [undefined],
-  gridOpacity: [undefined],
-  gridWidth: [undefined],
 
   format: [undefined],
   labels: DEFAULT_BOOLEAN_ENUM,
   labelAngle: [undefined],
   labelMaxLength: [undefined],
+  labelPadding: [undefined],
 
+  maxExtent: [undefined],
+  minExtent: [undefined],
+  position: [undefined],
 
   ticks: DEFAULT_BOOLEAN_ENUM,
-  tickColor: [undefined],
-  tickLabelColor: [undefined],
-  tickLabelFont: [undefined],
-  tickLabelFontSize: [undefined],
-  tickPadding: [undefined],
+  tickCount: [undefined],
   tickSize: [undefined],
-  tickSizeMajor: [undefined],
-  tickSizeMinor: [undefined],
-  tickSizeEnd: [undefined],
-  tickWidth: [undefined],
 
   title: [undefined],
-  titleColor: [undefined],
-  titleFont: [undefined],
-  titleFontWeight: [undefined],
-  titleFontSize: [undefined],
-  titleOffset: [undefined],
-  titleMaxLength: [undefined]
+  titleMaxLength: [undefined],
+  titlePadding: [undefined]
 };
 
 const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
+  entryPadding: [undefined],
   orient: ['left', 'right'],
   offset: [undefined],
   format: [undefined],
-  shortTimeLabels: DEFAULT_BOOLEAN_ENUM,
   values: [undefined],
 
-  labelAlign: [undefined],
-  labelBaseline: [undefined],
-  labelColor: [undefined],
-  labelFont: [undefined],
-  labelFontSize: [undefined],
-
-  symbolColor: [undefined],
-  symbolShape: [undefined],
-  symbolSize: [undefined],
-  symbolStrokeWidth:[undefined],
-
+  tickCount: [undefined],
   title: [undefined],
-  titleColor: [undefined],
-  titleFont: [undefined],
-  titleFontSize: [undefined],
-  titleFontWeight: [undefined],
+  type: [undefined],
+  zindex: [undefined]
 };
 
 // Use FullEnumIndex to make sure we have all properties specified here!
@@ -270,7 +248,7 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
   mark: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK], // Mark.TEXT
   channel: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT
 
-  aggregate: [undefined, AggregateOp.MEAN],
+  aggregate: [undefined, 'mean'],
   autoCount: DEFAULT_BOOLEAN_ENUM,
   bin: DEFAULT_BOOLEAN_ENUM,
   hasFn: DEFAULT_BOOLEAN_ENUM,
@@ -279,7 +257,7 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
   field: [undefined], // This is not used as field should be read from schema
   type: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
-  sort: [SortOrder.ASCENDING, SortOrder.DESCENDING],
+  sort: ['ascending', 'descending'],
 
   scale: [true],
   axis: DEFAULT_BOOLEAN_ENUM,
@@ -312,5 +290,5 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
   }
 
   /* istanbul ignore next */
-  throw new Error('No default enumValues for ' + prop);
+  throw new Error('No default enumValues for ' + JSON.stringify(prop));
 }
