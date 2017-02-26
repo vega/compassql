@@ -46,7 +46,7 @@ describe('nest', () => {
         };
 
         const answerSet = generate(query.spec, schema);
-        const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
+        const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
 
         assert.equal(groups.length, 1);
         assert.equal(groups[0].name, 'O|Q');
@@ -80,7 +80,7 @@ describe('nest', () => {
         };
 
         const answerSet = generate(query.spec, schema);
-        const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
+        const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
 
         assert.equal(groups.length, 1);
         assert.equal(groups[0].name, 'Q');
@@ -110,7 +110,7 @@ describe('nest', () => {
         };
 
         const answerSet = generate(query.spec, schema);
-        const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
+        const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
 
         assert.equal(groups.length, 1);
         assert.equal(groups[0].name, 'N|N1');
@@ -151,7 +151,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
+      const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
 
       // two because have two different aggregation
       assert.equal(groups.length, 2);
@@ -194,7 +194,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items;
+      const groups = nest(answerSet, query.nest).items;
       assert.equal(groups.length, 1);
     });
 
@@ -231,7 +231,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items;
+      const groups = nest(answerSet, query.nest).items;
       assert.equal(groups.length, 1);
     });
 
@@ -268,7 +268,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items;
+      const groups = nest(answerSet, query.nest).items;
       assert.equal(groups.length, 1);
     });
 
@@ -306,7 +306,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items;
+      const groups = nest(answerSet, query.nest).items;
       assert.equal(groups.length, 2);
       assert.equal((groups[0] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q)');
       (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModel) => {
@@ -357,7 +357,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items;
+      const groups = nest(answerSet, query.nest).items;
       assert.equal(groups.length, 2);
       assert.equal((groups[0] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q)');
       (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModelGroup) => {
@@ -395,7 +395,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
+      const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
 
       // two because have two different aggregation
       assert.equal(groups.length, 1);
@@ -419,7 +419,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
+      const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
 
       // two because have two different aggregation
       assert.equal(groups.length, 1);
@@ -452,7 +452,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items as SpecQueryModelGroup[] ;
+      const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
 
       // two because have two different aggregation
       assert.equal(groups.length, 2);
@@ -485,7 +485,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items;
+      const groups = nest(answerSet, query.nest).items;
       assert.equal(groups.length, 1);
     });
 
@@ -512,7 +512,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items;
+      const groups = nest(answerSet, query.nest).items;
       assert.equal(groups.length, 1);
     });
 
@@ -539,7 +539,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items;
+      const groups = nest(answerSet, query.nest).items;
       assert.equal(groups.length, 1);
     });
 
@@ -567,7 +567,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items;
+      const groups = nest(answerSet, query.nest).items;
       assert.equal(groups.length, 2);
       assert.equal((groups[0] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q)');
       (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModel) => {
@@ -604,7 +604,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items;
+      const groups = nest(answerSet, query.nest).items;
       assert.equal(groups.length, 2);
       assert.equal((groups[0] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q)');
       (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModelGroup) => {
@@ -639,7 +639,7 @@ describe('nest', () => {
         };
 
         const answerSet = generate(query.spec, schema);
-        const groups = nest(answerSet, query).items;
+        const groups = nest(answerSet, query.nest).items;
         assert.equal(groups.length, 1);
       });
 
@@ -670,7 +670,7 @@ describe('nest', () => {
         };
 
         const answerSet = generate(query.spec, schema);
-        const groups = nest(answerSet, query).items;
+        const groups = nest(answerSet, query.nest).items;
         assert.equal(groups.length, 1);
       });
 
@@ -694,7 +694,7 @@ describe('nest', () => {
         };
 
         const answerSet = generate(query.spec, schema, query.config);
-        const groups = nest(answerSet, query).items;
+        const groups = nest(answerSet, query.nest).items;
         assert.equal(groups.length, 2);
       });
     });
@@ -724,7 +724,7 @@ describe('nest', () => {
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query).items as SpecQueryModelGroup[];
+      const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[];
 
       // two because have two different aggregation
       assert.equal(groups.length, 2);
