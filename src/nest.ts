@@ -7,7 +7,7 @@ import {PropIndex} from './propindex';
 import {Dict} from './util';
 
 import {parseGroupBy, GROUP_BY_FIELD_TRANSFORM, GROUP_BY_ENCODING} from './query/groupby';
-import {Query} from './query/query';
+import {Query} from './query';
 import {fieldDef as fieldDefShorthand, spec as specShorthand, Replacer} from './query/shorthand';
 import {stack} from './query/spec';
 
