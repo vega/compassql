@@ -5,7 +5,7 @@ import {Legend} from 'vega-lite/src/legend';
 import {SortField} from 'vega-lite/src/sort';
 
 import {toMap} from './util';
-import {EncodingQuery} from './query/encoding';
+import {FieldQuery, ValueQuery} from './query/encoding';
 import {TransformQuery} from './query/transform';
 
 export type Property = FlatProp | EncodingNestedProp;
@@ -13,21 +13,19 @@ export type FlatProp = MarkProp | TransformProp | EncodingTopLevelProp;
 
 export type MarkProp = 'mark' | 'stack'; // FIXME: determine how 'stack' works;
 export type TransformProp = keyof TransformQuery;
-export type EncodingTopLevelProp = keyof EncodingQuery;
+export type EncodingTopLevelProp = keyof (FieldQuery & ValueQuery);
 export type EncodingNestedProp = BinProp | SortProp | ScaleProp | AxisProp | LegendProp;
 
-export type EncodingNestedChildProp = keyof Bin | keyof SortField | keyof Scale | keyof Axis | keyof Legend;
-
-export type BaseEncodingNestedProp<P, T> = {
+type BaseEncodingNestedProp<P, T> = {
   parent: P,
   child: keyof T
 };
 
-export type BinProp = BaseEncodingNestedProp<'bin', Bin>;
-export type SortProp = BaseEncodingNestedProp<'sort', SortField>;
-export type ScaleProp = BaseEncodingNestedProp<'scale', Scale>;
-export type AxisProp = BaseEncodingNestedProp<'axis', Axis>;
-export type LegendProp = BaseEncodingNestedProp<'legend', Legend>;
+type BinProp = BaseEncodingNestedProp<'bin', Bin>;
+type SortProp = BaseEncodingNestedProp<'sort', SortField>;
+type ScaleProp = BaseEncodingNestedProp<'scale', Scale>;
+type AxisProp = BaseEncodingNestedProp<'axis', Axis>;
+type LegendProp = BaseEncodingNestedProp<'legend', Legend>;
 
 export function isEncodingNestedProp(p: Property): p is EncodingNestedProp {
   return !!p['parent'];
@@ -135,7 +133,7 @@ const ENCODING_NESTED_PROP_INDEX = ENCODING_NESTED_PROPS.reduce((i, prop: Encodi
 }, {});
 
 // FIXME consider using a more general method
-export function getEncodingNestedProp(parent: EncodingTopLevelProp, child: EncodingNestedChildProp) {
+export function getEncodingNestedProp(parent: EncodingTopLevelProp, child) {
   return (ENCODING_NESTED_PROP_INDEX[parent] || {})[child];
 }
 

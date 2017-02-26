@@ -10,7 +10,7 @@ import {isEncodingTopLevelProperty, Property} from '../property';
 import {contains, extend, keys, some} from '../util';
 
 import {TransformQuery} from './transform';
-import {EncodingQuery} from './encoding';
+import {EncodingQuery, isFieldQuery, isValueQuery} from './encoding';
 
 
 
@@ -61,7 +61,9 @@ export function fromSpec(spec: ExtendedUnitSpec): SpecQuery {
 
 export function isAggregate(specQ: SpecQuery) {
   return some(specQ.encodings, (encQ: EncodingQuery) => {
-    return (!isWildcard(encQ.aggregate) && !!encQ.aggregate) || encQ.autoCount === true;
+    // TODO(akshatsh): aggregates are only fieldQueries?
+    // TODO(akshatsh): FieldQUery might be wrong
+    return isFieldQuery(encQ) && ((!isWildcard(encQ.aggregate) && !!encQ.aggregate) || encQ.autoCount === true);
   });
 }
 
@@ -88,7 +90,8 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
   }
 
   const stackBy = specQ.encodings.reduce((sc, encQ: EncodingQuery) => {
-    if (contains(STACK_GROUP_CHANNELS, encQ.channel) && !encQ.aggregate) {
+    // TODO(akshatsh): should require fieldQuery? 
+    if (contains(STACK_GROUP_CHANNELS, encQ.channel) && (isValueQuery(encQ) || !encQ.aggregate)) {
       sc.push({
         channel: encQ.channel,
         fieldDef: encQ
@@ -108,8 +111,9 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
   const yEncQ = specQ.encodings.reduce((f, encQ: EncodingQuery) => {
     return f || (encQ.channel === Channel.Y ? encQ : null);
   }, null);
-  const xIsAggregate = !!xEncQ && (!!xEncQ.aggregate || !!xEncQ.autoCount);
-  const yIsAggregate = !!yEncQ && (!!yEncQ.aggregate || !!yEncQ.autoCount);
+  // TODO(akshatsh): check this
+  const xIsAggregate = isFieldQuery(xEncQ) && (!!xEncQ && (!!xEncQ.aggregate || !!xEncQ.autoCount));
+  const yIsAggregate = isFieldQuery(yEncQ) && (!!yEncQ && (!!yEncQ.aggregate || !!yEncQ.autoCount));
 
   if (xIsAggregate !== yIsAggregate) {
     return {

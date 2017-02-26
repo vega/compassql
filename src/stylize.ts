@@ -5,7 +5,7 @@ import {Type} from 'vega-lite/src/type';
 
 import {QueryConfig} from './config';
 import {SpecQueryModel} from './model';
-import {AxisQuery, EncodingQuery, ScaleQuery, scaleType} from './query/encoding';
+import {AxisQuery, EncodingQuery, ScaleQuery, scaleType, isFieldQuery, FieldQuery} from './query/encoding';
 import {Schema} from './schema';
 import {Dict} from './util';
 
@@ -35,7 +35,8 @@ export function smallRangeStepForHighCardinalityOrFacet(specM: SpecQueryModel, s
   });
 
   const yEncQ = encQIndex[Channel.Y];
-  if (yEncQ !== undefined) {
+  // TODO(akshatsh): check this
+  if (yEncQ !== undefined && isFieldQuery(yEncQ)) {
     if (encQIndex[Channel.ROW] ||
         schema.cardinality(yEncQ) > opt.smallRangeStepForHighCardinalityOrFacet.maxCardinality) {
 
@@ -60,7 +61,8 @@ export function smallRangeStepForHighCardinalityOrFacet(specM: SpecQueryModel, s
   }
 
   const xEncQ = encQIndex[Channel.X];
-  if (xEncQ !== undefined) {
+  // TODO(akshatsh): check this
+  if (xEncQ !== undefined && isFieldQuery(xEncQ)) {
     if (encQIndex[Channel.COLUMN] ||
         schema.cardinality(xEncQ) > opt.smallRangeStepForHighCardinalityOrFacet.maxCardinality) {
 
@@ -87,7 +89,7 @@ export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schem
   encQIndex[Channel.COLOR] = specM.getEncodingQueryByChannel(Channel.COLOR);
 
   const colorEncQ = encQIndex[Channel.COLOR];
-  if ((colorEncQ !== undefined) && (colorEncQ.type === Type.NOMINAL) &&
+  if (isFieldQuery(colorEncQ) && (colorEncQ !== undefined) && (colorEncQ.type === Type.NOMINAL) &&
       (schema.cardinality(colorEncQ) > opt.nominalColorScaleForHighCardinality.maxCardinality)) {
 
     if (colorEncQ.scale === undefined) {
@@ -110,8 +112,9 @@ export function xAxisOnTopForHighYCardinalityWithoutColumn(specM: SpecQueryModel
   });
 
   if (encQIndex[Channel.COLUMN] === undefined) {
-    const xEncQ = encQIndex[Channel.X];
-    const yEncQ = encQIndex[Channel.Y];
+    // TODO(akshatsh): valid way to solve this?
+    const xEncQ = encQIndex[Channel.X] as FieldQuery;
+    const yEncQ = encQIndex[Channel.Y] as FieldQuery;
     if (yEncQ !== undefined && yEncQ.field && hasDiscreteDomain(scaleType(yEncQ))) {
       if (xEncQ !== undefined) {
         if (schema.cardinality(yEncQ) > opt.xAxisOnTopForHighYCardinalityWithoutColumn.maxCardinality) {
