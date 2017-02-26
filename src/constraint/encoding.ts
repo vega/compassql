@@ -1,6 +1,5 @@
-import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel, getSupportedRole} from 'vega-lite/src/channel';
-import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain, channelScalePropertyIncompatability} from 'vega-lite/src/scale';
+import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain, channelScalePropertyIncompatability, Scale} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -92,7 +91,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
-      return (fieldQ.field === '*') === (fieldQ.aggregate === AggregateOp.COUNT);
+      return (fieldQ.field === '*') === (fieldQ.aggregate === 'count');
     }
   // TODO: minCardinalityForBin
   },{
@@ -224,13 +223,14 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
             // ignore type and properties of wildcards
             continue;
           }
+          const sProp = scaleProp as (keyof Scale);
           if (sType === 'point') {
             // HACK: our current implementation of scaleType() can return point
             // when the scaleType is a band since we didn't pass all parameter to Vega-Lite's scale type method.
-            if (!scaleTypeSupportProperty('point', scaleProp) && !scaleTypeSupportProperty('band', scaleProp)) {
+            if (!scaleTypeSupportProperty('point', sProp) && !scaleTypeSupportProperty('band', sProp)) {
               return false;
             }
-          } else if (!scaleTypeSupportProperty(sType, scaleProp)) {
+          } else if (!scaleTypeSupportProperty(sType, sProp)) {
             return false;
           }
         }
@@ -254,7 +254,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
               // ignore type and properties of wildcards
               continue;
             }
-            let isSupported = channelScalePropertyIncompatability(channel, scaleProp) === undefined;
+            let isSupported = channelScalePropertyIncompatability(channel, scaleProp as keyof Scale) === undefined;
             if (!isSupported) {
               return false;
             }

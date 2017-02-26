@@ -1,9 +1,8 @@
-import {AggregateOp} from 'vega-lite/src/aggregate';
-import {AxisOrient} from 'vega-lite/src/axis';
+
+
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
-import {SortOrder} from 'vega-lite/src/sort';
 import {TimeUnit} from 'vega-lite/src/timeunit';
 import {Type} from 'vega-lite/src/type';
 
@@ -125,13 +124,13 @@ describe('query/shorthand', () => {
       it('should correctly parse an encoding query given a fieldDefShorthand with aggregation function', () => {
         let encQ: EncodingQuery = {} as EncodingQuery;
         shorthandParser.fn(encQ, 'sum(horsepower,q)');
-        assert.deepEqual(encQ, {aggregate: AggregateOp.SUM, field: 'horsepower', type: Type.QUANTITATIVE});
+        assert.deepEqual(encQ, {aggregate: 'sum', field: 'horsepower', type: Type.QUANTITATIVE});
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with count function', () => {
         let encQ: EncodingQuery = {} as EncodingQuery;
         shorthandParser.fn(encQ, 'count(*,q)');
-        assert.deepEqual(encQ,{aggregate: AggregateOp.COUNT, field: '*', type: Type.QUANTITATIVE});
+        assert.deepEqual(encQ,{aggregate: 'count', field: '*', type: Type.QUANTITATIVE});
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with timeunit function', () => {
@@ -226,14 +225,14 @@ describe('query/shorthand', () => {
         let encQ = shorthandParser.rawFieldDef({} as EncodingQuery,
           splitWithTail('a,q,scale={"domain":[1,2],"exponent":3,"type":"pow"},axis={"orient":"top"}', ',', 2)
         );
-        assert.deepEqual(encQ, {axis: {orient: AxisOrient.TOP}, field: 'a', scale: {domain: [1, 2], exponent: 3, type: ScaleType.POW}, type: Type.QUANTITATIVE});
+        assert.deepEqual(encQ, {axis: {orient: 'top'}, field: 'a', scale: {domain: [1, 2], exponent: 3, type: ScaleType.POW}, type: Type.QUANTITATIVE});
       });
 
       it('should correctly parse an encoding query from fieldDef parts', () => {
         let encQ = shorthandParser.rawFieldDef({} as EncodingQuery,
           splitWithTail('a,n,sort={"field":"a","op":"mean","order":"descending"}', ',', 2)
         );
-        assert.deepEqual(encQ, {field: 'a', sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}, type: Type.NOMINAL});
+        assert.deepEqual(encQ, {field: 'a', sort: {field: 'a', op: 'mean', order: 'descending'}, type: Type.NOMINAL});
       });
     });
   });
@@ -390,7 +389,7 @@ describe('query/shorthand', () => {
       const str = specShorthand({
         mark: Mark.BAR,
         encodings: [
-          {channel: Channel.X, field: 'q', type: Type.QUANTITATIVE, aggregate: AggregateOp.SUM},
+          {channel: Channel.X, field: 'q', type: Type.QUANTITATIVE, aggregate: 'sum'},
           {channel: Channel.Y, field: 'n', type: Type.NOMINAL},
           {channel: Channel.COLOR, field: 'n1', type: Type.NOMINAL}
         ]
@@ -402,7 +401,7 @@ describe('query/shorthand', () => {
       const str = specShorthand({
         mark: Mark.BAR,
         encodings: [
-          {channel: Channel.X, field: 'q', type: Type.QUANTITATIVE, aggregate: AggregateOp.SUM},
+          {channel: Channel.X, field: 'q', type: Type.QUANTITATIVE, aggregate: 'sum'},
           {channel: Channel.Y, field: 'n', type: Type.NOMINAL},
           {channel: Channel.COLOR, field: 'n1', type: Type.NOMINAL}
         ]
@@ -455,14 +454,14 @@ describe('query/shorthand', () => {
 
     it('should return correct fieldDefShorthand string for aggregate field', () => {
        const str = fieldDefShorthand({
-         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, aggregate: 'mean'
        });
        assert.equal(str, 'mean(a,q)');
     });
 
     it('should not include aggregate string for aggregate field when aggregate is not included', () => {
        const str = fieldDefShorthand({
-         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, aggregate: AggregateOp.MEAN
+         channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, aggregate: 'mean'
        }, new PropIndex<boolean>({field: true, type: true}));
        assert.equal(str, 'a,q');
     });
@@ -483,7 +482,7 @@ describe('query/shorthand', () => {
          channel: Channel.X,
          field: 'a',
          type: Type.QUANTITATIVE,
-         aggregate: {name: 'a1', enum: [AggregateOp.MAX, AggregateOp.MIN]},
+         aggregate: {name: 'a1', enum: ['max', 'min']},
          bin: {enum:[false, true], maxbins:20}
        });
        assert.equal(str, '?{"aggregate":["max","min"],"bin":[false,true]}(a,q,maxbins=20)');
@@ -494,7 +493,7 @@ describe('query/shorthand', () => {
          channel: Channel.X,
          field: 'a',
          type: Type.QUANTITATIVE,
-         aggregate: {name: 'a1', enum: [undefined, AggregateOp.MIN]},
+         aggregate: {name: 'a1', enum: [undefined, 'min']},
          bin: {enum:[false, true], maxbins:20},
          hasFn: true
        });
@@ -517,14 +516,14 @@ describe('query/shorthand', () => {
 
     it('should return correct fieldDefShorthand string for sort with ascending', () => {
       const str = fieldDefShorthand({
-        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: SortOrder.ASCENDING
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: 'ascending'
       });
       assert.equal(str, 'a,q,sort="ascending"');
     });
 
     it('should return correct fieldDefShorthand string for sort field definition object', () => {
       const str = fieldDefShorthand({
-        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: {field: 'a', op: AggregateOp.MEAN, order: SortOrder.DESCENDING}
+        channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, sort: {field: 'a', op: 'mean', order: 'descending'}
       });
       assert.equal(str, 'a,q,sort={"field":"a","op":"mean","order":"descending"}');
     });
@@ -538,14 +537,14 @@ describe('query/shorthand', () => {
 
     it('should return correct fieldDefShorthand string for scale with scaleType point and sort field definition object', () => {
       const str = fieldDefShorthand({
-        channel: Channel.Y, field: 'a', type: Type.ORDINAL, scale: {type: ScaleType.POINT}, sort: {field: 'b', op: AggregateOp.MEAN}
+        channel: Channel.Y, field: 'a', type: Type.ORDINAL, scale: {type: ScaleType.POINT}, sort: {field: 'b', op: 'mean'}
       });
       assert.equal(str, 'a,o,scale={"type":"point"},sort={"field":"b","op":"mean"}');
     });
 
     it('should return correct fieldDefShorthand string for bin with maxbins, axis with orient, scale with scaleType ', () => {
       const str = fieldDefShorthand({
-        axis: {orient: AxisOrient.TOP}, bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LINEAR}
+        axis: {orient: 'top'}, bin: {maxbins: 20}, channel: Channel.X, field: 'a', type: Type.QUANTITATIVE, scale: {type: ScaleType.LINEAR}
       });
       assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"linear"},axis={"orient":"top"})');
     });
@@ -558,14 +557,14 @@ describe('query/shorthand', () => {
             channel: Channel.X,
             field: 'a',
             type: Type.QUANTITATIVE,
-            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}
+            axis: {orient: 'top', ticks: 5, title: 'test x channel'}
           }
         ]
       });
-      assert.equal(str, 'point|x:a,q,axis={"orient":"top","shortTimeLabels":true,"ticks":5,"title":"test x channel"}');
+      assert.equal(str, 'point|x:a,q,axis={"orient":"top","ticks":5,"title":"test x channel"}');
     });
 
-    it('should return correct fieldDefShorthand string for legend with orient, labelAlign, symbolSize, and title', () => {
+    it('should return correct fieldDefShorthand string for legend with properties ordered alphabetically', () => {
       const str = specShorthand({
         mark: Mark.POINT,
         encodings: [
@@ -573,11 +572,11 @@ describe('query/shorthand', () => {
             channel: Channel.COLOR,
             field: 'a',
             type: Type.NOMINAL,
-            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}
+            legend: {title: 'test title', orient: 'right',}
           }
         ]
       });
-      assert.equal(str, 'point|color:a,n,legend={"labelAlign":"left","orient":"right","symbolSize":12,"title":"test title"}');
+      assert.equal(str, 'point|color:a,n,legend={"orient":"right","title":"test title"}');
     });
 
     it('should return a fieldDefShorthand string without incorrect legend', () => {
@@ -585,7 +584,7 @@ describe('query/shorthand', () => {
         mark: Mark.POINT,
         encodings: [
           {
-            axis: {orient: AxisOrient.RIGHT},
+            axis: {orient: 'right'},
             channel: Channel.X,
             field: 'a',
             type: Type.NOMINAL,
@@ -601,15 +600,17 @@ describe('query/shorthand', () => {
         mark: Mark.POINT,
         encodings: [
           {
-            axis: {orient: AxisOrient.RIGHT},
+            axis: {orient: 'right'},
             channel: Channel.COLOR,
             field: 'a',
             type: Type.NOMINAL,
-            legend: {labelAlign: 'left'}
+            legend: {
+              zindex: 0
+            }
           }
         ]
       });
-      assert.equal(str, 'point|color:a,n,legend={"labelAlign":"left"}');
+      assert.equal(str, 'point|color:a,n,legend={"zindex":0}');
     });
 
     it('should return correct fieldDefShorthand string for scale with a string[] domain', () => {

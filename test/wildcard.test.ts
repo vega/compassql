@@ -81,7 +81,7 @@ describe('wildcard', () => {
           }
         }
 
-        assert.equal(name in defaultNameIndex, false);
+        assert.equal(name in defaultNameIndex, false, `${name} is already used for ${JSON.stringify(defaultNameIndex[name])} and thus can't be used for ${JSON.stringify(prop)}`);
         defaultNameIndex[getDefaultName(prop)] = prop;
       }
       assert.equal(missing.length, 0, 'Properties with missing name: ' + missing.join(','));

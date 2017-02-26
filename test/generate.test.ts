@@ -1,6 +1,6 @@
 import {assert} from 'chai';
 
-import {AggregateOp} from 'vega-lite/src/aggregate';
+
 import {Channel} from 'vega-lite/src/channel';
 import {Mark} from 'vega-lite/src/mark';
 import {ScaleType} from 'vega-lite/src/scale';
@@ -14,6 +14,7 @@ import {SHORT_WILDCARD} from '../src/wildcard';
 import {extend, some} from '../src/util';
 
 import {schema} from './fixture';
+import {SpecQuery} from '../src/query/spec';
 
 const CONFIG_WITH_AUTO_ADD_COUNT = extend({}, DEFAULT_QUERY_CONFIG, {autoAddCount: true});
 
@@ -130,10 +131,10 @@ describe('generate', function () {
   describe('1D raw', () => {
     describe('dotplot', () => {
       it('should generate only a raw dot plot if omitAggregate is enabled.', () => {
-        const specQ = {
+        const specQ: SpecQuery = {
           mark: Mark.POINT,
           encodings: [
-            {aggregate: {name: 'aggregate', enum: [undefined, AggregateOp.MEAN]}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+            {aggregate: {name: 'aggregate', enum: [undefined, 'mean']}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
           ],
         };
         const CONFIG_WITH_OMIT_AGGREGATE = extend({}, DEFAULT_QUERY_CONFIG, {omitAggregate: true});
@@ -147,16 +148,16 @@ describe('generate', function () {
   describe('1D aggregate', () => {
     describe('dotplot with mean + histogram', () => {
       it('should generate only an aggregate dot plot if omitRaw is enabled.', () => {
-        const specQ = {
+        const specQ: SpecQuery = {
           mark: Mark.POINT,
           encodings: [
-            {aggregate: {name:'aggregate', enum: [undefined, AggregateOp.MEAN]}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
+            {aggregate: {name:'aggregate', enum: [undefined, 'mean']}, channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
           ]
         };
         const CONFIG_WITH_OMIT_RAW = extend({}, DEFAULT_QUERY_CONFIG, {omitRaw: true});
         const answerSet = generate(specQ, schema, CONFIG_WITH_OMIT_RAW);
         assert.equal(answerSet.length, 1);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).aggregate, AggregateOp.MEAN);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).aggregate, 'mean');
       });
     });
   });
@@ -249,12 +250,12 @@ describe('generate', function () {
           mark: SHORT_WILDCARD,
           encodings: [{
             channel: Channel.X,
-            aggregate: AggregateOp.MEAN,
+            aggregate: 'mean',
             field: 'Q',
             type: Type.QUANTITATIVE
           },{
             channel: Channel.Y,
-            aggregate: AggregateOp.MEAN,
+            aggregate: 'mean',
             field: 'Q1',
             type: Type.QUANTITATIVE
           }]

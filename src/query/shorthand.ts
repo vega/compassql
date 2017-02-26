@@ -1,7 +1,7 @@
 import {AGGREGATE_OPS} from 'vega-lite/src/aggregate';
 import {Channel, CHANNELS} from 'vega-lite/src/channel';
 import {Formula} from 'vega-lite/src/transform';
-import {ExtendedUnitSpec} from 'vega-lite/src/spec';
+import {FacetedUnitSpec} from 'vega-lite/src/spec';
 import {SINGLE_TIMEUNITS, MULTI_TIMEUNITS} from 'vega-lite/src/timeunit';
 import {Type, getFullName} from 'vega-lite/src/type';
 import {toMap, isString} from 'datalib/src/util';
@@ -60,7 +60,7 @@ export const INCLUDE_ALL: PropIndex<boolean> =
     .reduce((pi, prop) => pi.set(prop, true), new PropIndex<boolean>());
 
 
-export function vlSpec(vlspec: ExtendedUnitSpec,
+export function vlSpec(vlspec: FacetedUnitSpec,
     include: PropIndex<boolean> = INCLUDE_ALL,
     replace: PropIndex<Replacer> = REPLACE_NONE) {
   const specQ = fromSpec(vlspec);

@@ -1,4 +1,4 @@
-import {AggregateOp} from 'vega-lite/src/aggregate';
+
 import {Type} from 'vega-lite/src/type';
 import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
@@ -39,7 +39,7 @@ function aggregationQualityFeature (specM: SpecQueryModel, _: Schema, __: QueryC
 
     if (some(encodings, isDimension)) {
       let hasCount = some(encodings, (encQ: EncodingQuery) => {
-        return isFieldQuery(encQ) && (encQ.aggregate === AggregateOp.COUNT || encQ.autoCount === true);
+        return isFieldQuery(encQ) && (encQ.aggregate === 'count' || encQ.autoCount === true);
       });
       let hasBin = some(encodings, (encQ: EncodingQuery) => {
         return isFieldQuery(encQ) && !!encQ.bin;

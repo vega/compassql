@@ -1,11 +1,10 @@
-import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel} from 'vega-lite/src/channel';
 import {Data} from 'vega-lite/src/data';
 import {Encoding} from 'vega-lite/src/encoding';
 import {FieldDef} from 'vega-lite/src/fielddef';
 import {Mark} from 'vega-lite/src/mark';
 import {Type} from 'vega-lite/src/type';
-import {ExtendedUnitSpec} from 'vega-lite/src/spec';
+import {FacetedUnitSpec} from 'vega-lite/src/spec';
 import {StackProperties} from 'vega-lite/src/stack';
 
 import {QueryConfig} from './config';
@@ -230,7 +229,7 @@ export class SpecQueryModel {
     return this._channelFieldCount[channel] > 0;
   }
 
-  public stack() : StackProperties {
+  public stack(): StackProperties {
     return stack(this._spec);
   }
 
@@ -282,7 +281,7 @@ export class SpecQueryModel {
 
       // For count field that is automatically added, convert to correct vega-lite fieldDef
       if (isFieldQuery(encQ) && encQ.autoCount === true) {
-        fieldDef.aggregate = AggregateOp.COUNT;
+        fieldDef.aggregate = 'count';
         fieldDef.field = '*';
         fieldDef.type = Type.QUANTITATIVE;
       } else if (isValueQuery(encQ) || encQ.autoCount === false) {
@@ -324,7 +323,7 @@ export class SpecQueryModel {
    * Convert a query to a Vega-Lite spec if it is completed.
    * @return a Vega-Lite spec if completed, null otherwise.
    */
-  public toSpec(data?: Data): ExtendedUnitSpec {
+  public toSpec(data?: Data): FacetedUnitSpec {
     if (isWildcard(this._spec.mark)) return null;
 
     let spec: any = {};

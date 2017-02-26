@@ -1,15 +1,14 @@
-import {AggregateOp} from 'vega-lite/src/aggregate';
-import {AxisOrient} from 'vega-lite/src/axis';
+
+
 import {Channel} from 'vega-lite/src/channel';
 import {Mark, BAR, AREA, PRIMITIVE_MARKS} from 'vega-lite/src/mark';
-import {StackOffset} from 'vega-lite/src/stack';
-import {SortOrder} from 'vega-lite/src/sort';
 import {Type} from 'vega-lite/src/type';
 
 import {assert} from 'chai';
 
-import {fromSpec, stack} from '../../src/query/spec';
+import {fromSpec, stack, SpecQuery} from '../../src/query/spec';
 import {without} from '../../src/util';
+import {StackOffset} from 'vega-lite/src/stack';
 
 describe('query/spec', () => {
   describe('stack', () => {
@@ -17,12 +16,12 @@ describe('query/spec', () => {
     const NON_STACKABLE_MARKS = without(PRIMITIVE_MARKS, STACKABLE_MARKS);
 
     it('should always return null for nonstackable marks with at least of of the stack channel', () => {
-      [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((_stack) => {
+      [undefined, 'center', 'none', 'zero', 'normalize'].forEach((_stack) => {
         NON_STACKABLE_MARKS.forEach((nonStackableMark) => {
           const specQ = {
             mark: nonStackableMark,
             encodings: [
-              {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+              {channel: Channel.X, aggregate: 'sum', field: 'Q', type: Type.QUANTITATIVE},
               {channel: Channel.Y, field: 'N', type: Type.NOMINAL},
               {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
             ],
@@ -34,7 +33,7 @@ describe('query/spec', () => {
     });
 
     it('should always return null for raw plot', () => {
-      [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((_stack) => {
+      [undefined, 'center', 'none', 'zero', 'normalize'].forEach((_stack) => {
         PRIMITIVE_MARKS.forEach((mark) => {
           const specQ = {
             mark: mark,
@@ -51,12 +50,12 @@ describe('query/spec', () => {
     });
 
     it('should always return null if there is no grouping channel', () => {
-      [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((_stack) => {
+      [undefined, 'center', 'none', 'zero', 'normalize'].forEach((_stack) => {
         PRIMITIVE_MARKS.forEach((mark) => {
           const specQ = {
             mark: mark,
             encodings: [
-              {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+              {channel: Channel.X, aggregate: 'sum', field: 'Q', type: Type.QUANTITATIVE},
               {channel: Channel.Y, field: 'N', type: Type.NOMINAL}
             ],
             config: {mark: {stack: _stack}}
@@ -66,13 +65,13 @@ describe('query/spec', () => {
       });
     });
     it('should always be disabled if both x and y are aggregate', () => {
-      [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((_) => {
+      [undefined, 'center', 'none', 'zero', 'normalize'].forEach((_) => {
         PRIMITIVE_MARKS.forEach((mark) => {
           const specQ = {
               mark: mark,
               encodings: [
-                {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
-                {channel: Channel.Y, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.X, aggregate: 'sum', field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.Y, aggregate: 'sum', field: 'Q', type: Type.QUANTITATIVE},
                 {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
               ]
             };
@@ -82,7 +81,7 @@ describe('query/spec', () => {
     });
 
     it('should always be disabled if neither x nor y is aggregate', () => {
-      [undefined, StackOffset.CENTER, StackOffset.NONE, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((_) => {
+      [undefined, 'center', 'none', 'zero', 'normalize'].forEach((_) => {
         PRIMITIVE_MARKS.forEach((mark) => {
           const specQ = {
               mark: mark,
@@ -103,7 +102,7 @@ describe('query/spec', () => {
           const specQ = {
               mark: stackableMark,
               encodings: [
-                {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.X, aggregate: 'sum', field: 'Q', type: Type.QUANTITATIVE},
                 {channel: Channel.Y, field: 'N', type: Type.NOMINAL},
                 {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
               ]
@@ -119,7 +118,7 @@ describe('query/spec', () => {
           const specQ = {
               mark: stackableMark,
               encodings: [
-                {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.X, aggregate: 'sum', field: 'Q', type: Type.QUANTITATIVE},
                 {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
               ]
             };
@@ -134,7 +133,7 @@ describe('query/spec', () => {
           const specQ = {
               mark: stackableMark,
               encodings: [
-                {channel: Channel.Y, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.Y, aggregate: 'sum', field: 'Q', type: Type.QUANTITATIVE},
                 {channel: Channel.X, field: 'N', type: Type.NOMINAL},
                 {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
               ]
@@ -150,7 +149,7 @@ describe('query/spec', () => {
           const specQ = {
               mark: stackableMark,
               encodings: [
-                {channel: Channel.Y, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.Y, aggregate: 'sum', field: 'Q', type: Type.QUANTITATIVE},
                 {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
               ]
             };
@@ -182,26 +181,26 @@ describe('query/spec', () => {
           const specQ = {
             mark: stackableMark,
             encodings: [
-              {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+              {channel: Channel.X, aggregate: 'sum', field: 'Q', type: Type.QUANTITATIVE},
               {channel: Channel.Y, field: 'N', type: Type.NOMINAL},
               {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
             ]
           };
-          assert.equal(stack(specQ).offset, StackOffset.ZERO);
+          assert.equal(stack(specQ).offset, 'zero');
         });
       });
 
       it('should return the specified stack for stackable marks with at least one of the stack channel', () => {
-        [StackOffset.CENTER, StackOffset.ZERO, StackOffset.NORMALIZE].forEach((_stack) => {
+        ['center', 'zero', 'normalize'].forEach((_stack: StackOffset) => {
           [BAR, AREA].forEach((stackableMark) => {
-            const specQ = {
+            const specQ: SpecQuery = {
               mark: stackableMark,
               encodings: [
-                {channel: Channel.X, aggregate: AggregateOp.SUM, field: 'Q', type: Type.QUANTITATIVE},
+                {channel: Channel.X, aggregate: 'sum', field: 'Q', type: Type.QUANTITATIVE},
                 {channel: Channel.Y, field: 'N', type: Type.NOMINAL},
                 {channel: Channel.COLOR, field: 'N1', type: Type.NOMINAL},
               ],
-              config: {mark: {stacked: _stack}}
+              config: {stack: _stack}
             };
             assert.equal(stack(specQ).offset, _stack);
           });
@@ -220,7 +219,7 @@ describe('query/spec', () => {
           x: {
             field: 'x',
             type: Type.QUANTITATIVE,
-            axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'},
+            axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'},
           },
           y: {
             field: 'x', type: Type.QUANTITATIVE, scale: null
@@ -236,7 +235,7 @@ describe('query/spec', () => {
         transform: {filter: 'datum.x ===2'},
         mark: Mark.POINT,
         encodings: [
-          {channel: 'x', field: 'x', type: Type.QUANTITATIVE, axis: {orient: AxisOrient.TOP, shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
+          {channel: 'x', field: 'x', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
           {channel: 'y', field: 'x', type: Type.QUANTITATIVE, scale: false},
           {channel: 'color', legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}}
         ],
@@ -250,8 +249,8 @@ describe('query/spec', () => {
         transform: {filter: 'datum.x ===2'},
         mark: Mark.POINT,
         encoding: {
-          x: {field: 'x', sort: SortOrder.ASCENDING, type: Type.QUANTITATIVE},
-          y: {field: 'x', sort: {field: 'x', op: AggregateOp.MEAN, order: SortOrder.ASCENDING}, type: Type.QUANTITATIVE, scale: null}
+          x: {field: 'x', sort: 'ascending', type: Type.QUANTITATIVE},
+          y: {field: 'x', sort: {field: 'x', op: 'mean', order: 'ascending'}, type: Type.QUANTITATIVE, scale: null}
         },
         config: {}
       });
@@ -260,8 +259,8 @@ describe('query/spec', () => {
         transform: {filter: 'datum.x ===2'},
         mark: Mark.POINT,
         encodings: [
-          {channel: 'x', field: 'x', sort: SortOrder.ASCENDING, type: Type.QUANTITATIVE},
-          {channel: 'y', field: 'x',  sort: {field: 'x', op: AggregateOp.MEAN, order: SortOrder.ASCENDING}, type: Type.QUANTITATIVE, scale: false}
+          {channel: 'x', field: 'x', sort: 'ascending', type: Type.QUANTITATIVE},
+          {channel: 'y', field: 'x',  sort: {field: 'x', op: 'mean', order: 'ascending'}, type: Type.QUANTITATIVE, scale: false}
         ],
         config: {}
       });

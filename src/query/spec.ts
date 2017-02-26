@@ -1,9 +1,8 @@
 import {Channel, X, Y, STACK_GROUP_CHANNELS} from 'vega-lite/src/channel';
 import {Config} from 'vega-lite/src/config';
 import {Data} from 'vega-lite/src/data';
-import {ExtendedUnitSpec} from 'vega-lite/src/spec';
 import {Mark} from 'vega-lite/src/mark';
-import {StackOffset, StackProperties} from 'vega-lite/src/stack';
+import {StackProperties} from 'vega-lite/src/stack';
 
 import {isWildcard, WildcardProperty} from '../wildcard';
 import {isEncodingTopLevelProperty, Property} from '../property';
@@ -11,6 +10,7 @@ import {contains, extend, keys, some} from '../util';
 
 import {TransformQuery} from './transform';
 import {EncodingQuery, isFieldQuery, isValueQuery} from './encoding';
+import {FacetedUnitSpec} from 'vega-lite/src/spec';
 
 
 
@@ -29,7 +29,7 @@ export interface SpecQuery {
  * @param {ExtendedUnitSpec} spec
  * @returns
  */
-export function fromSpec(spec: ExtendedUnitSpec): SpecQuery {
+export function fromSpec(spec: FacetedUnitSpec): SpecQuery {
   return extend(
     spec.data ? { data: spec.data} : {},
     spec.transform ? { transform: spec.transform } : {},
@@ -70,10 +70,10 @@ export function isAggregate(specQ: SpecQuery) {
  */
 export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQuery, groupByEncQ: EncodingQuery} {
   const config = specQ.config;
-  const stacked = (config && config.mark) ? config.mark.stacked : undefined;
+  const stacked = config ? config.stack : undefined;
 
   // Should not have stack explicitly disabled
-  if (contains([StackOffset.NONE, null, false], stacked)) {
+  if (contains(['none', null, false], stacked)) {
     return null;
   }
 
@@ -118,7 +118,7 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
       fieldChannel: xIsAggregate ? X : Y,
       fieldEncQ: xIsAggregate ? xEncQ : yEncQ,
       stackBy: stackBy,
-      offset: stacked || StackOffset.ZERO
+      offset: stacked || 'zero'
     };
   }
   return null;

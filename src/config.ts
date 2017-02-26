@@ -76,7 +76,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   verbose: false,
   defaultSpecConfig: {
     overlay: {line: true},
-    scale: {useRawDomain: true}
+    scale: {useUnaggregatedDomain: true}
   },
   propertyPrecedence: DEFAULT_PROP_PRECEDENCE.map(toKey),
   enum: DEFAULT_ENUM_INDEX,
