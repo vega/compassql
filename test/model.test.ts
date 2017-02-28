@@ -12,6 +12,7 @@ import {SpecQueryModel} from '../src/model';
 import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, toKey} from '../src/property';
 import {SHORT_WILDCARD, isWildcard, getDefaultEnumValues} from '../src/wildcard';
 import {SpecQuery} from '../src/query/spec';
+import {FieldQuery} from '../src/query/encoding';
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
 
@@ -75,7 +76,7 @@ describe('SpecQueryModel', () => {
 
         const specM = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
         // check if type is wildcard
-        assert.isTrue(isWildcard(specM.getEncodingQueryByIndex(0).type));
+        assert.isTrue(isWildcard((specM.getEncodingQueryByIndex(0) as FieldQuery).type));
         // check if enumeration specifier index has an index for type
         assert.isOk(specM.wildcardIndex.encodings[0].get('type'));
       });
@@ -170,7 +171,7 @@ describe('SpecQueryModel', () => {
 
       it('should add new encoding if autoCount is enabled' , () => {
         assert.equal(model.specQuery.encodings.length, 2);
-        assert.isTrue(isWildcard(model.specQuery.encodings[1].autoCount));
+        assert.isTrue(isWildcard((model.specQuery.encodings[1] as FieldQuery).autoCount));
       });
 
       it('should add new channel and autoCount to the wildcard', () => {

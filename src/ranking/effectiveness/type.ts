@@ -1,7 +1,7 @@
 import {hasDiscreteDomain} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
-import {EncodingQuery, scaleType} from '../../query/encoding';
+import {FieldQuery, scaleType} from '../../query/encoding';
 /**
  * Finer grained data types that takes binning and timeUnit into account.
  */
@@ -32,12 +32,12 @@ export const O = ExtendedType.O;
 export const N = ExtendedType.N;
 export const NONE = ExtendedType.NONE;
 
-export function getExtendedType(encQ: EncodingQuery): ExtendedType {
-  if (encQ.bin) {
+export function getExtendedType(fieldQ: FieldQuery): ExtendedType {
+  if (fieldQ.bin) {
     return ExtendedType.BIN_Q;
-  } else if (encQ.timeUnit) {
-    const sType = scaleType(encQ);
+  } else if (fieldQ.timeUnit) {
+    const sType = scaleType(fieldQ);
     return hasDiscreteDomain(sType) ? ExtendedType.TIMEUNIT_O : ExtendedType.TIMEUNIT_T;
   }
-  return encQ.type as ExtendedType;
+  return fieldQ.type as ExtendedType;
 }

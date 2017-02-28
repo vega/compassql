@@ -7,7 +7,7 @@ import {schema} from './fixture';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel} from '../src/model';
-import {AxisQuery, ScaleQuery} from '../src/query/encoding';
+import {AxisQuery, ScaleQuery, FieldQuery} from '../src/query/encoding';
 import {smallRangeStepForHighCardinalityOrFacet, nominalColorScaleForHighCardinality, xAxisOnTopForHighYCardinalityWithoutColumn} from '../src/stylize';
 
 import {assert} from 'chai';
@@ -23,7 +23,7 @@ describe('stylize', () => {
         }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, undefined);
+      assert.equal(((specM.getEncodingQueryByChannel(Channel.Y) as FieldQuery).scale as ScaleQuery).rangeStep, undefined);
     });
 
     it('should not assign a rangeStep of 12 if cardinality of Y is over 10 and rangeStep is already set', () => {
@@ -35,7 +35,7 @@ describe('stylize', () => {
         }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, 21);
+      assert.equal(((specM.getEncodingQueryByChannel(Channel.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 21);
     });
 
     it('should assign a rangeStep of 12 if cardinality of Y is over 10 and rangeStep is not already set', () => {
@@ -47,7 +47,7 @@ describe('stylize', () => {
         }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, 12);
+      assert.equal(((specM.getEncodingQueryByChannel(Channel.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
     });
 
     it('should not assign a rangeStep of 12 if there is a row channel and rangeStep is already set', () => {
@@ -60,7 +60,7 @@ describe('stylize', () => {
         }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, 21);
+      assert.equal(((specM.getEncodingQueryByChannel(Channel.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 21);
     });
 
     it('should assign a rangeStep of 12 if there is a row channel and rangeStep is not already set', () => {
@@ -73,7 +73,7 @@ describe('stylize', () => {
         }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, 12);
+      assert.equal(((specM.getEncodingQueryByChannel(Channel.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
     });
 
     it('should not assign a rangeStep if scale is false', () => {
@@ -85,7 +85,7 @@ describe('stylize', () => {
           }, schema, DEFAULT_QUERY_CONFIG);
 
         specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-        assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, undefined);
+        assert.equal(((specM.getEncodingQueryByChannel(Channel.Y) as FieldQuery).scale as ScaleQuery).rangeStep, undefined);
     });
 
     it('should assign a rangeStep if scale is an Wildcard', () => {
@@ -97,7 +97,7 @@ describe('stylize', () => {
           }, schema, DEFAULT_QUERY_CONFIG);
 
         specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-        assert.equal((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, 12);
+        assert.equal(((specM.getEncodingQueryByChannel(Channel.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
     });
 
     it('should not assign a rangeStep if rangeStep is a Wildcard', () => {
@@ -109,7 +109,7 @@ describe('stylize', () => {
         }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.Y).scale as ScaleQuery).rangeStep, {name: 'scaleRangeStep', enum: [17, 21]});
+      assert.deepEqual(((specM.getEncodingQueryByChannel(Channel.Y) as FieldQuery).scale as ScaleQuery).rangeStep, {name: 'scaleRangeStep', enum: [17, 21]});
     });
   });
 
@@ -123,7 +123,7 @@ describe('stylize', () => {
           }, schema, DEFAULT_QUERY_CONFIG);
 
         specM = nominalColorScaleForHighCardinality(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-        assert.deepEqual((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, undefined);
+        assert.deepEqual(((specM.getEncodingQueryByChannel(Channel.COLOR) as FieldQuery).scale as ScaleQuery).range, undefined);
     });
 
     it('should not assign a range of category20 if cardinality of color is over 10 and range is already set', () => {
@@ -135,7 +135,7 @@ describe('stylize', () => {
           }, schema, DEFAULT_QUERY_CONFIG);
 
         specM = nominalColorScaleForHighCardinality(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-        assert.deepEqual((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, [10, 20]);
+        assert.deepEqual(((specM.getEncodingQueryByChannel(Channel.COLOR) as FieldQuery).scale as ScaleQuery).range, [10, 20]);
     });
 
     it('should assign a range of category20 if cardinality of color is over 10 and range is not already set', () => {
@@ -147,7 +147,7 @@ describe('stylize', () => {
           }, schema, DEFAULT_QUERY_CONFIG);
 
         specM = nominalColorScaleForHighCardinality(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-        assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, 'category20');
+        assert.equal(((specM.getEncodingQueryByChannel(Channel.COLOR) as FieldQuery).scale as ScaleQuery).range, 'category20');
     });
 
     it('should not assign a range if cardinality of color is over 10 and scale is false', () => {
@@ -159,7 +159,7 @@ describe('stylize', () => {
           }, schema, DEFAULT_QUERY_CONFIG);
 
         specM = nominalColorScaleForHighCardinality(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-        assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, undefined);
+        assert.equal(((specM.getEncodingQueryByChannel(Channel.COLOR) as FieldQuery).scale as ScaleQuery).range, undefined);
     });
 
     it('should assign a range if cardinality of color is over 10 and scale is a Wildcard', () => {
@@ -171,7 +171,7 @@ describe('stylize', () => {
           }, schema, DEFAULT_QUERY_CONFIG);
 
         specM = nominalColorScaleForHighCardinality(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-        assert.equal((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, 'category20');
+        assert.equal(((specM.getEncodingQueryByChannel(Channel.COLOR) as FieldQuery).scale as ScaleQuery).range, 'category20');
     });
 
     it('should not assign a range if cardinality of color is over 10 and scale.range is wildcard', () => {
@@ -183,7 +183,7 @@ describe('stylize', () => {
           }, schema, DEFAULT_QUERY_CONFIG);
 
         specM = nominalColorScaleForHighCardinality(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-        assert.deepEqual((specM.getEncodingQueryByChannel(Channel.COLOR).scale as ScaleQuery).range, {name: 'scaleRange', enum: [null]});
+        assert.deepEqual(((specM.getEncodingQueryByChannel(Channel.COLOR) as FieldQuery).scale as ScaleQuery).range, {name: 'scaleRange', enum: [null]});
     });
   });
 
@@ -199,7 +199,7 @@ describe('stylize', () => {
       }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
+      assert.deepEqual(((specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).axis as AxisQuery).orient, undefined);
     });
 
     it('should not orient the x axis on top if the orient has already been set', () => {
@@ -212,7 +212,7 @@ describe('stylize', () => {
       }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, AxisOrient.BOTTOM);
+      assert.deepEqual(((specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).axis as AxisQuery).orient, AxisOrient.BOTTOM);
     });
 
     it('should not orient the x axis on top if axis is set to false', () => {
@@ -225,7 +225,7 @@ describe('stylize', () => {
       }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
+      assert.deepEqual(((specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).axis as AxisQuery).orient, undefined);
     });
 
     it('should not orient the x axis on top if the Y channel\'s type is not NOMINAL or ORDINAL', () => {
@@ -238,7 +238,7 @@ describe('stylize', () => {
       }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
+      assert.deepEqual(((specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).axis as AxisQuery).orient, undefined);
     });
 
     it('should not orient the x axis on top if there is no Y channel', () => {
@@ -250,7 +250,7 @@ describe('stylize', () => {
       }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
+      assert.deepEqual(((specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).axis as AxisQuery).orient, undefined);
     });
 
     it('should not orient the x axis on top if the cardinality of the Y channel is not sufficiently high', () => {
@@ -263,7 +263,7 @@ describe('stylize', () => {
       }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.deepEqual((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, undefined);
+      assert.deepEqual(((specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).axis as AxisQuery).orient, undefined);
     });
 
     it('should orient the x axis on top if there is no column channel and the cardinality of the Y channel is sufficiently high', () => {
@@ -276,7 +276,7 @@ describe('stylize', () => {
       }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal((specM.getEncodingQueryByChannel(Channel.X).axis as AxisQuery).orient, AxisOrient.TOP);
+      assert.equal(((specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).axis as AxisQuery).orient, AxisOrient.TOP);
     });
   });
 });

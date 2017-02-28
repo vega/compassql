@@ -10,7 +10,7 @@ import {Type} from 'vega-lite/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {getEnumerator} from '../src/enumerator';
 import {SpecQueryModel} from '../src/model';
-import {BinQuery, ScaleQuery} from '../src/query/encoding';
+import {BinQuery, ScaleQuery, FieldQuery} from '../src/query/encoding';
 import {SpecQuery} from '../src/query/spec';
 import {Property} from '../src/property';
 import {extend} from '../src/util';
@@ -114,9 +114,9 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEAN);
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).aggregate, AggregateOp.MEDIAN);
-        assert.equal(answerSet[2].getEncodingQueryByIndex(0).aggregate, undefined);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).aggregate, AggregateOp.MEAN);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).aggregate, AggregateOp.MEDIAN);
+        assert.equal((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).aggregate, undefined);
       });
 
       it('should not enumerate aggregate when type is nominal', () => {
@@ -135,7 +135,7 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).aggregate, undefined);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).aggregate, undefined);
       });
     });
 
@@ -159,8 +159,8 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 10);
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin, false);
+        assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).bin as BinQuery).maxbins, 10);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).bin, false);
       });
 
       it('should correctly enumerate bin without nested property', () => {
@@ -181,8 +181,8 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
-        assert.deepEqual(answerSet[0].getEncodingQueryByIndex(0).bin, {});
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).bin, false);
+        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).bin, {});
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).bin, false);
       });
     });
 
@@ -205,9 +205,9 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 5);
-        assert.equal((answerSet[1].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 10);
-        assert.equal((answerSet[2].getEncodingQueryByIndex(0).bin as BinQuery).maxbins, 20);
+        assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).bin as BinQuery).maxbins, 5);
+        assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).bin as BinQuery).maxbins, 10);
+        assert.equal(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).bin as BinQuery).maxbins, 20);
       });
     });
 
@@ -231,8 +231,8 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).scale, false);
+        assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.LOG);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale, false);
       });
 
       it('should correctly enumerate scale without nested property', () => {
@@ -253,8 +253,8 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
-        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).scale, false);
+        assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale, false);
       });
     });
 
@@ -277,9 +277,9 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).clamp, true);
-        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).clamp, false);
-        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).clamp, undefined);
+        assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).clamp, true);
+        assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).clamp, false);
+        assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).clamp, undefined);
       });
     });
 
@@ -302,9 +302,9 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).domain, undefined);
-        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).domain, ['cats', 'dogs']);
-        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).domain, ['chickens', 'pigs']);
+        assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).domain, undefined);
+        assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).domain, ['cats', 'dogs']);
+        assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).domain, ['chickens', 'pigs']);
       });
 
       it('should correctly enumerate scaleDomain with number[] values', () => {
@@ -325,9 +325,9 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).domain, undefined);
-        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).domain, [1,3]);
-        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).domain, [5,7]);
+        assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).domain, undefined);
+        assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).domain, [1,3]);
+        assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).domain, [5,7]);
       });
     });
 
@@ -351,10 +351,10 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 4);
-        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, 0.5);
-        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, 1);
-        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, 2);
-        assert.deepEqual((answerSet[3].getEncodingQueryByIndex(0).scale as ScaleQuery).exponent, undefined);
+        assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).exponent, 0.5);
+        assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).exponent, 1);
+        assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).exponent, 2);
+        assert.deepEqual(((answerSet[3].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).exponent, undefined);
 
       });
     });
@@ -400,9 +400,9 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).range, undefined);
-        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).range, ['red', 'blue']);
-        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).range, ['green', 'black']);
+        assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).range, undefined);
+        assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).range, ['red', 'blue']);
+        assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).range, ['green', 'black']);
       });
 
       it('should correctly enumerate scaleRange with number[] values', () => {
@@ -423,9 +423,9 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).range, undefined);
-        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).range, [1,3]);
-        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).range, [5,7]);
+        assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).range, undefined);
+        assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).range, [1,3]);
+        assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).range, [5,7]);
       });
     });
 
@@ -448,9 +448,9 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).round, true);
-        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).round, false);
-        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).round, undefined);
+        assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).round, true);
+        assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).round, false);
+        assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).round, undefined);
       });
     });
 
@@ -473,9 +473,9 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).type, undefined);
-        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.LOG);
-        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).type, ScaleType.POW);
+        assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, undefined);
+        assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.LOG);
+        assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.POW);
       });
     });
 
@@ -498,9 +498,9 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.deepEqual((answerSet[0].getEncodingQueryByIndex(0).scale as ScaleQuery).useRawDomain, true);
-        assert.deepEqual((answerSet[1].getEncodingQueryByIndex(0).scale as ScaleQuery).useRawDomain, false);
-        assert.deepEqual((answerSet[2].getEncodingQueryByIndex(0).scale as ScaleQuery).useRawDomain, undefined);
+        assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).useRawDomain, true);
+        assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).useRawDomain, false);
+        assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).useRawDomain, undefined);
       });
     });
 
@@ -521,10 +521,10 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 4);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).timeUnit, TimeUnit.MONTH);
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).timeUnit, TimeUnit.DAY);
-        assert.equal(answerSet[2].getEncodingQueryByIndex(0).timeUnit, TimeUnit.YEAR);
-        assert.equal(answerSet[3].getEncodingQueryByIndex(0).timeUnit, undefined);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).timeUnit, TimeUnit.MONTH);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).timeUnit, TimeUnit.DAY);
+        assert.equal((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).timeUnit, TimeUnit.YEAR);
+        assert.equal((answerSet[3].getEncodingQueryByIndex(0) as FieldQuery).timeUnit, undefined);
       });
 
       it('should not enumerate timeUnit with non-temporal field', () => {
@@ -543,7 +543,7 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).timeUnit, undefined);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).timeUnit, undefined);
       });
     });
 
@@ -563,9 +563,9 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).field, 'Q');
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).field, 'Q1');
-        assert.equal(answerSet[2].getEncodingQueryByIndex(0).field, 'Q2');
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).field, 'Q');
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).field, 'Q1');
+        assert.equal((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).field, 'Q2');
       });
 
       it('should correctly enumerate fields with temporal type', () => {
@@ -583,7 +583,7 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).field, 'T');
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).field, 'T');
       });
 
       it('should correctly enumerate fields with ordinal type', () => {
@@ -601,10 +601,10 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 4);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).field, 'O');
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).field, 'O_10');
-        assert.equal(answerSet[2].getEncodingQueryByIndex(0).field, 'O_20');
-        assert.equal(answerSet[3].getEncodingQueryByIndex(0).field, 'O_100');
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).field, 'O');
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).field, 'O_10');
+        assert.equal((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).field, 'O_20');
+        assert.equal((answerSet[3].getEncodingQueryByIndex(0) as FieldQuery).field, 'O_100');
       });
 
       it('should correctly enumerate fields with nominal type', () => {
@@ -622,8 +622,8 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 2);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).field, 'N');
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).field, 'N20');
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).field, 'N');
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).field, 'N20');
       });
     });
 
@@ -640,9 +640,9 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 3);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).type, Type.QUANTITATIVE);
-        assert.equal(answerSet[1].getEncodingQueryByIndex(0).type, Type.NOMINAL);
-        assert.equal(answerSet[2].getEncodingQueryByIndex(0).type, Type.ORDINAL);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).type, Type.QUANTITATIVE);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).type, Type.NOMINAL);
+        assert.equal((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).type, Type.ORDINAL);
       });
 
       it('should correctly enumerate numeric field with typeMatchesSchemaType turned on', () => {
@@ -656,7 +656,7 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).type, Type.QUANTITATIVE);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).type, Type.QUANTITATIVE);
       });
 
       it('should correctly enumerate ordinal types', () => {
@@ -670,7 +670,7 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).type, Type.ORDINAL);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).type, Type.ORDINAL);
       });
 
       it('should correctly enumerate temporal types', () => {
@@ -684,7 +684,7 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).type, Type.TEMPORAL);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).type, Type.TEMPORAL);
       });
 
       it('should correctly enumerate nominal types', () => {
@@ -698,7 +698,7 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 1);
-        assert.equal(answerSet[0].getEncodingQueryByIndex(0).type, Type.NOMINAL);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).type, Type.NOMINAL);
       });
     });
   });
