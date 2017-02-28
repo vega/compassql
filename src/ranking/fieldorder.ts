@@ -1,7 +1,7 @@
 import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
 import {Schema} from '../schema';
-	import {isValueQuery} from '../query/encoding';
+import {isValueQuery} from '../query/encoding';
 
 import {RankingScore, FeatureScore} from './ranking';
 

@@ -9,7 +9,7 @@ import {toMap, isString} from 'datalib/src/util';
 import {EncodingQuery, isFieldQuery, FieldQuery, isValueQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
 
-import {isWildcard, isShortWildcard, Wildcard, SHORT_WILDCARD} from '../wildcard';
+import {isWildcard, isShortWildcard, SHORT_WILDCARD} from '../wildcard';
 import {getEncodingNestedProp, Property, hasNestedProperty, DEFAULT_PROP_PRECEDENCE, SORT_PROPS, EncodingNestedChildProp} from '../property';
 import {PropIndex} from '../propindex';
 import {Dict, keys, isArray, isBoolean} from '../util';

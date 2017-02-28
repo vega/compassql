@@ -16,7 +16,7 @@ import {isDimension} from '../query/encoding';
 import {Schema} from '../schema';
 import {contains, every, some} from '../util';
 
-import {scaleType, EncodingQuery, isMeasure, ScaleQuery, FieldQuery, isFieldQuery, isValueQuery} from '../query/encoding';
+import {scaleType, EncodingQuery, isMeasure, ScaleQuery, isFieldQuery, isValueQuery} from '../query/encoding';
 
 const NONSPATIAL_CHANNELS_INDEX = NONSPATIAL_CHANNELS.reduce((m, channel) => {
   m[channel] = true;

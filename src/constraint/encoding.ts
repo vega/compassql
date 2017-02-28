@@ -1,6 +1,6 @@
 import {AggregateOp} from 'vega-lite/src/aggregate';
 import {Channel, getSupportedRole} from 'vega-lite/src/channel';
-	import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain, channelScalePropertyIncompatability} from 'vega-lite/src/scale';
+import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain, channelScalePropertyIncompatability} from 'vega-lite/src/scale';
 import {Type} from 'vega-lite/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
@@ -412,12 +412,12 @@ export const VALUE_CONSTRAINTS: EncodingConstraintModel<ValueQuery>[] = [
     strict: true,
     satisfy: (valueQ: ValueQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
 
-     return !(contains(['row', 'column', 'x', 'y', 'detail'], valueQ.channel)); 
+     return !(contains(['row', 'column', 'x', 'y', 'detail'], valueQ.channel));
     }
   }
 ].map((ec: EncodingConstraint<ValueQuery>) => new EncodingConstraintModel<ValueQuery>(ec));
 
-export const VALUE_CONSTRAINT_INDEX : {[name: string]: EncodingConstraintModel<ValueQuery>} =
+export const VALUE_CONSTRAINT_INDEX: {[name: string]: EncodingConstraintModel<ValueQuery>} =
   VALUE_CONSTRAINTS.reduce((m, ec: EncodingConstraintModel<ValueQuery>) => {
     m[ec.name()] = ec;
     return m;

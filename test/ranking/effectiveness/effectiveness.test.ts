@@ -9,7 +9,7 @@ import {SpecQueryModel} from '../../../src/model';
 import {EncodingQuery} from '../../../src/query/encoding';
 import {SpecQuery} from '../../../src/query/spec';
 import {extend, nestedMap} from '../../../src/util';
-import effectiveness from '../../../src/ranking/effectiveness/effectiveness';
+import {effectiveness} from '../../../src/ranking/effectiveness';
 import {ExtendedType} from '../../../src/ranking/effectiveness/type';
 import {schema} from '../../fixture';
 import {RuleSet, Rule, testRuleSet} from '../rule';

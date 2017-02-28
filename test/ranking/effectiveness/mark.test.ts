@@ -1,14 +1,15 @@
 import {POINT, TICK, BAR, LINE, AREA, RULE, TEXT as TEXTMARK, Mark} from 'vega-lite/src/mark';
 
 import {BIN_Q, TIMEUNIT_O, TIMEUNIT_T, Q, N, O, T} from '../../../src/ranking/effectiveness/type';
-import {MarkScore} from '../../../src/ranking/effectiveness/mark';
+import {MarkScorer, featurize} from '../../../src/ranking/effectiveness/mark';
 import {nestedMap} from '../../../src/util';
 import {testRuleSet} from '../rule';
 
-const MARK_SCORE = MarkScore.init();
+
+const scorer = new MarkScorer();
 
 function getScore(feature: string) {
-  return MARK_SCORE[feature];
+  return scorer.scoreIndex[feature];
 }
 
 export interface Rule {
@@ -26,14 +27,14 @@ export const CC_RULESET = {
         _rules.push({
           name: xType + ' x ' + yType + ' (with occlusion)',
           items: nestedMap(continuousRank, (mark: Mark) => {
-            return MarkScore.featurize(xType, yType, true, mark);
+            return featurize(xType, yType, true, mark);
           })
         });
 
         _rules.push({
           name: xType + ' x ' + yType + ' (without occlusion)',
           items: nestedMap(continuousRank, (mark: Mark) => {
-            return MarkScore.featurize(xType, yType, false, mark);
+            return featurize(xType, yType, false, mark);
           })
         });
 
@@ -55,14 +56,14 @@ export const CD_RULESET = {
         _rules.push({
           name: measureType + ' x ' + dimensionType + ' (with occlusion)',
           items: nestedMap(dimWithOcclusionRank, (mark: Mark) => {
-            return MarkScore.featurize(measureType, dimensionType, true, mark);
+            return featurize(measureType, dimensionType, true, mark);
           })
         });
 
         _rules.push({
           name: dimensionType + ' x ' + measureType + ' (with occlusion)',
           items: nestedMap(dimWithOcclusionRank, (mark: Mark) => {
-            return MarkScore.featurize(dimensionType, measureType, true, mark);
+            return featurize(dimensionType, measureType, true, mark);
           })
         });
         // TODO: BAR, LINE, AREA, RULE should be terrible
@@ -73,14 +74,14 @@ export const CD_RULESET = {
         _rules.push({
           name: measureType + ' x ' + dimensionType + ' (with occlusion)',
           items: nestedMap(dimWithOcclusionRank, (mark: Mark) => {
-            return MarkScore.featurize(measureType, dimensionType, true, mark);
+            return featurize(measureType, dimensionType, true, mark);
           })
         });
 
         _rules.push({
           name: dimensionType + ' x ' + measureType + ' (with occlusion)',
           items: nestedMap(dimWithOcclusionRank, (mark: Mark) => {
-            return MarkScore.featurize(dimensionType, measureType, true, mark);
+            return featurize(dimensionType, measureType, true, mark);
           })
         });
         // TODO: BAR, LINE, AREA, RULE should be terrible
@@ -94,14 +95,14 @@ export const CD_RULESET = {
         _rules.push({
           name: measureType + ' x ' + dimensionType + ' (without occlusion)',
           items: nestedMap(orderedDimNoOcclusionRank, (mark: Mark) => {
-            return MarkScore.featurize(measureType, dimensionType, false, mark);
+            return featurize(measureType, dimensionType, false, mark);
           })
         });
 
         _rules.push({
           name: dimensionType + ' x ' + measureType + ' (without occlusion)',
           items: nestedMap(orderedDimNoOcclusionRank, (mark: Mark) => {
-            return MarkScore.featurize(dimensionType, measureType, false, mark);
+            return featurize(dimensionType, measureType, false, mark);
           })
         });
         // TODO: BAR, LINE, AREA, RULE should be terrible
@@ -113,14 +114,14 @@ export const CD_RULESET = {
         _rules.push({
           name: measureType + ' x ' + dimensionType + ' (without occlusion)',
           items: nestedMap(binDimNoOcclusionRank, (mark: Mark) => {
-            return MarkScore.featurize(measureType, dimensionType, false, mark);
+            return featurize(measureType, dimensionType, false, mark);
           })
         });
 
         _rules.push({
           name: dimensionType + ' x ' + measureType + ' (without occlusion)',
           items: nestedMap(binDimNoOcclusionRank, (mark: Mark) => {
-            return MarkScore.featurize(dimensionType, measureType, false, mark);
+            return featurize(dimensionType, measureType, false, mark);
           })
         });
         // TODO: RULE should be terrible
@@ -132,14 +133,14 @@ export const CD_RULESET = {
         _rules.push({
           name: measureType + ' x ' + dimensionType + ' (without occlusion)',
           items: nestedMap(binDimNoOcclusionRank, (mark: Mark) => {
-            return MarkScore.featurize(measureType, dimensionType, false, mark);
+            return featurize(measureType, dimensionType, false, mark);
           })
         });
 
         _rules.push({
           name: dimensionType + ' x ' + measureType + ' (without occlusion)',
           items: nestedMap(binDimNoOcclusionRank, (mark: Mark) => {
-            return MarkScore.featurize(dimensionType, measureType, false, mark);
+            return featurize(dimensionType, measureType, false, mark);
           })
         });
 
@@ -162,14 +163,14 @@ export const TT_RULESET = {
         _rules.push({
           name: xType + ' x ' + yType + ' (with occlusion)',
           items: nestedMap(ddRank, (mark: Mark) => {
-            return MarkScore.featurize(xType, yType, true, mark);
+            return featurize(xType, yType, true, mark);
           })
         });
 
         _rules.push({
           name: xType + ' x ' + yType + ' (without occlusion)',
           items: nestedMap(ddRank, (mark: Mark) => {
-            return MarkScore.featurize(xType, yType, false, mark);
+            return featurize(xType, yType, false, mark);
           })
         });
 
@@ -191,14 +192,14 @@ export const TD_RULESET = {
         _rules.push({
           name: xType + ' x ' + yType + ' (with occlusion)',
           items: nestedMap(ddRank, (mark: Mark) => {
-            return MarkScore.featurize(xType, yType, true, mark);
+            return featurize(xType, yType, true, mark);
           })
         });
 
         _rules.push({
           name: xType + ' x ' + yType + ' (without occlusion)',
           items: nestedMap(ddRank, (mark: Mark) => {
-            return MarkScore.featurize(xType, yType, false, mark);
+            return featurize(xType, yType, false, mark);
           })
         });
 
@@ -223,14 +224,14 @@ export const DD_RULESET = {
         _rules.push({
           name: xType + ' x ' + yType + ' (with occlusion)',
           items: nestedMap(ddRank, (mark: Mark) => {
-            return MarkScore.featurize(xType, yType, true, mark);
+            return featurize(xType, yType, true, mark);
           })
         });
 
         _rules.push({
           name: xType + ' x ' + yType + ' (without occlusion)',
           items: nestedMap(ddRank, (mark: Mark) => {
-            return MarkScore.featurize(xType, yType, false, mark);
+            return featurize(xType, yType, false, mark);
           })
         });
 
