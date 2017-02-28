@@ -17,8 +17,11 @@ import {contains} from '../util';
 
 export type EncodingQuery = FieldQuery | ValueQuery;
 
-export interface ValueQuery {
+export interface EncodingQueryBase {
   channel: WildcardProperty<Channel>;
+}
+
+export interface ValueQuery extends EncodingQueryBase {
   value: WildcardProperty<boolean | number | string>;
 }
 
@@ -31,7 +34,7 @@ export function isFieldQuery(encQ: EncodingQuery): encQ is FieldQuery {
 }
 
 // TODO: split this into FieldDefQuery and AutoCountQuery
-export interface FieldQuery {
+export interface FieldQuery extends EncodingQueryBase {
   channel: WildcardProperty<Channel>;
 
   // FieldDef
