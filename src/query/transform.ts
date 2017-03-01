@@ -1,5 +1,5 @@
-import {Filter} from 'vega-lite/src/filter';
-import {Formula} from 'vega-lite/src/transform';
+import {Filter} from 'vega-lite/build/src/filter';
+import {Formula} from 'vega-lite/build/src/transform';
 
 export interface TransformQuery {
   calculate?: Formula[];

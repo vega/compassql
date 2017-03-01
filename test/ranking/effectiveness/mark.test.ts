@@ -1,4 +1,4 @@
-import {POINT, TICK, BAR, LINE, AREA, RULE, TEXT as TEXTMARK, Mark} from 'vega-lite/src/mark';
+import {POINT, TICK, BAR, LINE, AREA, RULE, TEXT as TEXTMARK, Mark} from 'vega-lite/build/src/mark';
 
 import {BIN_Q, TIMEUNIT_O, TIMEUNIT_T, Q, N, O, T} from '../../../src/ranking/effectiveness/type';
 import {MarkScorer, featurize} from '../../../src/ranking/effectiveness/mark';

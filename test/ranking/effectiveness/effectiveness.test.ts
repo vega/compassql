@@ -1,8 +1,8 @@
 
-import {Channel, X, Y, SIZE, COLOR, OPACITY, ROW, COLUMN, SHAPE} from 'vega-lite/src/channel';
-import {AREA, BAR, POINT, SQUARE, CIRCLE, TICK, LINE, RULE, Mark} from 'vega-lite/src/mark';
-import {TimeUnit} from 'vega-lite/src/timeunit';
-import {Type} from 'vega-lite/src/type';
+import {Channel, X, Y, SIZE, COLOR, OPACITY, ROW, COLUMN, SHAPE} from 'vega-lite/build/src/channel';
+import {AREA, BAR, POINT, SQUARE, CIRCLE, TICK, LINE, RULE, Mark} from 'vega-lite/build/src/mark';
+import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import {Type} from 'vega-lite/build/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../../../src/config';
 import {SpecQueryModel} from '../../../src/model';

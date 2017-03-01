@@ -1,4 +1,4 @@
-import {Channel} from 'vega-lite/src/channel';
+import {Channel} from 'vega-lite/build/src/channel';
 import {isArray} from 'datalib/src/util';
 
 import {SpecQueryModel, SpecQueryModelGroup} from './model';

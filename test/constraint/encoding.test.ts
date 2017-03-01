@@ -1,10 +1,10 @@
 import {assert} from 'chai';
 
-import {Channel} from 'vega-lite/src/channel';
+import {Channel} from 'vega-lite/build/src/channel';
 
-import {ScaleType} from 'vega-lite/src/scale';
-import {TimeUnit} from 'vega-lite/src/timeunit';
-import {Type} from 'vega-lite/src/type';
+import {ScaleType} from 'vega-lite/build/src/scale';
+import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import {Type} from 'vega-lite/build/src/type';
 
 import {Property} from '../../src/property';
 import {PropIndex} from '../../src/propindex';

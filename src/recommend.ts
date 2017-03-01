@@ -1,4 +1,4 @@
-import {Config} from 'vega-lite/src/config';
+import {Config} from 'vega-lite/build/src/config';
 
 import {DEFAULT_QUERY_CONFIG} from './config';
 import {generate} from './generate';

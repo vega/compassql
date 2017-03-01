@@ -1,5 +1,5 @@
-import {Channel} from 'vega-lite/src/channel';
-import {Mark} from 'vega-lite/src/mark';
+import {Channel} from 'vega-lite/build/src/channel';
+import {Mark} from 'vega-lite/build/src/mark';
 
 import {QueryConfig} from '../../config';
 import {SpecQueryModel} from '../../model';

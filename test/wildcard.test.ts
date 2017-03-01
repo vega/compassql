@@ -1,4 +1,4 @@
-import {Mark} from 'vega-lite/src/mark';
+import {Mark} from 'vega-lite/build/src/mark';
 
 import {assert} from 'chai';
 import {initWildcard, isWildcard, SHORT_WILDCARD, getDefaultName, getDefaultEnumValues} from '../src/wildcard';

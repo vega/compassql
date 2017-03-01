@@ -1,5 +1,5 @@
-import {Channel} from 'vega-lite/src/channel';
-import {Config} from 'vega-lite/src/config';
+import {Channel} from 'vega-lite/build/src/channel';
+import {Config} from 'vega-lite/build/src/config';
 
 import {toKey, DEFAULT_PROP_PRECEDENCE} from './property';
 import {DEFAULT_ENUM_INDEX, EnumIndex} from './wildcard';

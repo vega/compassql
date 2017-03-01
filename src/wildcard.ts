@@ -3,16 +3,16 @@ import {Property, isEncodingNestedProp} from './property';
 import { Schema } from './schema';
 import { extend, isArray } from './util';
 
-import {Axis, AXIS_PROPERTIES} from 'vega-lite/src/axis';
-import {Bin} from 'vega-lite/src/bin';
-import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR} from 'vega-lite/src/channel';
-import {FieldDef} from 'vega-lite/src/fielddef';
-import {Mark} from 'vega-lite/src/mark';
-import {Scale, ScaleType, SCALE_PROPERTIES} from 'vega-lite/src/scale';
-import {Legend, LEGEND_PROPERTIES} from 'vega-lite/src/legend';
-import {SortField, SortOrder} from 'vega-lite/src/sort';
-import {TimeUnit} from 'vega-lite/src/timeunit';
-import {Type} from 'vega-lite/src/type';
+import {Axis, AXIS_PROPERTIES} from 'vega-lite/build/src/axis';
+import {Bin} from 'vega-lite/build/src/bin';
+import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR} from 'vega-lite/build/src/channel';
+import {FieldDef} from 'vega-lite/build/src/fielddef';
+import {Mark} from 'vega-lite/build/src/mark';
+import {Scale, ScaleType, SCALE_PROPERTIES} from 'vega-lite/build/src/scale';
+import {Legend, LEGEND_PROPERTIES} from 'vega-lite/build/src/legend';
+import {SortField, SortOrder} from 'vega-lite/build/src/sort';
+import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import {Type} from 'vega-lite/build/src/type';
 
 
 export const SHORT_WILDCARD: SHORT_WILDCARD = '?';

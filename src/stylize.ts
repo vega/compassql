@@ -1,6 +1,6 @@
-import {Channel} from 'vega-lite/src/channel';
-import {hasDiscreteDomain} from 'vega-lite/src/scale';
-import {Type} from 'vega-lite/src/type';
+import {Channel} from 'vega-lite/build/src/channel';
+import {hasDiscreteDomain} from 'vega-lite/build/src/scale';
+import {Type} from 'vega-lite/build/src/type';
 
 import {QueryConfig} from './config';
 import {SpecQueryModel} from './model';
