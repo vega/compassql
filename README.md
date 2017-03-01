@@ -43,6 +43,7 @@ npm run vendor -- -l compassql
 ## Main API
 
 The main method is `cql.recommend`, which is in `src/recommend.ts`.
+For example usage, please see index.html and its source code and console log.  (Currently we don't output any to the HTML yet.)
 
 ## Directory Structure
 
