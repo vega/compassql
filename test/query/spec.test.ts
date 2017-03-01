@@ -1,14 +1,14 @@
 
 
-import {Channel} from 'vega-lite/src/channel';
-import {Mark, BAR, AREA, PRIMITIVE_MARKS} from 'vega-lite/src/mark';
-import {Type} from 'vega-lite/src/type';
+import {Channel} from 'vega-lite/build/src/channel';
+import {Mark, BAR, AREA, PRIMITIVE_MARKS} from 'vega-lite/build/src/mark';
+import {Type} from 'vega-lite/build/src/type';
 
 import {assert} from 'chai';
 
 import {fromSpec, stack, SpecQuery} from '../../src/query/spec';
 import {without} from '../../src/util';
-import {StackOffset} from 'vega-lite/src/stack';
+import {StackOffset} from 'vega-lite/build/src/stack';
 
 describe('query/spec', () => {
   describe('stack', () => {

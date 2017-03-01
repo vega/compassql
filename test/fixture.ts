@@ -1,4 +1,4 @@
-import {Type} from 'vega-lite/src/type';
+import {Type} from 'vega-lite/build/src/type';
 
 import {Schema, FieldSchema, PrimitiveType} from '../src/schema';
 

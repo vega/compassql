@@ -1,9 +1,9 @@
 
-import {SUM_OPS} from 'vega-lite/src/aggregate';
-import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/src/channel';
-import {Mark} from 'vega-lite/src/mark';
-import {ScaleType} from 'vega-lite/src/scale';
-import {Type} from 'vega-lite/src/type';
+import {SUM_OPS} from 'vega-lite/build/src/aggregate';
+import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/build/src/channel';
+import {Mark} from 'vega-lite/build/src/mark';
+import {ScaleType} from 'vega-lite/build/src/scale';
+import {Type} from 'vega-lite/build/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
 

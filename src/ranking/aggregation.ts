@@ -1,5 +1,5 @@
 
-import {Type} from 'vega-lite/src/type';
+import {Type} from 'vega-lite/build/src/type';
 import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
 import {Schema} from '../schema';

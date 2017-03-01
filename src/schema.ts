@@ -1,7 +1,7 @@
-import {Type} from 'vega-lite/src/type';
-import {Channel} from 'vega-lite/src/channel';
-import {autoMaxBins} from 'vega-lite/src/bin';
-import {TimeUnit, containsTimeUnit, convert, SINGLE_TIMEUNITS} from 'vega-lite/src/timeunit';
+import {Type} from 'vega-lite/build/src/type';
+import {Channel} from 'vega-lite/build/src/channel';
+import {autoMaxBins} from 'vega-lite/build/src/bin';
+import {TimeUnit, containsTimeUnit, convert, SINGLE_TIMEUNITS} from 'vega-lite/build/src/timeunit';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 import * as dlBin from 'datalib/src/bins/bins';

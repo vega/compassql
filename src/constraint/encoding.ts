@@ -1,6 +1,6 @@
-import {Channel, getSupportedRole} from 'vega-lite/src/channel';
-import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain, channelScalePropertyIncompatability, Scale} from 'vega-lite/src/scale';
-import {Type} from 'vega-lite/src/type';
+import {Channel, getSupportedRole} from 'vega-lite/build/src/channel';
+import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain, channelScalePropertyIncompatability, Scale} from 'vega-lite/build/src/scale';
+import {Type} from 'vega-lite/build/src/type';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
 

@@ -1,4 +1,4 @@
-import {Mark} from 'vega-lite/src/mark';
+import {Mark} from 'vega-lite/build/src/mark';
 import {WildcardIndex} from '../src/wildcardindex';
 import {Property} from '../src/property';
 

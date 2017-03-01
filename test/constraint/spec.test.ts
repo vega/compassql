@@ -1,12 +1,12 @@
 import {assert} from 'chai';
 
-import {Mark} from 'vega-lite/src/mark';
-import {SUM_OPS} from 'vega-lite/src/aggregate';
-import {Channel} from 'vega-lite/src/channel';
-// import * as log from 'vega-lite/src/log';
-import {ScaleType} from 'vega-lite/src/scale';
-import {TimeUnit} from 'vega-lite/src/timeunit';
-import {Type} from 'vega-lite/src/type';
+import {Mark} from 'vega-lite/build/src/mark';
+import {SUM_OPS} from 'vega-lite/build/src/aggregate';
+import {Channel} from 'vega-lite/build/src/channel';
+// import * as log from 'vega-lite/build/src/log';
+import {ScaleType} from 'vega-lite/build/src/scale';
+import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import {Type} from 'vega-lite/build/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX, SpecConstraintModel} from '../../src/constraint/spec';

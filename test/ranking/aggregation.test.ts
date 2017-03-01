@@ -1,6 +1,6 @@
-import {AGGREGATE_OPS} from 'vega-lite/src/aggregate';
-import {TIMEUNITS} from 'vega-lite/src/timeunit';
-import {Type} from 'vega-lite/src/type';
+import {AGGREGATE_OPS} from 'vega-lite/build/src/aggregate';
+import {TIMEUNITS} from 'vega-lite/build/src/timeunit';
+import {Type} from 'vega-lite/build/src/type';
 
 import {RuleSet, testRuleSet} from './rule';
 

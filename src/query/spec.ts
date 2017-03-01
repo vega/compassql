@@ -1,8 +1,8 @@
-import {Channel, X, Y, STACK_GROUP_CHANNELS} from 'vega-lite/src/channel';
-import {Config} from 'vega-lite/src/config';
-import {Data} from 'vega-lite/src/data';
-import {Mark} from 'vega-lite/src/mark';
-import {StackProperties} from 'vega-lite/src/stack';
+import {Channel, X, Y, STACK_GROUP_CHANNELS} from 'vega-lite/build/src/channel';
+import {Config} from 'vega-lite/build/src/config';
+import {Data} from 'vega-lite/build/src/data';
+import {Mark} from 'vega-lite/build/src/mark';
+import {StackProperties} from 'vega-lite/build/src/stack';
 
 import {isWildcard, WildcardProperty} from '../wildcard';
 import {isEncodingTopLevelProperty, Property} from '../property';
@@ -10,7 +10,7 @@ import {contains, extend, keys, some} from '../util';
 
 import {TransformQuery} from './transform';
 import {EncodingQuery, isFieldQuery, isValueQuery} from './encoding';
-import {FacetedUnitSpec} from 'vega-lite/src/spec';
+import {FacetedUnitSpec} from 'vega-lite/build/src/spec';
 
 
 

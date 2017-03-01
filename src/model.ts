@@ -1,11 +1,11 @@
-import {Channel} from 'vega-lite/src/channel';
-import {Data} from 'vega-lite/src/data';
-import {Encoding} from 'vega-lite/src/encoding';
-import {FieldDef} from 'vega-lite/src/fielddef';
-import {Mark} from 'vega-lite/src/mark';
-import {Type} from 'vega-lite/src/type';
-import {FacetedUnitSpec} from 'vega-lite/src/spec';
-import {StackProperties} from 'vega-lite/src/stack';
+import {Channel} from 'vega-lite/build/src/channel';
+import {Data} from 'vega-lite/build/src/data';
+import {Encoding} from 'vega-lite/build/src/encoding';
+import {FieldDef} from 'vega-lite/build/src/fielddef';
+import {Mark} from 'vega-lite/build/src/mark';
+import {Type} from 'vega-lite/build/src/type';
+import {FacetedUnitSpec} from 'vega-lite/build/src/spec';
+import {StackProperties} from 'vega-lite/build/src/stack';
 
 import {QueryConfig} from './config';
 import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, hasNestedProperty} from './property';

@@ -1,8 +1,8 @@
-import {Axis, AXIS_PROPERTIES} from 'vega-lite/src/axis';
-import {Bin} from 'vega-lite/src/bin';
-import {Scale, SCALE_PROPERTIES} from 'vega-lite/src/scale';
-import {Legend, LEGEND_PROPERTIES} from 'vega-lite/src/legend';
-import {SortField} from 'vega-lite/src/sort';
+import {Axis, AXIS_PROPERTIES} from 'vega-lite/build/src/axis';
+import {Bin} from 'vega-lite/build/src/bin';
+import {Scale, SCALE_PROPERTIES} from 'vega-lite/build/src/scale';
+import {Legend, LEGEND_PROPERTIES} from 'vega-lite/build/src/legend';
+import {SortField} from 'vega-lite/build/src/sort';
 
 import {toMap} from './util';
 import {FieldQuery, ValueQuery} from './query/encoding';

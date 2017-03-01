@@ -1,6 +1,6 @@
-  import {ScaleType} from 'vega-lite/src/scale';
-  import {Type} from 'vega-lite/src/type';
-  import {TimeUnit} from 'vega-lite/src/timeunit';
+  import {ScaleType} from 'vega-lite/build/src/scale';
+  import {Type} from 'vega-lite/build/src/type';
+  import {TimeUnit} from 'vega-lite/build/src/timeunit';
   import {assert} from 'chai';
 
   import {scaleType} from '../../src/query/encoding';

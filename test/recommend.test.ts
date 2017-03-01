@@ -1,8 +1,8 @@
 import {assert} from 'chai';
 
-import {Mark} from 'vega-lite/src/mark';
-import {Channel} from 'vega-lite/src/channel';
-import {Type} from 'vega-lite/src/type';
+import {Mark} from 'vega-lite/build/src/mark';
+import {Channel} from 'vega-lite/build/src/channel';
+import {Type} from 'vega-lite/build/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';

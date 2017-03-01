@@ -1,5 +1,5 @@
-import {hasDiscreteDomain} from 'vega-lite/src/scale';
-import {Type} from 'vega-lite/src/type';
+import {hasDiscreteDomain} from 'vega-lite/build/src/scale';
+import {Type} from 'vega-lite/build/src/type';
 
 import {FieldQuery, scaleType} from '../../query/encoding';
 /**

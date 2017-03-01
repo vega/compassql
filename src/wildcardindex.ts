@@ -1,4 +1,4 @@
-import {Mark} from 'vega-lite/src/mark';
+import {Mark} from 'vega-lite/build/src/mark';
 
 import {Wildcard} from './wildcard';
 import {Property, isEncodingProperty} from './property';

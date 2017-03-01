@@ -1,4 +1,4 @@
-import {X, Y} from 'vega-lite/src/channel';
+import {X, Y} from 'vega-lite/build/src/channel';
 
 import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, N, O, T} from '../../../src/ranking/effectiveness/type';
 import {AxisScorer} from '../../../src/ranking/effectiveness/axis';
