@@ -9,6 +9,7 @@ import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS} from './proper
 import {PropIndex} from './propindex';
 import {Wildcard} from './wildcard';
 import {Schema} from './schema';
+import {isValueQuery} from './query/encoding';
 
 const ENUMERATOR_INDEX = new PropIndex<EnumeratorFactory>();
 
@@ -79,15 +80,16 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
         const encQ = specM.getEncodingQueryByIndex(index);
         const propWildcard = specM.getEncodingProperty(index, prop);
 
-        if (
-            // TODO: encQ.exclude
-            // If this encoding query is an excluded autoCount, there is no point enumerating other properties
-            // for this encoding query because they will be excluded anyway.
-            // Thus, we can just move on to the next encoding to enumerate.
-            encQ.autoCount === false ||
-            // nested encoding property might have its parent set to false
-            // therefore, we no longer have to enumerate them
-            !propWildcard
+        if (isValueQuery(encQ) || (
+              // TODO: encQ.exclude
+              // If this encoding query is an excluded autoCount, there is no point enumerating other properties
+              // for this encoding query because they will be excluded anyway.
+              // Thus, we can just move on to the next encoding to enumerate.
+              encQ.autoCount === false ||
+              // nested encoding property might have its parent set to false
+              // therefore, we no longer have to enumerate them
+              !propWildcard
+            )
           ) { // TODO: encQ.excluded
           enumerate(jobIndex + 1);
         } else {
