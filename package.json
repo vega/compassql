@@ -52,6 +52,7 @@
     "browserify-versionify": "~1.0.6",
     "chai": "~3.5.0",
     "codecov": "~1.0.1",
+    "d3": "~4",
     "exorcist": "~0.4.0",
     "mocha": "~2.4.4",
     "nodemon": "~1.9.2",
@@ -61,7 +62,6 @@
     "tslint": "~4.3.1",
     "typescript": "~2.1.5",
     "uglify-js": "~2.6.1",
-    "vega": "~2.6.0",
     "vega-datasets": "latest"
   },
   "dependencies": {
