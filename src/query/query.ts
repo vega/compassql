@@ -4,9 +4,12 @@ import {QueryConfig} from '../config';
 
 export interface Query {
   spec: SpecQuery;
-  nest?: Nest[];
+
   groupBy?: GroupBy;
+  nest?: Nest[];
+
   orderBy?: string | string[];
   chooseBy?: string | string[];
+
   config?: QueryConfig;
 }
