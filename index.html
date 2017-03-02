@@ -4,7 +4,6 @@
 <script src="./build/compassql.js"/></script>
 <script>
 d3.json('node_modules/vega-datasets/data/cars.json', function(error, data) {
-  // Note: This will become cql.schema.build(data) soon.
   var query = {
     "spec": {
       "data": {"url": "node_modules/vega-datasets/data/cars.json"},
@@ -25,7 +24,7 @@ d3.json('node_modules/vega-datasets/data/cars.json', function(error, data) {
     "chooseBy": "effectiveness"
   };
   var opt = {}; // query config
-  var schema = cql.schema.Schema.build(data, opt);
+  var schema = cql.schema.build(data, opt);
   var output = cql.recommend(query, schema, opt);
   var result = output.result;
   // Note: We might improve output of of our API.
