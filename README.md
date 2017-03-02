@@ -2,7 +2,7 @@
 
 CompassQL is a visualization query language that powers chart recommendations in [Voyager 2](https://github.com/vega/voyager2).
 
-As described in our [vision paper](idl.cs.washington.edu/papers/compassql) and [Voyager 2](idl.cs.washington.edu/papers/voyager2) paper, a CompassQL query is a JSON object that contains the following components:
+As described in our [vision paper](https://idl.cs.washington.edu/papers/compassql) and [Voyager 2](https://idl.cs.washington.edu/papers/voyager2) paper, a CompassQL query is a JSON object that contains the following components:
 
 - **Specification** (`spec`) for describing a collection of queried visualizations. This `spec`'s syntax follows a structure similar to [Vega-Lite](https://vega.github.io/vega-lite)'s unit specification.  However, `spec` in CompassQL can have *enumeration specifiers* (or *wildcards*) describing properties that can be enumerated.<sub>1<sub>
 
@@ -24,7 +24,7 @@ Given a row-based array of data object, you can use CQL in two steps.
 
 1) Build a data schema.
 
-```
+```js
 var schema = cql.schema.Schema.build(data);
 ```
 
@@ -32,7 +32,7 @@ var schema = cql.schema.Schema.build(data);
 
 2) Execute a CompassQL query.
 
-```
+```js
 var output = cql.query(query, schema);
 var query = output.query; // normalized query
 var result = output.result; // recommendation result
@@ -44,8 +44,8 @@ For example source code, please see index.html and its source code and console l
 
 # Note for Developers
 
-- To understand more about the structure of a CompassQL Query, look at its [interface](/vega/compassql/blob/master/src/query/query.ts) declaration.
-  - Its `spec` property implements `SpecQuery` interface, which follows the same structure as [Vega-Lite](/vega/vega-lite)'s `UnitSpec`.  The interface name has `Query` suffixes to hint that its instance (which can contain wildcards) is a query that describe a collection of specifications.  Most interfaces under `SpecQuery` similarly describe a "query" version of directives in Vega-Lite.
+- To understand more about the structure of a CompassQL Query, look at its [interface](https://github.com/vega/compassql/blob/master/src/query/query.ts) declaration.
+  - Its `spec` property implements `SpecQuery` interface, which follows the same structure as [Vega-Lite](https://github.com/vega/vega-lite)'s `UnitSpec`.  The interface name has `Query` suffixes to hint that its instance (which can contain wildcards) is a query that describe a collection of specifications.  Most interfaces under `SpecQuery` similarly describe a "query" version of directives in Vega-Lite.
 
 - The root file of our project is `src/cql.ts`, which defines the top-level namespace `cql` for the compiled files. Other files under `src/` reflect namespace structure.  All methods for `cql.xxx` will be in either `src/xxx.ts` or `src/xxx/xxx.ts`.  For example, `cql.util.*` methods are in `src/util.ts`, `cql.query` is in `src/query/query.ts`.
 
