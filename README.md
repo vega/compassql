@@ -25,7 +25,7 @@ Given a row-based array of data object, you can use CQL in two steps.
 1) Build a data schema.
 
 ```js
-var schema = cql.schema.Schema.build(data);
+var schema = cql.schema.build(data);
 ```
 
 (You can reuse the same schema for querying the same dataset multiple times.)
