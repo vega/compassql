@@ -7,7 +7,7 @@ import {some} from '../util';
 
 import {RankingScore, FeatureScore} from './ranking';
 
-import {EncodingQuery, isDimension, isMeasure, isFieldQuery} from '../query/encoding';
+import {EncodingQuery, isFieldQuery, isDiscrete, FieldQuery} from '../query/encoding';
 
 export const name = 'aggregationQuality';
 
@@ -19,7 +19,11 @@ export function score(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): 
   };
 }
 
-function aggregationQualityFeature (specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore {
+function isDimension(encQ: FieldQuery) {
+  return isDiscrete(encQ) || !!encQ.timeUnit;
+}
+
+function aggregationQualityFeature(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore {
   const encodings = specM.getEncodings();
   if (specM.isAggregate()) {
     const isRawContinuous = (encQ: EncodingQuery) => {
@@ -37,7 +41,7 @@ function aggregationQualityFeature (specM: SpecQueryModel, _: Schema, __: QueryC
       };
     }
 
-    if (some(encodings, isDimension)) {
+    if (some(encodings, (encQ) => isFieldQuery(encQ) && isDimension(encQ))) {
       let hasCount = some(encodings, (encQ: EncodingQuery) => {
         return isFieldQuery(encQ) && (encQ.aggregate === 'count' || encQ.autoCount === true);
       });
@@ -75,7 +79,7 @@ function aggregationQualityFeature (specM: SpecQueryModel, _: Schema, __: QueryC
       feature: 'Aggregate without dimension'
     };
   } else {
-    if (some(encodings, isMeasure)) {
+    if (some(encodings, (encQ) => isFieldQuery(encQ) && !isDimension(encQ))) {
        // raw plots with measure -- simplest of all!
       return {
         type: name,

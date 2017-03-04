@@ -12,7 +12,7 @@ import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNest
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
-import {isDimension, isMeasure, EncodingQuery, isFieldQuery, isValueQuery} from './query/encoding';
+import {EncodingQuery, isFieldQuery, isValueQuery} from './query/encoding';
 import {GroupBy, ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
@@ -249,16 +249,6 @@ export class SpecQueryModel {
 
   public getEncodingQueryByIndex(i: number) {
     return this._spec.encodings[i];
-  }
-
-  public isDimension(channel: Channel) {
-    const encQ = this.getEncodingQueryByChannel(channel);
-    return encQ && isDimension(encQ);
-  }
-
-  public isMeasure(channel: Channel) {
-    const encQ = this.getEncodingQueryByChannel(channel);
-    return encQ && isMeasure(encQ);
   }
 
   public isAggregate() {

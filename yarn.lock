@@ -3449,9 +3449,9 @@ vega-datasets@latest:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/vega-datasets/-/vega-datasets-1.8.0.tgz#a614ca655164e4f1a5e4477864d1091350d4eac8"
 
-vega-lite@2.0.0-alpha.3:
-  version "2.0.0-alpha.3"
-  resolved "https://registry.yarnpkg.com/vega-lite/-/vega-lite-2.0.0-alpha.3.tgz#2b576fc00e6d9ad5d4779b1e751e5233668fa0c2"
+vega-lite@2.0.0-alpha.5:
+  version "2.0.0-alpha.5"
+  resolved "https://registry.yarnpkg.com/vega-lite/-/vega-lite-2.0.0-alpha.5.tgz#f910e90c1d3caabb1e6d155ebd31776355275d80"
   dependencies:
     json-stable-stringify "~1.0.1"
     tslib "^1.6.0"

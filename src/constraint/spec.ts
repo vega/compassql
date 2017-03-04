@@ -12,11 +12,10 @@ import {isWildcard, Wildcard} from '../wildcard';
 import {SpecQueryModel} from '../model';
 import {isEncodingNestedProp, getEncodingNestedProp, Property, isEncodingProperty} from '../property';
 import {PropIndex} from '../propindex';
-import {isDimension} from '../query/encoding';
 import {Schema} from '../schema';
 import {contains, every, some} from '../util';
 
-import {scaleType, EncodingQuery, isMeasure, ScaleQuery, isFieldQuery, isValueQuery} from '../query/encoding';
+import {scaleType, EncodingQuery, isDiscrete, isContinuous, ScaleQuery, isFieldQuery, isValueQuery} from '../query/encoding';
 
 const NONSPATIAL_CHANNELS_INDEX = NONSPATIAL_CHANNELS.reduce((m, channel) => {
   m[channel] = true;
@@ -298,7 +297,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       if (specM.isAggregate()) {
         // TODO relax
         return some(specM.getEncodings(), (encQ: EncodingQuery) => {
-          if (isDimension(encQ)) {
+          if (isDiscrete(encQ)) {
             return true;
           }
           return false;
@@ -607,8 +606,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           if (specM.isAggregate()) { // TODO: refactor based on profiling statistics
             const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
             const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
-            const xIsMeasure = xEncQ && isMeasure(xEncQ);
-            const yIsMeasure = yEncQ && isMeasure(yEncQ);
+            const xIsMeasure = xEncQ && isContinuous(xEncQ);
+            const yIsMeasure = yEncQ && isContinuous(yEncQ);
 
             // for aggregate line / area, we need at least one group-by axis and one measure axis.
             return xEncQ && yEncQ && (xIsMeasure !== yIsMeasure) &&
@@ -628,15 +627,19 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           // Bar and tick should not use size.
           if (specM.channelUsed(Channel.SIZE)) {
             return false;
+          } else {
+            // Tick and Bar should have one and only one continuous axis
+            const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
+            const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
+            const xIsContinuous = xEncQ && isContinuous(xEncQ);
+            const yIsContinuous = yEncQ && isContinuous(yEncQ);
+            if (xIsContinuous !== yIsContinuous) {
+              // TODO: Bar and tick's dimension should not be continuous (quant/time) scale
+              return true;
+            }
+            return false;
           }
 
-          // Tick and Bar should have one and only one measure
-          if (specM.isMeasure(Channel.X) !== specM.isMeasure(Channel.Y)) {
-            // TODO: Bar and tick's dimension should not be continuous (quant/time) scale
-
-            return true;
-          }
-          return false;
         case Mark.CIRCLE:
         case Mark.POINT:
         case Mark.SQUARE:
@@ -688,15 +691,18 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   },
   {
     name: 'omitTableWithOcclusionIfAutoAddCount',
-    description: 'Plots without aggregation or autocount where x and y are both dimensions should be omitted if autoAddCount is enabled as they often lead to occlusion',
+    description: 'Plots without aggregation or autocount where x and y are both discrete should be omitted if autoAddCount is enabled as they often lead to occlusion',
     properties: [Property.CHANNEL, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
     allowWildcardForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
       if(opt.autoAddCount) {
+        const xEncQ = specM.getEncodingQueryByChannel('x');
+        const yEncQ = specM.getEncodingQueryByChannel('y');
+
         // TODO(#186): take mark properties channel into account
-        if (specM.isDimension(Channel.X) &&
-          specM.isDimension(Channel.Y) &&
+        if (isDiscrete(xEncQ) &&
+          isDiscrete(yEncQ) &&
           !specM.isAggregate() // TODO: refactor based on statistics
         ) {
           return false;
