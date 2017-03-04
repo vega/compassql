@@ -1,4 +1,5 @@
-import {Channel, getSupportedRole} from 'vega-lite/build/src/channel';
+import {Channel} from 'vega-lite/build/src/channel';
+import {channelCompatibility} from 'vega-lite/build/src/fielddef';
 import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain, channelScalePropertyIncompatability, Scale} from 'vega-lite/build/src/scale';
 import {Type} from 'vega-lite/build/src/type';
 
@@ -12,7 +13,7 @@ import {isWildcard, Wildcard} from '../wildcard';
 import {PrimitiveType, Schema} from '../schema';
 import {contains, every} from '../util';
 
-import {scaleType, FieldQuery, isDimension, isMeasure, ScaleQuery, EncodingQueryBase, ValueQuery, isValueQuery} from '../query/encoding';
+import {scaleType, FieldQuery, ScaleQuery, EncodingQueryBase, ValueQuery, isValueQuery, toFieldDef} from '../query/encoding';
 
 /**
  * Collection of constraints for a single encoding mapping.
@@ -108,27 +109,17 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
       return true;
     }
   },{
-    // FIXME(#301) revise this
-    name: 'channelSupportsRole',
-    description: 'encoding channel should support the role of the field',
+    name: 'channelFieldCompatible',
+    description: `encoding channel's range type be compatible with channel type.`,
     properties: [Property.CHANNEL, Property.TYPE, Property.BIN, Property.TIMEUNIT],
-    allowWildcardForProperties: true,
+    allowWildcardForProperties: false,
     strict: true,
     satisfy: (fieldQ: FieldQuery, _: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig) => {
-      if (isWildcard(fieldQ.channel)) return true; // not ready for checking yet!
-
-      if (!encWildcardIndex.has('channel') && !opt.constraintManuallySpecifiedValue) {
-        // Do not have to check this as this is manually specified by users.
-        return true;
-      }
-
-      const supportedRole = getSupportedRole(fieldQ.channel as Channel);
-      if (isDimension(fieldQ)) {
-        return supportedRole.dimension;
-      } else if (isMeasure(fieldQ)) {
-        return supportedRole.measure;
-      }
-      return true;
+      const fieldDef = {
+        field: 'f', // actual field doesn't really matter here
+        ... toFieldDef(fieldQ, ['bin', 'timeUnit', 'type'])
+      };
+      return channelCompatibility(fieldDef, fieldQ.channel as Channel).compatible;
     }
   },{
     name: 'hasFn',
