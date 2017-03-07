@@ -268,9 +268,9 @@ describe('constraints/encoding', () => {
         assert.isFalse(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
-      it(channel + ' does not support binned quantitative dimension.', () => {
+      it(channel + ' supports binned quantitative dimension.', () => {
         const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
-        assert.isFalse(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' does not support ordinal dimension.', () => {
