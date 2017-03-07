@@ -9,7 +9,7 @@ import {Type} from 'vega-lite/build/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
-import {AxisQuery, ScaleQuery, FieldQuery, isFieldQuery} from '../src/query/encoding';
+import {AxisQuery, ScaleQuery, FieldQuery, AutoCountQuery, isAutoCountQuery} from '../src/query/encoding';
 import {SHORT_WILDCARD} from '../src/wildcard';
 import {extend, some} from '../src/util';
 
@@ -184,7 +184,7 @@ describe('generate', function () {
         assert.isTrue(answerSet.length > 0);
         answerSet.forEach((specM) => {
           assert.isTrue(some(specM.getEncodings(), (encQ) => {
-            return isFieldQuery(encQ) && encQ.autoCount === true;
+            return isAutoCountQuery(encQ) && encQ.autoCount === true;
           }));
         });
       });
@@ -647,7 +647,7 @@ describe('generate', function () {
         };
         const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
         assert.equal(answerSet.length, 1);
-        assert.isTrue((answerSet[0].getEncodings()[1] as FieldQuery).autoCount);
+        assert.isTrue((answerSet[0].getEncodings()[1] as AutoCountQuery).autoCount);
       });
     });
 
@@ -660,8 +660,9 @@ describe('generate', function () {
       };
       const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
 
+      // TODO(akshatsh): is undefined also okay?
       it('should output autoCount=false', () => {
-        assert.isFalse((answerSet[0].getEncodingQueryByIndex(1) as FieldQuery).autoCount);
+        assert.isFalse((answerSet[0].getEncodingQueryByIndex(1) as AutoCountQuery).autoCount);
       });
 
       it('should not output duplicate results in the answer set', () => {

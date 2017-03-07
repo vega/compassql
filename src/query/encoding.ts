@@ -18,7 +18,7 @@ import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcar
 import {AggregateOp} from 'vega-lite/build/src/aggregate';
 import {FieldDef} from 'vega-lite/build/src/fielddef';
 
-export type EncodingQuery = FieldQuery | ValueQuery;
+export type EncodingQuery = FieldQuery | ValueQuery | AutoCountQuery;
 
 export interface EncodingQueryBase {
   channel: WildcardProperty<Channel>;
@@ -33,7 +33,16 @@ export function isValueQuery(encQ: EncodingQuery): encQ is ValueQuery {
 }
 
 export function isFieldQuery(encQ: EncodingQuery): encQ is FieldQuery {
-  return encQ !== null && encQ !== undefined && (encQ['field'] || 'autoCount' in encQ || encQ['aggregate'] === 'count');
+  return encQ !== null && encQ !== undefined && encQ['field'];
+}
+
+export function isAutoCountQuery(encQ: EncodingQuery): encQ is AutoCountQuery {
+  return encQ !== null && encQ !== undefined && 'autoCount' in encQ;
+}
+
+export interface AutoCountQuery extends EncodingQueryBase {
+  autoCount: WildcardProperty<boolean>;
+  type: 'quantitative';
 }
 
 // TODO: split this into FieldDefQuery and AutoCountQuery
@@ -42,8 +51,6 @@ export interface FieldQuery extends EncodingQueryBase {
 
   // FieldDef
   aggregate?: WildcardProperty<AggregateOp>;
-  /** Internal flag for representing automatic count that are added to plots with only ordinal or binned fields. */
-  autoCount?: WildcardProperty<boolean>;
   timeUnit?: WildcardProperty<TimeUnit>;
 
   /**
@@ -79,9 +86,9 @@ export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 
 
 export function toFieldDef(fieldQ: FieldQuery,
-    props: (keyof FieldQuery)[] = ['aggregate', 'autoCount', 'bin', 'timeUnit', 'field', 'type']) {
+    props: (keyof (FieldQuery & AutoCountQuery))[] = ['aggregate', 'autoCount', 'bin', 'timeUnit', 'field', 'type']) {
 
-  return props.reduce((fieldDef: FieldDef<string>, prop: keyof FieldQuery) => {
+  return props.reduce((fieldDef: FieldDef<string>, prop: keyof FieldQuery & AutoCountQuery) => {
     if (isWildcard(fieldQ[prop])) {
       throw new Error(`Cannot convert ${JSON.stringify(fieldQ)} to fielddef: ${prop} is wildcard`);
     } else if (fieldQ[prop] !== undefined) {

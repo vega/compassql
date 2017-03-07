@@ -11,7 +11,7 @@ import {PropIndex} from '../../src/propindex';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {EncodingConstraintModel} from '../../src/constraint/base';
 import {FIELD_CONSTRAINTS, FIELD_CONSTRAINT_INDEX} from '../../src/constraint/field';
-import {EncodingQuery, ScaleQuery, FieldQuery} from '../../src/query/encoding';
+import {EncodingQuery, ScaleQuery, FieldQuery, AutoCountQuery} from '../../src/query/encoding';
 import {SHORT_WILDCARD, Wildcard} from '../../src/wildcard';
 import {duplicate, extend} from '../../src/util';
 
@@ -494,10 +494,12 @@ describe('constraints/field', () => {
   });
 
   describe('onlyOneTypeOfFunction', () => {
-    const encQ: EncodingQuery = {
+    // TODO(akshatsh): Correct fix? for line 531
+    const encQ: EncodingQuery & AutoCountQuery = {
         channel: Channel.X,
         field: 'A',
-        type: Type.QUANTITATIVE
+        type: Type.QUANTITATIVE,
+        autoCount: false
       };
 
     it('should return true if there is no function', () => {

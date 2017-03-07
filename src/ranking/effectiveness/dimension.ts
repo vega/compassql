@@ -4,7 +4,7 @@ import {SpecQueryModel} from '../../model';
 import {Schema} from '../../schema';
 import {QueryConfig} from '../../config';
 import {FeatureScore} from '../ranking';
-import {EncodingQuery, isFieldQuery} from '../../query/encoding';
+import {EncodingQuery, isFieldQuery, isAutoCountQuery} from '../../query/encoding';
 
 /**
  * Penalize if facet channels are the only dimensions
@@ -28,7 +28,7 @@ export class DimensionScorer extends Scorer {
   public getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     if (specM.isAggregate()) {
       specM.getEncodings().reduce((maxFScore, encQ: EncodingQuery) => {
-        if (isFieldQuery(encQ) && !encQ.aggregate && !encQ.autoCount) { // isDimension
+        if (isFieldQuery(encQ) && !encQ.aggregate && (!isAutoCountQuery(encQ) || (isAutoCountQuery(encQ) && !encQ.autoCount))) { // isDimension
           const featureScore = this.getFeatureScore(encQ.channel + '');
           if (featureScore && featureScore.score > maxFScore.score) {
             return featureScore;

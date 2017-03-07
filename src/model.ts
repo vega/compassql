@@ -12,7 +12,7 @@ import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNest
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
-import {EncodingQuery, isFieldQuery, isValueQuery} from './query/encoding';
+import {EncodingQuery, isFieldQuery, isValueQuery, isAutoCountQuery} from './query/encoding';
 import {GroupBy, ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
@@ -55,7 +55,7 @@ export class SpecQueryModel {
 
     // encodings
     specQ.encodings.forEach((encQ, index) => {
-      if (isFieldQuery(encQ) && encQ.autoCount !== undefined) {
+      if (isAutoCountQuery(encQ) && encQ.autoCount !== undefined) {
         // This is only for testing purpose
         console.warn('A field with autoCount should not be included as autoCount meant to be an internal object.');
 
@@ -128,8 +128,9 @@ export class SpecQueryModel {
   constructor(spec: SpecQuery, wildcardIndex: WildcardIndex, schema: Schema, opt: QueryConfig, wildcardAssignment: Dict<any>) {
     this._spec = spec;
     this._channelFieldCount = spec.encodings.reduce((m, encQ) => {
-      // TODO(akshatsh): add a test case
-      if (isFieldQuery(encQ) && !isWildcard(encQ.channel) && encQ.autoCount !== false) {
+      // TODO: add a test case
+      // TODO(akshatsh): is undef okay?
+      if (!isWildcard(encQ.channel) && (!isAutoCountQuery(encQ) || encQ.autoCount !== false)) {
         m[encQ.channel + ''] = 1;
       }
       return m;
@@ -235,7 +236,8 @@ export class SpecQueryModel {
 
   public getEncodings() {
     // do not include encoding that has autoCount = false because it is not a part of the output spec.
-    return this._spec.encodings.filter((encQ) => (isValueQuery(encQ) || encQ.autoCount !== false));
+    // TODO(akshatsh): check that autcount = undef is valid???
+    return this._spec.encodings.filter((encQ) => (isValueQuery(encQ) || !(isAutoCountQuery(encQ) && encQ.autoCount === false)));
   }
 
   public getEncodingQueryByChannel(channel: Channel) {
@@ -270,11 +272,13 @@ export class SpecQueryModel {
       let fieldDef: FieldDef<string> = {};
 
       // For count field that is automatically added, convert to correct vega-lite fieldDef
-      if (isFieldQuery(encQ) && encQ.autoCount === true) {
+      if (isAutoCountQuery(encQ) && encQ.autoCount === true) {
         fieldDef.aggregate = 'count';
         fieldDef.field = '*';
         fieldDef.type = Type.QUANTITATIVE;
-      } else if (isValueQuery(encQ) || encQ.autoCount === false) {
+
+        // TODO(akshatsh): is undef okay?
+      } else if (isValueQuery(encQ) || (isAutoCountQuery(encQ) && encQ.autoCount === false)) {
         continue; // Do not include this in the output.
       }
 
