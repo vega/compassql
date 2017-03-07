@@ -10,7 +10,7 @@ import {isWildcard, Wildcard} from '../wildcard';
 import {PrimitiveType, Schema} from '../schema';
 import {contains} from '../util';
 
-import {scaleType, FieldQuery, ScaleQuery, toFieldDef} from '../query/encoding';
+import {scaleType, FieldQuery, ScaleQuery, toFieldDef, AutoCountQuery, isAutoCountQuery} from '../query/encoding';
 import {EncodingConstraintModel, EncodingConstraint} from './base';
 
 export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
@@ -96,9 +96,10 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN],
     allowWildcardForProperties: true,
     strict: true,
-    satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
+    // TODO(akshatsh): Allow field query with optional autocount?
+    satisfy: (fieldQ: FieldQuery & AutoCountQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
       const numFn = (!isWildcard(fieldQ.aggregate) && !!fieldQ.aggregate ? 1 : 0) +
-        (!isWildcard(fieldQ.autoCount) && !!fieldQ.autoCount ? 1 : 0) +
+        (isAutoCountQuery(fieldQ) && !isWildcard(fieldQ.autoCount) && !!fieldQ.autoCount ? 1 : 0) +
         (!isWildcard(fieldQ.bin) && !!fieldQ.bin ? 1 : 0) +
         (!isWildcard(fieldQ.timeUnit) && !!fieldQ.timeUnit ? 1 : 0);
       return numFn <= 1;
@@ -321,8 +322,8 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
   }
 ].map((ec: EncodingConstraint<FieldQuery>) => new EncodingConstraintModel<FieldQuery>(ec));
 
-export const FIELD_CONSTRAINT_INDEX: {[name: string]: EncodingConstraintModel<FieldQuery>} =
-  FIELD_CONSTRAINTS.reduce((m, ec: EncodingConstraintModel<FieldQuery>) => {
+export const FIELD_CONSTRAINT_INDEX: {[name: string]: EncodingConstraintModel<FieldQuery | AutoCountQuery>} =
+  FIELD_CONSTRAINTS.reduce((m, ec: EncodingConstraintModel<FieldQuery | AutoCountQuery>) => {
     m[ec.name()] = ec;
     return m;
   }, {});

@@ -12,7 +12,7 @@ import {isSpecQueryGroup, SpecQueryModel, SpecQueryGroup, SpecQueryModelGroup} f
 import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, toKey} from '../src/property';
 import {SHORT_WILDCARD, isWildcard, getDefaultEnumValues} from '../src/wildcard';
 import {SpecQuery} from '../src/query/spec';
-import {FieldQuery} from '../src/query/encoding';
+import {FieldQuery, AutoCountQuery} from '../src/query/encoding';
 import {Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
 
@@ -171,7 +171,7 @@ describe('SpecQueryModel', () => {
 
       it('should add new encoding if autoCount is enabled' , () => {
         assert.equal(model.specQuery.encodings.length, 2);
-        assert.isTrue(isWildcard((model.specQuery.encodings[1] as FieldQuery).autoCount));
+        assert.isTrue(isWildcard((model.specQuery.encodings[1] as AutoCountQuery).autoCount));
       });
 
       it('should add new channel and autoCount to the wildcard', () => {

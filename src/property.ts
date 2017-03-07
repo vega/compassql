@@ -5,7 +5,7 @@ import {Legend, LEGEND_PROPERTIES} from 'vega-lite/build/src/legend';
 import {SortField} from 'vega-lite/build/src/sort';
 
 import {toMap} from './util';
-import {FieldQuery, ValueQuery} from './query/encoding';
+import {FieldQuery, ValueQuery, AutoCountQuery} from './query/encoding';
 import {TransformQuery} from './query/transform';
 
 export type Property = FlatProp | EncodingNestedProp;
@@ -13,7 +13,7 @@ export type FlatProp = MarkProp | TransformProp | EncodingTopLevelProp;
 
 export type MarkProp = 'mark' | 'stack'; // FIXME: determine how 'stack' works;
 export type TransformProp = keyof TransformQuery;
-export type EncodingTopLevelProp = keyof (FieldQuery & ValueQuery);
+export type EncodingTopLevelProp = keyof (FieldQuery & ValueQuery & AutoCountQuery);
 export type EncodingNestedProp = BinProp | SortProp | ScaleProp | AxisProp | LegendProp;
 
 export type EncodingNestedChildProp = keyof Bin | keyof SortField | keyof Scale | keyof Axis | keyof Legend;

@@ -6,7 +6,7 @@ import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 import * as dlBin from 'datalib/src/bins/bins';
 
-import {BinQuery, EncodingQuery, FieldQuery} from './query/encoding';
+import {BinQuery, EncodingQuery, FieldQuery, isAutoCountQuery} from './query/encoding';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {cmp, duplicate, extend, keys} from './util';
 
@@ -237,7 +237,7 @@ export class Schema {
    */
   public cardinality(fieldQ: FieldQuery, augmentTimeUnitDomain: boolean = true, excludeInvalid: boolean = false) {
     const fieldSchema = this._fieldSchemaIndex[fieldQ.field as string];
-    if (fieldQ.aggregate || fieldQ.autoCount) {
+    if (fieldQ.aggregate || isAutoCountQuery(fieldQ) && fieldQ.autoCount) {
       return 1;
     } else if (fieldQ.bin) {
       // encQ.bin will either be a boolean or a BinQuery

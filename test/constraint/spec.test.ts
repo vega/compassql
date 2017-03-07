@@ -14,7 +14,7 @@ import {SHORT_WILDCARD} from '../../src/wildcard';
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {SpecQuery} from '../../src/query/spec';
-import {FieldQuery} from '../../src/query/encoding';
+import {AutoCountQuery} from '../../src/query/encoding';
 import {Property} from '../../src/property';
 import {duplicate, extend} from '../../src/util';
 
@@ -128,7 +128,7 @@ describe('constraints/spec', () => {
           model.setEncodingProperty(
             autoCountIndex, 'autoCount',
             autoCount,
-            (model.getEncodingQueryByIndex(autoCountIndex) as FieldQuery).autoCount
+            (model.getEncodingQueryByIndex(autoCountIndex) as AutoCountQuery).autoCount
           );
 
           assert.equal(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(model, schema, DEFAULT_QUERY_CONFIG), satisfy);
