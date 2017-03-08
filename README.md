@@ -4,7 +4,7 @@ CompassQL is a visualization query language that powers chart recommendations in
 
 As described in our [vision paper](https://idl.cs.washington.edu/papers/compassql) and [Voyager 2](https://idl.cs.washington.edu/papers/voyager2) paper, a CompassQL query is a JSON object that contains the following components:
 
-- **Specification** (`spec`) for describing a collection of queried visualizations. This `spec`'s syntax follows a structure similar to [Vega-Lite](https://vega.github.io/vega-lite)'s unit specification.  However, `spec` in CompassQL can have *enumeration specifiers* (or *wildcards*) describing properties that can be enumerated.<sub>1<sub>
+- **Specification** (`spec`) for describing a collection of queried visualizations. This `spec`'s syntax follows a structure similar to [Vega-Lite](https://vega.github.io/vega-lite)'s unit specification.  However, `spec` in CompassQL can have *enumeration specifiers* (or *wildcards*) describing properties that can be enumerated.<sup>1</sup>
 
 - **Grouping/Nesting** method names (`groupBy` and `nest`) for grouping queried visualizations into groups or hierarchical groups.
 
@@ -16,7 +16,7 @@ Internally, CompassQL engine contains a collection of constraints for enumeratin
 
 __Notes__:
 
-<sub>1</sub> Since multiple encoding channels can be a wildcard, the `encoding` object in Vega-Lite is flatten as `encodings` which is an array of Encoding in CompassQL's `spec`.
+<sup>1</sup> Since multiple encoding channels can be a wildcard, the `encoding` object in Vega-Lite is flatten as `encodings` which is an array of Encoding in CompassQL's `spec`.
 
 ## Usage
 
