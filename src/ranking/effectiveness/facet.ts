@@ -4,7 +4,7 @@ import {Schema} from '../../schema';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../../config';
 import {FeatureScore} from '../ranking';
 import {EncodingQuery} from '../../query/encoding';
-import {Channel} from 'vega-lite/src/channel';
+import {Channel} from 'vega-lite/build/src/channel';
 import {Dict} from '../../util';
 
 /**

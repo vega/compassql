@@ -2,7 +2,7 @@
  * Field Type (with Bin and TimeUnit) and Channel Score (Cleveland / Mackinlay based)
  */
 
-import {Channel} from 'vega-lite/src/channel';
+import {Channel} from 'vega-lite/build/src/channel';
 
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../../config';
 import {SpecQueryModel} from '../../model';

@@ -1,4 +1,4 @@
-import {Mark} from 'vega-lite/src/mark';
+import {Mark} from 'vega-lite/build/src/mark';
 
 import {assert} from 'chai';
 import {initWildcard, isWildcard, SHORT_WILDCARD, getDefaultName, getDefaultEnumValues} from '../src/wildcard';
@@ -81,7 +81,7 @@ describe('wildcard', () => {
           }
         }
 
-        assert.equal(name in defaultNameIndex, false);
+        assert.equal(name in defaultNameIndex, false, `${name} is already used for ${JSON.stringify(defaultNameIndex[name])} and thus can't be used for ${JSON.stringify(prop)}`);
         defaultNameIndex[getDefaultName(prop)] = prop;
       }
       assert.equal(missing.length, 0, 'Properties with missing name: ' + missing.join(','));

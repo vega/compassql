@@ -1,4 +1,4 @@
-import {ROW, COLUMN} from 'vega-lite/src/channel';
+import {ROW, COLUMN} from 'vega-lite/build/src/channel';
 import {FacetScorer} from '../../../src/ranking/effectiveness/facet';
 import {RuleSet, testRuleSet} from '../rule';
 

@@ -1,7 +1,7 @@
-import {AxisOrient} from 'vega-lite/src/axis';
-import {Channel} from 'vega-lite/src/channel';
-import {Mark} from 'vega-lite/src/mark';
-import {Type} from 'vega-lite/src/type';
+
+import {Channel} from 'vega-lite/build/src/channel';
+import {Mark} from 'vega-lite/build/src/mark';
+import {Type} from 'vega-lite/build/src/type';
 
 import {schema} from './fixture';
 
@@ -206,13 +206,13 @@ describe('stylize', () => {
       let specM = SpecQueryModel.build({
         mark: Mark.POINT,
         encodings: [
-          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, axis: {orient: AxisOrient.BOTTOM}},
+          {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE, axis: {orient: 'bottom'}},
           {channel: Channel.Y, field: 'O_100', type: Type.ORDINAL}
         ]
       }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.deepEqual(((specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).axis as AxisQuery).orient, AxisOrient.BOTTOM);
+      assert.deepEqual(((specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).axis as AxisQuery).orient, 'bottom');
     });
 
     it('should not orient the x axis on top if axis is set to false', () => {
@@ -276,7 +276,7 @@ describe('stylize', () => {
       }, schema, DEFAULT_QUERY_CONFIG);
 
       specM = xAxisOnTopForHighYCardinalityWithoutColumn(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal(((specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).axis as AxisQuery).orient, AxisOrient.TOP);
+      assert.equal(((specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).axis as AxisQuery).orient, 'top');
     });
   });
 });

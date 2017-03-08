@@ -1,4 +1,4 @@
-import {X, Y, SIZE, COLOR, OPACITY, TEXT, ROW, COLUMN, SHAPE, DETAIL} from 'vega-lite/src/channel';
+import {X, Y, SIZE, COLOR, OPACITY, TEXT, ROW, COLUMN, SHAPE, DETAIL} from 'vega-lite/build/src/channel';
 
 import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T} from '../../../src/ranking/effectiveness/type';
 import {TypeChannelScorer} from '../../../src/ranking/effectiveness/typechannel';

@@ -1,4 +1,4 @@
-import {SIZE, COLOR, OPACITY, ROW, COLUMN, SHAPE} from 'vega-lite/src/channel';
+import {SIZE, COLOR, OPACITY, ROW, COLUMN, SHAPE} from 'vega-lite/build/src/channel';
 import {DimensionScorer} from '../../../src/ranking/effectiveness/dimension';
 import {RuleSet, testRuleSet} from '../rule';
 

@@ -1,8 +1,8 @@
-import {AggregateOp} from 'vega-lite/src/aggregate';
-import {Channel} from 'vega-lite/src/channel';
-import {Mark} from 'vega-lite/src/mark';
-import {TimeUnit} from 'vega-lite/src/timeunit';
-import {Type} from 'vega-lite/src/type';
+
+import {Channel} from 'vega-lite/build/src/channel';
+import {Mark} from 'vega-lite/build/src/mark';
+import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import {Type} from 'vega-lite/build/src/type';
 
 import {schema} from '../fixture';
 
@@ -43,7 +43,7 @@ describe('ranking', () => {
             mark: Mark.LINE,
             encodings: [
               {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
-              {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
+              {aggregate: 'mean', channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
             ]
           },
           schema,
@@ -55,7 +55,7 @@ describe('ranking', () => {
             mark: Mark.POINT,
             encodings: [
               {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
-              {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
+              {aggregate: 'mean', channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
             ]
           },
           schema,
@@ -84,8 +84,8 @@ describe('ranking', () => {
           {
             mark: Mark.POINT,
             encodings: [
-              {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
-              {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE},
+              {aggregate: 'mean', channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
+              {aggregate: 'mean', channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE},
             ]
           },
           schema,
@@ -104,7 +104,7 @@ describe('ranking', () => {
             mark: Mark.LINE,
             encodings: [
               {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
-              {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE}
+              {aggregate: 'mean', channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE}
             ]
           },
           schema,
@@ -116,7 +116,7 @@ describe('ranking', () => {
             mark: Mark.POINT,
             encodings: [
               {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
-              {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE}
+              {aggregate: 'mean', channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE}
             ]
           },
           schema,
@@ -144,8 +144,8 @@ describe('ranking', () => {
           {
             mark: Mark.POINT,
             encodings: [
-              {aggregate: AggregateOp.MEAN, channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
-              {aggregate: AggregateOp.MEAN, channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE},
+              {aggregate: 'mean', channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
+              {aggregate: 'mean', channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE},
             ]
           },
           schema,

@@ -1,19 +1,18 @@
-import {AggregateOp} from 'vega-lite/src/aggregate';
-import {Channel} from 'vega-lite/src/channel';
-import {Data} from 'vega-lite/src/data';
-import {Encoding} from 'vega-lite/src/encoding';
-import {FieldDef} from 'vega-lite/src/fielddef';
-import {Mark} from 'vega-lite/src/mark';
-import {Type} from 'vega-lite/src/type';
-import {ExtendedUnitSpec} from 'vega-lite/src/spec';
-import {StackProperties} from 'vega-lite/src/stack';
+import {Channel} from 'vega-lite/build/src/channel';
+import {Data} from 'vega-lite/build/src/data';
+import {Encoding} from 'vega-lite/build/src/encoding';
+import {FieldDef} from 'vega-lite/build/src/fielddef';
+import {Mark} from 'vega-lite/build/src/mark';
+import {Type} from 'vega-lite/build/src/type';
+import {FacetedUnitSpec} from 'vega-lite/build/src/spec';
+import {StackProperties} from 'vega-lite/build/src/stack';
 
 import {QueryConfig} from './config';
 import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, hasNestedProperty} from './property';
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
-import {isDimension, isMeasure, EncodingQuery, isFieldQuery, isValueQuery} from './query/encoding';
+import {EncodingQuery, isFieldQuery, isValueQuery} from './query/encoding';
 import {GroupBy, ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
@@ -230,7 +229,7 @@ export class SpecQueryModel {
     return this._channelFieldCount[channel] > 0;
   }
 
-  public stack() : StackProperties {
+  public stack(): StackProperties {
     return stack(this._spec);
   }
 
@@ -250,16 +249,6 @@ export class SpecQueryModel {
 
   public getEncodingQueryByIndex(i: number) {
     return this._spec.encodings[i];
-  }
-
-  public isDimension(channel: Channel) {
-    const encQ = this.getEncodingQueryByChannel(channel);
-    return encQ && isDimension(encQ);
-  }
-
-  public isMeasure(channel: Channel) {
-    const encQ = this.getEncodingQueryByChannel(channel);
-    return encQ && isMeasure(encQ);
   }
 
   public isAggregate() {
@@ -282,7 +271,7 @@ export class SpecQueryModel {
 
       // For count field that is automatically added, convert to correct vega-lite fieldDef
       if (isFieldQuery(encQ) && encQ.autoCount === true) {
-        fieldDef.aggregate = AggregateOp.COUNT;
+        fieldDef.aggregate = 'count';
         fieldDef.field = '*';
         fieldDef.type = Type.QUANTITATIVE;
       } else if (isValueQuery(encQ) || encQ.autoCount === false) {
@@ -324,7 +313,7 @@ export class SpecQueryModel {
    * Convert a query to a Vega-Lite spec if it is completed.
    * @return a Vega-Lite spec if completed, null otherwise.
    */
-  public toSpec(data?: Data): ExtendedUnitSpec {
+  public toSpec(data?: Data): FacetedUnitSpec {
     if (isWildcard(this._spec.mark)) return null;
 
     let spec: any = {};

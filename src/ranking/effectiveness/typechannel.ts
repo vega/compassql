@@ -1,6 +1,6 @@
 
 
-import {Channel} from 'vega-lite/src/channel';
+import {Channel} from 'vega-lite/build/src/channel';
 
 import {QueryConfig} from '../../config';
 import {SpecQueryModel} from '../../model';

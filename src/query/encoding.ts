@@ -1,19 +1,21 @@
-import {AggregateOp} from 'vega-lite/src/aggregate';
-import {Axis} from 'vega-lite/src/axis';
-import {Bin} from 'vega-lite/src/bin';
-import {Channel} from 'vega-lite/src/channel';
-import {Mark} from 'vega-lite/src/mark';
 
-import {Scale} from 'vega-lite/src/scale';
-import {Legend} from 'vega-lite/src/legend';
-import {SortOrder, SortField} from 'vega-lite/src/sort';
-import {TimeUnit} from 'vega-lite/src/timeunit';
-import {Type} from 'vega-lite/src/type';
+import {Axis} from 'vega-lite/build/src/axis';
+import {Bin} from 'vega-lite/build/src/bin';
+import {Channel} from 'vega-lite/build/src/channel';
+import * as vlFieldDef from 'vega-lite/build/src/fielddef';
+import {Mark} from 'vega-lite/build/src/mark';
 
-import compileScaleType from 'vega-lite/src/compile/scale/type';
+import {Scale} from 'vega-lite/build/src/scale';
+import {Legend} from 'vega-lite/build/src/legend';
+import {SortOrder, SortField} from 'vega-lite/build/src/sort';
+import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import {Type} from 'vega-lite/build/src/type';
+
+import compileScaleType from 'vega-lite/build/src/compile/scale/type';
 
 import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
-import {contains} from '../util';
+import {AggregateOp} from 'vega-lite/build/src/aggregate';
+import {FieldDef} from 'vega-lite/build/src/fielddef';
 
 export type EncodingQuery = FieldQuery | ValueQuery;
 
@@ -74,15 +76,42 @@ export type ScaleQuery =  FlatQueryWithEnableFlag<Scale>;
 export type AxisQuery =  FlatQueryWithEnableFlag<Axis>;
 export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 
-export function isDimension(fieldQ: FieldQuery) {
-  return contains([Type.NOMINAL, Type.ORDINAL], fieldQ.type) ||
-      (!isWildcard(fieldQ.bin) && !!fieldQ.bin) ||          // surely Q type
-      (!isWildcard(fieldQ.timeUnit) && !!fieldQ.timeUnit);  // surely T type
+
+export function toFieldDef(fieldQ: FieldQuery,
+    props: (keyof FieldQuery)[] = ['aggregate', 'autoCount', 'bin', 'timeUnit', 'field', 'type']) {
+
+  return props.reduce((fieldDef: FieldDef, prop: keyof FieldQuery) => {
+    if (isWildcard(fieldQ[prop])) {
+      throw new Error(`Cannot convert ${JSON.stringify(fieldQ)} to fielddef: ${prop} is wildcard`);
+    } else if (fieldQ[prop] !== undefined) {
+      if (prop === 'autoCount') {
+        if (fieldQ[prop]) {
+          fieldDef.aggregate = 'count';
+        } else {
+          throw new Error(`Cannot convert {autoCount: false} into a field def`);
+        }
+      } else {
+        fieldDef[prop] = fieldQ[prop];
+      }
+    }
+    return fieldDef;
+  }, {});
 }
 
-export function isMeasure(fieldQ: FieldQuery) {
-  return (fieldQ.type === Type.QUANTITATIVE && !fieldQ.bin) ||
-      (fieldQ.type === Type.TEMPORAL && !fieldQ.timeUnit);
+/**
+ * Is a field query continuous field?
+ * This method is applicable only for fieldQuery without wildcard
+ */
+export function isContinuous(fieldQ: FieldQuery) {
+  return vlFieldDef.isContinuous(toFieldDef(fieldQ, ['bin', 'timeUnit', 'field', 'type']));
+}
+
+/**
+ * Is a field query discrete field?
+ * This method is applicable only for fieldQuery without wildcard
+ */
+export function isDiscrete(fieldQ: FieldQuery) {
+  return vlFieldDef.isDiscrete(toFieldDef(fieldQ, ['bin', 'timeUnit', 'field', 'type']));
 }
 
 /**

@@ -1,0 +1,39 @@
+<html>
+<body>
+<script src="./node_modules/d3/build/d3.min.js"></script>
+<script src="./build/compassql.js"/></script>
+<script>
+d3.json('node_modules/vega-datasets/data/cars.json', function(error, data) {
+  var query = {
+    "spec": {
+      "data": {"url": "node_modules/vega-datasets/data/cars.json"},
+      "mark": "?",
+      "encodings": [
+        {
+          "channel": "x",
+          "aggregate": "mean",
+          "field": "Horsepower",
+          "type": "quantitative"
+        },{
+          "channel": "y",
+          "field": "Cylinders",
+          "type": "ordinal"
+        }
+      ]
+    },
+    "chooseBy": "effectiveness"
+  };
+  var opt = {}; // query config
+  var schema = cql.schema.build(data, opt);
+  var output = cql.recommend(query, schema, opt);
+  var result = output.result;
+  // Note: We might improve output of of our API.
+  // Currently, a result is an object of class SpecQueryModelGroup
+  // that can contains items of class SpecQueryModel or SpecQueryModelGroup.
+  // In this case, we don't have groupBy, so it's definitely a SpecQueryModel.
+  // We can convert a SpecQueryModel to a Vega-Lite spec using toSpec() method.
+  console.log(JSON.stringify(result.items[0].toSpec(), null, 2));
+})
+</script>
+</body>
+</html>

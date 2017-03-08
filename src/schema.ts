@@ -1,7 +1,7 @@
-import {Type} from 'vega-lite/src/type';
-import {Channel} from 'vega-lite/src/channel';
-import {autoMaxBins} from 'vega-lite/src/bin';
-import {TimeUnit, containsTimeUnit, convert, SINGLE_TIMEUNITS} from 'vega-lite/src/timeunit';
+import {Type} from 'vega-lite/build/src/type';
+import {Channel} from 'vega-lite/build/src/channel';
+import {autoMaxBins} from 'vega-lite/build/src/bin';
+import {TimeUnit, containsTimeUnit, convert, SINGLE_TIMEUNITS} from 'vega-lite/build/src/timeunit';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 import * as dlBin from 'datalib/src/bins/bins';
@@ -26,114 +26,114 @@ export interface FieldSchema {
   timeStats?: {[timeUnit: string]: DLFieldProfile};
 }
 
-export class Schema {
-  private _fieldSchemas: FieldSchema[];
-  private _fieldSchemaIndex: {[field: string]: FieldSchema};
+/**
+ * Build a Schema object.
+ *
+ * @param data - a set of raw data in the same format that Vega-Lite / Vega takes
+ * Basically, it's an array in the form of:
+ *
+ * [
+ *   {a: 1, b:2},
+ *   {a: 2, b:3},
+ *   ...
+ * ]
+ *
+ * @return a Schema object
+ */
+export function build(data: any, opt: QueryConfig = {}): Schema {
+  opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
 
-  /**
-   * Build a Schema object.
-   *
-   * @param data - a set of raw data in the same format that Vega-Lite / Vega takes
-   * Basically, it's an array in the form of:
-   *
-   * [
-   *   {a: 1, b:2},
-   *   {a: 2, b:3},
-   *   ...
-   * ]
-   *
-   * @return a Schema object
-   */
-  public static build(data: any, opt: QueryConfig = {}): Schema {
-    opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
+  // create profiles for each variable
+  let summaries: DLFieldProfile[] = summary(data);
+  let types = inferAll(data); // inferAll does stronger type inference than summary
 
-    // create profiles for each variable
-    let summaries: DLFieldProfile[] = summary(data);
-    let types = inferAll(data); // inferAll does stronger type inference than summary
+  let fieldSchemas: FieldSchema[] = summaries.map(function(fieldProfile) {
+    let field: string = fieldProfile.field;
+    let primitiveType: PrimitiveType = types[field] as any;
+    let distinct: number = fieldProfile.distinct;
+    let type: Type;
 
-    let fieldSchemas: FieldSchema[] = summaries.map(function(fieldProfile) {
-      let field: string = fieldProfile.field;
-      let primitiveType: PrimitiveType = types[field] as any;
-      let distinct: number = fieldProfile.distinct;
-      let type: Type;
-
-      if (primitiveType === PrimitiveType.NUMBER) {
-        type = Type.QUANTITATIVE;
-      } else if (primitiveType === PrimitiveType.INTEGER) {
-        // use ordinal or nominal when cardinality of integer type is relatively low and the distinct values are less than an amount specified in options
-        if ((distinct < opt.numberNominalLimit) && (distinct / fieldProfile.count < opt.numberNominalProportion)) {
-          type = Type.NOMINAL;
-        } else {
-          type = Type.QUANTITATIVE;
-        }
-      } else if (primitiveType === PrimitiveType.DATE) {
-        type = Type.TEMPORAL;
-        // need to get correct min/max of date data because datalib's summary method does not
-        // calculate this correctly for date types.
-        fieldProfile.min = new Date(data[0][field]);
-        fieldProfile.max = new Date(data[0][field]);
-        for (const dataEntry of data) {
-          const time = new Date(dataEntry[field]).getTime();
-          if (time < (fieldProfile.min as Date).getTime()) {
-            fieldProfile.min = new Date(time);
-          }
-          if (time > (fieldProfile.max as Date).getTime()) {
-            fieldProfile.max = new Date(time);
-          }
-        }
-      } else {
+    if (primitiveType === PrimitiveType.NUMBER) {
+      type = Type.QUANTITATIVE;
+    } else if (primitiveType === PrimitiveType.INTEGER) {
+      // use ordinal or nominal when cardinality of integer type is relatively low and the distinct values are less than an amount specified in options
+      if ((distinct < opt.numberNominalLimit) && (distinct / fieldProfile.count < opt.numberNominalProportion)) {
         type = Type.NOMINAL;
-      }
-
-      return {
-        field: field,
-        type: type,
-        primitiveType: primitiveType,
-        stats: fieldProfile,
-        timeStats: {} as {[timeUnit: string]: DLFieldProfile},
-        binStats: {} as {[key: string]: DLFieldProfile}
-      };
-    });
-
-    // order the fieldSchemas (sort them)
-    const order = {
-      'nominal': 0,
-      'ordinal': 1,
-      'temporal': 2,
-      'quantitative': 3
-    };
-    fieldSchemas.sort(function(a: FieldSchema, b: FieldSchema) {
-      // first order by type: nominal < temporal < quantitative < ordinal
-      if (order[a.type] < order[b.type]) {
-        return -1;
-      } else if (order[a.type] > order[b.type]) {
-        return 1;
       } else {
-        // then order by field (alphabetically)
-        return a.field.localeCompare(b.field);
+        type = Type.QUANTITATIVE;
       }
-    });
-
-    // Add index for sorting
-    fieldSchemas.forEach((fieldSchema, index) => fieldSchema.index = index);
-
-    // calculate preset bins for quantitative and temporal data
-    for (let fieldSchema of fieldSchemas) {
-      if (fieldSchema.type === Type.QUANTITATIVE) {
-        for (let maxbins of opt.enum.binProps.maxbins) {
-          fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
+    } else if (primitiveType === PrimitiveType.DATE) {
+      type = Type.TEMPORAL;
+      // need to get correct min/max of date data because datalib's summary method does not
+      // calculate this correctly for date types.
+      fieldProfile.min = new Date(data[0][field]);
+      fieldProfile.max = new Date(data[0][field]);
+      for (const dataEntry of data) {
+        const time = new Date(dataEntry[field]).getTime();
+        if (time < (fieldProfile.min as Date).getTime()) {
+          fieldProfile.min = new Date(time);
         }
-      } else if (fieldSchema.type === Type.TEMPORAL) {
-        for (let unit of opt.enum.timeUnit) {
-          if (unit !== undefined) {
-            fieldSchema.timeStats[unit] = timeSummary(unit, fieldSchema.stats);
-          }
+        if (time > (fieldProfile.max as Date).getTime()) {
+          fieldProfile.max = new Date(time);
+        }
+      }
+    } else {
+      type = Type.NOMINAL;
+    }
+
+    return {
+      field: field,
+      type: type,
+      primitiveType: primitiveType,
+      stats: fieldProfile,
+      timeStats: {} as {[timeUnit: string]: DLFieldProfile},
+      binStats: {} as {[key: string]: DLFieldProfile}
+    };
+  });
+
+  // order the fieldSchemas (sort them)
+  const order = {
+    'nominal': 0,
+    'ordinal': 1,
+    'temporal': 2,
+    'quantitative': 3
+  };
+  fieldSchemas.sort(function(a: FieldSchema, b: FieldSchema) {
+    // first order by type: nominal < temporal < quantitative < ordinal
+    if (order[a.type] < order[b.type]) {
+      return -1;
+    } else if (order[a.type] > order[b.type]) {
+      return 1;
+    } else {
+      // then order by field (alphabetically)
+      return a.field.localeCompare(b.field);
+    }
+  });
+
+  // Add index for sorting
+  fieldSchemas.forEach((fieldSchema, index) => fieldSchema.index = index);
+
+  // calculate preset bins for quantitative and temporal data
+  for (let fieldSchema of fieldSchemas) {
+    if (fieldSchema.type === Type.QUANTITATIVE) {
+      for (let maxbins of opt.enum.binProps.maxbins) {
+        fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
+      }
+    } else if (fieldSchema.type === Type.TEMPORAL) {
+      for (let unit of opt.enum.timeUnit) {
+        if (unit !== undefined) {
+          fieldSchema.timeStats[unit] = timeSummary(unit, fieldSchema.stats);
         }
       }
     }
-
-    return new Schema(fieldSchemas);
   }
+
+  return new Schema(fieldSchemas);
+}
+
+export class Schema {
+  private _fieldSchemas: FieldSchema[];
+  private _fieldSchemaIndex: {[field: string]: FieldSchema};
 
   constructor(fieldSchemas: FieldSchema[]) {
     this._fieldSchemas = fieldSchemas;

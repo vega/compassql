@@ -1,5 +1,5 @@
-import {Channel} from 'vega-lite/src/channel';
-import {Config} from 'vega-lite/src/config';
+import {Channel} from 'vega-lite/build/src/channel';
+import {Config} from 'vega-lite/build/src/config';
 
 import {toKey, DEFAULT_PROP_PRECEDENCE} from './property';
 import {DEFAULT_ENUM_INDEX, EnumIndex} from './wildcard';
@@ -76,7 +76,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   verbose: false,
   defaultSpecConfig: {
     overlay: {line: true},
-    scale: {useRawDomain: true}
+    scale: {useUnaggregatedDomain: true}
   },
   propertyPrecedence: DEFAULT_PROP_PRECEDENCE.map(toKey),
   enum: DEFAULT_ENUM_INDEX,

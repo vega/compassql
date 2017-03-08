@@ -8,7 +8,7 @@ export {generate} from './generate';
 export import model = require('./model');
 export import nest = require('./nest');
 export import property = require('./property');
-export import query = require('./query/query');
+export import query = require('./query');
 export import ranking = require('./ranking/ranking');
 export {recommend} from './recommend';
 export import schema = require('./schema');
