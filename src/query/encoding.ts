@@ -102,16 +102,16 @@ export function toFieldDef(fieldQ: FieldQuery,
  * Is a field query continuous field?
  * This method is applicable only for fieldQuery without wildcard
  */
-export function isContinuous(fieldQ: FieldQuery) {
-  return vlFieldDef.isContinuous(toFieldDef(fieldQ, ['bin', 'timeUnit', 'field', 'type']));
+export function isContinuous(encQ: EncodingQuery) {
+  return isFieldQuery(encQ) && vlFieldDef.isContinuous(toFieldDef(encQ, ['bin', 'timeUnit', 'field', 'type']));
 }
 
 /**
  * Is a field query discrete field?
  * This method is applicable only for fieldQuery without wildcard
  */
-export function isDiscrete(fieldQ: FieldQuery) {
-  return vlFieldDef.isDiscrete(toFieldDef(fieldQ, ['bin', 'timeUnit', 'field', 'type']));
+export function isDiscrete(encQ: EncodingQuery) {
+  return isFieldQuery(encQ) && vlFieldDef.isDiscrete(toFieldDef(encQ, ['bin', 'timeUnit', 'field', 'type']));
 }
 
 /**
