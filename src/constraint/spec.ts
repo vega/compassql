@@ -606,8 +606,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           if (specM.isAggregate()) { // TODO: refactor based on profiling statistics
             const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
             const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
-            const xIsMeasure = xEncQ && isContinuous(xEncQ);
-            const yIsMeasure = yEncQ && isContinuous(yEncQ);
+            const xIsMeasure = isContinuous(xEncQ);
+            const yIsMeasure = isContinuous(yEncQ);
 
             // for aggregate line / area, we need at least one group-by axis and one measure axis.
             return xEncQ && yEncQ && (xIsMeasure !== yIsMeasure) &&
@@ -631,8 +631,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
             // Tick and Bar should have one and only one continuous axis
             const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
             const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
-            const xIsContinuous = xEncQ && isContinuous(xEncQ);
-            const yIsContinuous = yEncQ && isContinuous(yEncQ);
+            const xIsContinuous = isContinuous(xEncQ);
+            const yIsContinuous = isContinuous(yEncQ);
             if (xIsContinuous !== yIsContinuous) {
               // TODO: Bar and tick's dimension should not be continuous (quant/time) scale
               return true;
