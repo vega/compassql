@@ -30,11 +30,15 @@ export interface ExtendedWildcard<T> extends Wildcard<T> {
 }
 
 export function isWildcard(prop: any): prop is Wildcard<any> | SHORT_WILDCARD  {
-  return isShortWildcard(prop) || (prop !== undefined && (!!prop.enum || !!prop.name) && !isArray(prop));
+  return isShortWildcard(prop) || isWildcardDef(prop);
 }
 
 export function isShortWildcard(prop: any): prop is SHORT_WILDCARD {
   return prop === SHORT_WILDCARD;
+}
+
+export function isWildcardDef(prop: any): prop is Wildcard<any> {
+  return prop !== undefined && (!!prop.enum || !!prop.name) && !isArray(prop);
 }
 
 export function initWildcard(prop: any, defaultName: string, defaultEnumValues: any[]): ExtendedWildcard<any> {
