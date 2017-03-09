@@ -700,9 +700,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         const xEncQ = specM.getEncodingQueryByChannel('x');
         const yEncQ = specM.getEncodingQueryByChannel('y');
 
-        // TODO(#186): take mark properties channel into account
-        if (isDiscrete(xEncQ) &&
-          isDiscrete(yEncQ) &&
+        // TODO(#186): take non-spatial channel into account
+        if ((!isFieldQuery(xEncQ) || isDiscrete(xEncQ)) &&
+          (!isFieldQuery(yEncQ) || isDiscrete(yEncQ)) &&
           !specM.isAggregate() // TODO: refactor based on statistics
         ) {
           return false;
