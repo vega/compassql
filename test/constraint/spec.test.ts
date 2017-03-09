@@ -1402,6 +1402,19 @@ describe('constraints/spec', () => {
 
       });
     });
+
+    it('return false for raw plot with both x and y are either empty or raw/unaggregated field.', () => {
+      [Mark.POINT, Mark.CIRCLE, Mark.SQUARE, Mark.LINE, Mark.AREA, Mark.BAR].forEach((mark) => {
+        const specM = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, field: 'N', type: Type.NOMINAL}
+          ]
+        });
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitTableWithOcclusionIfAutoAddCount'].satisfy(specM, schema, {autoAddCount: true}));
+
+      });
+    });
   });
 
   describe('omitVerticalDotPlot', () => {
