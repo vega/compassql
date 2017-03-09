@@ -32,7 +32,7 @@ export function isValueQuery(encQ: EncodingQuery): encQ is ValueQuery {
 }
 
 export function isFieldQuery(encQ: EncodingQuery): encQ is FieldQuery {
-  return encQ !== null && encQ !== undefined && (encQ['field'] || 'autoCount' in encQ);
+  return encQ !== null && encQ !== undefined && (encQ['field'] || 'autoCount' in encQ || encQ['aggregate'] === 'count');
 }
 
 // TODO: split this into FieldDefQuery and AutoCountQuery
