@@ -257,7 +257,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   },
   {
     name: 'omitAggregatePlotWithDimensionOnlyOnFacet',
-    description: 'All required channels for the specified mark should be specified',
+    description: 'Omit aggregate plots with dimensions only on facets as that leads to inefficient use of space.',
     properties: [Property.CHANNEL, Property.AGGREGATE, Property.AUTOCOUNT],
     allowWildcardForProperties: false,
     strict: false,
