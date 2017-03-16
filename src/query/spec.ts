@@ -4,13 +4,14 @@ import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
 import {StackProperties} from 'vega-lite/build/src/stack';
 
-import {isWildcard, WildcardProperty} from '../wildcard';
-import {isEncodingTopLevelProperty, Property} from '../property';
+import {isWildcard, WildcardProperty, Wildcard} from '../wildcard';
+import {isEncodingTopLevelProperty, Property, toKey, FlatProp, EncodingNestedProp} from '../property';
 import {contains, extend, keys, some} from '../util';
 
 import {TransformQuery} from './transform';
 import {EncodingQuery, isFieldQuery, isValueQuery} from './encoding';
 import {FacetedUnitSpec} from 'vega-lite/build/src/spec';
+import {toMap} from 'datalib/src/util';
 
 
 /**
@@ -126,4 +127,39 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
     };
   }
   return null;
+}
+
+export function hasWildcard(specQ: SpecQuery, opt: {exclude?: Property[]} = {}) {
+  const exclude = opt.exclude ? toMap(opt.exclude.map(toKey)) : {};
+  if (isWildcard(specQ.mark) && !exclude['mark']) {
+    return true;
+  }
+
+  for (const encQ of specQ.encodings) {
+    // TODO: implement more efficiently, just check only properties of encQ
+    for (const key in encQ) {
+      const parentProp = key as FlatProp;
+      if (encQ.hasOwnProperty(parentProp) && isEncodingTopLevelProperty(parentProp)) {
+
+        if(isWildcard(encQ[parentProp]) && !exclude[parentProp]) {
+          return true;
+        }
+
+        const propObj = encQ[parentProp];
+        for (const childProp in propObj) {
+          if (propObj.hasOwnProperty(childProp) && !contains(['enum', 'name'] as (keyof Wildcard<any>)[], childProp)) {
+            const prop: EncodingNestedProp = {
+              parent: parentProp,
+              child: childProp
+            } as EncodingNestedProp;
+
+            if (isWildcard(propObj[childProp]) && !exclude[toKey(prop)]) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+  }
+  return false;
 }
