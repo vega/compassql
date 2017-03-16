@@ -6,7 +6,7 @@ import {Type} from 'vega-lite/build/src/type';
 
 import {assert} from 'chai';
 
-import {fromSpec, stack, SpecQuery} from '../../src/query/spec';
+import {fromSpec, stack, SpecQuery, hasWildcard} from '../../src/query/spec';
 import {without} from '../../src/util';
 import {StackOffset} from 'vega-lite/build/src/stack';
 
@@ -281,6 +281,68 @@ describe('query/spec', () => {
           {channel: 'y', field: 'x', type: Type.QUANTITATIVE, scale: false}
         ]
       });
+    });
+  });
+
+  describe('hasWildcard', () => {
+    it('returns true if there is a wildcard mark', () => {
+      assert(hasWildcard({
+        mark: '?',
+        encodings: []
+      }));
+    });
+
+    it('returns true if there is a wildcard encoding top-level property', () => {
+      assert(hasWildcard({
+        mark: 'point',
+        encodings: [{
+          channel: '?',
+          field: 'x',
+          type: 'quantitative'
+        }]
+      }));
+    });
+
+    it('returns true if there is a wildcard encoding nested property', () => {
+      assert(hasWildcard({
+        mark: 'point',
+        encodings: [{
+          channel: 'x',
+          scale: {
+            type: '?',
+          },
+          field: 'x',
+          type: 'quantitative'
+        }]
+      }));
+    });
+
+    it('returns false if there is no wildcard', () => {
+      assert(!hasWildcard({
+        mark: 'point',
+        encodings: [{
+          channel: 'x',
+          bin: {
+            maxbins: 20,
+          },
+          field: 'x',
+          type: 'quantitative'
+        }]
+      }));
+    });
+
+    it('returns false if all wildcard are excluded', () => {
+      assert(!hasWildcard({
+        mark: '?',
+        encodings: [{
+          channel: 'x',
+          bin: {
+            maxbins: 20,
+          },
+          field: 'x',
+          type: 'quantitative'
+        }]
+      }, {exclude: ['mark']}));
     });
   });
 });
