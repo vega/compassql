@@ -17,7 +17,7 @@ import {duplicate, extend} from '../../src/util';
 
 import {schema} from '../fixture';
 
-describe('constraints/encoding', () => {
+describe('constraints/field', () => {
   const defaultOpt = DEFAULT_QUERY_CONFIG;
 
   const CONSTRAINT_MANUALLY_SPECIFIED_CONFIG = extend({}, DEFAULT_QUERY_CONFIG, {constraintManuallySpecifiedValue: true});

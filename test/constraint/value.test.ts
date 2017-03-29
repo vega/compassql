@@ -11,7 +11,7 @@ import {extend} from '../../src/util';
 
 import {schema} from '../fixture';
 
-describe('constraints/encoding', () => {
+describe('constraints/value', () => {
   const CONSTRAINT_MANUALLY_SPECIFIED_CONFIG = extend({}, DEFAULT_QUERY_CONFIG, {constraintManuallySpecifiedValue: true});
 
   describe('Value Constraint Checks', () => {
