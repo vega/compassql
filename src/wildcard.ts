@@ -278,7 +278,8 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
 export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryConfig): any[] {
   if (prop === 'field' || (isEncodingNestedProp(prop) && prop.parent === 'sort' && prop.child === 'field')) {
     // For field, by default enumerate all fields
-    if ((isEncodingNestedProp(prop) && prop.parent === 'sort' && prop.child === 'field') && opt.autoAddCountOnSort){
+    // For sort.field, add * on fields to sort by 'count'
+    if ((isEncodingNestedProp(prop) && prop.parent === 'sort' && prop.child === 'field')){
       return schema.fields().concat(['*']);
     }
     return schema.fields();

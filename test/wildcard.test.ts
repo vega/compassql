@@ -2,7 +2,7 @@ import {Mark} from 'vega-lite/build/src/mark';
 
 import {assert} from 'chai';
 import {initWildcard, isWildcard, SHORT_WILDCARD, getDefaultName, getDefaultEnumValues} from '../src/wildcard';
-import {DEFAULT_PROP_PRECEDENCE, toKey} from '../src/property';
+import {DEFAULT_PROP_PRECEDENCE, toKey, isEncodingNestedProp} from '../src/property';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 
 describe('wildcard', () => {
@@ -114,8 +114,12 @@ describe('wildcard', () => {
         if (e === undefined) {
           missing.push(toKey(prop));
         }
+        if ((isEncodingNestedProp(prop) && prop.parent === 'sort' && prop.child === 'field')){
+          assert.deepEqual(e, ['a', 'b', '*']);
+        }
       }
       assert.equal(missing.length, 0, 'Properties with missing enum: ' + missing.join(','));
     });
   });
 });
+

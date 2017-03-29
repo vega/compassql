@@ -493,20 +493,22 @@ describe('constraints/field', () => {
    });
   });
 
-  describe('onlyCountWithAutoCountFieldOnSort', () => {
+  describe('onlyUseCountWithAsteriskSortField', () => {
     it('should allow sort with * if and only if count is op', () => {
+      const encQ: EncodingQuery = {channel: Channel.X, field: 'O', type: Type.ORDINAL};
+      assert.isTrue(FIELD_CONSTRAINT_INDEX['onlyUseCountWithAsteriskSortField'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
 
-      const encQ: EncodingQuery = {channel: Channel.X, field: 'O', sort: {field: '*', op: 'count', order: 'ascending'}, type: Type.ORDINAL};
-      assert.isTrue(FIELD_CONSTRAINT_INDEX['onlyCountWithAutoCountFieldOnSort'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+      const encQ1: EncodingQuery = {channel: Channel.X, field: 'O', sort: {field: '*', op: 'count', order: 'ascending'}, type: Type.ORDINAL};
+      assert.isTrue(FIELD_CONSTRAINT_INDEX['onlyUseCountWithAsteriskSortField'].satisfy(encQ1, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
 
       const encQ2: EncodingQuery = {channel: Channel.X, field: 'O', sort: {field: '*', op: 'mean', order: 'ascending'}, type: Type.ORDINAL};
-      assert.isFalse(FIELD_CONSTRAINT_INDEX['onlyCountWithAutoCountFieldOnSort'].satisfy(encQ2, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+      assert.isFalse(FIELD_CONSTRAINT_INDEX['onlyUseCountWithAsteriskSortField'].satisfy(encQ2, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
 
       const encQ3: EncodingQuery = {channel: Channel.X, field: 'O', sort: {field: 'A', op: 'count', order: 'ascending'}, type: Type.ORDINAL};
-      assert.isFalse(FIELD_CONSTRAINT_INDEX['onlyCountWithAutoCountFieldOnSort'].satisfy(encQ3, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+      assert.isFalse(FIELD_CONSTRAINT_INDEX['onlyUseCountWithAsteriskSortField'].satisfy(encQ3, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
 
       const encQ4: EncodingQuery = {channel: Channel.X, field: 'O', sort: {field: 'A', op: 'mean', order: 'ascending'}, type: Type.ORDINAL};
-      assert.isTrue(FIELD_CONSTRAINT_INDEX['onlyCountWithAutoCountFieldOnSort'].satisfy(encQ4, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+      assert.isTrue(FIELD_CONSTRAINT_INDEX['onlyUseCountWithAsteriskSortField'].satisfy(encQ4, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
 
 
     });
