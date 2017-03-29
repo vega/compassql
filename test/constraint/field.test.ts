@@ -906,7 +906,6 @@ describe('constraints/field', () => {
           field: '*',
           type: type
         };
-
         assert.isTrue(FIELD_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(countEncQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
