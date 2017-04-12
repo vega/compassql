@@ -660,7 +660,6 @@ describe('generate', function () {
       };
       const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
 
-      // TODO(akshatsh): is undefined also okay?
       it('should output autoCount=false', () => {
         assert.isFalse((answerSet[0].getEncodingQueryByIndex(1) as AutoCountQuery).autoCount);
       });
