@@ -329,7 +329,7 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe.only('hasAppropriateGraphicTypeForMark', () => {
+  describe('hasAppropriateGraphicTypeForMark', () => {
     describe('bar, tick', () => {
       it('should return true for plots with one dimension and one measure on x/y', () => {
         [Mark.BAR, Mark.TICK].forEach((mark) => {
