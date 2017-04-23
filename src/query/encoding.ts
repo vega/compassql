@@ -15,6 +15,7 @@ import compileScaleType from 'vega-lite/build/src/compile/scale/type';
 
 import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
 import {AggregateOp} from 'vega-lite/build/src/aggregate';
+import {CompositeAggregate} from 'vega-lite/build/src/compositemark';
 import {FieldDef} from 'vega-lite/build/src/fielddef';
 
 export type EncodingQuery = FieldQuery | ValueQuery;
@@ -40,7 +41,7 @@ export interface FieldQuery extends EncodingQueryBase {
   channel: WildcardProperty<Channel>;
 
   // FieldDef
-  aggregate?: WildcardProperty<AggregateOp>;
+  aggregate?: WildcardProperty<AggregateOp | CompositeAggregate>;
   /** Internal flag for representing automatic count that are added to plots with only ordinal or binned fields. */
   autoCount?: WildcardProperty<boolean>;
   timeUnit?: WildcardProperty<TimeUnit>;
@@ -80,7 +81,7 @@ export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 export function toFieldDef(fieldQ: FieldQuery,
     props: (keyof FieldQuery)[] = ['aggregate', 'autoCount', 'bin', 'timeUnit', 'field', 'type']) {
 
-  return props.reduce((fieldDef: FieldDef, prop: keyof FieldQuery) => {
+  return props.reduce((fieldDef: FieldDef<string>, prop: keyof FieldQuery) => {
     if (isWildcard(fieldQ[prop])) {
       throw new Error(`Cannot convert ${JSON.stringify(fieldQ)} to fielddef: ${prop} is wildcard`);
     } else if (fieldQ[prop] !== undefined) {

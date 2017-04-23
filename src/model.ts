@@ -4,7 +4,7 @@ import {Encoding} from 'vega-lite/build/src/encoding';
 import {FieldDef} from 'vega-lite/build/src/fielddef';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Type} from 'vega-lite/build/src/type';
-import {FacetedUnitSpec} from 'vega-lite/build/src/spec';
+import {FacetSpec} from 'vega-lite/build/src/spec';
 import {StackProperties} from 'vega-lite/build/src/stack';
 
 import {QueryConfig} from './config';
@@ -263,11 +263,11 @@ export class SpecQueryModel {
     return specShorthand(this._spec);
   }
 
-  private _encoding(): Encoding {
-    let encoding: Encoding = {};
+  private _encoding(): Encoding<string> {
+    let encoding: Encoding<string> = {};
 
     for (const encQ of this._spec.encodings) {
-      let fieldDef: FieldDef = {};
+      let fieldDef: FieldDef<string> = {};
 
       // For count field that is automatically added, convert to correct vega-lite fieldDef
       if (isFieldQuery(encQ) && encQ.autoCount === true) {
@@ -313,7 +313,7 @@ export class SpecQueryModel {
    * Convert a query to a Vega-Lite spec if it is completed.
    * @return a Vega-Lite spec if completed, null otherwise.
    */
-  public toSpec(data?: Data): FacetedUnitSpec {
+  public toSpec(data?: Data): FacetSpec {
     if (isWildcard(this._spec.mark)) return null;
 
     let spec: any = {};

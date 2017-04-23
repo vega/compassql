@@ -10,7 +10,7 @@ import {contains, extend, keys, some} from '../util';
 
 import {TransformQuery} from './transform';
 import {EncodingQuery, isFieldQuery, isValueQuery} from './encoding';
-import {FacetedUnitSpec} from 'vega-lite/build/src/spec';
+import {FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
 import {toMap} from 'datalib/src/util';
 
 
@@ -34,7 +34,7 @@ export interface SpecQuery {
  * @param {ExtendedUnitSpec} spec
  * @returns
  */
-export function fromSpec(spec: FacetedUnitSpec): SpecQuery {
+export function fromSpec(spec: FacetedCompositeUnitSpec): SpecQuery { // dont know if this is right.
   return extend(
     spec.data ? { data: spec.data} : {},
     spec.transform ? { transform: spec.transform } : {},

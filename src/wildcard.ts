@@ -252,7 +252,7 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
   mark: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK], // Mark.TEXT
   channel: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT
 
-  aggregate: [undefined, 'mean'],
+  aggregate: [undefined, 'boxplot'],
   autoCount: DEFAULT_BOOLEAN_ENUM,
   bin: DEFAULT_BOOLEAN_ENUM,
   hasFn: DEFAULT_BOOLEAN_ENUM,

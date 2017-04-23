@@ -1,8 +1,8 @@
 import {Filter} from 'vega-lite/build/src/filter';
-import {Formula} from 'vega-lite/build/src/transform';
+import {VgFormulaTransform} from 'vega-lite/build/src/vega.schema';
 
 export interface TransformQuery {
-  calculate?: Formula[];
+  calculate?: VgFormulaTransform[];
   filter?: Filter | string | (Filter|string)[];
   filterInvalid?: boolean;
 }
