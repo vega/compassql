@@ -223,11 +223,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         case PrimitiveType.NUMBER:
         case PrimitiveType.INTEGER:
           return type !== Type.TEMPORAL;
-<<<<<<< 77f55febb51160429cbb94924d64b4d8619acc13
         case PrimitiveType.DATETIME:
-=======
-        case PrimitiveType.DATE:
->>>>>>> split constraint files
           // TODO: add NOMINAL, ORDINAL support after we support this in Vega-Lite
           return type === Type.TEMPORAL;
         case null:
@@ -253,11 +249,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         return fieldQ.type === Type.QUANTITATIVE;
       }
 
-<<<<<<< 77f55febb51160429cbb94924d64b4d8619acc13
       return schema.vlType(fieldQ.field as string) === fieldQ.type;
-=======
-      return schema.type(fieldQ.field as string) === fieldQ.type;
->>>>>>> split constraint files
     }
   },{
    name: 'maxCardinalityForCategoricalColor',
@@ -297,7 +289,8 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
       }
       return true; // other channel is irrelevant to this constraint
     }
-  },{
+  },
+  {
     name: 'dataTypeAndFunctionMatchScaleType',
     description: 'Scale type must match data type',
     properties: [Property.TYPE, Property.SCALE, getEncodingNestedProp('scale', 'type'), Property.TIMEUNIT, Property.BIN],
