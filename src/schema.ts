@@ -7,6 +7,7 @@ import {inferAll} from 'datalib/src/import/type';
 import * as dlBin from 'datalib/src/bins/bins';
 
 import {BinQuery, EncodingQuery, FieldQuery} from './query/encoding';
+import { ExpandedType } from './query/ExpandedType';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {cmp, duplicate, extend, keys} from './util';
 
@@ -36,7 +37,7 @@ export interface TableSchemaFieldDescriptor {
  * Field Schema
  */
 export interface FieldSchema extends TableSchemaFieldDescriptor {
-  vlType?: VLType;
+  vlType?: ExpandedType;
 
   index?: number;
   // Need to keep original index for re-exporting TableSchema
@@ -90,7 +91,7 @@ export function build(data: any,  tableSchema: TableSchema<TableSchemaFieldDescr
     // In Table schema, 'date' doesn't include time so use 'datetime'
     const type: PrimitiveType = types[name] === 'date' ? PrimitiveType.DATETIME :  (types[name] as any);
     let distinct: number = fieldProfile.distinct;
-    let vlType: VLType;
+    let vlType: ExpandedType;
 
     if (type === PrimitiveType.NUMBER) {
       vlType = VLType.QUANTITATIVE;
@@ -141,9 +142,10 @@ export function build(data: any,  tableSchema: TableSchema<TableSchemaFieldDescr
   // order the fieldSchemas (sort them)
   const order = {
     'nominal': 0,
-    'ordinal': 1,
-    'temporal': 2,
-    'quantitative': 3
+    'key': 1,
+    'ordinal': 2,
+    'temporal': 3,
+    'quantitative': 4
   };
   fieldSchemas.sort(function(a: FieldSchema, b: FieldSchema) {
     // first order by vlType: nominal < temporal < quantitative < ordinal

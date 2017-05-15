@@ -3,6 +3,9 @@ import {assert} from 'chai';
 import {Type} from 'vega-lite/build/src/type';
 import {Channel} from 'vega-lite/build/src/channel';
 
+import {ExpandedType} from '../src/query/ExpandedType';
+
+
 import {Schema, build, PrimitiveType} from '../src/schema';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {extend} from '../src/util';
@@ -66,7 +69,7 @@ describe('schema', () => {
 
     it('should return the correct type of measurement for each field', () => {
       assert.equal(schema.vlType('a'), Type.QUANTITATIVE);
-      assert.equal(schema.vlType('b'), Type.NOMINAL);
+      assert.equal(schema.vlType('b'), ExpandedType.KEY);
       assert.equal(schema.vlType('c'), Type.QUANTITATIVE);
       assert.equal(schema.vlType('d'), Type.TEMPORAL);
     });

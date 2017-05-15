@@ -10,6 +10,7 @@ import {Legend} from 'vega-lite/build/src/legend';
 import {SortOrder, SortField} from 'vega-lite/build/src/sort';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
 import {Type} from 'vega-lite/build/src/type';
+import {ExpandedType} from './ExpandedType';
 
 import compileScaleType from 'vega-lite/build/src/compile/scale/type';
 
@@ -56,7 +57,7 @@ export interface FieldQuery extends EncodingQueryBase {
   sort?: SortOrder | SortField;
 
   field?: WildcardProperty<string>;
-  type?: WildcardProperty<Type>;
+  type?: WildcardProperty<ExpandedType>;
   // TODO: value
 
   axis?: boolean | AxisQuery | SHORT_WILDCARD;
@@ -173,9 +174,14 @@ export function scaleType(fieldQ: FieldQuery) {
     return undefined;
   }
 
+  let vegaLiteType = type;
+  if (vegaLiteType === ExpandedType.KEY) {
+    vegaLiteType = Type.NOMINAL;
+  }
+
   return compileScaleType(
     scale.type, channel,
-    {type, timeUnit: timeUnit as TimeUnit, bin: bin as Bin},
+    {type: vegaLiteType, timeUnit: timeUnit as TimeUnit, bin: bin as Bin},
     markType, hasTopLevelSize, rangeStep, scaleConfig
   );
 }

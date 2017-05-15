@@ -5,6 +5,7 @@ import {Type} from 'vega-lite/build/src/type';
 import {QueryConfig} from './config';
 import {SpecQueryModel} from './model';
 import {AxisQuery, EncodingQuery, ScaleQuery, scaleType, isFieldQuery} from './query/encoding';
+import {ExpandedType} from './query/ExpandedType';
 import {Schema} from './schema';
 import {Dict} from './util';
 
@@ -86,7 +87,7 @@ export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schem
   encQIndex[Channel.COLOR] = specM.getEncodingQueryByChannel(Channel.COLOR);
 
   const colorEncQ = encQIndex[Channel.COLOR];
-  if (isFieldQuery(colorEncQ) && (colorEncQ !== undefined) && (colorEncQ.type === Type.NOMINAL) &&
+  if (isFieldQuery(colorEncQ) && (colorEncQ !== undefined) && (colorEncQ.type === Type.NOMINAL || colorEncQ.type === ExpandedType.KEY) &&
       (schema.cardinality(colorEncQ) > opt.nominalColorScaleForHighCardinality.maxCardinality)) {
 
     if (colorEncQ.scale === undefined) {
