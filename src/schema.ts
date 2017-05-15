@@ -121,6 +121,11 @@ export function build(data: any,  tableSchema: TableSchema<TableSchemaFieldDescr
       vlType = VLType.NOMINAL;
     }
 
+    let isIdLike = (vlType === VLType.NOMINAL && distinct / fieldProfile.count > .8 && fieldProfile.count > 50);
+    if (isIdLike) {
+      vlType = ExpandedType.KEY;
+    }
+
     let fieldSchema = {
       name: name,
       // Need to keep original index for re-exporting TableSchema
