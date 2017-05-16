@@ -70,6 +70,9 @@ export interface QueryConfig {
   // EFFECTIVENESS PREFERENCE
   maxGoodCardinalityForColor?: number; // FIXME: revise
   maxGoodCardinalityForFacet?: number; // FIXME: revise
+  // HIGH CARDINALITY STRINGS
+  percentUnique?: number;
+  minimumKeys?: number;
 }
 
 export const DEFAULT_QUERY_CONFIG: QueryConfig = {
@@ -126,6 +129,10 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   // RANKING PREFERENCE
   maxGoodCardinalityForFacet: 5, // FIXME: revise
   maxGoodCardinalityForColor: 7, // FIXME: revise
+
+  // HIGH CARDINALITY STRINGS
+  percentUnique: .8,
+  minimumKeys: 50,
 };
 
 export function extendConfig(opt: QueryConfig) {
