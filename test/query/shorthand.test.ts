@@ -10,7 +10,7 @@ import {PropIndex} from '../../src/propindex';
 import {SHORT_WILDCARD} from '../../src/wildcard';
 import {
   parse, splitWithTail, shorthandParser, vlSpec, spec as specShorthand,
-  encoding as encodingShorthand, fieldDef as fieldDefShorthand, calculate as calculateShorthand,
+  encoding as encodingShorthand, fieldDef as fieldDefShorthand,
   INCLUDE_ALL, getReplacer, Replacer
 } from '../../src/query/shorthand';
 
@@ -24,18 +24,15 @@ describe('query/shorthand', () => {
   describe('vlSpec', () => {
     it('should return a proper short hand string for a vega-lite spec', () => {
       assert.equal(vlSpec({
-        transform: {
-          filter: 'datum.x === 5',
-          calculate: [{
-            as: 'x2',
-            expr: 'datum.x*2'
-          }]
-        },
+        transform: [
+          {filter: 'datum.x === 5'},
+          {calculate: 'datum.x*2', as: 'x2'}
+        ],
         mark: Mark.POINT,
         encoding: {
           x: {field: 'x', type: Type.QUANTITATIVE}
         }
-      }), 'point|calculate:{"x2":"datum.x*2"}|filter:"datum.x === 5"|x:x,q');
+      }), 'point|transform:[{"filter":"datum.x === 5"},{"calculate":"datum.x*2","as":"x2"}]|x:x,q');
     });
   });
 
@@ -54,15 +51,14 @@ describe('query/shorthand', () => {
   describe('parse', () => {
     it('should correctly parse a shorthand string with calculate, filter, and filterInvalid', () => {
       let specQ: SpecQuery = parse(
-        'point|calculate:{"b2":"3*datum[\\"b2\\"]","a3":"3*datum[\\"a3\\"]"}|filter:"datum[\\"b2\\"] > 60"|filterInvalid:false|x:b2,q|y:bin(balance,q)'
+        'point|transform:[{"calculate":"3*datum[\\"b2\\"]", "as": "b2"},{"filter":"datum[\\"b2\\"] > 60"}]|x:b2,q|y:bin(balance,q)'
       );
 
       assert.deepEqual(specQ, {
-        transform: {
-          calculate: [{as: 'b2', expr: '3*datum["b2"]'}, {as: 'a3', expr: '3*datum["a3"]'}],
-          filter: 'datum["b2"] > 60',
-          filterInvalid: false
-        },
+        transform: [
+          {calculate: '3*datum["b2"]', as: 'b2'},
+          {filter: 'datum["b2"] > 60'}
+        ],
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'b2', type: Type.QUANTITATIVE},
@@ -334,53 +330,53 @@ describe('query/shorthand', () => {
 
     it('should return correct spec string for a specific specQuery with transform filter and calculate', () => {
       const str = specShorthand({
-        transform: {
-          calculate: [{as: 'b2', expr: '3*datum["b2"]'}],
-          filter: 'datum["b2"] > 60',
-          filterInvalid: false
-        },
+        transform: [
+          {calculate: '3*datum["b2"]', as: 'b2'},
+          {filter: 'datum["b2"] > 60'}
+        ],
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'b2', type: Type.QUANTITATIVE}
-        ]
+        ],
+        config: {filterInvalid: false}
       });
-      assert.equal(str, 'point|calculate:{"b2":"3*datum[\\"b2\\"]"}|filter:"datum[\\"b2\\"] > 60"|filterInvalid:false|x:b2,q');
+      assert.equal(str, 'point|transform:[{"calculate":"3*datum[\\"b2\\"]","as":"b2"},{"filter":"datum[\\"b2\\"] > 60"}]|x:b2,q');
     });
 
     it('should return correct spec string for a specific specQuery with transform filter and calculate', () => {
       const str = specShorthand({
-        transform: {
-          filter: [
-            {field: 'color', equal: 'red'}, 'datum["b2"] > 60', {field: 'color', oneOf: ['red', 'yellow']}, {field: 'x', range: [0,5]}
-          ],
-          filterInvalid: false
-        },
+        transform: [
+          {filter: {field: 'color', equal: 'red'}},
+          {filter: 'datum["b2"] > 60'},
+          {filter: {field: 'color', oneOf: ['red', 'yellow']}},
+          {filter: {field: 'x', range: [0,5]}}
+        ],
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'b2', type: Type.QUANTITATIVE}
-        ]
+        ],
+        config: {filterInvalid: false}
       });
-      assert.equal(str, 'point|filter:[{"field":"color","equal":"red"},"datum[\\"b2\\"] > 60",{"field":"color","oneOf":["red","yellow"]},{"field":"x","range":[0,5]}]|filterInvalid:false|x:b2,q');
+      assert.deepEqual(
+        str,
+        'point|transform:['+
+        '{"filter":{"field":"color","equal":"red"}},' +
+        '{"filter":"datum[\\"b2\\"] > 60"},' +
+        '{"filter":{"field":"color","oneOf":["red","yellow"]}},' +
+        '{"filter":{"field":"x","range":[0,5]}}]' +
+        '|x:b2,q'
+      );
     });
 
     it('should return correct spec string for a specific specQuery with an empty transform', () => {
       const str = specShorthand({
-        transform: {},
+        transform: [],
         mark: Mark.POINT,
         encodings: [
           {channel: Channel.X, field: 'a', type: Type.QUANTITATIVE}
         ]
       });
       assert.equal(str, 'point|x:a,q');
-    });
-  });
-
-  describe('calculate', () => {
-    it('should return a correct calculate string when passed a Formula array', () => {
-      const str = calculateShorthand([
-        {as: 'b2', expr: '2*datum["b"]'}, {as: 'a', expr:'3*datum["a"]'}
-      ]);
-      assert.equal(str, '{"b2":"2*datum[\\"b\\"]","a":"3*datum[\\"a\\"]"}');
     });
   });
 

@@ -213,7 +213,7 @@ describe('query/spec', () => {
     it('should produce correct SpecQuery', () => {
       const specQ = fromSpec({
         data: {values: [{x: 1}, {x: 2}]},
-        transform: {filter: 'datum.x ===2'},
+        transform: [{filter: 'datum.x ===2'}],
         mark: Mark.POINT,
         encoding: {
           x: {
@@ -232,7 +232,7 @@ describe('query/spec', () => {
       });
       assert.deepEqual(specQ, {
         data: {values: [{x: 1}, {x: 2}]},
-        transform: {filter: 'datum.x ===2'},
+        transform: [{filter: 'datum.x ===2'}],
         mark: Mark.POINT,
         encodings: [
           {channel: 'x', field: 'x', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
@@ -246,7 +246,7 @@ describe('query/spec', () => {
     it('should produce correct SpecQuery with Sort', () => {
       const specQ = fromSpec({
         data: {values: [{x: 1}, {x: 2}]},
-        transform: {filter: 'datum.x ===2'},
+        transform: [{filter: 'datum.x ===2'}],
         mark: Mark.POINT,
         encoding: {
           x: {field: 'x', sort: 'ascending', type: Type.QUANTITATIVE},
@@ -256,7 +256,7 @@ describe('query/spec', () => {
       });
       assert.deepEqual(specQ, {
         data: {values: [{x: 1}, {x: 2}]},
-        transform: {filter: 'datum.x ===2'},
+        transform: [{filter: 'datum.x ===2'}],
         mark: Mark.POINT,
         encodings: [
           {channel: 'x', field: 'x', sort: 'ascending', type: Type.QUANTITATIVE},

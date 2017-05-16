@@ -1,7 +1,6 @@
 import {AGGREGATE_OPS} from 'vega-lite/build/src/aggregate';
 import {Channel, CHANNELS} from 'vega-lite/build/src/channel';
-import {Formula} from 'vega-lite/build/src/transform';
-import {FacetedUnitSpec} from 'vega-lite/build/src/spec';
+import {FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
 import {SINGLE_TIMEUNITS, MULTI_TIMEUNITS} from 'vega-lite/build/src/timeunit';
 import {Type, getFullName} from 'vega-lite/build/src/type';
 import {toMap, isString} from 'datalib/src/util';
@@ -54,13 +53,16 @@ export function replace(v: any, replacer: Replacer): any {
 export const REPLACE_NONE = new PropIndex<Replacer>();
 
 export const INCLUDE_ALL: PropIndex<boolean> =
-  // FIXME: remove manual STACK, FILTER, CALCULATE concat once we really support enumerating it.
-  DEFAULT_PROP_PRECEDENCE
-    .concat(SORT_PROPS, [Property.CALCULATE, Property.FILTER, Property.FILTERINVALID, Property.STACK])
-    .reduce((pi, prop) => pi.set(prop, true), new PropIndex<boolean>());
+  // FIXME: remove manual TRANSFORM concat once we really support enumerating transform.
+  [].concat(
+    DEFAULT_PROP_PRECEDENCE,
+    SORT_PROPS,
+    [Property.TRANSFORM, Property.STACK]
+  )
+  .reduce((pi, prop: Property) => pi.set(prop, true), new PropIndex<boolean>());
 
 
-export function vlSpec(vlspec: FacetedUnitSpec,
+export function vlSpec(vlspec: FacetedCompositeUnitSpec,
     include: PropIndex<boolean> = INCLUDE_ALL,
     replace: PropIndex<Replacer> = REPLACE_NONE) {
   const specQ = fromSpec(vlspec);
@@ -84,30 +86,14 @@ export function spec(specQ: SpecQuery,
     include: PropIndex<boolean> = INCLUDE_ALL,
     replace: PropIndex<Replacer> = REPLACE_NONE
     ): string {
-  const parts = [];
+  const parts: string[] = [];
 
   if (include.get(Property.MARK)) {
     parts.push(value(specQ.mark, replace.get(Property.MARK)));
   }
 
-  if (specQ.transform) {
-    if (include.get(Property.CALCULATE)) {
-      if (specQ.transform.calculate !== undefined) {
-        parts.push('calculate:' + calculate(specQ.transform.calculate));
-      }
-    }
-
-    if (include.get(Property.FILTER)) {
-      if (specQ.transform.filter !== undefined) {
-        parts.push('filter:' + JSON.stringify(specQ.transform.filter));
-      }
-    }
-
-    if (include.get(Property.FILTERINVALID)) {
-      if (specQ.transform.filterInvalid !== undefined) {
-        parts.push('filterInvalid:' + specQ.transform.filterInvalid);
-      }
-    }
+  if (specQ.transform && specQ.transform.length > 0) {
+    parts.push('transform:' + JSON.stringify(specQ.transform));
   }
 
   // TODO: extract this to its own stack method
@@ -152,14 +138,6 @@ export function spec(specQ: SpecQuery,
   return parts.join('|');
 }
 
-export function calculate(formulaArr: Formula[]): string {
-  return JSON.stringify(
-    formulaArr.reduce((m, calculateItem) => {
-      m[calculateItem.as] = calculateItem.expr;
-      return m;
-    }, {})
-  );
-}
 
 /**
  * Returns a shorthand for an encoding query
@@ -362,28 +340,8 @@ export function parse(shorthand: string): SpecQuery {
       continue;
     }
 
-    if (splitPartKey === 'calculate') {
-      specQ.transform = specQ.transform || {};
-      let calculate: Formula[] = [];
-      let fieldExprMapping = JSON.parse(splitPartValue);
-
-      for (let field in fieldExprMapping) {
-        calculate.push({expr: fieldExprMapping[field], as: field});
-      }
-
-      specQ.transform.calculate = calculate;
-      continue;
-    }
-
-    if (splitPartKey === 'filter') {
-      specQ.transform = specQ.transform || {};
-      specQ.transform.filter = JSON.parse(splitPartValue);
-      continue;
-    }
-
-    if (splitPartKey === 'filterInvalid') {
-      specQ.transform = specQ.transform || {};
-      specQ.transform.filterInvalid = JSON.parse(splitPartValue);
+    if (splitPartKey === 'transform') {
+      specQ.transform = JSON.parse(splitPartValue);
       continue;
     }
   }

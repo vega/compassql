@@ -150,7 +150,7 @@ export type EnumIndex =
     autoCount: boolean[],
     hasFn: boolean[],
   } &
-  DefEnumIndex<FieldDef> &
+  DefEnumIndex<FieldDef<string>> &
   {
     sort: (SortField | SortOrder)[],
     scale: boolean[],
@@ -218,7 +218,6 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   format: [undefined],
   labels: DEFAULT_BOOLEAN_ENUM,
   labelAngle: [undefined],
-  labelMaxLength: [undefined],
   labelPadding: [undefined],
 
   maxExtent: [undefined],

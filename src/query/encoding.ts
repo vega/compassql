@@ -80,7 +80,7 @@ export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 export function toFieldDef(fieldQ: FieldQuery,
     props: (keyof FieldQuery)[] = ['aggregate', 'autoCount', 'bin', 'timeUnit', 'field', 'type']) {
 
-  return props.reduce((fieldDef: FieldDef, prop: keyof FieldQuery) => {
+  return props.reduce((fieldDef: FieldDef<string>, prop: keyof FieldQuery) => {
     if (isWildcard(fieldQ[prop])) {
       throw new Error(`Cannot convert ${JSON.stringify(fieldQ)} to fielddef: ${prop} is wildcard`);
     } else if (fieldQ[prop] !== undefined) {
@@ -139,6 +139,11 @@ export function scaleType(fieldQ: FieldQuery) {
     return undefined;
   }
 
+  // If scale type is specified, then use scale.type
+  if (scale.type) {
+    return scale.type;
+  }
+
   let rangeStep: number = undefined;
   // Note: Range step currently does not matter as we don't pass mark into compileScaleType anyway.
   // However, if we pass mark, we could use a rule like the following.
@@ -169,7 +174,8 @@ export function scaleType(fieldQ: FieldQuery) {
   }
 
   return compileScaleType(
-    scale.type, channel, {type, timeUnit: timeUnit as TimeUnit, bin}, markType,
-    hasTopLevelSize, rangeStep, scaleConfig
+    scale.type, channel,
+    {type, timeUnit: timeUnit as TimeUnit, bin: bin as Bin},
+    markType, hasTopLevelSize, rangeStep, scaleConfig
   );
 }
