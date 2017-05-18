@@ -26,6 +26,7 @@ export interface QueryConfig {
    * plots that contain neither unbinned quantitative field nor temporal field without time unit.
    */
   autoAddCount?: boolean;
+  autoAddCountOnSort?: boolean;
 
   // CONSTRAINTS
   constraintManuallySpecifiedValue?: boolean;
@@ -88,6 +89,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   constraintManuallySpecifiedValue: false,
   // Spec Constraints -- See description inside src/constraints/spec.ts
   autoAddCount: false,
+  autoAddCountOnSort: false,
 
   hasAppropriateGraphicTypeForMark: true,
   omitAggregate: false,

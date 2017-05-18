@@ -177,7 +177,7 @@ const DEFAULT_BIN_PROPS_ENUM: DefEnumIndex<Bin> = {
 
 const DEFAULT_SORT_PROPS: DefEnumIndex<SortField> = {
   field: [undefined], // This should be never call and instead read from the schema
-  op: ['min', 'mean'],
+  op: ['min', 'mean', 'count'],
   order: ['ascending', 'descending']
 };
 
@@ -278,6 +278,9 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
 export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryConfig): any[] {
   if (prop === 'field' || (isEncodingNestedProp(prop) && prop.parent === 'sort' && prop.child === 'field')) {
     // For field, by default enumerate all fields
+    if ((isEncodingNestedProp(prop) && prop.parent === 'sort' && prop.child === 'field') && opt.autoAddCountOnSort){
+      return schema.fields().concat(['*']);
+    }
     return schema.fields();
   }
 
