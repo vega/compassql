@@ -1,9 +1,9 @@
 import {AGGREGATE_OPS} from 'vega-lite/build/src/aggregate';
 import {Channel, CHANNELS} from 'vega-lite/build/src/channel';
-import {Formula} from 'vega-lite/build/src/transform';
-import {FacetedUnitSpec} from 'vega-lite/build/src/spec';
+import {FacetSpec} from 'vega-lite/build/src/spec';
 import {SINGLE_TIMEUNITS, MULTI_TIMEUNITS} from 'vega-lite/build/src/timeunit';
 import {Type, getFullName} from 'vega-lite/build/src/type';
+import {VgFormulaTransform} from 'vega-lite/build/src/vega.schema';
 import {toMap, isString} from 'datalib/src/util';
 
 import {EncodingQuery, isFieldQuery, FieldQuery, isValueQuery} from './encoding';
@@ -60,7 +60,7 @@ export const INCLUDE_ALL: PropIndex<boolean> =
     .reduce((pi, prop) => pi.set(prop, true), new PropIndex<boolean>());
 
 
-export function vlSpec(vlspec: FacetedUnitSpec,
+export function vlSpec(vlspec: FacetSpec,
     include: PropIndex<boolean> = INCLUDE_ALL,
     replace: PropIndex<Replacer> = REPLACE_NONE) {
   const specQ = fromSpec(vlspec);
@@ -152,7 +152,7 @@ export function spec(specQ: SpecQuery,
   return parts.join('|');
 }
 
-export function calculate(formulaArr: Formula[]): string {
+export function calculate(formulaArr: VgFormulaTransform[]): string {
   return JSON.stringify(
     formulaArr.reduce((m, calculateItem) => {
       m[calculateItem.as] = calculateItem.expr;
@@ -364,11 +364,11 @@ export function parse(shorthand: string): SpecQuery {
 
     if (splitPartKey === 'calculate') {
       specQ.transform = specQ.transform || {};
-      let calculate: Formula[] = [];
+      let calculate: VgFormulaTransform[] = [];
       let fieldExprMapping = JSON.parse(splitPartValue);
 
       for (let field in fieldExprMapping) {
-        calculate.push({expr: fieldExprMapping[field], as: field});
+        calculate.push({type: 'formula', expr: fieldExprMapping[field], as: field}); // dont know if this right
       }
 
       specQ.transform.calculate = calculate;
