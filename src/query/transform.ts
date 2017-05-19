@@ -1,8 +1,4 @@
-import {Filter} from 'vega-lite/build/src/filter';
-import {Formula} from 'vega-lite/build/src/transform';
+import {Transform} from 'vega-lite/build/src/transform';
 
-export interface TransformQuery {
-  calculate?: Formula[];
-  filter?: Filter | string | (Filter|string)[];
-  filterInvalid?: boolean;
-}
+// TODO: support enumeration of transform properties
+export type TransformQuery = Transform;

@@ -10,9 +10,8 @@ import {contains, extend, keys, some} from '../util';
 
 import {TransformQuery} from './transform';
 import {EncodingQuery, isFieldQuery, isValueQuery} from './encoding';
-import {FacetedUnitSpec} from 'vega-lite/build/src/spec';
+import {TopLevel, FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
 import {toMap} from 'datalib/src/util';
-
 
 /**
  * This interface follows the same structure as [Vega-Lite](https://github.com/vega/vega-lite)'s `UnitSpec`.
@@ -22,7 +21,7 @@ import {toMap} from 'datalib/src/util';
 export interface SpecQuery {
   data?: Data;
   mark: WildcardProperty<Mark>;
-  transform?: TransformQuery;
+  transform?: TransformQuery[];
   encodings: EncodingQuery[];
 
   // TODO: make config query (not important at all, only for the sake of completeness.)
@@ -34,7 +33,7 @@ export interface SpecQuery {
  * @param {ExtendedUnitSpec} spec
  * @returns
  */
-export function fromSpec(spec: FacetedUnitSpec): SpecQuery {
+export function fromSpec(spec: TopLevel<FacetedCompositeUnitSpec>): SpecQuery {
   return extend(
     spec.data ? { data: spec.data} : {},
     spec.transform ? { transform: spec.transform } : {},

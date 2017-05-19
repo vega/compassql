@@ -252,7 +252,7 @@ describe('SpecQueryModel', () => {
     it('should return a Vega-Lite spec if the query is completed', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{A: 1}]},
-        transform: {filter: 'datum.A===1'},
+        transform: [{filter: 'datum.A===1'}],
         mark: Mark.BAR,
         encodings: [
           {
@@ -273,7 +273,7 @@ describe('SpecQueryModel', () => {
       const spec = specM.toSpec();
       assert.deepEqual(spec, {
         data: {values: [{A: 1}]},
-        transform: {filter: 'datum.A===1'},
+        transform: [{filter: 'datum.A===1'}],
         mark: Mark.BAR,
         encoding: {
           x: {field: 'A', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
@@ -286,7 +286,7 @@ describe('SpecQueryModel', () => {
     it('should return a Vega-Lite spec that does not output inapplicable legend', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{A: 1}]},
-        transform: {filter: 'datum.A===1'},
+        transform: [{filter: 'datum.A===1'}],
         mark: Mark.BAR,
         encodings: [
           {
@@ -302,7 +302,7 @@ describe('SpecQueryModel', () => {
       const spec = specM.toSpec();
       assert.deepEqual(spec, {
         data: {values: [{A: 1}]},
-        transform: {filter: 'datum.A===1'},
+        transform: [{filter: 'datum.A===1'}],
         mark: Mark.BAR,
         encoding: {
           x: {field: 'A', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
@@ -314,7 +314,7 @@ describe('SpecQueryModel', () => {
     it('should return a Vega-Lite spec that does not output inapplicable axis', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{A: 1}]},
-        transform: {filter: 'datum.A===1'},
+        transform: [{filter: 'datum.A===1'}],
         mark: Mark.BAR,
         encodings: [
           {
@@ -330,7 +330,7 @@ describe('SpecQueryModel', () => {
       const spec = specM.toSpec();
       assert.deepEqual(spec, {
         data: {values: [{A: 1}]},
-        transform: {filter: 'datum.A===1'},
+        transform: [{filter: 'datum.A===1'}],
         mark: Mark.BAR,
         encoding: {
           color: {field: 'B', type: Type.QUANTITATIVE, legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}}
@@ -382,7 +382,7 @@ describe('SpecQueryModel', () => {
     it('should return a correct Vega-Lite spec if the query has sort: SortOrder', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{A: 1}]},
-        transform: {filter: 'datum.A===1'},
+        transform: [{filter: 'datum.A===1'}],
         mark: Mark.BAR,
         encodings: [
           {channel: Channel.X, field: 'A', sort: 'ascending', type: Type.QUANTITATIVE},
@@ -394,7 +394,7 @@ describe('SpecQueryModel', () => {
       const spec = specM.toSpec();
       assert.deepEqual(spec, {
         data: {values: [{A: 1}]},
-        transform: {filter: 'datum.A===1'},
+        transform: [{filter: 'datum.A===1'}],
         mark: Mark.BAR,
         encoding: {
           x: {field: 'A', sort: 'ascending', type: Type.QUANTITATIVE},

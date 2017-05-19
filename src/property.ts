@@ -135,7 +135,7 @@ export const ALL_ENCODING_PROPS = ([] as Property[]).concat(
   ENCODING_NESTED_PROPS
 );
 
-export const DEFAULT_PROP_PRECEDENCE =
+export const DEFAULT_PROP_PRECEDENCE: Property[] =
 ([
   'type', // type is a constraint for field
   'field',
@@ -158,14 +158,7 @@ export const DEFAULT_PROP_PRECEDENCE =
 export namespace Property {
   export const MARK: 'mark' = 'mark';
 
-  export const FILTER: 'filter' = 'filter';
-  // TODO: Sub-properties for filter
-
-  export const CALCULATE: 'calculate' = 'calculate';
-  // TODO: Sub-properties for calculate
-
-  export const FILTERINVALID: 'filterInvalid' = 'filterInvalid';
-
+  export const TRANSFORM: 'transform' = 'transform';
   // Layout
   export const STACK: 'stack' = 'stack';
   // TODO: sub parts of stack
