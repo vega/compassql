@@ -9,7 +9,7 @@ import {isEncodingTopLevelProperty, Property, toKey, FlatProp, EncodingNestedPro
 import {contains, extend, keys, some} from '../util';
 
 import {TransformQuery} from './transform';
-import {EncodingQuery, isFieldQuery, isValueQuery, isAutoCountQuery} from './encoding';
+import {EncodingQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isEnabledAutoCountQuery} from './encoding';
 import {TopLevel, FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
 import {toMap} from 'datalib/src/util';
 
@@ -65,7 +65,7 @@ export function fromSpec(spec: TopLevel<FacetedCompositeUnitSpec>): SpecQuery {
 
 export function isAggregate(specQ: SpecQuery) {
   return some(specQ.encodings, (encQ: EncodingQuery) => {
-    return ((isFieldQuery(encQ) && !isWildcard(encQ.aggregate) && !!encQ.aggregate) || (isAutoCountQuery(encQ) && encQ.autoCount === true));
+    return ((isFieldQuery(encQ) && !isWildcard(encQ.aggregate) && !!encQ.aggregate) || isEnabledAutoCountQuery(encQ));
   });
 }
 

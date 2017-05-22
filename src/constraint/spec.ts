@@ -16,7 +16,7 @@ import {PropIndex} from '../propindex';
 import {Schema} from '../schema';
 import {contains, every, some} from '../util';
 
-import {scaleType, EncodingQuery, isDiscrete, isContinuous, ScaleQuery, isFieldQuery, isValueQuery, isAutoCountQuery} from '../query/encoding';
+import {scaleType, EncodingQuery, isDiscrete, isContinuous, ScaleQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery} from '../query/encoding';
 
 const NONSPATIAL_CHANNELS_INDEX = NONSPATIAL_CHANNELS.reduce((m, channel) => {
   m[channel] = true;
@@ -139,7 +139,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     allowWildcardForProperties: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
-      const hasAutoCount =  some(specM.getEncodings(), (encQ: EncodingQuery) => isAutoCountQuery(encQ) && encQ.autoCount === true);
+      const hasAutoCount =  some(specM.getEncodings(), (encQ: EncodingQuery) => isEnabledAutoCountQuery(encQ));
 
       if (hasAutoCount) {
         // Auto count should only be applied if all fields are nominal, ordinal, temporal with timeUnit, binned quantitative, or autoCount
@@ -149,10 +149,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           if (isAutoCountQuery(encQ)) {
             return true;
           }
-
-          /*if (encQ.autoCount !== undefined) {
-            return true;
-          }*/
 
           switch (encQ.type) {
             case Type.QUANTITATIVE:
@@ -183,8 +179,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           return some(specM.getEncodings(), (encQ: EncodingQuery) => {
             if ((isFieldQuery(encQ) || isAutoCountQuery(encQ)) && encQ.type === Type.QUANTITATIVE) {
 
-              // TODO(akshatsh): autoCount undefined okay?
-              if (isAutoCountQuery(encQ) && encQ.autoCount === false) {
+              if (isDisabledAutoCountQuery(encQ)) {
                 return false;
               } else {
                 return isFieldQuery(encQ) && (!encQ.bin || isWildcard(encQ.bin));
@@ -276,7 +271,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       if (specM.isAggregate()) {
         let hasNonFacetDim = false, hasDim = false, hasEnumeratedFacetDim = false;
         specM.specQuery.encodings.forEach((encQ, index) => {
-          if (isValueQuery(encQ) || (isAutoCountQuery(encQ) && encQ.autoCount === false)) return; // skip unused field
+          if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ))) return; // skip unused field
 
           // FieldQuery & !encQ.aggregate
           if (isFieldQuery(encQ) && !encQ.aggregate) { // isDimension
@@ -409,7 +404,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
       for (let i = 0; i < encodings.length; i++) {
         const encQ = encodings[i];
-        if (isValueQuery(encQ) || (isAutoCountQuery(encQ) && encQ.autoCount === false)) continue; // ignore skipped encoding
+        if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ))) continue; // ignore skipped encoding
 
         const channel = encQ.channel;
         if (!isWildcard(channel)) {
@@ -442,7 +437,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       let hasX = false, hasY = false;
       for (let i = 0; i < encodings.length; i++) {
         const encQ = encodings[i];
-        if (isValueQuery(encQ) || (isAutoCountQuery(encQ) && encQ.autoCount === false)) continue; // ignore skipped encoding
+        if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ))) continue; // ignore skipped encoding
 
         const channel = encQ.channel;
         if (channel === Channel.X) {
@@ -491,7 +486,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
          const encodings = specM.specQuery.encodings;
          for (let i = 0; i < encodings.length; i++) {
            const encQ = encodings[i];
-           if (isValueQuery(encQ) || (isAutoCountQuery(encQ) && encQ.autoCount === false)) continue; // skip unused encoding
+           if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ))) continue; // skip unused encoding
 
            // TODO: aggregate for ordinal and temporal
 
@@ -536,7 +531,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         return true;
       }
       return every(specM.specQuery.encodings, (encQ, index) => {
-        if (isValueQuery(encQ) || (isAutoCountQuery(encQ) && encQ.autoCount === false)) return true; // ignore autoCount field
+        if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ))) return true; // ignore autoCount field
 
         if (encQ.channel === Channel.DETAIL) {
           // Detail channel for raw plot is not good, except when its enumerated
@@ -676,7 +671,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       if (stack) {
         for (let encQ of specM.getEncodings()) {
           if (isValueQuery(encQ)) continue;
-          if (((isFieldQuery(encQ) && !!encQ.aggregate) || (isAutoCountQuery(encQ) && encQ.autoCount === true)) &&
+          if (((isFieldQuery(encQ) && !!encQ.aggregate) || isEnabledAutoCountQuery(encQ)) &&
              encQ.type === Type.QUANTITATIVE &&
              contains([Channel.X, Channel.Y], encQ.channel)) {
               if (scaleType(encQ) !== ScaleType.LINEAR) {

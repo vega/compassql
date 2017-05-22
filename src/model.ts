@@ -12,7 +12,7 @@ import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNest
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
-import {EncodingQuery, isFieldQuery, isValueQuery, isAutoCountQuery} from './query/encoding';
+import {EncodingQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery} from './query/encoding';
 import {GroupBy, ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
@@ -237,7 +237,7 @@ export class SpecQueryModel {
   public getEncodings() {
     // do not include encoding that has autoCount = false because it is not a part of the output spec.
     // TODO(akshatsh): check that autcount = undef is valid???
-    return this._spec.encodings.filter((encQ) => (isValueQuery(encQ) || !(isAutoCountQuery(encQ) && encQ.autoCount === false)));
+    return this._spec.encodings.filter((encQ) => (isValueQuery(encQ) || !(isDisabledAutoCountQuery(encQ))));
   }
 
   public getEncodingQueryByChannel(channel: Channel) {
@@ -272,13 +272,12 @@ export class SpecQueryModel {
       let fieldDef: FieldDef<string> = {};
 
       // For count field that is automatically added, convert to correct vega-lite fieldDef
-      if (isAutoCountQuery(encQ) && encQ.autoCount === true) {
+      if (isEnabledAutoCountQuery(encQ)) {
         fieldDef.aggregate = 'count';
         fieldDef.field = '*';
         fieldDef.type = Type.QUANTITATIVE;
 
-        // TODO(akshatsh): is undef okay?
-      } else if (isValueQuery(encQ) || (isAutoCountQuery(encQ) && encQ.autoCount === false)) {
+      } else if (isValueQuery(encQ) || isDisabledAutoCountQuery(encQ)) {
         continue; // Do not include this in the output.
       }
 

@@ -7,7 +7,7 @@ import {some} from '../util';
 
 import {RankingScore, FeatureScore} from './ranking';
 
-import {EncodingQuery, isFieldQuery, isDiscrete, FieldQuery, isAutoCountQuery} from '../query/encoding';
+import {EncodingQuery, isFieldQuery, isDiscrete, FieldQuery, isAutoCountQuery, isEnabledAutoCountQuery} from '../query/encoding';
 
 export const name = 'aggregationQuality';
 
@@ -44,7 +44,7 @@ function aggregationQualityFeature(specM: SpecQueryModel, _: Schema, __: QueryCo
 
     if (some(encodings, (encQ) => isFieldQuery(encQ) && isDimension(encQ))) {
       let hasCount = some(encodings, (encQ: EncodingQuery) => {
-        return (isFieldQuery(encQ) && encQ.aggregate === 'count' || isAutoCountQuery(encQ) && encQ.autoCount === true);
+        return (isFieldQuery(encQ) && encQ.aggregate === 'count' || isEnabledAutoCountQuery(encQ));
       });
       let hasBin = some(encodings, (encQ: EncodingQuery) => {
         return isFieldQuery(encQ) && !!encQ.bin;
