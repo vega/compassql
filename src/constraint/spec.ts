@@ -617,8 +617,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
               // TODO: make this clause optional
 
               // TODO: should this one consider ORDINAL too.
-              !(isFieldQuery(xEncQ) && !xIsMeasure && (isDiscreteType(xEncQ.type))) &&
-              !(isFieldQuery(yEncQ) && !yIsMeasure && (yEncQ.type === Type.NOMINAL || yEncQ.type === ExpandedType.KEY))
+              !(isFieldQuery(xEncQ) && !xIsMeasure && (isDiscreteType(xEncQ.type)) && xEncQ.type !== Type.ORDINAL) &&
+              !(isFieldQuery(yEncQ) && !yIsMeasure && (isDiscreteType(yEncQ.type)))
             ;
             // TODO: allow connected scatterplot
           }
