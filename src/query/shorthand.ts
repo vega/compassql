@@ -5,7 +5,7 @@ import {SINGLE_TIMEUNITS, MULTI_TIMEUNITS} from 'vega-lite/build/src/timeunit';
 import {Type, getFullName} from 'vega-lite/build/src/type';
 import {toMap, isString} from 'datalib/src/util';
 
-import {EncodingQuery, isFieldQuery, FieldQuery, isValueQuery, isAutoCountQuery} from './encoding';
+import {EncodingQuery, isFieldQuery, FieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
 
 import {isWildcard, isShortWildcard, SHORT_WILDCARD} from '../wildcard';
@@ -178,7 +178,7 @@ export function fieldDef(encQ: EncodingQuery,
     replacer: PropIndex<Replacer> = REPLACE_NONE): string {
 
   // TODO(akshatsh): check this
-  if (include.get(Property.AGGREGATE) && isAutoCountQuery(encQ) && encQ.autoCount === false) {
+  if (include.get(Property.AGGREGATE) && isDisabledAutoCountQuery(encQ)) {
     return '-';
   }
 

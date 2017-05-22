@@ -96,8 +96,9 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN],
     allowWildcardForProperties: true,
     strict: true,
-    // TODO(akshatsh): Allow field query with optional autocount?
+    // TODO(akshatsh): Check constraint
     satisfy: (fieldQ: FieldQuery & AutoCountQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
+
       const numFn = (!isWildcard(fieldQ.aggregate) && !!fieldQ.aggregate ? 1 : 0) +
         (isAutoCountQuery(fieldQ) && !isWildcard(fieldQ.autoCount) && !!fieldQ.autoCount ? 1 : 0) +
         (!isWildcard(fieldQ.bin) && !!fieldQ.bin ? 1 : 0) +

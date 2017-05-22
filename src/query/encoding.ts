@@ -39,6 +39,14 @@ export function isAutoCountQuery(encQ: EncodingQuery): encQ is AutoCountQuery {
   return encQ !== null && encQ !== undefined && 'autoCount' in encQ;
 }
 
+export function isDisabledAutoCountQuery(encQ: EncodingQuery) {
+  return isAutoCountQuery(encQ) && encQ.autoCount === false;
+}
+
+export function isEnabledAutoCountQuery(encQ: EncodingQuery) {
+  return isAutoCountQuery(encQ) && encQ.autoCount === true;
+}
+
 export interface AutoCountQuery extends EncodingQueryBase {
   autoCount: WildcardProperty<boolean>;
   type: 'quantitative';
