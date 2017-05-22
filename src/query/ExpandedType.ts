@@ -8,3 +8,7 @@ export namespace ExpandedType {
 }
 
 export type ExpandedType = Type | typeof ExpandedType.KEY;
+
+export function isDiscrete(fieldType: any) {
+  return fieldType === Type.ORDINAL || fieldType === Type.NOMINAL || fieldType === ExpandedType.KEY;
+}

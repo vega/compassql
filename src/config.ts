@@ -71,8 +71,8 @@ export interface QueryConfig {
   maxGoodCardinalityForColor?: number; // FIXME: revise
   maxGoodCardinalityForFacet?: number; // FIXME: revise
   // HIGH CARDINALITY STRINGS
-  percentUnique?: number;
-  minimumKeys?: number;
+  minPercentUniqueForKey?: number;
+  minCardinalityForKey?: number;
 }
 
 export const DEFAULT_QUERY_CONFIG: QueryConfig = {
@@ -131,8 +131,8 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   maxGoodCardinalityForColor: 7, // FIXME: revise
 
   // HIGH CARDINALITY STRINGS
-  percentUnique: .8,
-  minimumKeys: 50,
+  minPercentUniqueForKey: .8,
+  minCardinalityForKey: 50,
 };
 
 export function extendConfig(opt: QueryConfig) {

@@ -2,7 +2,7 @@ import {Channel} from 'vega-lite/build/src/channel';
 import {channelCompatibility} from 'vega-lite/build/src/fielddef';
 import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain, channelScalePropertyIncompatability, Scale} from 'vega-lite/build/src/scale';
 import {Type} from 'vega-lite/build/src/type';
-import {ExpandedType} from '../query/ExpandedType';
+import {ExpandedType, isDiscrete} from '../query/ExpandedType';
 
 import {QueryConfig} from '../config';
 import {getEncodingNestedProp, Property, SCALE_PROPS} from '../property';
@@ -23,7 +23,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     strict: true,
     satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
       if (fieldQ.aggregate) {
-        return fieldQ.type !== Type.ORDINAL && fieldQ.type !== Type.NOMINAL && fieldQ.type !== ExpandedType.KEY;
+        return !isDiscrete(fieldQ.type);
       }
       // TODO: some aggregate function are actually supported by ordinal
       return true; // no aggregate is okay with any type.
@@ -302,7 +302,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         const type = fieldQ.type;
         const sType = scaleType(fieldQ);
 
-        if (contains([Type.ORDINAL, Type.NOMINAL, ExpandedType.KEY], type)) {
+        if (isDiscrete(type)) {
             return sType === undefined || hasDiscreteDomain(sType);
         } else if (type === Type.TEMPORAL) {
           if(!fieldQ.timeUnit) {

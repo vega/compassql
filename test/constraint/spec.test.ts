@@ -380,7 +380,7 @@ describe('constraints/spec', () => {
             ]
           });
           assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
-        });
+      });
       });
 
       it('should return false for graphics with two measures on x/y', () => {

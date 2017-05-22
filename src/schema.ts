@@ -122,8 +122,8 @@ export function build(data: any,  tableSchema: TableSchema<TableSchemaFieldDescr
     }
 
     if (vlType === VLType.NOMINAL 
-      && distinct / fieldProfile.count > DEFAULT_QUERY_CONFIG.percentUnique
-      && fieldProfile.count > DEFAULT_QUERY_CONFIG.minimumKeys) {
+      && distinct / fieldProfile.count > DEFAULT_QUERY_CONFIG.minPercentUniqueForKey
+      && fieldProfile.count > DEFAULT_QUERY_CONFIG.minCardinalityForKey) {
       vlType = ExpandedType.KEY;
     }
 

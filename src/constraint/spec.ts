@@ -4,7 +4,7 @@ import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/build/src/cha
 import {Mark} from 'vega-lite/build/src/mark';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {Type} from 'vega-lite/build/src/type';
-import {ExpandedType} from '../query/ExpandedType';
+import {ExpandedType, isDiscrete as isDiscreteType} from '../query/ExpandedType';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
 
@@ -617,7 +617,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
               // TODO: make this clause optional
 
               // TODO: should this one consider ORDINAL too.
-              !(isFieldQuery(xEncQ) && !xIsMeasure && (xEncQ.type === Type.NOMINAL || xEncQ.type === ExpandedType.KEY)) &&
+              !(isFieldQuery(xEncQ) && !xIsMeasure && (isDiscreteType(xEncQ.type))) &&
               !(isFieldQuery(yEncQ) && !yIsMeasure && (yEncQ.type === Type.NOMINAL || yEncQ.type === ExpandedType.KEY))
             ;
             // TODO: allow connected scatterplot
