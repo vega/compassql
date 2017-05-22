@@ -616,10 +616,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
               // and the dimension axis should not be nominal
               // TODO: make this clause optional
 
-              // TODO: should this one consider ORDINAL too.
-              !(isFieldQuery(xEncQ) && !xIsMeasure && (isDiscreteType(xEncQ.type)) && xEncQ.type !== Type.ORDINAL) &&
-              !(isFieldQuery(yEncQ) && !yIsMeasure && (isDiscreteType(yEncQ.type)))
-            ;
+              !(isFieldQuery(xEncQ) && !xIsMeasure && contains(['nominal', 'key'], xEncQ.type)) &&
+              !(isFieldQuery(yEncQ) && !yIsMeasure && contains(['nominal', 'key'], yEncQ.type));
             // TODO: allow connected scatterplot
           }
           return true;

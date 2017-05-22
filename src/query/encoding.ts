@@ -91,7 +91,13 @@ export function toFieldDef(fieldQ: FieldQuery,
         } else {
           throw new Error(`Cannot convert {autoCount: false} into a field def`);
         }
-      } else {
+      } /*else if (prop === 'type') {
+        if (fieldQ[prop] === ExpandedType.KEY) {
+          fieldDef[prop] = Type.NOMINAL;
+        } else {
+          fieldDef[prop] = fieldQ[prop];
+        }
+      } */ else {
         fieldDef[prop] = fieldQ[prop];
       }
     }
