@@ -346,14 +346,15 @@ export class SpecQueryModel {
   }
 }
 
-export class SpecQueryModelGroup {
+export class SpecQueryGroup<T> {
+
   private _name: string;
   private _path: string;
-  private _items: (SpecQueryModel | SpecQueryModelGroup)[];
+  private _items: (SpecQueryGroup<T> | T)[];
   private _groupBy: GroupBy;
   private _orderGroupBy: string | string[];
 
-  constructor(name: string = '', path: string = '', items: (SpecQueryModel | SpecQueryModelGroup)[] = [],
+  constructor(name: string = '', path: string = '', items: (T | SpecQueryGroup<T>)[] = [],
               groupBy: GroupBy = undefined, orderGroupBy: string | string[] = undefined) {
     this._name = name;
     this._path = path;
@@ -362,10 +363,14 @@ export class SpecQueryModelGroup {
     this._orderGroupBy = orderGroupBy;
   }
 
-  public getTopSpecQueryModel(): SpecQueryModel {
+  public isItemSpecQueryGroup(item: SpecQueryGroup<T> | T): item is SpecQueryGroup<T> {
+    return (<SpecQueryGroup<T>>item).getTopSpecQueryItem !== undefined;
+  }
+
+  public getTopSpecQueryItem(): T {
     const topItem = this._items[0];
-    if (topItem instanceof SpecQueryModelGroup) {
-      return topItem.getTopSpecQueryModel();
+    if (this.isItemSpecQueryGroup(topItem)) {
+      return topItem.getTopSpecQueryItem();
     } else {
       return topItem;
     }
@@ -373,6 +378,10 @@ export class SpecQueryModelGroup {
 
   public get name() {
     return this._name;
+  }
+
+  public get path() {
+    return this._path;
   }
 
   public get items() {
@@ -395,3 +404,5 @@ export class SpecQueryModelGroup {
     this._orderGroupBy = orderGroupBy;
   }
 }
+
+export type SpecQueryModelGroup = SpecQueryGroup<SpecQueryModel>;

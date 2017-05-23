@@ -55,7 +55,7 @@ export function get(name: string) {
   return rankingRegistry[name];
 }
 
-export function rank(group: SpecQueryModelGroup, query: Query, schema: Schema, level: number) {
+export function rank(group: SpecQueryModelGroup, query: Query, schema: Schema, level: number): SpecQueryModelGroup {
   if (!query.nest || level === query.nest.length) {
     if (query.orderBy || query.chooseBy) {
       group.items.sort(comparatorFactory(query.orderBy || query.chooseBy, schema, query.config));
@@ -88,10 +88,10 @@ export function comparatorFactory(name: string | string[], schema: Schema, opt: 
   };
 }
 
-export function groupComparatorFactory(name: string | string[], schema: Schema, opt: QueryConfig) {
-  return (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup) => {
-    const m1 = g1.getTopSpecQueryModel();
-    const m2 = g2.getTopSpecQueryModel();
+export function groupComparatorFactory(name: string | string[], schema: Schema, opt: QueryConfig): (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup) => number {
+  return (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup): number => {
+    const m1 = g1.getTopSpecQueryItem();
+    const m2 = g2.getTopSpecQueryItem();
     if (name instanceof Array) {
       return getScoreDifference(name, m1, m2, schema, opt);
     } else {

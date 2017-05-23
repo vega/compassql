@@ -1,7 +1,7 @@
 import {Channel} from 'vega-lite/build/src/channel';
 import {isArray} from 'datalib/src/util';
 
-import {SpecQueryModel, SpecQueryModelGroup} from './model';
+import {SpecQueryModel, SpecQueryGroup, SpecQueryModelGroup} from './model';
 import {Property} from './property';
 import {PropIndex} from './propindex';
 import {Dict} from './util';
@@ -37,7 +37,7 @@ export const SPEC = 'spec';
  */
 export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQueryModelGroup {
   if (queryNest) {
-    const rootGroup: SpecQueryModelGroup = new SpecQueryModelGroup();
+    const rootGroup: SpecQueryModelGroup = new SpecQueryGroup<SpecQueryModel>();
     let groupIndex: Dict<SpecQueryModelGroup> = {};
 
     // global `includes` and `replaces` will get augmented by each level's groupBy.
@@ -73,7 +73,7 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
 
         path += '/' + key;
         if (!groupIndex[path]) { // this item already exists on the path
-          groupIndex[path] = new SpecQueryModelGroup(key, path, []);
+          groupIndex[path] = new SpecQueryGroup<SpecQueryModel>(key, path, []);
 
           group.items.push(groupIndex[path]);
         }
@@ -84,7 +84,7 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
     return rootGroup;
   } else {
     // no nesting, just return a flat group
-    return new SpecQueryModelGroup('', '', specModels);
+    return new SpecQueryGroup<SpecQueryModel>('', '', specModels);
   }
 }
 
