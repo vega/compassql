@@ -5,7 +5,7 @@ import {Channel} from 'vega-lite/build/src/channel';
 import {Type} from 'vega-lite/build/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
-import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
+import {SpecQueryModel, SpecQueryGroup, SpecQueryModelGroup} from '../src/model';
 import {Property} from '../src/property';
 import {Query} from '../src/query/query';
 import {recommend} from '../src/recommend';
@@ -111,10 +111,10 @@ describe('recommend()', () => {
     const result = output.result;
 
     it('enumerates a nested query correctly ', () => {
-      assert.isTrue(result.items[0] instanceof SpecQueryModelGroup);
-      if (result.items[0] instanceof SpecQueryModelGroup) {
+      assert.isTrue(result.items[0] instanceof SpecQueryGroup);
+      if (result.items[0] instanceof SpecQueryGroup) {
         const group1: SpecQueryModelGroup = <SpecQueryModelGroup> result.items[0];
-        assert.isFalse(group1.items[0] instanceof SpecQueryModelGroup);
+        assert.isFalse(group1.items[0] instanceof SpecQueryGroup);
         assert.equal(group1.items.length, 2);
         assert.equal((<SpecQueryModel>group1.items[0]).specQuery.mark, 'tick');
         assert.equal((<SpecQueryModel>group1.items[1]).specQuery.mark, 'point');
@@ -177,7 +177,7 @@ describe('recommend()', () => {
       orderBy: 'effectiveness',
     };
     const result = recommend(q, schema).result;
-    assert.isFalse(result.items[0] instanceof SpecQueryModelGroup);
+    assert.isFalse(result.items[0] instanceof SpecQueryGroup);
     assert.equal(result.items.length, 2);
     assert.equal((<SpecQueryModel>result.items[0]).specQuery.mark, 'tick');
     assert.equal((<SpecQueryModel>result.items[1]).specQuery.mark, 'point');
