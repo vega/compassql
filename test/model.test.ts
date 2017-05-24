@@ -8,7 +8,7 @@ import {Mark} from 'vega-lite/build/src/mark';
 import {Type} from 'vega-lite/build/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
-import {isItemSpecQueryGroup, SpecQueryModel, SpecQueryGroup, SpecQueryModelGroup} from '../src/model';
+import {isSpecQueryGroup, SpecQueryModel, SpecQueryGroup, SpecQueryModelGroup} from '../src/model';
 import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, toKey} from '../src/property';
 import {SHORT_WILDCARD, isWildcard, getDefaultEnumValues} from '../src/wildcard';
 import {SpecQuery} from '../src/query/spec';
@@ -541,7 +541,7 @@ describe('SpecQueryModelGroup', () => {
   describe('isItemSpecQueryGroup', () => {
     it('should return true for ItemSpecQueryGroup', () => {
       const group: SpecQueryModelGroup = new SpecQueryGroup<SpecQueryModel>();
-      assert.isTrue(isItemSpecQueryGroup<SpecQueryModel>(group));
+      assert.isTrue(isSpecQueryGroup<SpecQueryModel>(group));
     });
   });
 

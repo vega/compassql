@@ -365,7 +365,7 @@ export class SpecQueryGroup<T> {
 
   public getTopSpecQueryItem(): T {
     const topItem = this._items[0];
-    if (isItemSpecQueryGroup<T>(topItem)) {
+    if (isSpecQueryGroup<T>(topItem)) {
       return topItem.getTopSpecQueryItem();
     } else {
       return topItem;
@@ -401,7 +401,7 @@ export class SpecQueryGroup<T> {
   }
 }
 
-export function isItemSpecQueryGroup<T>(item: SpecQueryGroup<T> | T): item is SpecQueryGroup<T> {
+export function isSpecQueryGroup<T>(item: SpecQueryGroup<T> | T): item is SpecQueryGroup<T> {
   return (<SpecQueryGroup<T>>item).getTopSpecQueryItem !== undefined;
 }
 
