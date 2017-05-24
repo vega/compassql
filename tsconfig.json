@@ -20,13 +20,6 @@
         "**/*.ts",
         "**/*.tsx"
     ],
-    "exclude": [
-        "node_modules",
-        "bower_components",
-        "data",
-        "_site",
-        "lib"
-    ],
     "include": [
         "src/**/*.ts",
         "test/**/*.ts",
