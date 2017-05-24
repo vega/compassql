@@ -363,13 +363,9 @@ export class SpecQueryGroup<T> {
     this._orderGroupBy = orderGroupBy;
   }
 
-  public isItemSpecQueryGroup(item: SpecQueryGroup<T> | T): item is SpecQueryGroup<T> {
-    return (<SpecQueryGroup<T>>item).getTopSpecQueryItem !== undefined;
-  }
-
   public getTopSpecQueryItem(): T {
     const topItem = this._items[0];
-    if (this.isItemSpecQueryGroup(topItem)) {
+    if (isItemSpecQueryGroup<T>(topItem)) {
       return topItem.getTopSpecQueryItem();
     } else {
       return topItem;
@@ -403,6 +399,10 @@ export class SpecQueryGroup<T> {
   public set orderGroupBy(orderGroupBy: string | string[]) {
     this._orderGroupBy = orderGroupBy;
   }
+}
+
+export function isItemSpecQueryGroup<T>(item: SpecQueryGroup<T> | T): item is SpecQueryGroup<T> {
+  return (<SpecQueryGroup<T>>item).getTopSpecQueryItem !== undefined;
 }
 
 export type SpecQueryModelGroup = SpecQueryGroup<SpecQueryModel>;
