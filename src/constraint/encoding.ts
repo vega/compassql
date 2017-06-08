@@ -3,7 +3,6 @@ import {SpecQueryModel} from '../model';
 import {Property} from '../property';
 import {Wildcard} from '../wildcard';
 import {Schema} from '../schema';
-
 import {isValueQuery} from '../query/encoding';
 import {FIELD_CONSTRAINTS_BY_PROPERTY} from './field';
 import {VALUE_CONSTRAINTS_BY_PROPERTY} from './value';

@@ -2,6 +2,7 @@ import {Channel} from 'vega-lite/build/src/channel';
 import {channelCompatibility} from 'vega-lite/build/src/fielddef';
 import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain, channelScalePropertyIncompatability, Scale} from 'vega-lite/build/src/scale';
 import {Type} from 'vega-lite/build/src/type';
+import {SortField, isSortField} from 'vega-lite/build/src/sort';
 
 import {QueryConfig} from '../config';
 import {getEncodingNestedProp, Property, SCALE_PROPS} from '../property';
@@ -315,6 +316,18 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
             return contains([ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.LINEAR, undefined], sType);
           }
         }
+      }
+      return true;
+    }
+  },{
+    name: 'onlyUseCountWithAsteriskSortField',
+    description: 'Sort by * if and only if op is count',
+    properties: [Property.SORT, getEncodingNestedProp('sort', 'field'), getEncodingNestedProp('sort', 'op')],
+    allowWildcardForProperties: false,
+    strict: true,
+    satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
+      if (fieldQ.sort && isSortField(fieldQ.sort)) {
+        return ((fieldQ.sort as SortField).field === '*') === ((fieldQ.sort as SortField).op === 'count');
       }
       return true;
     }
