@@ -24,10 +24,10 @@ describe('schema', () => {
       ];
       let schema = build(data);
 
-      assert.equal(schema['fieldSchemas'][0]['name'], 'c');
-      assert.equal(schema['fieldSchemas'][1]['name'], 'a');
-      assert.equal(schema['fieldSchemas'][2]['name'], 'b');
-      assert.equal(schema['fieldSchemas'][3]['name'], 'd');
+      assert.equal(schema['fields'][0]['name'], 'c');
+      assert.equal(schema['fields'][1]['name'], 'a');
+      assert.equal(schema['fields'][2]['name'], 'b');
+      assert.equal(schema['fields'][3]['name'], 'd');
     });
   });
 

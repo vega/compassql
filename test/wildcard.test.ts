@@ -91,7 +91,7 @@ describe('wildcard', () => {
     it('should return enum for every properties by default', () => {
       const missing = [];
       const mockSchema = {
-        fields: () => ['a','b']
+        names: () => ['a','b']
       } as any;
       for (const prop of DEFAULT_PROP_PRECEDENCE) {
         const e = getDefaultEnumValues(prop, mockSchema, DEFAULT_QUERY_CONFIG);
@@ -107,7 +107,7 @@ describe('wildcard', () => {
     it('should return enum for every properties by default.', () => {
       const missing = [];
       const mockSchema = {
-        fields: () => ['a','b']
+        names: () => ['a','b']
       } as any;
       for (const prop of DEFAULT_PROP_PRECEDENCE) {
         const e =getDefaultEnumValues(prop, mockSchema, DEFAULT_QUERY_CONFIG);
