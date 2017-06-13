@@ -20,7 +20,7 @@ function getScore(shortenedFields: string) {
 
       const field: string = encQ.field = split.length > 1 ? split[1] : split[0];
 
-      encQ.type = field === '*' ? Type.QUANTITATIVE : schema.type(field);
+      encQ.type = field === '*' ? Type.QUANTITATIVE : schema.vlType(field);
 
       if (split.length > 1) {
         const fn = split[0];

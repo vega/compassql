@@ -1,4 +1,4 @@
-import {Type} from 'vega-lite/build/src/type';
+import {Type as VLType} from 'vega-lite/build/src/type';
 import {Channel} from 'vega-lite/build/src/channel';
 import {autoMaxBins} from 'vega-lite/build/src/bin';
 import {TimeUnit, containsTimeUnit, convert, SINGLE_TIMEUNITS} from 'vega-lite/build/src/timeunit';
@@ -10,20 +10,50 @@ import {BinQuery, EncodingQuery, FieldQuery} from './query/encoding';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {cmp, extend, keys} from './util';
 
-export interface FieldSchema {
-  field: string;
-  type?: Type;
+/**
+ * Table Schema Field Descriptor interface
+ * see: https://specs.frictionlessdata.io/table-schema/
+ */
+export interface TableSchemaFieldDescriptor {
+  /* name of field **/
+  name: string;
 
-  /** number, integer, string, date  */
-  primitiveType: PrimitiveType;
-
-
+  /* A nicer human readable label or title for the field **/
   title?: string;
+
+  /* number, integer, string, datetime  */
+  type: DataType;
+
+  /* A string specifying a format */
+  format?: string;
+
+  /* A description for the field */
+  description?: string;
+
+}
+
+/**
+ * Field Schema
+ */
+export interface FieldSchema extends TableSchemaFieldDescriptor {
+  vlType?: VLType;
+
   index?: number;
 
   stats: DLFieldProfile;
   binStats?: {[maxbins: string]: DLFieldProfile};
   timeStats?: {[timeUnit: string]: DLFieldProfile};
+}
+
+/**
+ * Table Schema
+ * see: https://specs.frictionlessdata.io/table-schema/
+ */
+export interface TableSchema {
+  fields: TableSchemaFieldDescriptor[];
+  missingValues?: string[];
+  primaryKey?: string | string[];
+  foreignKeys?: object[];
 }
 
 /**
@@ -48,28 +78,31 @@ export function build(data: any, opt: QueryConfig = {}): Schema {
   let types = inferAll(data); // inferAll does stronger type inference than summary
 
   let fieldSchemas: FieldSchema[] = summaries.map(function(fieldProfile) {
-    let field: string = fieldProfile.field;
-    let primitiveType: PrimitiveType = types[field] as any;
+    let name: string = fieldProfile.field;
+    let tempType = types[name];
+    // In Table schema, 'date' doesn't include time so use 'datetime'
+    tempType = tempType === 'date' ? 'datetime' : tempType;
+    let type: DataType = tempType as any;
     let distinct: number = fieldProfile.distinct;
-    let type: Type;
+    let vlType: VLType;
 
-    if (primitiveType === PrimitiveType.NUMBER) {
-      type = Type.QUANTITATIVE;
-    } else if (primitiveType === PrimitiveType.INTEGER) {
+    if (type === DataType.NUMBER) {
+      vlType = VLType.QUANTITATIVE;
+    } else if (type === DataType.INTEGER) {
       // use ordinal or nominal when cardinality of integer type is relatively low and the distinct values are less than an amount specified in options
       if ((distinct < opt.numberNominalLimit) && (distinct / fieldProfile.count < opt.numberNominalProportion)) {
-        type = Type.NOMINAL;
+        vlType = VLType.NOMINAL;
       } else {
-        type = Type.QUANTITATIVE;
+        vlType = VLType.QUANTITATIVE;
       }
-    } else if (primitiveType === PrimitiveType.DATE) {
-      type = Type.TEMPORAL;
+    } else if (type === DataType.DATETIME) {
+      vlType = VLType.TEMPORAL;
       // need to get correct min/max of date data because datalib's summary method does not
       // calculate this correctly for date types.
-      fieldProfile.min = new Date(data[0][field]);
-      fieldProfile.max = new Date(data[0][field]);
+      fieldProfile.min = new Date(data[0][name]);
+      fieldProfile.max = new Date(data[0][name]);
       for (const dataEntry of data) {
-        const time = new Date(dataEntry[field]).getTime();
+        const time = new Date(dataEntry[name]).getTime();
         if (time < (fieldProfile.min as Date).getTime()) {
           fieldProfile.min = new Date(time);
         }
@@ -78,13 +111,13 @@ export function build(data: any, opt: QueryConfig = {}): Schema {
         }
       }
     } else {
-      type = Type.NOMINAL;
+      vlType = VLType.NOMINAL;
     }
 
     return {
-      field: field,
+      name: name,
+      vlType: vlType,
       type: type,
-      primitiveType: primitiveType,
       stats: fieldProfile,
       timeStats: {} as {[timeUnit: string]: DLFieldProfile},
       binStats: {} as {[key: string]: DLFieldProfile}
@@ -99,14 +132,14 @@ export function build(data: any, opt: QueryConfig = {}): Schema {
     'quantitative': 3
   };
   fieldSchemas.sort(function(a: FieldSchema, b: FieldSchema) {
-    // first order by type: nominal < temporal < quantitative < ordinal
-    if (order[a.type] < order[b.type]) {
+    // first order by vlType: nominal < temporal < quantitative < ordinal
+    if (order[a.vlType] < order[b.vlType]) {
       return -1;
-    } else if (order[a.type] > order[b.type]) {
+    } else if (order[a.vlType] > order[b.vlType]) {
       return 1;
     } else {
       // then order by field (alphabetically)
-      return a.field.localeCompare(b.field);
+      return a.name.localeCompare(b.name);
     }
   });
 
@@ -115,11 +148,11 @@ export function build(data: any, opt: QueryConfig = {}): Schema {
 
   // calculate preset bins for quantitative and temporal data
   for (let fieldSchema of fieldSchemas) {
-    if (fieldSchema.type === Type.QUANTITATIVE) {
+    if (fieldSchema.vlType === VLType.QUANTITATIVE) {
       for (let maxbins of opt.enum.binProps.maxbins) {
         fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
       }
-    } else if (fieldSchema.type === Type.TEMPORAL) {
+    } else if (fieldSchema.vlType === VLType.TEMPORAL) {
       for (let unit of opt.enum.timeUnit) {
         if (unit !== undefined) {
           fieldSchema.timeStats[unit] = timeSummary(unit, fieldSchema.stats);
@@ -131,44 +164,44 @@ export function build(data: any, opt: QueryConfig = {}): Schema {
   return new Schema(fieldSchemas);
 }
 
-export class Schema {
+export class Schema implements TableSchema {
   private _fieldSchemas: FieldSchema[];
   private _fieldSchemaIndex: {[field: string]: FieldSchema};
 
   constructor(fieldSchemas: FieldSchema[]) {
     this._fieldSchemas = fieldSchemas;
     this._fieldSchemaIndex = fieldSchemas.reduce((m, fieldSchema: FieldSchema) => {
-      m[fieldSchema.field] = fieldSchema;
+      m[fieldSchema.name] = fieldSchema;
       return m;
     }, {});
   }
 
   /** @return a list of the field names (for enumerating). */
-  public fields() {
-    return this._fieldSchemas.map((fieldSchema) => fieldSchema.field);
+  public names() {
+    return this._fieldSchemas.map((fieldSchema) => fieldSchema.name);
   }
 
   /** @return a list of FieldSchemas */
-  public get fieldSchemas() {
+  public get fields() {
     return this._fieldSchemas;
   }
 
-  public fieldSchema(field: string) {
-    return this._fieldSchemaIndex[field];
+  public fieldSchema(name: string) {
+    return this._fieldSchemaIndex[name];
   }
 
   /**
    * @return primitive type of the field if exist, otherwise return null
    */
-  public primitiveType(field: string) {
-    return this._fieldSchemaIndex[field] ? this._fieldSchemaIndex[field].primitiveType : null;
+  public type(field: string) {
+    return this._fieldSchemaIndex[field] ? this._fieldSchemaIndex[field].type : null;
   }
 
   /**
-   * @return type of measturement of the field if exist, otherwise return null
+   * @return vlType of measturement of the field if exist, otherwise return null
    */
-  public type(field: string) {
-    return this._fieldSchemaIndex[field] ? this._fieldSchemaIndex[field].type : null;
+  public vlType(field: string) {
+    return this._fieldSchemaIndex[field] ? this._fieldSchemaIndex[field].vlType : null;
   }
 
   /** @return cardinality of the field associated with encQ, null if it doesn't exist.
@@ -273,14 +306,14 @@ export class Schema {
     // TODO: differentiate for field with bin / timeUnit
     const fieldSchema = this._fieldSchemaIndex[fieldQ.field as string];
     let domain: any[] = keys(fieldSchema.stats.unique);
-    if (fieldSchema.type === Type.QUANTITATIVE) {
+    if (fieldSchema.vlType === VLType.QUANTITATIVE) {
       // return [min, max], coerced into number types
       return [+fieldSchema.stats.min, +fieldSchema.stats.max];
-    } else if (fieldSchema.primitiveType === PrimitiveType.DATE) {
+    } else if (fieldSchema.type === DataType.DATETIME) {
       // return [min, max] dates
       return [fieldSchema.stats.min, fieldSchema.stats.max];
-    } else if (fieldSchema.primitiveType === PrimitiveType.INTEGER ||
-        fieldSchema.primitiveType === PrimitiveType.NUMBER) {
+    } else if (fieldSchema.type === DataType.INTEGER ||
+        fieldSchema.type === DataType.NUMBER) {
       // coerce non-quantitative numerical data into number type
       domain = domain.map(x => +x);
       return domain.sort(cmp);
@@ -377,10 +410,10 @@ function invalidCount(unique: {}, list: any[]) {
   }, 0);
 }
 
-export enum PrimitiveType {
+export enum DataType {
   STRING = 'string' as any,
   NUMBER = 'number' as any,
   INTEGER = 'integer' as any,
   BOOLEAN = 'boolean' as any,
-  DATE = 'date' as any
+  DATETIME = 'datetime' as any
 }

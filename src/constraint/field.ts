@@ -7,7 +7,7 @@ import {QueryConfig} from '../config';
 import {getEncodingNestedProp, Property, SCALE_PROPS} from '../property';
 import {PropIndex} from '../propindex';
 import {isWildcard, Wildcard} from '../wildcard';
-import {PrimitiveType, Schema} from '../schema';
+import {DataType, Schema} from '../schema';
 import {contains} from '../util';
 
 import {scaleType, FieldQuery, ScaleQuery, toFieldDef} from '../query/encoding';
@@ -208,7 +208,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         return true;
       }
 
-      const primitiveType = schema.primitiveType(fieldQ.field as string);
+      const primitiveType = schema.type(fieldQ.field as string);
       const type = fieldQ.type;
 
       if (!encWildcardIndex.has('field') && !encWildcardIndex.has('type') && !opt.constraintManuallySpecifiedValue) {
@@ -217,13 +217,13 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
       }
 
       switch (primitiveType) {
-        case PrimitiveType.BOOLEAN:
-        case PrimitiveType.STRING:
+        case DataType.BOOLEAN:
+        case DataType.STRING:
           return type !== Type.QUANTITATIVE && type !== Type.TEMPORAL;
-        case PrimitiveType.NUMBER:
-        case PrimitiveType.INTEGER:
+        case DataType.NUMBER:
+        case DataType.INTEGER:
           return type !== Type.TEMPORAL;
-        case PrimitiveType.DATE:
+        case DataType.DATETIME:
           // TODO: add NOMINAL, ORDINAL support after we support this in Vega-Lite
           return type === Type.TEMPORAL;
         case null:
@@ -249,7 +249,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         return fieldQ.type === Type.QUANTITATIVE;
       }
 
-      return schema.type(fieldQ.field as string) === fieldQ.type;
+      return schema.vlType(fieldQ.field as string) === fieldQ.type;
     }
   },{
    name: 'maxCardinalityForCategoricalColor',

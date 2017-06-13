@@ -25,7 +25,7 @@ export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): Ra
   }
 
   const encodings = specM.specQuery.encodings;
-  const numFields = schema.fieldSchemas.length;
+  const numFields = schema.fields.length;
 
   const features: FeatureScore[] = [];
   let totalScore = 0, base = 1;

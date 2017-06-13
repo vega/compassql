@@ -1,26 +1,26 @@
 import {Type} from 'vega-lite/build/src/type';
 
-import {Schema, FieldSchema, PrimitiveType} from '../src/schema';
+import {Schema, FieldSchema, DataType} from '../src/schema';
 
 const fixtures: FieldSchema[] = [{
-  field: 'Q',
-  type: Type.QUANTITATIVE,
-  primitiveType: PrimitiveType.NUMBER,
+  name: 'Q',
+  vlType: Type.QUANTITATIVE,
+  type: DataType.NUMBER,
   stats: {distinct: 100} as any // HACK so that we don't have to define all summary properties
 },{
-  field: 'Q1',
-  type: Type.QUANTITATIVE,
-  primitiveType: PrimitiveType.NUMBER,
+  name: 'Q1',
+  vlType: Type.QUANTITATIVE,
+  type: DataType.NUMBER,
   stats: {distinct: 100} as any // HACK so that we don't have to define all summary properties
 },{
-  field: 'Q2',
-  type: Type.QUANTITATIVE,
-  primitiveType: PrimitiveType.NUMBER,
+  name: 'Q2',
+  vlType: Type.QUANTITATIVE,
+  type: DataType.NUMBER,
   stats: {distinct: 100} as any // HACK so that we don't have to define all summary properties
 },{
-  field: 'T',
-  type: Type.TEMPORAL,
-  primitiveType: PrimitiveType.DATE,
+  name: 'T',
+  vlType: Type.TEMPORAL,
+  type: DataType.DATETIME,
   stats: {
     distinct: 100,
     unique: {'2000/1/1': 1, '2000/1/2': 1}
@@ -40,40 +40,40 @@ const fixtures: FieldSchema[] = [{
     }
   } as any
 },{
-  field: 'T1',
-  type: Type.TEMPORAL,
-  primitiveType: PrimitiveType.DATE,
+  name: 'T1',
+  vlType: Type.TEMPORAL,
+  type: DataType.DATETIME,
   stats: {distinct: 100} as any, // HACK so that we don't have to define all summary properties
   timeStats: {year: {distinct: 5}, month: {distinct: 12}, day: {distinct: 5}} as any
 },{
-  field: 'O',
-  type: Type.ORDINAL,
-  primitiveType: PrimitiveType.STRING,
+  name: 'O',
+  vlType: Type.ORDINAL,
+  type: DataType.STRING,
   stats: {distinct: 6} as any // HACK so that we don't have to define all summary properties
 },{
-  field: 'O_10',
-  type: Type.ORDINAL,
-  primitiveType: PrimitiveType.STRING,
+  name: 'O_10',
+  vlType: Type.ORDINAL,
+  type: DataType.STRING,
   stats: {distinct: 10} as any // HACK so that we don't have to define all summary properties
 },{
-  field: 'O_20',
-  type: Type.ORDINAL,
-  primitiveType: PrimitiveType.STRING,
+  name: 'O_20',
+  vlType: Type.ORDINAL,
+  type: DataType.STRING,
   stats: {distinct: 20} as any // HACK so that we don't have to define all summary properties
 },{
-  field: 'O_100',
-  type: Type.ORDINAL,
-  primitiveType: PrimitiveType.STRING,
+  name: 'O_100',
+  vlType: Type.ORDINAL,
+  type: DataType.STRING,
   stats: {distinct: 100} as any // HACK so that we don't have to define all summary properties
 },{
-  field: 'N',
-  type: Type.NOMINAL,
-  primitiveType: PrimitiveType.STRING,
+  name: 'N',
+  vlType: Type.NOMINAL,
+  type: DataType.STRING,
   stats: {distinct: 6} as any // HACK so that we don't have to define all summary properties
 },{
-  field: 'N20',
-  type: Type.NOMINAL,
-  primitiveType: PrimitiveType.STRING,
+  name: 'N20',
+  vlType: Type.NOMINAL,
+  type: DataType.STRING,
   stats: {distinct: 20} as any // HACK so that we don't have to define all summary properties
 }];
 
