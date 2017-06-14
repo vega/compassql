@@ -39,7 +39,8 @@ export interface FieldSchema extends TableSchemaFieldDescriptor {
   vlType?: VLType;
 
   index?: number;
-  inIndex?: number;
+  // Need to keep original index for re-exporting TableSchema
+  originalIndex?: number;
 
   stats: DLFieldProfile;
   binStats?: {[maxbins: string]: DLFieldProfile};
@@ -71,7 +72,7 @@ export interface TableSchema<F extends TableSchemaFieldDescriptor> {
  *
  * @return a Schema object
  */
-export function build(data: any, opt: QueryConfig = {}, tableSchema: TableSchema<TableSchemaFieldDescriptor> = {fields:[]}): Schema {
+export function build(data: any,  tableSchema: TableSchema<TableSchemaFieldDescriptor> = {fields:[]}, opt: QueryConfig = {}): Schema {
   opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
 
   // create profiles for each variable
@@ -86,7 +87,6 @@ export function build(data: any, opt: QueryConfig = {}, tableSchema: TableSchema
   let fieldSchemas: FieldSchema[] = summaries.map(function(fieldProfile, index) {
 
     const name: string = fieldProfile.field;
-    const inIndex: number = index;
     // In Table schema, 'date' doesn't include time so use 'datetime'
     const type: PrimitiveType = types[name] === 'date' ? PrimitiveType.DATETIME :  (types[name] as any);
     let distinct: number = fieldProfile.distinct;
@@ -122,7 +122,8 @@ export function build(data: any, opt: QueryConfig = {}, tableSchema: TableSchema
 
     let fieldSchema = {
       name: name,
-      inIndex: inIndex,
+      // Need to keep original index for re-exporting TableSchema
+      originalIndex: index,
       vlType: vlType,
       type: type,
       stats: fieldProfile,
@@ -175,10 +176,8 @@ export function build(data: any, opt: QueryConfig = {}, tableSchema: TableSchema
   }
 
   const derivedTableSchema: TableSchema<FieldSchema> = {
+    ...tableSchema,
     fields: fieldSchemas,
-    primaryKey: tableSchema.primaryKey,
-    foreignKeys: tableSchema.foreignKeys,
-    missingValues: tableSchema.missingValues
   };
 
   return new Schema(derivedTableSchema);
@@ -215,7 +214,7 @@ export class Schema {
     // but this is not allowed in table schema.
     // so we will re-order based on original index.
     const tableSchema = duplicate(this._tableSchema);
-    tableSchema.fields.sort((a, b) => a.inIndex - b.inIndex);
+    tableSchema.fields.sort((a, b) => a.originalIndex - b.originalIndex);
     return tableSchema;
   }
 

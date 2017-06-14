@@ -82,7 +82,7 @@ describe('schema', () => {
       for (let i = 0; i < configWithOrdinalInference.numberOrdinalLimit + 1; i++) {
         numberData.push({a: i});
       }
-      const numberSchema = build(numberData, configWithOrdinalInference);
+      const numberSchema = build(numberData, {fields:[]}, configWithOrdinalInference);
       assert.equal(numberSchema.vlType('a'), Type.QUANTITATIVE);
     });
 
@@ -93,7 +93,7 @@ describe('schema', () => {
       for (let i = 0; i < total; i++) {
         numberData.push({a: 1});
       }
-      const numberSchema = build(numberData, configWithOrdinalInference);
+      const numberSchema = build(numberData, {fields:[]}, configWithOrdinalInference);
       assert.equal(numberSchema.vlType('a'), Type.NOMINAL);
     });
 
@@ -107,7 +107,7 @@ describe('schema', () => {
         numberData.push({a: 1});
         numberData.push({a: 2});
       }
-      const numberSchema = build(numberData, configWithOrdinalInference);
+      const numberSchema = build(numberData, {fields:[]}, configWithOrdinalInference);
       assert.equal(numberSchema.vlType('a'), Type.NOMINAL);
     });
 
@@ -121,7 +121,7 @@ describe('schema', () => {
         numberData.push({a: 2});
         numberData.push({a: 3});
       }
-      const numberSchema = build(numberData, configWithOrdinalInference);
+      const numberSchema = build(numberData, {fields:[]}, configWithOrdinalInference);
       assert.equal(numberSchema.vlType('a'), Type.NOMINAL);
     });
   });
@@ -538,7 +538,7 @@ describe('schema', () => {
     };
 
     // build schema with passed in dataTable schema
-    let dataTableSchema: Schema = build(dataTableData, {}, dataTable);
+    let dataTableSchema: Schema = build(dataTableData, dataTable);
 
     it('should have data table schema values override inferred values', () => {
       assert.equal(dataTableSchema.primitiveType('b'), PrimitiveType.INTEGER);
@@ -548,6 +548,7 @@ describe('schema', () => {
 
     it('should retain custom values in fields', () => {
       const rTableSchema = dataTableSchema.tableSchema();
+
       // open question: should tableSchema() only return original schema-ed fields?
       // shouldn't be an issue usually, as a valid table schema will include
       // all fields in the data.
