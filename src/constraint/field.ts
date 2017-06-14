@@ -223,7 +223,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         case PrimitiveType.NUMBER:
         case PrimitiveType.INTEGER:
           return type !== Type.TEMPORAL;
-        case PrimitiveType.DATE:
+        case PrimitiveType.DATETIME:
           // TODO: add NOMINAL, ORDINAL support after we support this in Vega-Lite
           return type === Type.TEMPORAL;
         case null:
@@ -249,7 +249,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         return fieldQ.type === Type.QUANTITATIVE;
       }
 
-      return schema.type(fieldQ.field as string) === fieldQ.type;
+      return schema.vlType(fieldQ.field as string) === fieldQ.type;
     }
   },{
    name: 'maxCardinalityForCategoricalColor',

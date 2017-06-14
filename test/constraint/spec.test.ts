@@ -19,7 +19,7 @@ import {Property} from '../../src/property';
 import {duplicate, extend} from '../../src/util';
 
 describe('constraints/spec', () => {
-  const schema = new Schema([]);
+  const schema = new Schema({fields:[]});
 
   function buildSpecQueryModel(specQ: SpecQuery) {
     return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);

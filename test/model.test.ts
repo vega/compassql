@@ -19,7 +19,7 @@ import {duplicate, extend} from '../src/util';
 const DEFAULT_SPEC_CONFIG = DEFAULT_QUERY_CONFIG.defaultSpecConfig;
 
 describe('SpecQueryModel', () => {
-  const schema = new Schema([]);
+  const schema = new Schema({fields:[]});
 
   function buildSpecQueryModel(specQ: SpecQuery) {
     return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
@@ -479,7 +479,7 @@ describe('SpecQueryModel', () => {
 });
 
 describe('SpecQueryModelGroup', () => {
-  const schema = new Schema([]);
+  const schema = new Schema({fields:[]});
 
   function buildSpecQueryModel(specQ: SpecQuery) {
     return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
