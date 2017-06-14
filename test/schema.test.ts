@@ -3,7 +3,7 @@ import {assert} from 'chai';
 import {Type} from 'vega-lite/build/src/type';
 import {Channel} from 'vega-lite/build/src/channel';
 
-import {Schema, build, DataType} from '../src/schema';
+import {Schema, build, PrimitiveType} from '../src/schema';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {extend} from '../src/util';
 
@@ -15,7 +15,7 @@ describe('schema', () => {
       let schema = build(data);
 
       assert.isNotNull(schema);
-      assert.equal(schema.names().length, 0);
+      assert.equal(schema.fieldNames().length, 0);
     });
 
     it('should store FieldSchemas in the correct order', () => {
@@ -24,10 +24,10 @@ describe('schema', () => {
       ];
       let schema = build(data);
 
-      assert.equal(schema['fields'][0]['name'], 'c');
-      assert.equal(schema['fields'][1]['name'], 'a');
-      assert.equal(schema['fields'][2]['name'], 'b');
-      assert.equal(schema['fields'][3]['name'], 'd');
+      assert.equal(schema['fieldSchemas'][0]['name'], 'c');
+      assert.equal(schema['fieldSchemas'][1]['name'], 'a');
+      assert.equal(schema['fieldSchemas'][2]['name'], 'b');
+      assert.equal(schema['fieldSchemas'][3]['name'], 'd');
     });
   });
 
@@ -39,7 +39,7 @@ describe('schema', () => {
 
   describe('fields', () => {
     it('should return an array of the correct fields', () => {
-      const fields: string[] = schema.names();
+      const fields: string[] = schema.fieldNames();
 
       assert.equal(fields.length, 4);
       assert.notEqual(fields.indexOf('a'), -1);
@@ -51,10 +51,10 @@ describe('schema', () => {
 
   describe('type', () => {
     it('should return the expected primitive type of each field', () => {
-      assert.equal(schema.type('a'), DataType.INTEGER);
-      assert.equal(schema.type('b'), DataType.STRING);
-      assert.equal(schema.type('c'), DataType.NUMBER);
-      assert.equal(schema.type('d'), DataType.DATETIME);
+      assert.equal(schema.primitiveType('a'), PrimitiveType.INTEGER);
+      assert.equal(schema.primitiveType('b'), PrimitiveType.STRING);
+      assert.equal(schema.primitiveType('c'), PrimitiveType.NUMBER);
+      assert.equal(schema.primitiveType('d'), PrimitiveType.DATETIME);
     });
   });
 
@@ -234,7 +234,7 @@ describe('schema', () => {
         channel: Channel.X,
         timeUnit: 'yearmonth'
       });
-      assert.equal(cardinalitySchema.type('a'), DataType.DATETIME);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 1);
     });
 
@@ -252,7 +252,7 @@ describe('schema', () => {
         channel: Channel.X,
         timeUnit: 'yearmonth'
       });
-      assert.equal(cardinalitySchema.type('a'), DataType.DATETIME);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, numYears);
     });
 
@@ -264,7 +264,7 @@ describe('schema', () => {
         channel: Channel.X,
         timeUnit: 'yearquarter'
       });
-      assert.equal(cardinalitySchema.type('a'), DataType.DATETIME);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 2);
 
       cardinalityData = [{a: 'June 21, 1996'}, {a: 'May 21, 1996'}];
@@ -274,7 +274,7 @@ describe('schema', () => {
         channel: Channel.X,
         timeUnit: 'yearquarter'
       });
-      assert.equal(cardinalitySchema.type('a'), DataType.DATETIME);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 1);
     });
 
@@ -286,7 +286,7 @@ describe('schema', () => {
         channel: Channel.X,
         timeUnit: 'year'
       });
-      assert.equal(cardinalitySchema.type('a'), DataType.DATETIME);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 1);
 
       cardinalityData = [{a: 'June 21, 2000'}, {a: 'June 21, 2010'}];
@@ -296,7 +296,7 @@ describe('schema', () => {
         channel: Channel.X,
         timeUnit: 'year'
       });
-      assert.equal(cardinalitySchema.type('a'), DataType.DATETIME);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 2);
     });
 
@@ -314,7 +314,7 @@ describe('schema', () => {
         channel: Channel.X,
         timeUnit: 'quartermonth'
       });
-      assert.equal(cardinalitySchema.type('a'), DataType.DATETIME);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 3);
     });
 
@@ -332,7 +332,7 @@ describe('schema', () => {
         channel: Channel.X,
         timeUnit: 'hoursminutes'
       });
-      assert.equal(cardinalitySchema.type('a'), DataType.DATETIME);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 3);
     });
 
@@ -351,7 +351,7 @@ describe('schema', () => {
         channel: Channel.X,
         timeUnit: 'year'
       }, true, true);
-      assert.equal(cardinalitySchema.type('a'), DataType.DATETIME);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 1);
       cardinality = cardinalitySchema.cardinality({
         field: 'a',
@@ -375,7 +375,7 @@ describe('schema', () => {
         field: 'a',
         channel: Channel.X,
       }, true, true);
-      assert.equal(cardinalitySchema.type('a'), DataType.INTEGER);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.INTEGER);
       assert.equal(cardinality, 1);
       cardinality = cardinalitySchema.cardinality({
         field: 'a',
@@ -399,7 +399,7 @@ describe('schema', () => {
         channel: Channel.X,
         bin: true
       }, true, true);
-      assert.equal(cardinalitySchema.type('a'), DataType.INTEGER);
+      assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.INTEGER);
       assert.equal(cardinality, 10);
       cardinality = cardinalitySchema.cardinality({
         field: 'a',
@@ -517,6 +517,48 @@ describe('schema', () => {
       assert.equal(domain.length, 2);
       assert.equal(domain[0].getTime(), new Date('6/14/2016').getTime());
       assert.equal(domain[1].getTime(), new Date('7/14/2016').getTime());
+    });
+  });
+
+
+  describe('dataTable', () => {
+    const dataTableData = [
+      {a: 1, b: 1.1, c: 'a', d: 2.3},
+      {a: 2, b: 1.2, c: 'b', d: 3.4},
+      {a: 3, b: 1.3, c: 'c', d: 6.0},
+      {a: 4, b: 1.4, c: 'd', d: 7.2}
+    ];
+
+    const dataTable = {
+      fields: [
+        {name: 'a', type: PrimitiveType.INTEGER, title: 'a title', custom: 'la la la'},
+        {name: 'b', type: PrimitiveType.INTEGER}
+      ],
+      primaryKey: 'a'
+    };
+
+    // build schema with passed in dataTable schema
+    let dataTableSchema: Schema = build(dataTableData, {}, dataTable);
+
+    it('should have data table schema values override inferred values', () => {
+      assert.equal(dataTableSchema.primitiveType('b'), PrimitiveType.INTEGER);
+      // assert that a similar data type would get a different inferred primitive type
+      assert.equal(dataTableSchema.primitiveType('d'), PrimitiveType.NUMBER);
+    });
+
+    it('should retain custom values in fields', () => {
+      const rTableSchema = dataTableSchema.tableSchema();
+      // open question: should tableSchema() only return original schema-ed fields?
+      // shouldn't be an issue usually, as a valid table schema will include
+      // all fields in the data.
+      assert.equal(rTableSchema.fields.length, 4);
+      assert.equal(rTableSchema.fields[0].title, 'a title');
+      assert.equal((rTableSchema.fields[0] as any).custom, 'la la la');
+    });
+
+    it('should retain data table schema level attributes passed in', () => {
+      const rTableSchema = dataTableSchema.tableSchema();
+      assert.equal((rTableSchema.primaryKey), 'a');
     });
   });
 

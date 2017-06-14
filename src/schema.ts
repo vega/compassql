@@ -8,7 +8,7 @@ import * as dlBin from 'datalib/src/bins/bins';
 
 import {BinQuery, EncodingQuery, FieldQuery} from './query/encoding';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
-import {cmp, extend, keys} from './util';
+import {cmp, duplicate, extend, keys} from './util';
 
 /**
  * Table Schema Field Descriptor interface
@@ -22,7 +22,7 @@ export interface TableSchemaFieldDescriptor {
   title?: string;
 
   /* number, integer, string, datetime  */
-  type: DataType;
+  type: PrimitiveType;
 
   /* A string specifying a format */
   format?: string;
@@ -39,6 +39,7 @@ export interface FieldSchema extends TableSchemaFieldDescriptor {
   vlType?: VLType;
 
   index?: number;
+  inIndex?: number;
 
   stats: DLFieldProfile;
   binStats?: {[maxbins: string]: DLFieldProfile};
@@ -49,8 +50,8 @@ export interface FieldSchema extends TableSchemaFieldDescriptor {
  * Table Schema
  * see: https://specs.frictionlessdata.io/table-schema/
  */
-export interface TableSchema {
-  fields: TableSchemaFieldDescriptor[];
+export interface TableSchema<F extends TableSchemaFieldDescriptor> {
+  fields: F[];
   missingValues?: string[];
   primaryKey?: string | string[];
   foreignKeys?: object[];
@@ -70,32 +71,37 @@ export interface TableSchema {
  *
  * @return a Schema object
  */
-export function build(data: any, opt: QueryConfig = {}): Schema {
+export function build(data: any, opt: QueryConfig = {}, tableSchema: TableSchema<TableSchemaFieldDescriptor> = {fields:[]}): Schema {
   opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
 
   // create profiles for each variable
   let summaries: DLFieldProfile[] = summary(data);
   let types = inferAll(data); // inferAll does stronger type inference than summary
 
-  let fieldSchemas: FieldSchema[] = summaries.map(function(fieldProfile) {
-    let name: string = fieldProfile.field;
-    let tempType = types[name];
+  let tableSchemaFieldIndex = tableSchema.fields.reduce((m, field: TableSchemaFieldDescriptor) => {
+    m[field.name] = field;
+    return m;
+  }, {});
+
+  let fieldSchemas: FieldSchema[] = summaries.map(function(fieldProfile, index) {
+
+    const name: string = fieldProfile.field;
+    const inIndex: number = index;
     // In Table schema, 'date' doesn't include time so use 'datetime'
-    tempType = tempType === 'date' ? 'datetime' : tempType;
-    let type: DataType = tempType as any;
+    const type: PrimitiveType = types[name] === 'date' ? PrimitiveType.DATETIME :  (types[name] as any);
     let distinct: number = fieldProfile.distinct;
     let vlType: VLType;
 
-    if (type === DataType.NUMBER) {
+    if (type === PrimitiveType.NUMBER) {
       vlType = VLType.QUANTITATIVE;
-    } else if (type === DataType.INTEGER) {
+    } else if (type === PrimitiveType.INTEGER) {
       // use ordinal or nominal when cardinality of integer type is relatively low and the distinct values are less than an amount specified in options
       if ((distinct < opt.numberNominalLimit) && (distinct / fieldProfile.count < opt.numberNominalProportion)) {
         vlType = VLType.NOMINAL;
       } else {
         vlType = VLType.QUANTITATIVE;
       }
-    } else if (type === DataType.DATETIME) {
+    } else if (type === PrimitiveType.DATETIME) {
       vlType = VLType.TEMPORAL;
       // need to get correct min/max of date data because datalib's summary method does not
       // calculate this correctly for date types.
@@ -114,14 +120,21 @@ export function build(data: any, opt: QueryConfig = {}): Schema {
       vlType = VLType.NOMINAL;
     }
 
-    return {
+    let fieldSchema = {
       name: name,
+      inIndex: inIndex,
       vlType: vlType,
       type: type,
       stats: fieldProfile,
       timeStats: {} as {[timeUnit: string]: DLFieldProfile},
       binStats: {} as {[key: string]: DLFieldProfile}
     };
+
+    // extend field schema with table schema field - if present
+    const orgFieldSchema = tableSchemaFieldIndex[fieldSchema.name];
+    fieldSchema = extend(fieldSchema, orgFieldSchema);
+
+    return fieldSchema;
   });
 
   // order the fieldSchemas (sort them)
@@ -161,47 +174,63 @@ export function build(data: any, opt: QueryConfig = {}): Schema {
     }
   }
 
-  return new Schema(fieldSchemas);
+  const derivedTableSchema: TableSchema<FieldSchema> = {
+    fields: fieldSchemas,
+    primaryKey: tableSchema.primaryKey,
+    foreignKeys: tableSchema.foreignKeys,
+    missingValues: tableSchema.missingValues
+  };
+
+  return new Schema(derivedTableSchema);
 }
 
-export class Schema implements TableSchema {
-  private _fieldSchemas: FieldSchema[];
+export class Schema {
+  private _tableSchema: TableSchema<FieldSchema>;
   private _fieldSchemaIndex: {[field: string]: FieldSchema};
 
-  constructor(fieldSchemas: FieldSchema[]) {
-    this._fieldSchemas = fieldSchemas;
-    this._fieldSchemaIndex = fieldSchemas.reduce((m, fieldSchema: FieldSchema) => {
+  constructor(tableSchema: TableSchema<FieldSchema>) {
+    this._tableSchema = tableSchema;
+    this._fieldSchemaIndex = tableSchema.fields.reduce((m, fieldSchema: FieldSchema) => {
       m[fieldSchema.name] = fieldSchema;
       return m;
     }, {});
   }
 
   /** @return a list of the field names (for enumerating). */
-  public names() {
-    return this._fieldSchemas.map((fieldSchema) => fieldSchema.name);
+  public fieldNames() {
+    return this._tableSchema.fields.map((fieldSchema) => fieldSchema.name);
   }
 
   /** @return a list of FieldSchemas */
-  public get fields() {
-    return this._fieldSchemas;
+  public get fieldSchemas() {
+    return this._tableSchema.fields;
   }
 
-  public fieldSchema(name: string) {
-    return this._fieldSchemaIndex[name];
+  public fieldSchema(fieldName: string) {
+    return this._fieldSchemaIndex[fieldName];
+  }
+
+  public tableSchema() {
+    // the fieldschemas are re-arranged
+    // but this is not allowed in table schema.
+    // so we will re-order based on original index.
+    const tableSchema = duplicate(this._tableSchema);
+    tableSchema.fields.sort((a, b) => a.inIndex - b.inIndex);
+    return tableSchema;
   }
 
   /**
    * @return primitive type of the field if exist, otherwise return null
    */
-  public type(field: string) {
-    return this._fieldSchemaIndex[field] ? this._fieldSchemaIndex[field].type : null;
+  public primitiveType(fieldName: string) {
+    return this._fieldSchemaIndex[fieldName] ? this._fieldSchemaIndex[fieldName].type : null;
   }
 
   /**
    * @return vlType of measturement of the field if exist, otherwise return null
    */
-  public vlType(field: string) {
-    return this._fieldSchemaIndex[field] ? this._fieldSchemaIndex[field].vlType : null;
+  public vlType(fieldName: string) {
+    return this._fieldSchemaIndex[fieldName] ? this._fieldSchemaIndex[fieldName].vlType : null;
   }
 
   /** @return cardinality of the field associated with encQ, null if it doesn't exist.
@@ -309,11 +338,11 @@ export class Schema implements TableSchema {
     if (fieldSchema.vlType === VLType.QUANTITATIVE) {
       // return [min, max], coerced into number types
       return [+fieldSchema.stats.min, +fieldSchema.stats.max];
-    } else if (fieldSchema.type === DataType.DATETIME) {
+    } else if (fieldSchema.type === PrimitiveType.DATETIME) {
       // return [min, max] dates
       return [fieldSchema.stats.min, fieldSchema.stats.max];
-    } else if (fieldSchema.type === DataType.INTEGER ||
-        fieldSchema.type === DataType.NUMBER) {
+    } else if (fieldSchema.type === PrimitiveType.INTEGER ||
+        fieldSchema.type === PrimitiveType.NUMBER) {
       // coerce non-quantitative numerical data into number type
       domain = domain.map(x => +x);
       return domain.sort(cmp);
@@ -410,7 +439,7 @@ function invalidCount(unique: {}, list: any[]) {
   }, 0);
 }
 
-export enum DataType {
+export enum PrimitiveType {
   STRING = 'string' as any,
   NUMBER = 'number' as any,
   INTEGER = 'integer' as any,

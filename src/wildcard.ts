@@ -278,7 +278,7 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
 export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryConfig): any[] {
   if (prop === 'field' || (isEncodingNestedProp(prop) && prop.parent === 'sort' && prop.child === 'field')) {
     // For field, by default enumerate all fields
-    return schema.names();
+    return schema.fieldNames();
   }
 
   let val;
