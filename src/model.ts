@@ -12,7 +12,7 @@ import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNest
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
-import {EncodingQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery} from './query/encoding';
+import {AutoCountQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery} from './query/encoding';
 import {GroupBy, ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
@@ -102,7 +102,7 @@ export class SpecQueryModel {
     // AUTO COUNT
     // Add Auto Count Field
     if (opt.autoAddCount) {
-      const countEncQ: EncodingQuery = {
+      const countEncQ: AutoCountQuery = {
         channel: {
           name: getDefaultName(Property.CHANNEL) + specQ.encodings.length,
           enum: getDefaultEnumValues(Property.CHANNEL, schema, opt)
