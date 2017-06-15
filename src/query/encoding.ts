@@ -52,7 +52,6 @@ export interface AutoCountQuery extends EncodingQueryBase {
   type: 'quantitative';
 }
 
-// TODO: split this into FieldDefQuery and AutoCountQuery
 export interface FieldQuery extends EncodingQueryBase {
   channel: WildcardProperty<Channel>;
 

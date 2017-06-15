@@ -522,12 +522,12 @@ describe('constraints/field', () => {
         ['mean', undefined, true, undefined],
         ['mean', TimeUnit.MONTH, undefined, undefined],
         [undefined, TimeUnit.MONTH, true, undefined],
-        ['mean', undefined, undefined, true],
+        // ['mean', undefined, undefined, true],
       ].forEach((tuple) => {
         encQ.aggregate = tuple[0];
         encQ.timeUnit = tuple[1];
         encQ.bin = tuple[2];
-        encQ.autoCount = tuple[3];
+        // encQ.autoCount = tuple[3];
 
         assert.isFalse(FIELD_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
