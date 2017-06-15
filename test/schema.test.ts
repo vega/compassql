@@ -2,9 +2,6 @@ import {assert} from 'chai';
 
 import {Type} from 'vega-lite/build/src/type';
 import {Channel} from 'vega-lite/build/src/channel';
-
-import {ExpandedType} from '../src/query/ExpandedType';
-
 import {Schema, build, PrimitiveType} from '../src/schema';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {extend} from '../src/util';
