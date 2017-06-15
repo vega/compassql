@@ -10,7 +10,7 @@ import {isWildcard, Wildcard} from '../wildcard';
 import {PrimitiveType, Schema} from '../schema';
 import {contains} from '../util';
 
-import { scaleType, FieldQuery, ScaleQuery, toFieldDef, AutoCountQuery, isAutoCountQuery, isFieldQuery } from '../query/encoding';
+import { scaleType, FieldQuery, ScaleQuery, toFieldDef, AutoCountQuery, isFieldQuery } from '../query/encoding';
 import {EncodingConstraintModel, EncodingConstraint} from './base';
 
 export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
