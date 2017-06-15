@@ -12,7 +12,7 @@ import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNest
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
-import {AutoCountQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, FieldQuery, ValueQuery} from './query/encoding';
+import {AutoCountQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, EncodingQuery} from './query/encoding';
 import {GroupBy, ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
@@ -55,7 +55,7 @@ export class SpecQueryModel {
 
     // encodings
     specQ.encodings.forEach((encQ, index) => {
-      if (isAutoCountQuery(encQ) && encQ.autoCount !== undefined) {
+      if (isAutoCountQuery(encQ)) {
         // This is only for testing purpose
         console.warn('A field with autoCount should not be included as autoCount meant to be an internal object.');
 
@@ -128,8 +128,6 @@ export class SpecQueryModel {
   constructor(spec: SpecQuery, wildcardIndex: WildcardIndex, schema: Schema, opt: QueryConfig, wildcardAssignment: Dict<any>) {
     this._spec = spec;
     this._channelFieldCount = spec.encodings.reduce((m, encQ) => {
-      // TODO: add a test case
-      // TODO(akshatsh): is undef okay?
       if (!isWildcard(encQ.channel) && (!isAutoCountQuery(encQ) || encQ.autoCount !== false)) {
         m[encQ.channel + ''] = 1;
       }
@@ -234,10 +232,9 @@ export class SpecQueryModel {
     return stack(this._spec);
   }
 
-  public getEncodings() {
+  public getEncodings(): EncodingQuery[] {
     // do not include encoding that has autoCount = false because it is not a part of the output spec.
-    // TODO(akshatsh): check that autcount = undef is valid???
-    return this._spec.encodings.filter((encQ) => (isValueQuery(encQ) || !(isDisabledAutoCountQuery(encQ))));
+    return this._spec.encodings.filter(encQ => !isDisabledAutoCountQuery(encQ));
   }
 
   public getEncodingQueryByChannel(channel: Channel) {

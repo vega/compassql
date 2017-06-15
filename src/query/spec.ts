@@ -65,7 +65,7 @@ export function fromSpec(spec: TopLevel<FacetedCompositeUnitSpec>): SpecQuery {
 
 export function isAggregate(specQ: SpecQuery) {
   return some(specQ.encodings, (encQ: EncodingQuery) => {
-    return ((isFieldQuery(encQ) && !isWildcard(encQ.aggregate) && !!encQ.aggregate) || isEnabledAutoCountQuery(encQ));
+    return (isFieldQuery(encQ) && !isWildcard(encQ.aggregate) && !!encQ.aggregate) || isEnabledAutoCountQuery(encQ);
   });
 }
 

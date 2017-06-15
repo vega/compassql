@@ -237,7 +237,7 @@ export class Schema {
    */
   public cardinality(fieldQ: FieldQuery, augmentTimeUnitDomain: boolean = true, excludeInvalid: boolean = false) {
     const fieldSchema = this._fieldSchemaIndex[fieldQ.field as string];
-    if (fieldQ.aggregate || isAutoCountQuery(fieldQ) && fieldQ.autoCount) {
+    if (fieldQ.aggregate || (isAutoCountQuery(fieldQ) && fieldQ.autoCount)) {
       return 1;
     } else if (fieldQ.bin) {
       // encQ.bin will either be a boolean or a BinQuery

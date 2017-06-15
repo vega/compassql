@@ -143,7 +143,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       if (hasAutoCount) {
         // Auto count should only be applied if all fields are nominal, ordinal, temporal with timeUnit, binned quantitative, or autoCount
         return every(specM.getEncodings(), (encQ: EncodingQuery) => {
-          if (isValueQuery(encQ)) {return false;}
+          if (isValueQuery(encQ)) {
+            return false;
+          }
 
           if (isAutoCountQuery(encQ)) {
             return true;
@@ -226,9 +228,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       switch (mark) {
         case Mark.AREA:
         case Mark.LINE:
-          let usedX = specM.channelUsed(Channel.X);
-          let usedY = specM.channelUsed(Channel.Y);
-          return usedX && usedY;
+          return specM.channelUsed(Channel.X) && specM.channelUsed(Channel.Y);
         case Mark.TEXT:
           return specM.channelUsed(Channel.TEXT);
         case Mark.BAR:
@@ -402,7 +402,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
       for (let i = 0; i < encodings.length; i++) {
         const encQ = encodings[i];
-        if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ))) continue; // ignore skipped encoding
+        if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ)))  {
+          continue; // ignore skipped encoding
+        }
 
         const channel = encQ.channel;
         if (!isWildcard(channel)) {
@@ -435,7 +437,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       let hasX = false, hasY = false;
       for (let i = 0; i < encodings.length; i++) {
         const encQ = encodings[i];
-        if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ))) continue; // ignore skipped encoding
+        if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ))) {
+          continue; // ignore skipped encoding
+        }
 
         const channel = encQ.channel;
         if (channel === Channel.X) {
@@ -557,11 +561,17 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       for (let i = 0; i < encodings.length ; i++) {
         const encQ = encodings[i];
 
-        // TODO(akshatsh): skip autocount queries?
         if (isValueQuery(encQ) || isAutoCountQuery(encQ)) continue;
 
+        let field;
         if (encQ.field && !isWildcard(encQ.field)) {
-          const field = encQ.field as string;
+          field = encQ.field as string;
+        }
+        if (isAutoCountQuery(encQ) && !isWildcard(encQ.autoCount)) {
+          field = 'count_*';
+        }
+
+        if (field) {
           if (specM.wildcardIndex.hasEncodingProperty(i, Property.FIELD)) {
             fieldEnumerated[field] = true;
           }
