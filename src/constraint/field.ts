@@ -10,7 +10,7 @@ import {isWildcard, Wildcard} from '../wildcard';
 import {PrimitiveType, Schema} from '../schema';
 import {contains} from '../util';
 
-import {scaleType, FieldQuery, ScaleQuery, toFieldDef, AutoCountQuery, isAutoCountQuery} from '../query/encoding';
+import { scaleType, FieldQuery, ScaleQuery, toFieldDef, AutoCountQuery, isAutoCountQuery, isFieldQuery } from '../query/encoding';
 import {EncodingConstraintModel, EncodingConstraint} from './base';
 
 export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
@@ -97,13 +97,14 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     allowWildcardForProperties: true,
     strict: true,
     // TODO(akshatsh): Check constraint
-    satisfy: (fieldQ: FieldQuery & AutoCountQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
-
-      const numFn = (!isWildcard(fieldQ.aggregate) && !!fieldQ.aggregate ? 1 : 0) +
-        (isAutoCountQuery(fieldQ) && !isWildcard(fieldQ.autoCount) && !!fieldQ.autoCount ? 1 : 0) +
-        (!isWildcard(fieldQ.bin) && !!fieldQ.bin ? 1 : 0) +
-        (!isWildcard(fieldQ.timeUnit) && !!fieldQ.timeUnit ? 1 : 0);
-      return numFn <= 1;
+    satisfy: (fieldQ: FieldQuery | AutoCountQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
+      if (isFieldQuery(fieldQ))  {
+        const numFn = (!isWildcard(fieldQ.aggregate) && !!fieldQ.aggregate ? 1 : 0) +
+          (!isWildcard(fieldQ.bin) && !!fieldQ.bin ? 1 : 0) +
+          (!isWildcard(fieldQ.timeUnit) && !!fieldQ.timeUnit ? 1 : 0);
+        return numFn <= 1;
+      }
+      return true;
     }
   },{
     name: 'timeUnitAppliedForTemporal',

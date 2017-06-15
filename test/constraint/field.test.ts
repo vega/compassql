@@ -495,12 +495,11 @@ describe('constraints/field', () => {
 
   describe('onlyOneTypeOfFunction', () => {
     // TODO(akshatsh): Correct fix? for line 531
-    const encQ: EncodingQuery & AutoCountQuery = {
-        channel: Channel.X,
-        field: 'A',
-        type: Type.QUANTITATIVE,
-        autoCount: false
-      };
+    const encQ: EncodingQuery = {
+      channel: Channel.X,
+      field: 'A',
+      type: Type.QUANTITATIVE
+    };
 
     it('should return true if there is no function', () => {
       assert.isTrue(FIELD_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
