@@ -9,7 +9,7 @@ import {Scale} from 'vega-lite/build/src/scale';
 import {Legend} from 'vega-lite/build/src/legend';
 import {SortOrder, SortField} from 'vega-lite/build/src/sort';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
-import {Type} from 'vega-lite/build/src/type';
+import { Type, Type as VLType } from 'vega-lite/build/src/type';
 import {ExpandedType} from './ExpandedType';
 
 import compileScaleType from 'vega-lite/build/src/compile/scale/type';
@@ -91,13 +91,13 @@ export function toFieldDef(fieldQ: FieldQuery,
         } else {
           throw new Error(`Cannot convert {autoCount: false} into a field def`);
         }
-      } /*else if (prop === 'type') {
+       } else if (prop === 'type') {
         if (fieldQ[prop] === ExpandedType.KEY) {
           fieldDef[prop] = Type.NOMINAL;
         } else {
-          fieldDef[prop] = fieldQ[prop];
+          fieldDef[prop] = fieldQ[prop] as VLType;
         }
-      } */ else {
+      } else {
         fieldDef[prop] = fieldQ[prop];
       }
     }
