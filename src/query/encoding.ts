@@ -9,7 +9,7 @@ import {Scale} from 'vega-lite/build/src/scale';
 import {Legend} from 'vega-lite/build/src/legend';
 import {SortOrder, SortField} from 'vega-lite/build/src/sort';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
-import { Type, Type as VLType } from 'vega-lite/build/src/type';
+import {Type as VLType} from 'vega-lite/build/src/type';
 import {ExpandedType} from './ExpandedType';
 
 import compileScaleType from 'vega-lite/build/src/compile/scale/type';
@@ -92,31 +92,38 @@ export type AxisQuery =  FlatQueryWithEnableFlag<Axis>;
 export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 
 
-export function toFieldDef(fieldQ: FieldQuery,
-    props: (keyof (FieldQuery & AutoCountQuery))[] = ['aggregate', 'autoCount', 'bin', 'timeUnit', 'field', 'type']) {
-
-  return props.reduce((fieldDef: FieldDef<string>, prop: keyof FieldQuery & AutoCountQuery) => {
-    if (isWildcard(fieldQ[prop])) {
-      throw new Error(`Cannot convert ${JSON.stringify(fieldQ)} to fielddef: ${prop} is wildcard`);
-    } else if (fieldQ[prop] !== undefined) {
-      if (prop === 'autoCount') {
-        if (fieldQ[prop]) {
-          fieldDef.aggregate = 'count';
-        } else {
-          throw new Error(`Cannot convert {autoCount: false} into a field def`);
-        }
-       } else if (prop === 'type') {
-        if (fieldQ[prop] === ExpandedType.KEY) {
-          fieldDef[prop] = Type.NOMINAL;
-        } else {
-          fieldDef[prop] = fieldQ[prop] as VLType;
-        }
-      } else {
-        fieldDef[prop] = fieldQ[prop];
+export function toFieldDef(encQ: FieldQuery | AutoCountQuery,
+    props: (keyof (FieldQuery))[] = ['aggregate', 'bin', 'timeUnit', 'field', 'type']) {
+  if (isFieldQuery(encQ)) {
+    return props.reduce((fieldDef: FieldDef<string>, prop: keyof FieldQuery) => {
+      if (isWildcard(encQ[prop])) {
+        throw new Error(`Cannot convert ${JSON.stringify(encQ)} to fielddef: ${prop} is wildcard`);
+      } else if (encQ[prop] !== undefined) {
+        fieldDef[prop] = encQ[prop];
       }
+      return fieldDef;
+    }, {});
+
+  } else {
+    if (encQ.autoCount === false) {
+      throw new Error(`Cannot convert {autoCount: false} into a field def`);
+    } else {
+      return props.reduce((fieldDef: FieldDef<string>, prop: keyof FieldQuery) => {
+        if (isWildcard(encQ[prop])) {
+          throw new Error(`Cannot convert ${JSON.stringify(encQ)} to fielddef: ${prop} is wildcard`);
+        }
+        switch (prop) {
+          case 'type':
+            fieldDef.type = 'quantitative';
+            break;
+          case 'aggregate':
+            fieldDef.aggregate = 'count';
+            break;
+        }
+        return fieldDef;
+      }, {});
     }
-    return fieldDef;
-  }, {});
+  }
 }
 
 /**
@@ -196,7 +203,7 @@ export function scaleType(fieldQ: FieldQuery) {
 
   let vegaLiteType = type;
   if (vegaLiteType === ExpandedType.KEY) {
-    vegaLiteType = Type.NOMINAL;
+    vegaLiteType = VLType.NOMINAL;
   }
 
   return compileScaleType(

@@ -248,6 +248,24 @@ describe('SpecQueryModel', () => {
     });
   });
 
+  describe('getEncodings()', () => {
+    it('should return correct encodings', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.Y, value: 5},
+          {channel: Channel.COLOR, field: 'a', type: 'quantitative'},
+          {channel: Channel.X, autoCount: false}
+        ]
+      });
+
+      assert.deepEqual(specM.getEncodings(), [
+        {channel: Channel.Y, value: 5},
+        {channel: Channel.COLOR, field: 'a', type: 'quantitative'}
+      ]);
+    });
+  });
+
   describe('toSpec', () => {
     it('should return a Vega-Lite spec if the query is completed', () => {
       const specM = buildSpecQueryModel({

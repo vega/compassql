@@ -1,12 +1,22 @@
-  import {ScaleType} from 'vega-lite/build/src/scale';
-  import {Type} from 'vega-lite/build/src/type';
-  import {TimeUnit} from 'vega-lite/build/src/timeunit';
-  import {assert} from 'chai';
+import {ScaleType} from 'vega-lite/build/src/scale';
+import {Type} from 'vega-lite/build/src/type';
+import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import {assert} from 'chai';
 
-  import {scaleType} from '../../src/query/encoding';
-  import {SHORT_WILDCARD} from '../../src/wildcard';
+import {scaleType, toFieldDef} from '../../src/query/encoding';
+import {SHORT_WILDCARD} from '../../src/wildcard';
 
-  describe('query/encoding/scaleType', () => {
+describe('query/encoding', () => {
+  describe('toFieldDef', () => {
+    it('return correct fieldDef for autoCount', () => {
+      assert.deepEqual(
+        toFieldDef({channel: 'x', autoCount: true, type: 'quantitative'}),
+        {aggregate: 'count', type: 'quantitative'}
+      );
+    });
+  });
+
+  describe('scaleType', () => {
     it('should return specified scale type if it is valid', () => {
       const sType = scaleType({
         channel: 'x',
@@ -137,3 +147,4 @@
        assert.equal(sType, ScaleType.TIME);
      });
   });
+});

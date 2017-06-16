@@ -1,7 +1,7 @@
 import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
 import {Schema} from '../schema';
-import {isFieldQuery, isValueQuery, isAutoCountQuery} from '../query/encoding';
+import {isFieldQuery, isValueQuery, isEnabledAutoCountQuery} from '../query/encoding';
 
 import {RankingScore, FeatureScore} from './ranking';
 
@@ -35,8 +35,19 @@ export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): Ra
     const encoding = encodings[index];
 
     // Skip ValueQuery as we only care about order of fields.
-    if (!isFieldQuery(encoding) && (isValueQuery(encoding) || isAutoCountQuery(encoding))) continue;
-    const field = encoding.field as string;
+    let field;
+    if (isValueQuery(encoding)) {
+      continue;
+    } else if (isFieldQuery(encoding)) {
+      field = encoding.field as string;
+    } else {
+      if (isEnabledAutoCountQuery) {
+        field = 'count_*';
+      } else {
+        continue;
+      }
+    }
+
     const fieldWildcard = specM.wildcardIndex.encodings[index].get('field');
     const fieldIndex = schema.fieldSchema(field).index;
      // reverse order field with lower index should get higher score and come first
