@@ -1,7 +1,7 @@
 import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
 import {Schema} from '../schema';
-import {isFieldQuery, isValueQuery, isEnabledAutoCountQuery} from '../query/encoding';
+import {isFieldQuery} from '../query/encoding';
 
 import {RankingScore, FeatureScore} from './ranking';
 
@@ -36,16 +36,11 @@ export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): Ra
 
     // Skip ValueQuery as we only care about order of fields.
     let field;
-    if (isValueQuery(encoding)) {
-      continue;
-    } else if (isFieldQuery(encoding)) {
+
+    if (isFieldQuery(encoding)) {
       field = encoding.field as string;
-    } else {
-      if (isEnabledAutoCountQuery) {
-        field = 'count_*';
-      } else {
-        continue;
-      }
+    } else { // ignore ValueQuery / AutoCountQuery
+      continue;
     }
 
     const fieldWildcard = specM.wildcardIndex.encodings[index].get('field');
