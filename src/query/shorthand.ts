@@ -5,7 +5,7 @@ import {SINGLE_TIMEUNITS, MULTI_TIMEUNITS} from 'vega-lite/build/src/timeunit';
 import {Type, getFullName} from 'vega-lite/build/src/type';
 import {toMap, isString} from 'datalib/src/util';
 
-import {EncodingQuery, isFieldQuery, FieldQuery, isValueQuery} from './encoding';
+import {EncodingQuery, isFieldQuery, FieldQuery, isValueQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, isAutoCountQuery} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
 
 import {isWildcard, isShortWildcard, SHORT_WILDCARD} from '../wildcard';
@@ -118,17 +118,17 @@ export function spec(specQ: SpecQuery,
 
   if (specQ.encodings) {
     const encodings = specQ.encodings.reduce((encQs, encQ) => {
-          // Exclude encoding mapping with autoCount=false as they are basically disabled.
-          if (isFieldQuery(encQ) && encQ.autoCount !== false) {
-            const str = encoding(encQ, include, replace);
-            if (str) { // only add if the shorthand isn't an empty string.
-              encQs.push(str);
-            }
+        // Exclude encoding mapping with autoCount=false as they are basically disabled.
+        if (!isDisabledAutoCountQuery(encQ)) {
+          const str = encoding(encQ, include, replace);
+          if (str) { // only add if the shorthand isn't an empty string.
+            encQs.push(str);
           }
-          return encQs;
-        }, [])
-        .sort() // sort at the end to ignore order
-        .join('|');
+        }
+        return encQs;
+      }, [])
+      .sort() // sort at the end to ignore order
+      .join('|');
 
     if (encodings) {
       parts.push(encodings);
@@ -173,34 +173,42 @@ export function encoding(encQ: EncodingQuery,
  * @param include Dict Set listing property types (key) to be included in the shorthand
  * @param replace Dictionary of replace function for values of a particular property type (key)
  */
-export function fieldDef(fieldQ: FieldQuery,
+export function fieldDef(encQ: EncodingQuery,
     include: PropIndex<boolean> = INCLUDE_ALL,
     replacer: PropIndex<Replacer> = REPLACE_NONE): string {
 
-  if (include.get(Property.AGGREGATE) && fieldQ.autoCount === false) {
+  if (include.get(Property.AGGREGATE) && isDisabledAutoCountQuery(encQ)) {
     return '-';
   }
 
-  const fn = func(fieldQ, include, replacer);
-  const props = fieldDefProps(fieldQ, include, replacer);
+  const fn = func(encQ, include, replacer);
+  const props = fieldDefProps(encQ, include, replacer);
 
-  // field
-  let fieldAndParams = include.get('field') ? value(fieldQ.field || '*', replacer.get('field')) : '...';
-  // type
-  if (include.get(Property.TYPE)) {
-    if (isWildcard(fieldQ.type)) {
-      fieldAndParams += ',' + value(fieldQ.type, replacer.get(Property.TYPE));
-    } else {
-      const typeShort = ((fieldQ.type || Type.QUANTITATIVE)+'').substr(0,1);
-      fieldAndParams += ',' + value(typeShort, replacer.get(Property.TYPE));
+  let fieldAndParams;
+  if (isFieldQuery(encQ)) {
+    // field
+    fieldAndParams = include.get('field') ? value(encQ.field, replacer.get('field')) : '...';
+    // type
+    if (include.get(Property.TYPE)) {
+      if (isWildcard(encQ.type)) {
+        fieldAndParams += ',' + value(encQ.type, replacer.get(Property.TYPE));
+      } else {
+        const typeShort = ((encQ.type || Type.QUANTITATIVE)+'').substr(0,1);
+        fieldAndParams += ',' + value(typeShort, replacer.get(Property.TYPE));
+      }
     }
+    // encoding properties
+    fieldAndParams += props.map((p) => {
+      let val = p.value instanceof Array ? '[' + p.value + ']' : p.value;
+      return ',' + p.key + '=' + val;
+    }).join('');
+  } else if (isAutoCountQuery(encQ)) {
+    fieldAndParams = '*,q';
   }
-  // encoding properties
-  fieldAndParams += props.map((p) => {
-    let val = p.value instanceof Array ? '[' + p.value + ']' : p.value;
-    return ',' + p.key + '=' + val;
-  }).join('');
 
+  if (!fieldAndParams) {
+    return null;
+  }
   if (fn) {
     let fnPrefix = isString(fn) ? fn : SHORT_WILDCARD +
       (keys(fn).length > 0 ? JSON.stringify(fn) : '');
@@ -210,13 +218,14 @@ export function fieldDef(fieldQ: FieldQuery,
   return fieldAndParams;
 }
 
+
 /**
  * Return function part of
  */
 function func(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer: PropIndex<Replacer>): string | Object {
   if (include.get(Property.AGGREGATE) && fieldQ.aggregate && !isWildcard(fieldQ.aggregate)) {
     return replace(fieldQ.aggregate, replacer.get(Property.AGGREGATE));
-  } else if (include.get(Property.AGGREGATE) && fieldQ.autoCount && !isWildcard(fieldQ.autoCount)) {
+  } else if (include.get(Property.AGGREGATE) && isEnabledAutoCountQuery(fieldQ)) {
     // autoCount is considered a part of aggregate
     return replace('count', replacer.get(Property.AGGREGATE));;
   } else if (include.get(Property.TIMEUNIT) && fieldQ.timeUnit && !isWildcard(fieldQ.timeUnit)) {

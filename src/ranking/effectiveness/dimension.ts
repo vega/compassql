@@ -28,7 +28,7 @@ export class DimensionScorer extends Scorer {
   public getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     if (specM.isAggregate()) {
       specM.getEncodings().reduce((maxFScore, encQ: EncodingQuery) => {
-        if (isFieldQuery(encQ) && !encQ.aggregate && !encQ.autoCount) { // isDimension
+        if (isFieldQuery(encQ) && !encQ.aggregate) { // isDimension
           const featureScore = this.getFeatureScore(encQ.channel + '');
           if (featureScore && featureScore.score > maxFScore.score) {
             return featureScore;

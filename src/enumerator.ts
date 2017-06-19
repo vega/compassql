@@ -9,7 +9,7 @@ import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS} from './proper
 import {PropIndex} from './propindex';
 import {Wildcard} from './wildcard';
 import {Schema} from './schema';
-import {isValueQuery} from './query/encoding';
+import {isValueQuery, isDisabledAutoCountQuery} from './query/encoding';
 
 const ENUMERATOR_INDEX = new PropIndex<EnumeratorFactory>();
 
@@ -85,7 +85,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
               // If this encoding query is an excluded autoCount, there is no point enumerating other properties
               // for this encoding query because they will be excluded anyway.
               // Thus, we can just move on to the next encoding to enumerate.
-              encQ.autoCount === false ||
+              (isDisabledAutoCountQuery(encQ)) ||
               // nested encoding property might have its parent set to false
               // therefore, we no longer have to enumerate them
               !propWildcard

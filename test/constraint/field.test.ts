@@ -495,10 +495,10 @@ describe('constraints/field', () => {
 
   describe('onlyOneTypeOfFunction', () => {
     const encQ: EncodingQuery = {
-        channel: Channel.X,
-        field: 'A',
-        type: Type.QUANTITATIVE
-      };
+      channel: Channel.X,
+      field: 'A',
+      type: Type.QUANTITATIVE
+    };
 
     it('should return true if there is no function', () => {
       assert.isTrue(FIELD_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
@@ -517,16 +517,14 @@ describe('constraints/field', () => {
 
     it('should return false if there are multiple functions', () => {
       [
-        ['mean', TimeUnit.MONTH, true, undefined],
-        ['mean', undefined, true, undefined],
-        ['mean', TimeUnit.MONTH, undefined, undefined],
-        [undefined, TimeUnit.MONTH, true, undefined],
-        ['mean', undefined, undefined, true],
+        ['mean', TimeUnit.MONTH, true],
+        ['mean', undefined, true],
+        ['mean', TimeUnit.MONTH, undefined],
+        [undefined, TimeUnit.MONTH, true],
       ].forEach((tuple) => {
         encQ.aggregate = tuple[0];
         encQ.timeUnit = tuple[1];
         encQ.bin = tuple[2];
-        encQ.autoCount = tuple[3];
 
         assert.isFalse(FIELD_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
