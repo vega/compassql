@@ -1,4 +1,4 @@
-import {Channel, X, Y, STACK_GROUP_CHANNELS} from 'vega-lite/build/src/channel';
+import {Channel, X, Y, STACK_BY_CHANNELS} from 'vega-lite/build/src/channel';
 import {Config} from 'vega-lite/build/src/config';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
@@ -92,7 +92,7 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
   }
 
   const stackBy = specQ.encodings.reduce((sc, encQ: EncodingQuery) => {
-    if (contains(STACK_GROUP_CHANNELS, encQ.channel) && (isValueQuery(encQ) || (isFieldQuery(encQ) &&!encQ.aggregate))) {
+    if (contains(STACK_BY_CHANNELS, encQ.channel) && (isValueQuery(encQ) || (isFieldQuery(encQ) &&!encQ.aggregate))) {
       sc.push({
         channel: encQ.channel,
         fieldDef: encQ

@@ -12,7 +12,7 @@ import {TimeUnit} from 'vega-lite/build/src/timeunit';
 import {Type as VLType} from 'vega-lite/build/src/type';
 import {ExpandedType} from './ExpandedType';
 
-import compileScaleType from 'vega-lite/build/src/compile/scale/type';
+import {scaleType as compileScaleType} from 'vega-lite/build/src/compile/scale/type';
 
 import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
 import {AggregateOp} from 'vega-lite/build/src/aggregate';
@@ -93,7 +93,7 @@ export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 
 
 export function toFieldDef(encQ: FieldQuery | AutoCountQuery,
-    props: (keyof (FieldQuery))[] = ['aggregate', 'bin', 'timeUnit', 'field', 'type']) {
+    props: (keyof (FieldQuery))[] = ['aggregate', 'bin', 'timeUnit', 'field', 'type']): FieldDef<string> {
   if (isFieldQuery(encQ)) {
     return props.reduce((fieldDef: FieldDef<string>, prop: keyof FieldQuery) => {
       if (isWildcard(encQ[prop])) {
@@ -102,7 +102,7 @@ export function toFieldDef(encQ: FieldQuery | AutoCountQuery,
         fieldDef[prop] = encQ[prop];
       }
       return fieldDef;
-    }, {});
+    }, {} as FieldDef<string>);
 
   } else {
     if (encQ.autoCount === false) {
@@ -121,7 +121,7 @@ export function toFieldDef(encQ: FieldQuery | AutoCountQuery,
             break;
         }
         return fieldDef;
-      }, {});
+      }, {} as FieldDef<string>);
     }
   }
 }
@@ -153,14 +153,13 @@ export function scaleType(fieldQ: FieldQuery) {
 
   const {type, channel, timeUnit, bin} = fieldQ;
 
-  // HACK: All of markType, hasTopLevelSize, and scaleConfig only affect
+  // HACK: All of markType, and scaleConfig only affect
   // sub-type of ordinal to quantitative scales (point or band)
   // Currently, most of scaleType usage in CompassQL doesn't care about this subtle difference.
-  // Thus, instead of making this method requiring the global mark and topLevelSize,
-  // we will just call it with mark = undefined and hasTopLevelSize = false.
+  // Thus, instead of making this method requiring the global mark,
+  // we will just call it with mark = undefined .
   // Thus, currently, we will always get a point scale unless a CompassQuery specifies band.
   const markType: Mark = undefined;
-  const hasTopLevelSize = false;
   const scaleConfig = {};
 
   if (isWildcard(scale.type) || isWildcard(type) || isWildcard(channel) || isWildcard(bin)) {
@@ -201,14 +200,8 @@ export function scaleType(fieldQ: FieldQuery) {
     return undefined;
   }
 
-  let vegaLiteType = type;
-  if (vegaLiteType === ExpandedType.KEY) {
-    vegaLiteType = VLType.NOMINAL;
-  }
+  let vegaLiteType: VLType = type === ExpandedType.KEY ? 'nominal': type;
 
-  return compileScaleType(
-    scale.type, channel,
-    {type: vegaLiteType, timeUnit: timeUnit as TimeUnit, bin: bin as Bin},
-    markType, hasTopLevelSize, rangeStep, scaleConfig
-  );
+  const fieldDef = {type: vegaLiteType, timeUnit: timeUnit as TimeUnit, bin: bin as Bin};
+  return compileScaleType(scale.type, channel, fieldDef, markType, rangeStep, scaleConfig);
 }

@@ -266,14 +266,16 @@ export class SpecQueryModel {
     let encoding: Encoding<string> = {};
 
     for (const encQ of this._spec.encodings) {
-      let fieldDef: FieldDef<string> = {};
+      // Need to cast here so we can assign properties later
+      let fieldDef = {} as FieldDef<string>;
 
       // For count field that is automatically added, convert to correct vega-lite fieldDef
       if (isEnabledAutoCountQuery(encQ)) {
-        fieldDef.aggregate = 'count';
-        fieldDef.field = '*';
-        fieldDef.type = Type.QUANTITATIVE;
-
+        fieldDef = {
+          aggregate: 'count',
+          field: '*',
+          type: 'quantitative'
+        };
       } else if (isValueQuery(encQ) || isDisabledAutoCountQuery(encQ)) {
         continue; // Do not include this in the output.
       }

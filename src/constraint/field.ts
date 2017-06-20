@@ -1,5 +1,5 @@
 import {Channel} from 'vega-lite/build/src/channel';
-import {channelCompatibility} from 'vega-lite/build/src/fielddef';
+import {channelCompatibility, FieldDef} from 'vega-lite/build/src/fielddef';
 import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain, channelScalePropertyIncompatability, Scale} from 'vega-lite/build/src/scale';
 import {Type} from 'vega-lite/build/src/type';
 import {ExpandedType, isDiscrete} from '../query/ExpandedType';
@@ -59,7 +59,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (fieldQ: FieldQuery, _: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig) => {
-      const fieldDef = {
+      const fieldDef: FieldDef<string> = {
         field: 'f', // actual field doesn't really matter here
         ... toFieldDef(fieldQ, ['bin', 'timeUnit', 'type'])
       };
@@ -186,6 +186,10 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         let channel: Channel = fieldQ.channel as Channel;
         let scale: ScaleQuery = fieldQ.scale as ScaleQuery;
         if (channel && !isWildcard(channel) && scale) {
+          if (channel === 'row' || channel === 'column') {
+            // row / column do not have scale
+            return false;
+          }
           for (let scaleProp in scale) {
             if (!scale.hasOwnProperty(scaleProp)) continue;
             if (scaleProp === 'type' || scaleProp === 'name' || scaleProp === 'enum') {

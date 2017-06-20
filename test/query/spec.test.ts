@@ -219,12 +219,14 @@ describe('query/spec', () => {
           x: {
             field: 'x',
             type: Type.QUANTITATIVE,
-            axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'},
+            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'},
           },
           y: {
             field: 'x', type: Type.QUANTITATIVE, scale: null
           },
           color: {
+            field: 'n',
+            type: 'nominal',
             legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}
           }
         },
@@ -235,9 +237,9 @@ describe('query/spec', () => {
         transform: [{filter: 'datum.x ===2'}],
         mark: Mark.POINT,
         encodings: [
-          {channel: 'x', field: 'x', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
+          {channel: 'x', field: 'x', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'}},
           {channel: 'y', field: 'x', type: Type.QUANTITATIVE, scale: false},
-          {channel: 'color', legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}}
+          {channel: 'color', field: 'n', type: 'nominal', legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}}
         ],
         config: {}
       });
