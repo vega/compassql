@@ -719,12 +719,25 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         const xEncQ = specM.getEncodingQueryByChannel('x');
         const yEncQ = specM.getEncodingQueryByChannel('y');
 
-        // TODO(#186): take non-spatial channel into account
         if ((!isFieldQuery(xEncQ) || isDiscrete(xEncQ)) &&
-          (!isFieldQuery(yEncQ) || isDiscrete(yEncQ)) &&
-          !specM.isAggregate() // TODO: refactor based on statistics
-        ) {
-          return false;
+            (!isFieldQuery(yEncQ) || isDiscrete(yEncQ))) {
+          if (!specM.isAggregate()) {
+            return false;
+          } else {
+            return every(specM.getEncodings(), (encQ) => {
+              let channel = encQ.channel;
+
+              if (channel !== Channel.X && channel !== Channel.Y &&
+                  channel !== Channel.ROW && channel !== Channel.COLUMN) {
+                if (isAutoCountQuery(encQ) || (isFieldQuery(encQ) && encQ.aggregate)) {
+                  return true;
+                } else {
+                  return false;
+                }
+              }
+              return true;
+            });
+          }
         }
       }
       return true;

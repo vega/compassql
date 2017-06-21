@@ -1415,6 +1415,37 @@ describe('constraints/spec', () => {
 
       });
     });
+
+    it('return true for plot with x and y as dimensions and aggregation', () => {
+      [Mark.POINT, Mark.CIRCLE, Mark.SQUARE, Mark.LINE, Mark.AREA, Mark.BAR].forEach((mark) => {
+        const specM = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'N20', type: Type.NOMINAL},
+            {aggregate: 'mean', channel: Channel.SIZE, field: 'Q', type: Type.QUANTITATIVE}
+          ]
+        });
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitTableWithOcclusionIfAutoAddCount'].satisfy(specM, schema, {autoAddCount: true}));
+      });
+    });
+
+    it('return false for plot with both x and y as dimensions where any non-X, non-Y' +
+       'non-Row, or non-Column channel are not aggregated', () => {
+      [Mark.POINT, Mark.CIRCLE, Mark.SQUARE, Mark.LINE, Mark.AREA, Mark.BAR].forEach((mark) => {
+        [Channel.COLOR, Channel.DETAIL, Channel.SHAPE, Channel.SIZE, Channel.OPACITY].forEach((rawChannel) => {
+          const specM = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+              {channel: Channel.Y, field: 'N20', type: Type.NOMINAL},
+              {channel: rawChannel, field: 'Q', type: Type.QUANTITATIVE}
+            ]
+          });
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['omitTableWithOcclusionIfAutoAddCount'].satisfy(specM, schema, {autoAddCount: true}));
+        });
+      });
+    });
   });
 
   describe('omitVerticalDotPlot', () => {
