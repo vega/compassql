@@ -139,6 +139,32 @@ describe('constraints/field', () => {
     });
   });
 
+  describe('minCardinalityForBin', () => {
+    it('should return false for binned quantitative field that has low cardinality', () => {
+      ['Q5', 'Q10'].forEach((field) => {
+        const encQ: EncodingQuery = {
+          channel: Channel.X,
+          bin: true,
+          field: field,
+          type: Type.QUANTITATIVE
+        };
+        assert.isFalse(FIELD_CONSTRAINT_INDEX['minCardinalityForBin'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+      });
+    });
+
+    it('should return true for binned quantitative field that has high enough cardinality', () => {
+      ['Q15', 'Q20', 'Q'].forEach((field) => {
+        const encQ: EncodingQuery = {
+          channel: Channel.X,
+          bin: true,
+          field: field,
+          type: Type.QUANTITATIVE
+        };
+        assert.isTrue(FIELD_CONSTRAINT_INDEX['minCardinalityForBin'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+      });
+    });
+  });
+
   describe('binAppliedForQuantitative', () => {
     let encQ: FieldQuery = {
       channel: Channel.X,

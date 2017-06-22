@@ -53,8 +53,8 @@ export interface QueryConfig {
   preferredNominalAxis?: Channel;
   preferredFacet?: Channel;
 
-  // Encoding Constraints
-
+  // Field Encoding Constraints
+  minCardinalityForBin?: number;
   maxCardinalityForCategoricalColor?: number;
   maxCardinalityForFacet?: number;
   maxCardinalityForShape?: number;
@@ -113,7 +113,8 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   preferredNominalAxis: Channel.Y, // nominal on y makes it easier to read.
   preferredFacet: Channel.ROW, // row make it easier to scroll than column
 
-  // Encoding Constraints -- See description inside src/constraints/encoding.ts
+  // Field Encoding Constraints -- See description inside src/constraint/field.ts
+  minCardinalityForBin: 15,
   maxCardinalityForCategoricalColor: 20,
   maxCardinalityForFacet: 20,
   maxCardinalityForShape: 6,

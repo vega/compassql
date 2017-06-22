@@ -18,6 +18,26 @@ const fixtures: FieldSchema[] = [{
   type: PrimitiveType.NUMBER,
   stats: {distinct: 100} as any // HACK so that we don't have to define all summary properties
 },{
+  name: 'Q5',
+  vlType: Type.QUANTITATIVE,
+  type: PrimitiveType.NUMBER,
+  stats: {distinct: 5} as any // HACK so that we don't have to define all summary properties
+},{
+  name: 'Q10',
+  vlType: Type.QUANTITATIVE,
+  type: PrimitiveType.NUMBER,
+  stats: {distinct: 10} as any // HACK so that we don't have to define all summary properties
+},{
+  name: 'Q15',
+  vlType: Type.QUANTITATIVE,
+  type: PrimitiveType.NUMBER,
+  stats: {distinct: 15} as any // HACK so that we don't have to define all summary properties
+},{
+  name: 'Q20',
+  vlType: Type.QUANTITATIVE,
+  type: PrimitiveType.NUMBER,
+  stats: {distinct: 20} as any // HACK so that we don't have to define all summary properties
+},{
   name: 'T',
   vlType: Type.TEMPORAL,
   type: PrimitiveType.DATETIME,
