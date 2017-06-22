@@ -154,7 +154,7 @@ describe('constraints/spec', () => {
       });
     });
 
-    autoCountShouldBe(true, 'there is only a temporal field with timeUnit or an unbinned quantitative field', {
+    autoCountShouldBe(true, 'there is only a temporal field with timeUnit or a binned quantitative field', {
       mark: Mark.POINT,
       encodings: [
         {channel: Channel.X, field: 'A', type: Type.TEMPORAL, timeUnit: TimeUnit.HOURS},
@@ -1413,6 +1413,53 @@ describe('constraints/spec', () => {
         });
         assert.isFalse(SPEC_CONSTRAINT_INDEX['omitTableWithOcclusionIfAutoAddCount'].satisfy(specM, schema, {autoAddCount: true}));
 
+      });
+    });
+
+    it('return true for plot with x and y as dimensions and aggregation', () => {
+      [Mark.POINT, Mark.CIRCLE, Mark.SQUARE, Mark.LINE, Mark.AREA, Mark.BAR].forEach((mark) => {
+        const specM = buildSpecQueryModel({
+          mark: mark,
+          encodings: [
+            {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+            {channel: Channel.Y, field: 'N20', type: Type.NOMINAL},
+            {aggregate: 'mean', channel: Channel.SIZE, field: 'Q', type: Type.QUANTITATIVE}
+          ]
+        });
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitTableWithOcclusionIfAutoAddCount'].satisfy(specM, schema, {autoAddCount: true}));
+      });
+    });
+
+    it('return false for plot with unaggregated non-position/facet channel', () => {
+      [Mark.POINT, Mark.CIRCLE, Mark.SQUARE, Mark.LINE, Mark.AREA, Mark.BAR].forEach((mark) => {
+        [Channel.COLOR, Channel.DETAIL, Channel.SHAPE, Channel.SIZE, Channel.OPACITY].forEach((rawChannel) => {
+          const specM = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+              {channel: Channel.Y, field: 'N20', type: Type.NOMINAL},
+              {channel: rawChannel, field: 'Q', type: Type.QUANTITATIVE}
+            ]
+          });
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['omitTableWithOcclusionIfAutoAddCount'].satisfy(specM, schema, {autoAddCount: true}));
+        });
+      });
+    });
+
+    it('return false for plot with unaggregated non-position/facet channel', () => {
+      [Mark.POINT, Mark.CIRCLE, Mark.SQUARE, Mark.LINE, Mark.AREA, Mark.BAR].forEach((mark) => {
+        [Channel.COLOR, Channel.DETAIL, Channel.SHAPE, Channel.OPACITY].forEach((rawChannel) => {
+          const specM = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: Channel.X, field: 'N', type: Type.NOMINAL},
+              {channel: Channel.Y, field: 'N20', type: Type.NOMINAL},
+              {aggregate: 'mean', channel: Channel.SIZE, field: 'Q', type: Type.QUANTITATIVE},
+              {channel: rawChannel, field: 'Q', type: Type.QUANTITATIVE}
+            ]
+          });
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['omitTableWithOcclusionIfAutoAddCount'].satisfy(specM, schema, {autoAddCount: true}));
+        });
       });
     });
   });
