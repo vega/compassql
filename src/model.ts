@@ -348,63 +348,24 @@ export class SpecQueryModel {
   }
 }
 
-export class SpecQueryGroup<T> {
+export interface SpecQueryGroup<T> {
+  name: string;
+  path: string;
+  items: (SpecQueryGroup<T> | T)[];
+  groupBy?: GroupBy;
+  orderGroupBy?: string | string[];
+}
 
-  private _name: string;
-  private _path: string;
-  private _items: (SpecQueryGroup<T> | T)[];
-  private _groupBy: GroupBy;
-  private _orderGroupBy: string | string[];
-
-  constructor(name: string = '', path: string = '', items: (T | SpecQueryGroup<T>)[] = [],
-              groupBy: GroupBy = undefined, orderGroupBy: string | string[] = undefined) {
-    this._name = name;
-    this._path = path;
-    this._items = items;
-    this._groupBy = groupBy;
-    this._orderGroupBy = orderGroupBy;
-  }
-
-  public getTopSpecQueryItem(): T {
-    const topItem = this._items[0];
-    if (isSpecQueryGroup<T>(topItem)) {
-      return topItem.getTopSpecQueryItem();
-    } else {
-      return topItem;
+export function getTopSpecQueryItem<T>(specQuery: SpecQueryGroup<T>): T {
+    let topItem = specQuery.items[0];
+    while (topItem && isSpecQueryGroup(topItem)) {
+      topItem = topItem.items[0];
     }
-  }
-
-  public get name() {
-    return this._name;
-  }
-
-  public get path() {
-    return this._path;
-  }
-
-  public get items() {
-    return this._items;
-  }
-
-  public get groupBy() {
-    return this._groupBy;
-  }
-
-  public set groupBy(groupBy: GroupBy) {
-    this._groupBy = groupBy;
-  }
-
-  public get orderGroupBy() {
-    return this._orderGroupBy;
-  }
-
-  public set orderGroupBy(orderGroupBy: string | string[]) {
-    this._orderGroupBy = orderGroupBy;
-  }
+    return <T>topItem;
 }
 
 export function isSpecQueryGroup<T>(item: SpecQueryGroup<T> | T): item is SpecQueryGroup<T> {
-  return (<SpecQueryGroup<T>>item).getTopSpecQueryItem !== undefined;
+  return (<SpecQueryGroup<T>>item).items !== undefined;
 }
 
 export type SpecQueryModelGroup = SpecQueryGroup<SpecQueryModel>;
