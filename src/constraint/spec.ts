@@ -729,9 +729,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
               if (channel !== Channel.X && channel !== Channel.Y &&
                   channel !== Channel.ROW && channel !== Channel.COLUMN) {
-                if (isAutoCountQuery(encQ) || (isFieldQuery(encQ) && encQ.aggregate)) {
-                  return true;
-                } else {
+                // Non-position fields should not be unaggreated fields
+                if (isFieldQuery(encQ) && !encQ.aggregate) {
                   return false;
                 }
               }
