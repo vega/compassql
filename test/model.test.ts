@@ -8,7 +8,7 @@ import {Mark} from 'vega-lite/build/src/mark';
 import {Type} from 'vega-lite/build/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
-import {isSpecQueryGroup, SpecQueryModel, SpecQueryGroup, SpecQueryModelGroup} from '../src/model';
+import {isSpecQueryGroup, SpecQueryModel, SpecQueryModelGroup, getTopSpecQueryItem} from '../src/model';
 import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, toKey} from '../src/property';
 import {SHORT_WILDCARD, isWildcard, getDefaultEnumValues} from '../src/wildcard';
 import {SpecQuery} from '../src/query/spec';
@@ -505,11 +505,20 @@ describe('SpecQueryModelGroup', () => {
 
   function buildSpecQueryModelGroup(specQs: SpecQuery[]) {
     const items = specQs.map((specQ) => buildSpecQueryModel(specQ));
-    return new SpecQueryGroup<SpecQueryModel>('a name', 'path', items);
+    return {
+      name: 'a name',
+      path: 'path',
+      items: items
+    };
   }
 
   describe('constructor', () => {
-    const group: SpecQueryModelGroup = new SpecQueryGroup<SpecQueryModel>();
+    const group: SpecQueryModelGroup = {
+      name: '',
+      path: '',
+      items: [],
+    };
+
     it('should have default values', () => {
       assert.equal(group.name, '');
       assert.equal(group.path, '');
@@ -536,7 +545,7 @@ describe('SpecQueryModelGroup', () => {
           ]
         }
       ]);
-      const top = group.getTopSpecQueryItem();
+      const top = getTopSpecQueryItem(group);
       assert.equal(top.getMark(), Mark.BAR);
     });
     it('should get handle nested groups', () => {
@@ -549,16 +558,24 @@ describe('SpecQueryModelGroup', () => {
         }
       ]);
 
-      const root: SpecQueryModelGroup = new SpecQueryGroup<SpecQueryModel>('root','', [group]);
+      const root: SpecQueryModelGroup = {
+        name: 'root',
+        path: '',
+        items: [group],
+      };
 
-      const top = root.getTopSpecQueryItem();
+      const top = getTopSpecQueryItem(root);
       assert.equal(top.getMark(), Mark.BAR);
     });
   });
 
   describe('isItemSpecQueryGroup', () => {
     it('should return true for ItemSpecQueryGroup', () => {
-      const group: SpecQueryModelGroup = new SpecQueryGroup<SpecQueryModel>();
+      const group: SpecQueryModelGroup = {
+        name: '',
+        path: '',
+        items: [],
+      };
       assert.isTrue(isSpecQueryGroup<SpecQueryModel>(group));
     });
   });

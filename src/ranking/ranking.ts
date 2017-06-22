@@ -1,5 +1,5 @@
 import {QueryConfig} from '../config';
-import {SpecQueryModel, SpecQueryModelGroup} from '../model';
+import {SpecQueryModel, SpecQueryModelGroup, getTopSpecQueryItem} from '../model';
 import {Query} from '../query/query';
 import {Dict} from '../util';
 import {Schema} from '../schema';
@@ -90,8 +90,8 @@ export function comparatorFactory(name: string | string[], schema: Schema, opt: 
 
 export function groupComparatorFactory(name: string | string[], schema: Schema, opt: QueryConfig): (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup) => number {
   return (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup): number => {
-    const m1 = g1.getTopSpecQueryItem();
-    const m2 = g2.getTopSpecQueryItem();
+    const m1 = getTopSpecQueryItem(g1);
+    const m2 = getTopSpecQueryItem(g2);
     if (name instanceof Array) {
       return getScoreDifference(name, m1, m2, schema, opt);
     } else {

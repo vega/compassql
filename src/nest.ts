@@ -1,7 +1,7 @@
 import {Channel} from 'vega-lite/build/src/channel';
 import {isArray} from 'datalib/src/util';
 
-import {SpecQueryModel, SpecQueryGroup, SpecQueryModelGroup} from './model';
+import { SpecQueryModel, SpecQueryModelGroup } from './model';
 import {Property} from './property';
 import {PropIndex} from './propindex';
 import {Dict} from './util';
@@ -37,7 +37,12 @@ export const SPEC = 'spec';
  */
 export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQueryModelGroup {
   if (queryNest) {
-    const rootGroup: SpecQueryModelGroup = new SpecQueryGroup<SpecQueryModel>();
+    // const rootGroup: SpecQueryModelGroup = new SpecQueryGroup<SpecQueryModel>();
+    const rootGroup: SpecQueryModelGroup = {
+      name: '',
+      path: '',
+      items: [],
+    };
     let groupIndex: Dict<SpecQueryModelGroup> = {};
 
     // global `includes` and `replaces` will get augmented by each level's groupBy.
@@ -60,6 +65,7 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
     }
 
     // With includes and replacers, now we can construct the nesting tree
+
     specModels.forEach((specM) => {
       let path = '';
       let group: SpecQueryModelGroup = rootGroup;
@@ -73,7 +79,11 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
 
         path += '/' + key;
         if (!groupIndex[path]) { // this item already exists on the path
-          groupIndex[path] = new SpecQueryGroup<SpecQueryModel>(key, path, []);
+          groupIndex[path] = {
+            name: key,
+            path: path,
+            items: [],
+          };
 
           group.items.push(groupIndex[path]);
         }
@@ -84,7 +94,11 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
     return rootGroup;
   } else {
     // no nesting, just return a flat group
-    return new SpecQueryGroup<SpecQueryModel>('', '', specModels);
+    return {
+      name: '',
+      path: '',
+      items: specModels,
+    };
   }
 }
 

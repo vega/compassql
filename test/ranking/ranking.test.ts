@@ -7,7 +7,7 @@ import {Type} from 'vega-lite/build/src/type';
 import {schema} from '../fixture';
 
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
-import {SpecQueryModel, SpecQueryGroup, SpecQueryModelGroup} from '../../src/model';
+import {SpecQueryModel, SpecQueryModelGroup} from '../../src/model';
 import {rank, comparatorFactory} from '../../src/ranking/ranking';
 
 import {assert} from 'chai';
@@ -17,7 +17,11 @@ describe('ranking', () => {
   describe('rank', () => {
     it('should return an empty group if the input group is empty', () => {
       let group: SpecQueryModelGroup = rank(
-        new SpecQueryGroup<SpecQueryModel>(),
+        {
+          name: '',
+          path: '',
+          items: [],
+        },
         {
           spec: {
             mark: Mark.BAR,
