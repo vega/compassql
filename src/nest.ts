@@ -37,7 +37,6 @@ export const SPEC = 'spec';
  */
 export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQueryModelGroup {
   if (queryNest) {
-    // const rootGroup: SpecQueryModelGroup = new SpecQueryGroup<SpecQueryModel>();
     const rootGroup: SpecQueryModelGroup = {
       name: '',
       path: '',
