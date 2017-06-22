@@ -2,7 +2,7 @@ import {hasDiscreteDomain} from 'vega-lite/build/src/scale';
 import {Type} from 'vega-lite/build/src/type';
 
 import {FieldQuery, scaleType} from '../../query/encoding';
-import {ExpandedType} from '../../query/ExpandedType';
+import {ExpandedType} from '../../query/expandedType';
 /**
  * Finer grained data types that takes binning and timeUnit into account.
  */

@@ -4,7 +4,7 @@ import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/build/src/cha
 import {Mark} from 'vega-lite/build/src/mark';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {Type} from 'vega-lite/build/src/type';
-import {ExpandedType} from '../query/ExpandedType';
+import {ExpandedType} from '../query/expandedType';
 
 import {AbstractConstraint, AbstractConstraintModel} from './base';
 

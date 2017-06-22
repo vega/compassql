@@ -2,7 +2,7 @@ import {Channel} from 'vega-lite/build/src/channel';
 import {channelCompatibility, FieldDef} from 'vega-lite/build/src/fielddef';
 import {ScaleType, scaleTypeSupportProperty, hasDiscreteDomain, channelScalePropertyIncompatability, Scale} from 'vega-lite/build/src/scale';
 import {Type} from 'vega-lite/build/src/type';
-import {ExpandedType, isDiscrete} from '../query/ExpandedType';
+import {ExpandedType, isDiscrete} from '../query/expandedType';
 
 import {QueryConfig} from '../config';
 import {getEncodingNestedProp, Property, SCALE_PROPS} from '../property';
