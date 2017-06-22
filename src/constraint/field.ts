@@ -28,7 +28,6 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
       // TODO: some aggregate function are actually supported by ordinal
       return true; // no aggregate is okay with any type.
     }
-  // TODO: minCardinalityForBin
   },{
     name: 'asteriskFieldWithCountOnly',
     description: 'Field="*" should be disallowed except aggregate="count"',
@@ -38,7 +37,20 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
       return (fieldQ.field === '*') === (fieldQ.aggregate === 'count');
     }
-  // TODO: minCardinalityForBin
+  },{
+    name: 'minCardinalityForBin',
+    description: 'binned quantitative field should not have too low cardinality',
+    properties: [Property.BIN, Property.FIELD, Property.TYPE],
+    allowWildcardForProperties: false,
+    strict: true,
+    satisfy: (fieldQ: FieldQuery, schema: Schema, _: PropIndex<Wildcard<any>>, opt: QueryConfig) => {
+      if (fieldQ.bin && fieldQ.type === Type.QUANTITATIVE) {
+        // We remove bin so schema can infer the raw unbinned cardinality.
+        let fieldQwithoutBin: FieldQuery = {channel: fieldQ.channel, field: fieldQ.field, type: fieldQ.type};
+        return schema.cardinality(fieldQwithoutBin) >= opt.minCardinalityForBin;
+      }
+      return true;
+    }
   },{
     name: 'binAppliedForQuantitative',
     description: 'bin should be applied to quantitative field only.',
