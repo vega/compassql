@@ -7,7 +7,7 @@ import {inferAll} from 'datalib/src/import/type';
 import * as dlBin from 'datalib/src/bins/bins';
 
 import {BinQuery, EncodingQuery, FieldQuery, isAutoCountQuery} from './query/encoding';
-import { ExpandedType } from './query/expandedType';
+import { ExpandedType } from './query/expandedtype';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {cmp, duplicate, extend, keys} from './util';
 
