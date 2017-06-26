@@ -10,7 +10,7 @@ import {Legend} from 'vega-lite/build/src/legend';
 import {SortOrder, SortField} from 'vega-lite/build/src/sort';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
 import {Type as VLType} from 'vega-lite/build/src/type';
-import {ExpandedType} from './expandedType';
+import {ExpandedType} from './expandedtype';
 
 import {scaleType as compileScaleType} from 'vega-lite/build/src/compile/scale/type';
 

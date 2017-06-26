@@ -14,9 +14,6 @@ import {SortField, SortOrder} from 'vega-lite/build/src/sort';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
 import {Type} from 'vega-lite/build/src/type';
 
-import {ExpandedType} from './query/expandedType';
-
-
 export const SHORT_WILDCARD: SHORT_WILDCARD = '?';
 export type SHORT_WILDCARD = '?';
 
