@@ -145,29 +145,6 @@ export function build(data: any,  tableSchema: TableSchema<TableSchemaFieldDescr
     return fieldSchema;
   });
 
-  // order the fieldSchemas (sort them)
-  const order = {
-    'nominal': 0,
-    'key': 1,
-    'ordinal': 2,
-    'temporal': 3,
-    'quantitative': 4
-  };
-  fieldSchemas.sort(function(a: FieldSchema, b: FieldSchema) {
-    // first order by vlType: nominal < temporal < quantitative < ordinal
-    if (order[a.vlType] < order[b.vlType]) {
-      return -1;
-    } else if (order[a.vlType] > order[b.vlType]) {
-      return 1;
-    } else {
-      // then order by field (alphabetically)
-      return a.name.localeCompare(b.name);
-    }
-  });
-
-  // Add index for sorting
-  fieldSchemas.forEach((fieldSchema, index) => fieldSchema.index = index);
-
   // calculate preset bins for quantitative and temporal data
   for (let fieldSchema of fieldSchemas) {
     if (fieldSchema.vlType === VLType.QUANTITATIVE) {
@@ -197,6 +174,32 @@ export class Schema {
 
   constructor(tableSchema: TableSchema<FieldSchema>) {
     this._tableSchema = tableSchema;
+
+    // order the field schema when we construct a new Schema
+    // this orders the fields in the UI
+    const order = {
+      'nominal': 0,
+      'key': 1,
+      'ordinal': 2,
+      'temporal': 3,
+      'quantitative': 4
+    };
+
+    tableSchema.fields.sort(function(a: FieldSchema, b: FieldSchema) {
+      // first order by vlType: nominal < temporal < quantitative < ordinal
+      if (order[a.vlType] < order[b.vlType]) {
+        return -1;
+      } else if (order[a.vlType] > order[b.vlType]) {
+        return 1;
+      } else {
+        // then order by field (alphabetically)
+        return a.name.localeCompare(b.name);
+      }
+    });
+
+    // Add index for sorting
+    tableSchema.fields.forEach((fieldSchema, index) => fieldSchema.index = index);
+
     this._fieldSchemaIndex = tableSchema.fields.reduce((m, fieldSchema: FieldSchema) => {
       m[fieldSchema.name] = fieldSchema;
       return m;
