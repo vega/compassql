@@ -168,6 +168,16 @@ export function build(data: any,  tableSchema: TableSchema<TableSchemaFieldDescr
   return new Schema(derivedTableSchema);
 }
 
+  // order the field schema when we construct a new Schema
+  // this orders the fields in the UI
+  const order = {
+    'nominal': 0,
+    'key': 1,
+    'ordinal': 2,
+    'temporal': 3,
+    'quantitative': 4
+  };
+
 export class Schema {
   private _tableSchema: TableSchema<FieldSchema>;
   private _fieldSchemaIndex: {[field: string]: FieldSchema};
@@ -175,15 +185,6 @@ export class Schema {
   constructor(tableSchema: TableSchema<FieldSchema>) {
     this._tableSchema = tableSchema;
 
-    // order the field schema when we construct a new Schema
-    // this orders the fields in the UI
-    const order = {
-      'nominal': 0,
-      'key': 1,
-      'ordinal': 2,
-      'temporal': 3,
-      'quantitative': 4
-    };
 
     tableSchema.fields.sort(function(a: FieldSchema, b: FieldSchema) {
       // first order by vlType: nominal < temporal < quantitative < ordinal
