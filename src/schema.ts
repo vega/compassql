@@ -46,6 +46,9 @@ export interface FieldSchema extends TableSchemaFieldDescriptor {
   stats: DLFieldProfile;
   binStats?: {[maxbins: string]: DLFieldProfile};
   timeStats?: {[timeUnit: string]: DLFieldProfile};
+
+  // array of valid input values (fields)
+  ordinalDomain?: string[];
 }
 
 /**
@@ -357,6 +360,8 @@ export class Schema {
       // coerce non-quantitative numerical data into number type
       domain = domain.map(x => +x);
       return domain.sort(cmp);
+    } else if ((fieldSchema.vlType === VLType.ORDINAL) && (fieldSchema.ordinalDomain !== null)) {
+      return fieldSchema.ordinalDomain;
     }
 
     return domain.map((x) => {

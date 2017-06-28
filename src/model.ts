@@ -298,6 +298,17 @@ export class SpecQueryModel {
           if (!PROPERTY_SUPPORTED_CHANNELS[prop] ||  // all channels support this prop
             PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel]) {
             fieldDef[prop] = encQ[prop];
+
+            if (prop === Property.SCALE) {
+              if (isFieldQuery(encQ)) {
+                let field = encQ.field;
+
+                let fieldSchema = this._schema.fieldSchema(field as string);
+                if (fieldSchema.ordinalDomain && !encQ[prop]['domain']) {
+                  fieldDef[prop] = extend(encQ[prop], {domain: fieldSchema.originalIndex});
+                }
+              }
+            }
           }
         }
       }
