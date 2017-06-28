@@ -13,7 +13,7 @@ import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, toKey} from '.
 import {SHORT_WILDCARD, isWildcard, getDefaultEnumValues} from '../src/wildcard';
 import {SpecQuery} from '../src/query/spec';
 import {FieldQuery, AutoCountQuery} from '../src/query/encoding';
-import {Schema} from '../src/schema';
+import {FieldSchema, Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
 
 const DEFAULT_SPEC_CONFIG = DEFAULT_QUERY_CONFIG.defaultSpecConfig;
@@ -377,6 +377,53 @@ describe('SpecQueryModel', () => {
       });
     });
 
+    it.only('should return a spec with the domain specified in FieldSchema if the encoding query ' +
+            'did not originaly have scale', () => {
+      const specM = SpecQueryModel.build(
+        {
+          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.X, field: 'A', type: Type.ORDINAL},
+            {channel: Channel.Y, field: 'B', type: Type.QUANTITATIVE}
+          ]
+        },
+        new Schema({fields:
+          [{
+            name: 'A',
+            vlType: 'ordinal',
+            type: 'string' as any,
+            ordinalDomain: ['S', 'M', 'L'],
+            stats: {
+              distinct: 3
+            }
+          },{
+            name: 'B',
+            vlType: 'quantitative',
+            type: 'number' as any,
+            stats: {
+              distinct: 3
+            }
+          }] as FieldSchema[]
+        }),
+        DEFAULT_QUERY_CONFIG
+      );
+
+      const spec = specM.toSpec();
+      assert.deepEqual(spec, {
+          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+          mark: Mark.BAR,
+          encoding: {
+            x: {field: 'A', type: Type.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
+            y: {field: 'B', type: Type.QUANTITATIVE}
+          },
+          config: DEFAULT_SPEC_CONFIG
+      });
+    });
+
+    it('should return a spec with the domain specified in FieldSchema if the encoding query already has ');
+
+
     it('should return a spec with bin as object if the bin has no parameter.', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{A: 1}]},
@@ -399,7 +446,7 @@ describe('SpecQueryModel', () => {
 
     it('should return a correct Vega-Lite spec if the query has sort: SortOrder', () => {
       const specM = buildSpecQueryModel({
-        data: {values: [{A: 1}]},
+        data: {values: [{A: 1, B: 1}]},
         transform: [{filter: 'datum.A===1'}],
         mark: Mark.BAR,
         encodings: [

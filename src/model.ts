@@ -292,7 +292,7 @@ export class SpecQueryModel {
         // if the property is a wildcard, return null
         if (isWildcard(encQ[prop])) return null;
 
-        // otherwise, assign the proper to the field def
+        // otherwise, assign the property to the field def
         if (encQ[prop] !== undefined) {
 
           if (!PROPERTY_SUPPORTED_CHANNELS[prop] ||  // all channels support this prop
@@ -305,8 +305,21 @@ export class SpecQueryModel {
 
                 let fieldSchema = this._schema.fieldSchema(field as string);
                 if (fieldSchema.ordinalDomain && !encQ[prop]['domain']) {
-                  fieldDef[prop] = extend(encQ[prop], {domain: fieldSchema.originalIndex});
+                  fieldDef[prop] = extend(encQ[prop], {domain: fieldSchema.ordinalDomain});
                 }
+              }
+            }
+          }
+          // if the encoding query doesn't have scale, but the schema does
+        } else if (prop === Property.SCALE) {
+          if (!PROPERTY_SUPPORTED_CHANNELS[Property.SCALE] ||
+            PROPERTY_SUPPORTED_CHANNELS[Property.SCALE][encQ.channel as Channel]) {
+            if (isFieldQuery(encQ)) {
+              let field = encQ.field;
+
+              let fieldSchema = this._schema.fieldSchema(field as string);
+              if (fieldSchema.ordinalDomain) {
+                fieldDef[Property.SCALE] = {domain: fieldSchema.ordinalDomain};
               }
             }
           }
