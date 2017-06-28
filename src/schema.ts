@@ -360,7 +360,7 @@ export class Schema {
       // coerce non-quantitative numerical data into number type
       domain = domain.map(x => +x);
       return domain.sort(cmp);
-    } else if ((fieldSchema.vlType === VLType.ORDINAL) && (fieldSchema.ordinalDomain !== null)) {
+    } else if ((fieldSchema.vlType === VLType.ORDINAL) && fieldSchema.ordinalDomain) {
       return fieldSchema.ordinalDomain;
     }
 
