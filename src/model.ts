@@ -300,7 +300,7 @@ export class SpecQueryModel {
             fieldDef[prop] = encQ[prop];
 
             if (prop === Property.SCALE) {
-              if (isFieldQuery(encQ)) {
+              if (isFieldQuery(encQ) && encQ.type === Type.ORDINAL) {
                 let field = encQ.field;
 
                 let fieldSchema = this._schema.fieldSchema(field as string);
@@ -315,7 +315,7 @@ export class SpecQueryModel {
         } else if (prop === Property.SCALE) {
           if (!PROPERTY_SUPPORTED_CHANNELS[Property.SCALE] ||
             PROPERTY_SUPPORTED_CHANNELS[Property.SCALE][encQ.channel as Channel]) {
-            if (isFieldQuery(encQ)) {
+            if (isFieldQuery(encQ) && encQ.type === Type.ORDINAL) {
               let field = encQ.field;
 
               let fieldSchema = this._schema.fieldSchema(field as string);
