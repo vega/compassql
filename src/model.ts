@@ -290,10 +290,10 @@ export class SpecQueryModel {
       for (const prop of PROPERTIES) {
 
         // if the property is a wildcard, return null
-        if (isWildcard(encQ[prop])) return null;
-
+        if (isWildcard(encQ[prop])) {
+          return null;
+        } else if (encQ[prop] !== undefined) {
         // otherwise, assign the property to the field def
-        if (encQ[prop] !== undefined) {
 
           if (!PROPERTY_SUPPORTED_CHANNELS[prop] ||  // all channels support this prop
             PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel]) {
@@ -304,6 +304,7 @@ export class SpecQueryModel {
                 let field = encQ.field;
 
                 let fieldSchema = this._schema.fieldSchema(field as string);
+                // we use ['domain'] accessor hack because Typescript can't infer between FlatQuery and Wildcard
                 if (fieldSchema.ordinalDomain && !encQ[prop]['domain']) {
                   fieldDef[prop] = extend(encQ[prop], {domain: fieldSchema.ordinalDomain});
                 }
