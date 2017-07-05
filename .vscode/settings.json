@@ -4,10 +4,12 @@
   "files.exclude": {
     "build": true,
     "coverage/**/*": true
-  }
-,
-"files.trimTrailingWhitespace": true,
-"tslint.autoFixOnSave": true,
-"tsimporter.spaceBetweenBraces": false,
-"typescript.tsdk": "./node_modules/typescript/lib"
+  },
+  "search.exclude": {
+    "build": true
+  },
+  "files.trimTrailingWhitespace": true,
+  "tslint.autoFixOnSave": true,
+  "tsimporter.spaceBetweenBraces": false,
+  "typescript.tsdk": "./node_modules/typescript/lib"
 }
