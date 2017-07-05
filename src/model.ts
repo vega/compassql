@@ -298,26 +298,21 @@ export class SpecQueryModel {
           const isSupportedByChannel = (!PROPERTY_SUPPORTED_CHANNELS[prop] || PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel]);
 
           if (isSupportedByChannel) {
-            if (prop === Property.SCALE && isFieldQuery(encQ) && encQ.type === Type.ORDINAL) {
-              let fieldSchema = this._schema.fieldSchema(encQ.field as string);
-              let scale = encQ.scale;
-              let ordinalDomain = fieldSchema.ordinalDomain;
-
-              // we use ['domain'] accessor hack because Typescript can't infer between FlatQuery and Wildcard
-              if (scale && scale['domain'] && isObject(scale)) {
-                  // use scale domain in encoding query if it's already set
-                  fieldDef[Property.SCALE] = scale;
-              } else if (ordinalDomain) {
-                if (isObject(scale)) {
-                  // scale exists and is an object, but does not have domain nested prop
-                  fieldDef[Property.SCALE] =  {...scale, domain: ordinalDomain};
-                } else {
-                  // scale is undefined or equal to true or false
-                  fieldDef[Property.SCALE] = {domain: ordinalDomain};
-                }
-              }
-            } else if (encodingProperty !== undefined) {
+            if (encodingProperty !== undefined) {
               fieldDef[prop] = encodingProperty;
+            }
+
+            if (prop === Property.SCALE && isFieldQuery(encQ) && encQ.type === Type.ORDINAL) {
+              const scale = encQ.scale;
+              const {ordinalDomain} = this._schema.fieldSchema(encQ.field as string);
+
+              if (scale && ordinalDomain) {
+                fieldDef[Property.SCALE] = {
+                  domain: ordinalDomain,
+                  // explicitly specfied domain property should override ordinalDomain
+                  ...(isObject(scale) ? scale : {})
+                };
+              }
             }
           }
         }
