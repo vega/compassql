@@ -462,6 +462,94 @@ describe('SpecQueryModel', () => {
       });
     });
 
+    it('should return a spec with the domain specified in FieldSchema if the encoding query ' +
+       'already has scale set to true', () => {
+      const specM = SpecQueryModel.build(
+        {
+          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.X, field: 'A', type: Type.ORDINAL, scale: true},
+            {channel: Channel.Y, field: 'B', type: Type.QUANTITATIVE}
+          ]
+        },
+        new Schema({fields:
+          [{
+            name: 'A',
+            vlType: 'ordinal',
+            type: 'string' as any,
+            ordinalDomain: ['S', 'M', 'L'],
+            stats: {
+              distinct: 3
+            }
+          },{
+            name: 'B',
+            vlType: 'quantitative',
+            type: 'number' as any,
+            stats: {
+              distinct: 3
+            }
+          }] as FieldSchema[]
+        }),
+        DEFAULT_QUERY_CONFIG
+      );
+
+      const spec = specM.toSpec();
+      assert.deepEqual(spec, {
+          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+          mark: Mark.BAR,
+          encoding: {
+            x: {field: 'A', type: Type.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
+            y: {field: 'B', type: Type.QUANTITATIVE}
+          },
+          config: DEFAULT_SPEC_CONFIG
+      });
+    });
+
+    it('should return a spec with the domain specified in FieldSchema even if the encoding query ' +
+       'did not originally have a scale', () => {
+      const specM = SpecQueryModel.build(
+        {
+          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.X, field: 'A', type: Type.ORDINAL},
+            {channel: Channel.Y, field: 'B', type: Type.QUANTITATIVE}
+          ]
+        },
+        new Schema({fields:
+          [{
+            name: 'A',
+            vlType: 'ordinal',
+            type: 'string' as any,
+            ordinalDomain: ['S', 'M', 'L'],
+            stats: {
+              distinct: 3
+            }
+          },{
+            name: 'B',
+            vlType: 'quantitative',
+            type: 'number' as any,
+            stats: {
+              distinct: 3
+            }
+          }] as FieldSchema[]
+        }),
+        DEFAULT_QUERY_CONFIG
+      );
+
+      const spec = specM.toSpec();
+      assert.deepEqual(spec, {
+          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+          mark: Mark.BAR,
+          encoding: {
+            x: {field: 'A', type: Type.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
+            y: {field: 'B', type: Type.QUANTITATIVE}
+          },
+          config: DEFAULT_SPEC_CONFIG
+      });
+    });
+
     it('should return a spec with the domain that is already set in an Encoding Query', () => {
       const specM = SpecQueryModel.build(
         {

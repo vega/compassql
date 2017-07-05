@@ -17,7 +17,7 @@ import {GroupBy, ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
-import {Dict, duplicate, extend} from './util';
+import {Dict, duplicate, extend, isObject} from './util';
 
 /**
  * Internal class for specQuery that provides helper for the enumeration process.
@@ -287,41 +287,37 @@ export class SpecQueryModel {
       const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND];
       // TODO(#226):
       // write toSpec() and toShorthand() in a way that prevents outputting inapplicable scale, sort, axis / legend
+
       for (const prop of PROPERTIES) {
-
-        // if the property is a wildcard, return null
-        if (isWildcard(encQ[prop])) {
+        // if the property's a wildcard, return null
+        let encodingProperty = encQ[prop];
+        if (isWildcard(encodingProperty)) {
           return null;
-        } else if (encQ[prop] !== undefined) {
-        // otherwise, assign the property to the field def
+        } else {
+          // all channels support this prop
+          const isSupportedByChannel = (!PROPERTY_SUPPORTED_CHANNELS[prop] || PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel]);
 
-          if (!PROPERTY_SUPPORTED_CHANNELS[prop] ||  // all channels support this prop
-            PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel]) {
-            fieldDef[prop] = encQ[prop];
+          if (isSupportedByChannel) {
+            if (prop === Property.SCALE && isFieldQuery(encQ) && encQ.type === Type.ORDINAL) {
+              let fieldSchema = this._schema.fieldSchema(encQ.field as string);
+              let scale = encQ.scale;
+              let ordinalDomain = fieldSchema.ordinalDomain;
 
-            if (prop === Property.SCALE) {
-              if (isFieldQuery(encQ) && encQ.type === Type.ORDINAL) {
-                let field = encQ.field;
-
-                let fieldSchema = this._schema.fieldSchema(field as string);
-                // we use ['domain'] accessor hack because Typescript can't infer between FlatQuery and Wildcard
-                if (fieldSchema.ordinalDomain && !encQ[prop]['domain']) {
-                  fieldDef[prop] = extend(encQ[prop], {domain: fieldSchema.ordinalDomain});
+              // we use ['domain'] accessor hack because Typescript can't infer between FlatQuery and Wildcard
+              if (scale && scale['domain'] && isObject(scale)) {
+                  // use scale domain in encoding query if it's already set
+                  fieldDef[Property.SCALE] = scale;
+              } else if (ordinalDomain) {
+                if (isObject(scale)) {
+                  // scale exists and is an object, but does not have domain nested prop
+                  fieldDef[Property.SCALE] =  {...scale, domain: ordinalDomain};
+                } else {
+                  // scale is undefined or equal to true or false
+                  fieldDef[Property.SCALE] = {domain: ordinalDomain};
                 }
               }
-            }
-          }
-          // if the encoding query doesn't have scale, but the schema does
-        } else if (prop === Property.SCALE) {
-          if (!PROPERTY_SUPPORTED_CHANNELS[Property.SCALE] ||
-            PROPERTY_SUPPORTED_CHANNELS[Property.SCALE][encQ.channel as Channel]) {
-            if (isFieldQuery(encQ) && encQ.type === Type.ORDINAL) {
-              let field = encQ.field;
-
-              let fieldSchema = this._schema.fieldSchema(field as string);
-              if (fieldSchema.ordinalDomain) {
-                fieldDef[Property.SCALE] = {domain: fieldSchema.ordinalDomain};
-              }
+            } else if (encodingProperty !== undefined) {
+              fieldDef[prop] = encodingProperty;
             }
           }
         }
