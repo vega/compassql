@@ -18,7 +18,7 @@ declare module 'datalib/src/util' {
   export function vals(a: any): any[];
   export function truncate(a: string, length: number): string;
   export function toMap(a: any): {[key: string]: 1};
-  export function isObject(a: any): a is any;
+  export function isObject(a: any): a is object;
   export function isString(a: any): a is string;
   export function isNumber(a: any): a is number;
   export function isBoolean(a: any): a is boolean;
