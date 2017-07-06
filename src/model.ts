@@ -17,7 +17,7 @@ import {GroupBy, ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
-import {Dict, duplicate, extend} from './util';
+import {Dict, duplicate, extend, isObject} from './util';
 
 /**
  * Internal class for specQuery that provides helper for the enumeration process.
@@ -287,17 +287,33 @@ export class SpecQueryModel {
       const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND];
       // TODO(#226):
       // write toSpec() and toShorthand() in a way that prevents outputting inapplicable scale, sort, axis / legend
+
       for (const prop of PROPERTIES) {
+        // if the property's a wildcard, return null
+        let encodingProperty = encQ[prop];
+        if (isWildcard(encodingProperty)) {
+          return null;
+        } else {
+          // all channels support this prop
+          const isSupportedByChannel = (!PROPERTY_SUPPORTED_CHANNELS[prop] || PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel]);
 
-        // if the property is a wildcard, return null
-        if (isWildcard(encQ[prop])) return null;
+          if (isSupportedByChannel) {
+            if (encodingProperty !== undefined) {
+              fieldDef[prop] = encodingProperty;
+            }
 
-        // otherwise, assign the proper to the field def
-        if (encQ[prop] !== undefined) {
+            if (prop === Property.SCALE && isFieldQuery(encQ) && encQ.type === Type.ORDINAL) {
+              const scale = encQ.scale;
+              const {ordinalDomain} = this._schema.fieldSchema(encQ.field as string);
 
-          if (!PROPERTY_SUPPORTED_CHANNELS[prop] ||  // all channels support this prop
-            PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel]) {
-            fieldDef[prop] = encQ[prop];
+              if (scale !== null && ordinalDomain) {
+                fieldDef[Property.SCALE] = {
+                  domain: ordinalDomain,
+                  // explicitly specfied domain property should override ordinalDomain
+                  ...(isObject(scale) ? scale : {})
+                };
+              }
+            }
           }
         }
       }
