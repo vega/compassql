@@ -306,7 +306,7 @@ export class SpecQueryModel {
               const scale = encQ.scale;
               const {ordinalDomain} = this._schema.fieldSchema(encQ.field as string);
 
-              if (scale && ordinalDomain) {
+              if (scale !== null && ordinalDomain) {
                 fieldDef[Property.SCALE] = {
                   domain: ordinalDomain,
                   // explicitly specfied domain property should override ordinalDomain
