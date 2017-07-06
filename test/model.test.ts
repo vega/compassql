@@ -462,8 +462,8 @@ describe('SpecQueryModel', () => {
       });
     });
 
-    it('should not return a spec with the domain specified in FieldSchema if the encoding query ' +
-       'did not originally have scale', () => {
+    it('should return a spec with the domain specified in FieldSchema if the encoding query ' +
+       'scale is undefined', () => {
       const specM = SpecQueryModel.build(
         {
           data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
@@ -499,7 +499,7 @@ describe('SpecQueryModel', () => {
           data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
           mark: Mark.BAR,
           encoding: {
-            x: {field: 'A', type: Type.ORDINAL},
+            x: {field: 'A', type: Type.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
             y: {field: 'B', type: Type.QUANTITATIVE}
           },
           config: DEFAULT_SPEC_CONFIG
