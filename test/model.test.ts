@@ -264,6 +264,24 @@ describe('SpecQueryModel', () => {
   });
 
   describe('toSpec', () => {
+    it('should not return a Vega-Lite spec if an encoding property is wildcard', () => {
+      const specM = buildSpecQueryModel({
+        data: {values: [{Q: 1}]},
+        transform: [{filter: 'datum.Q===1'}],
+        mark: Mark.BAR,
+        encodings: [
+          {
+            channel: Channel.X,
+            field: '?',
+            type: Type.QUANTITATIVE,
+          }
+        ]
+      });
+
+      const spec = specM.toSpec();
+      assert.isNull(spec);
+    });
+
     it('should return a Vega-Lite spec if the query is completed', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{Q: 1}]},
@@ -661,6 +679,17 @@ describe('SpecQueryModel', () => {
           {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
         ],
         config: DEFAULT_SPEC_CONFIG
+      });
+
+      assert.isNull(specM.toSpec());
+    });
+
+    it('should not output spec with inapplicable scale, sort, axis / legend ', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, bin: {'maxbins': '?'}, field: 'A', type: Type.QUANTITATIVE}
+        ]
       });
 
       assert.isNull(specM.toSpec());

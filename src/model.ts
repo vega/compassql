@@ -8,7 +8,7 @@ import {FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
 import {StackProperties} from 'vega-lite/build/src/stack';
 
 import {QueryConfig} from './config';
-import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, hasNestedProperty} from './property';
+import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, ENCODING_NESTED_PROP_PARENT_INDEX, isEncodingNestedProp, hasNestedProperty} from './property';
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
@@ -285,8 +285,6 @@ export class SpecQueryModel {
 
       // assemble other property into a field def.
       const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND];
-      // TODO(#226):
-      // write toSpec() and toShorthand() in a way that prevents outputting inapplicable scale, sort, axis / legend
 
       for (const prop of PROPERTIES) {
         // if the property's a wildcard, return null
@@ -299,6 +297,16 @@ export class SpecQueryModel {
 
           if (isSupportedByChannel) {
             if (encodingProperty !== undefined) {
+
+              if (ENCODING_NESTED_PROP_PARENT_INDEX[prop]) {
+                for (const childProp in encQ[prop]) {
+                  // ensure nested properties are not wildcard before assigning to field def
+                  if (isWildcard(encQ[prop][childProp])) {
+                    return null;
+                  }
+                }
+              }
+
               fieldDef[prop] = encodingProperty;
             }
 
