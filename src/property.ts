@@ -56,7 +56,7 @@ const ENCODING_NESTED_PROP_PARENTS: EncodingTopLevelProp[] = [
   'bin', 'scale', 'sort', 'axis', 'legend'
 ];
 
-const ENCODING_NESTED_PROP_PARENT_INDEX = toMap(ENCODING_NESTED_PROP_PARENTS);
+export const ENCODING_NESTED_PROP_PARENT_INDEX = toMap(ENCODING_NESTED_PROP_PARENTS);
 
 export function hasNestedProperty(prop: string) {
   return ENCODING_NESTED_PROP_PARENT_INDEX[prop as string];

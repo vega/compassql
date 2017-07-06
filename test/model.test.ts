@@ -665,6 +665,17 @@ describe('SpecQueryModel', () => {
 
       assert.isNull(specM.toSpec());
     });
+
+    it('should not output spec with inapplicable scale, sort, axis / legend ', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, bin: {'maxbins': '?'}, field: 'A', type: Type.QUANTITATIVE}
+        ]
+      });
+
+      assert.isNull(specM.toSpec());
+    });
   });
 });
 
