@@ -187,6 +187,7 @@ const DEFAULT_SCALE_PROPS_ENUM: DefEnumIndex<Scale> = {
 
   clamp: DEFAULT_BOOLEAN_ENUM,
   nice: DEFAULT_BOOLEAN_ENUM,
+  reverse: DEFAULT_BOOLEAN_ENUM,
   round: DEFAULT_BOOLEAN_ENUM,
   zero: DEFAULT_BOOLEAN_ENUM,
 
@@ -199,8 +200,6 @@ const DEFAULT_SCALE_PROPS_ENUM: DefEnumIndex<Scale> = {
   range: [undefined],
   rangeStep: [17, 21],
   scheme: [undefined],
-
-
 };
 
 
@@ -217,6 +216,7 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   format: [undefined],
   labels: DEFAULT_BOOLEAN_ENUM,
   labelAngle: [undefined],
+  labelOverlap: [undefined],
   labelPadding: [undefined],
 
   maxExtent: [undefined],
@@ -225,6 +225,7 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
 
   ticks: DEFAULT_BOOLEAN_ENUM,
   tickCount: [undefined],
+  tickExtra: [undefined],
   tickSize: [undefined],
 
   title: [undefined],
