@@ -484,7 +484,7 @@ describe('schema', () => {
     ];
     const domainSchema: Schema = build(domainData);
     it('should return an array containing one of each datapoint corresponding to the given EncodingQuery for non-Q data', () => {
-      const domain: string[] = domainSchema.domain({field: 'c', channel: Channel.X});
+      const domain: string[] = domainSchema.domain({field: 'c'});
       assert.isNotNull(domain);
       assert.equal(domain.length, 4);
       assert.notEqual(domain.indexOf('a'), -1);
@@ -494,25 +494,25 @@ describe('schema', () => {
     });
 
     it('should only return one copy of datapoints that occur multiple times', () => {
-      const domain: string[] = domainSchema.domain({field: 'd', channel: Channel.X});
+      const domain: string[] = domainSchema.domain({field: 'd'});
       assert.equal(domain.length, 2);
       assert.notEqual(domain.indexOf('a'), -1);
       assert.notEqual(domain.indexOf('b'), -1);
     });
 
     it('should return an array of length 2 containing min and max for quantitative data', () => {
-      let domain: number[] = domainSchema.domain({field: 'a', channel: Channel.X});
+      let domain: number[] = domainSchema.domain({field: 'a'});
       assert.equal(domain.length, 2);
       assert.equal(domain.indexOf(1), 0);
       assert.equal(domain.indexOf(4), 1);
-      domain = domainSchema.domain({field: 'b', channel: Channel.X});
+      domain = domainSchema.domain({field: 'b'});
       assert.equal(domain.length, 2);
       assert.equal(domain.indexOf(1.1), 0);
       assert.equal(domain.indexOf(1.4), 1);
     });
 
     it('should return a date array containing correctly translated date types', () => {
-      let domain: Date[] = domainSchema.domain({field: 'e', channel: Channel.X});
+      let domain: Date[] = domainSchema.domain({field: 'e'});
       assert.equal(domain.length, 2);
       assert.equal(domain[0].getTime(), new Date('6/14/2016').getTime());
       assert.equal(domain[1].getTime(), new Date('7/14/2016').getTime());

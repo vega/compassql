@@ -345,9 +345,9 @@ export class Schema {
     return true;
   }
 
-  public domain(fieldQ: FieldQuery): any[] {
+  public domain(fieldQueryParts: {field: string}): any[] {
     // TODO: differentiate for field with bin / timeUnit
-    const fieldSchema = this._fieldSchemaIndex[fieldQ.field as string];
+    const fieldSchema = this._fieldSchemaIndex[fieldQueryParts.field as string];
     let domain: any[] = keys(fieldSchema.stats.unique);
     if (fieldSchema.vlType === VLType.QUANTITATIVE) {
       // return [min, max], coerced into number types
