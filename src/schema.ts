@@ -289,8 +289,11 @@ export class Schema {
       let unit = fieldQ.timeUnit as string;
       let timeStats = fieldSchema.timeStats;
       // if the cardinality for the timeUnit is not cached, calculate it
-      if (!timeStats[unit]) {
-        timeStats[unit] = timeSummary(fieldQ.timeUnit as TimeUnit, fieldSchema.stats);
+      if (!timeStats || !timeStats[unit]) {
+        timeStats = {
+          ...timeStats,
+          [unit]: timeSummary(fieldQ.timeUnit as TimeUnit, fieldSchema.stats)
+        };
       }
 
       if (excludeInvalid) {
