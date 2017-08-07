@@ -1,19 +1,15 @@
-
 import {Axis} from 'vega-lite/build/src/axis';
 import {Bin} from 'vega-lite/build/src/bin';
 import {Channel} from 'vega-lite/build/src/channel';
 import * as vlFieldDef from 'vega-lite/build/src/fielddef';
 import {Mark} from 'vega-lite/build/src/mark';
-
 import {Scale} from 'vega-lite/build/src/scale';
 import {Legend} from 'vega-lite/build/src/legend';
 import {SortOrder, SortField} from 'vega-lite/build/src/sort';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
 import {Type as VLType} from 'vega-lite/build/src/type';
 import {ExpandedType} from './expandedtype';
-
 import {scaleType as compileScaleType} from 'vega-lite/build/src/compile/scale/type';
-
 import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
 import {AggregateOp} from 'vega-lite/build/src/aggregate';
 import {FieldDef} from 'vega-lite/build/src/fielddef';
@@ -33,7 +29,7 @@ export function isValueQuery(encQ: EncodingQuery): encQ is ValueQuery {
 }
 
 export function isFieldQuery(encQ: EncodingQuery): encQ is FieldQuery {
-  return encQ !== null && encQ !== undefined && encQ['field'];
+  return encQ !== null && encQ !== undefined && (encQ['field'] || encQ['aggregate'] === 'count');
 }
 
 export function isAutoCountQuery(encQ: EncodingQuery): encQ is AutoCountQuery {
