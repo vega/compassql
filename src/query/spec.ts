@@ -55,6 +55,10 @@ export function fromSpec(spec: TopLevel<FacetedCompositeUnitSpec>): SpecQuery {
             }
           }
 
+          if (isFieldQuery(encQ) && encQ.aggregate === 'count' && !encQ.field) {
+            encQ.field = '*';
+          }
+
           return encQ;
         }
       )
