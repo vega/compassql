@@ -464,6 +464,19 @@ describe('constraints/spec', () => {
           assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
+
+      it('should return true for aggregate line/area with one temporal field and one continuous field', () => {
+        [Mark.LINE, Mark.AREA].forEach((mark) => {
+          const specM = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: Channel.X, field: 'T', type: Type.TEMPORAL, timeUnit: 'yearmonthdate'},
+              {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'}
+            ]
+          });
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+        });
+      });
     });
   });
 

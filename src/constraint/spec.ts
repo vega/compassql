@@ -625,8 +625,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           if (specM.isAggregate()) { // TODO: refactor based on profiling statistics
             const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
             const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
-            const xIsMeasure = isContinuous(xEncQ);
-            const yIsMeasure = isContinuous(yEncQ);
+            const xIsMeasure = isContinuous(xEncQ) && !(isFieldQuery(xEncQ) && xEncQ.type === Type.TEMPORAL);
+            const yIsMeasure = isContinuous(yEncQ) && !(isFieldQuery(yEncQ) && yEncQ.type === Type.TEMPORAL);
 
             // for aggregate line / area, we need at least one group-by axis and one measure axis.
             return xEncQ && yEncQ && (xIsMeasure !== yIsMeasure) &&
