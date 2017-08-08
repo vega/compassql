@@ -127,11 +127,17 @@ export function toFieldDef(encQ: FieldQuery | AutoCountQuery,
  * This method is applicable only for fieldQuery without wildcard
  */
 export function isContinuous(encQ: EncodingQuery) {
-  return isFieldQuery(encQ) && vlFieldDef.isContinuous(toFieldDef(encQ, ['bin', 'timeUnit', 'field', 'type']));
+  if (isFieldQuery(encQ)) {
+    return vlFieldDef.isContinuous(toFieldDef(encQ, ['bin', 'timeUnit', 'field', 'type']));
+  }
+  return isAutoCountQuery(encQ);
 }
 
 export function isMeasure(encQ: EncodingQuery) {
-  return isFieldQuery(encQ) && !isDimension(encQ);
+  if (isFieldQuery(encQ)) {
+    return !isDimension(encQ);
+  }
+  return isAutoCountQuery(encQ);
 }
 
 /**

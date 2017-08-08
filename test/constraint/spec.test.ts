@@ -370,6 +370,19 @@ describe('constraints/spec', () => {
         });
       });
 
+      it('should return true for plots with one binned dimension and one autoCount on x/y', () => {
+        [Mark.BAR, Mark.TICK].forEach((mark) => {
+          const specM = buildSpecQueryModel({
+            mark: mark,
+            encodings: [
+              {channel: Channel.X, field: 'Q1', type: Type.QUANTITATIVE, bin: true},
+              {channel: Channel.Y, autoCount: true, type: Type.QUANTITATIVE}
+            ]
+          });
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+        });
+      });
+
       it('should return false for plots with two dimensions on x/y', () => {
         [Mark.BAR, Mark.TICK].forEach((mark) => {
           const specM = buildSpecQueryModel({
