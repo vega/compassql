@@ -54,6 +54,30 @@ describe('recommend()', () => {
     assert.equal(getTopSpecQueryItem(group.result).getMark(), 'line');
   });
 
+  it('recommends bar for a histogram of a temporal field', () => {
+    const group = recommend({
+      "spec": {
+        "data": {"url": "data/cars.json"},
+        "transform": [],
+        "mark": "?",
+        "encodings": [
+          {
+            "channel": "x",
+            "bin": true,
+            "field": "Q1",
+            "type": "quantitative"
+          }
+        ]
+      },
+      "groupBy": "encoding",
+      "orderBy": ["fieldOrder","aggregationQuality","effectiveness"],
+      "chooseBy": ["aggregationQuality","effectiveness"],
+      "config": {"autoAddCount": true}
+    }, schema);
+
+    assert.equal(getTopSpecQueryItem(group.result).getMark(), 'bar');
+  });
+
   describe('omitAggregatePlotWithoutDimension', () => {
     it('?(Q) x ?(Q) should not produce MEAN(Q)xMEAN(Q) if omitAggregatePlotWithoutDimension is enabled.', () => {
       const q = {
