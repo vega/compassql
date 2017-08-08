@@ -7,7 +7,7 @@ import {some} from '../util';
 
 import {RankingScore, FeatureScore} from './ranking';
 
-import {EncodingQuery, isFieldQuery, isDiscrete, FieldQuery, isEnabledAutoCountQuery} from '../query/encoding';
+import {EncodingQuery, isFieldQuery, isDimension, isEnabledAutoCountQuery} from '../query/encoding';
 
 export const name = 'aggregationQuality';
 
@@ -17,10 +17,6 @@ export function score(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): 
     score: feature.score,
     features: [feature]
   };
-}
-
-function isDimension(encQ: FieldQuery) {
-  return isDiscrete(encQ) || !!encQ.timeUnit;
 }
 
 function aggregationQualityFeature(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore {

@@ -16,7 +16,7 @@ import {PropIndex} from '../propindex';
 import {Schema} from '../schema';
 import {contains, every, some} from '../util';
 
-import {scaleType, EncodingQuery, isDiscrete, isContinuous, ScaleQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery} from '../query/encoding';
+import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, isContinuous} from '../query/encoding';
 
 const NONSPATIAL_CHANNELS_INDEX = NONSPATIAL_CHANNELS.reduce((m, channel) => {
   m[channel] = true;
@@ -304,7 +304,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       if (specM.isAggregate()) {
         // TODO relax
         return some(specM.getEncodings(), (encQ: EncodingQuery) => {
-          if (isDiscrete(encQ)) {
+          if (isDimension(encQ) || (isFieldQuery(encQ) && (encQ.type === 'temporal'))) {
             return true;
           }
           return false;
@@ -625,16 +625,18 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           if (specM.isAggregate()) { // TODO: refactor based on profiling statistics
             const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
             const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
-            const xIsMeasure = isContinuous(xEncQ);
-            const yIsMeasure = isContinuous(yEncQ);
+            const xIsNonTemporalMeasure = isMeasure(xEncQ) &&
+              !(isFieldQuery(xEncQ) && xEncQ.type === 'temporal');
+            const yIsNonTemporalMeasure = isMeasure(yEncQ) &&
+              !(isFieldQuery(yEncQ) && yEncQ.type === 'temporal');
 
             // for aggregate line / area, we need at least one group-by axis and one measure axis.
-            return xEncQ && yEncQ && (xIsMeasure !== yIsMeasure) &&
+            return xEncQ && yEncQ && (xIsNonTemporalMeasure !== yIsNonTemporalMeasure) &&
               // and the dimension axis should not be nominal
               // TODO: make this clause optional
 
-              !(isFieldQuery(xEncQ) && !xIsMeasure && contains(['nominal', 'key'], xEncQ.type)) &&
-              !(isFieldQuery(yEncQ) && !yIsMeasure && contains(['nominal', 'key'], yEncQ.type));
+              !(isFieldQuery(xEncQ) && !xIsNonTemporalMeasure && contains(['nominal', 'key'], xEncQ.type)) &&
+              !(isFieldQuery(yEncQ) && !yIsNonTemporalMeasure && contains(['nominal', 'key'], yEncQ.type));
             // TODO: allow connected scatterplot
           }
           return true;
@@ -719,8 +721,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         const xEncQ = specM.getEncodingQueryByChannel('x');
         const yEncQ = specM.getEncodingQueryByChannel('y');
 
-        if ((!isFieldQuery(xEncQ) || isDiscrete(xEncQ)) &&
-            (!isFieldQuery(yEncQ) || isDiscrete(yEncQ))) {
+        if ((!isFieldQuery(xEncQ) || isDimension(xEncQ)) &&
+            (!isFieldQuery(yEncQ) || isDimension(yEncQ))) {
           if (!specM.isAggregate()) {
             return false;
           } else {
