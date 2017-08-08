@@ -127,6 +127,7 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
       groupByEncQ: xIsAggregate ? yEncQ : xEncQ,
       fieldChannel: xIsAggregate ? X : Y,
       fieldEncQ: xIsAggregate ? xEncQ : yEncQ,
+      impute: contains(['area', 'line'], specQ.mark),
       stackBy: stackBy,
       offset: stacked || 'zero'
     };
