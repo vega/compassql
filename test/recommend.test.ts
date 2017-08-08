@@ -1,3 +1,5 @@
+/* tslint:disable:quotemark */
+
 import {assert} from 'chai';
 
 import {Mark} from 'vega-lite/build/src/mark';
@@ -5,7 +7,7 @@ import {Channel} from 'vega-lite/build/src/channel';
 import {Type} from 'vega-lite/build/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
-import { SpecQueryModel, SpecQueryModelGroup, isSpecQueryGroup } from '../src/model';
+import {SpecQueryModel, SpecQueryModelGroup, isSpecQueryGroup, getTopSpecQueryItem} from '../src/model';
 import {Property} from '../src/property';
 import {Query} from '../src/query/query';
 import {recommend} from '../src/recommend';
@@ -15,7 +17,43 @@ import {duplicate} from '../src/util';
 
 import {schema} from './fixture';
 
+
+
 describe('recommend()', () => {
+  it('recommends line for a histogram of a temporal field', () => {
+    const group = recommend({
+      "spec": {
+        "data": {"url": "data/cars.json"},
+        "transform": [],
+        "mark": "?",
+        "encodings": [
+          {
+            "channel": "x",
+            "timeUnit": "year",
+            "field": "T1",
+            "type": "temporal"
+          },
+          {
+            "channel": "y",
+            "field": "*",
+            "type": "quantitative",
+            "aggregate": "count"
+          }
+        ],
+        "config": {
+          "overlay": {"line": true},
+          "scale": {"useUnaggregatedDomain": true}
+        }
+      },
+      "groupBy": "encoding",
+      "orderBy": ["fieldOrder","aggregationQuality","effectiveness"],
+      "chooseBy": ["aggregationQuality","effectiveness"],
+      "config": {"autoAddCount": false}
+    }, schema);
+
+    assert.equal(getTopSpecQueryItem(group.result).getMark(), 'line');
+  });
+
   describe('omitAggregatePlotWithoutDimension', () => {
     it('?(Q) x ?(Q) should not produce MEAN(Q)xMEAN(Q) if omitAggregatePlotWithoutDimension is enabled.', () => {
       const q = {

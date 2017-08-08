@@ -130,12 +130,20 @@ export function isContinuous(encQ: EncodingQuery) {
   return isFieldQuery(encQ) && vlFieldDef.isContinuous(toFieldDef(encQ, ['bin', 'timeUnit', 'field', 'type']));
 }
 
+export function isMeasure(encQ: EncodingQuery) {
+  return isFieldQuery(encQ) && !isDimension(encQ);
+}
+
 /**
  * Is a field query discrete field?
  * This method is applicable only for fieldQuery without wildcard
  */
-export function isDiscrete(encQ: EncodingQuery) {
-  return isFieldQuery(encQ) && vlFieldDef.isDiscrete(toFieldDef(encQ, ['bin', 'timeUnit', 'field', 'type']));
+export function isDimension(encQ: EncodingQuery) {
+  if (isFieldQuery(encQ)) {
+    const fieldDef = toFieldDef(encQ, ['bin', 'timeUnit', 'field', 'type']);
+    return vlFieldDef.isDiscrete(fieldDef) || !!fieldDef.timeUnit;
+  }
+  return false;
 }
 
 /**

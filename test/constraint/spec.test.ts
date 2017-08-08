@@ -424,6 +424,21 @@ describe('constraints/spec', () => {
         });
       });
 
+      it('should return true for aggregate line/area with one temporal field', () => {
+        [Mark.LINE, Mark.AREA].forEach((mark) => {
+          [undefined, 'year'].forEach((timeUnit: TimeUnit) => {
+            const specM = buildSpecQueryModel({
+              mark: mark,
+              encodings: [
+                {channel: Channel.X, timeUnit, field: 'T', type: Type.TEMPORAL},
+                {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'}
+              ]
+            });
+            assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG), `${mark}, ${timeUnit} test`);
+          });
+        });
+      });
+
 
       it('should return false for aggregate line/area with at least one non-nominal dimension', () => {
         [Mark.LINE, Mark.AREA].forEach((mark) => {
