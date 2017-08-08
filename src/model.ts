@@ -157,7 +157,7 @@ export class SpecQueryModel {
   }
 
   public setMark(mark: Mark) {
-    const name = (this._spec.mark as Wildcard<Mark>).name;
+    const name = this._wildcardIndex.mark.name;
     this._assignedWildcardIndex[name] = this._spec.mark = mark;
   }
 
