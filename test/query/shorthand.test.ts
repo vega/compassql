@@ -338,7 +338,7 @@ describe('query/shorthand', () => {
         encodings: [
           {channel: Channel.X, field: 'b2', type: Type.QUANTITATIVE}
         ],
-        config: {filterInvalid: false}
+        config: {invalidValues: 'filter'}
       });
       assert.equal(str, 'point|transform:[{"calculate":"3*datum[\\"b2\\"]","as":"b2"},{"filter":"datum[\\"b2\\"] > 60"}]|x:b2,q');
     });
@@ -355,7 +355,7 @@ describe('query/shorthand', () => {
         encodings: [
           {channel: Channel.X, field: 'b2', type: Type.QUANTITATIVE}
         ],
-        config: {filterInvalid: false}
+        config: {invalidValues: 'filter'}
       });
       assert.deepEqual(
         str,
