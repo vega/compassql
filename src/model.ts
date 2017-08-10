@@ -18,6 +18,8 @@ import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorth
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend, isObject} from './util';
+import {isString} from 'datalib/src/util';
+import {getGroupByKey} from './nest';
 
 /**
  * Internal class for specQuery that provides helper for the enumeration process.
@@ -254,8 +256,11 @@ export class SpecQueryModel {
     return isAggregate(this._spec);
   }
 
-  public toShorthand(groupBy?: (string | ExtendedGroupBy)[]): string {
+  public toShorthand(groupBy?: string | (string | ExtendedGroupBy)[]): string {
     if (groupBy) {
+      if (isString(groupBy)) {
+        return getGroupByKey(this, groupBy);
+      }
       const parsedGroupBy = parseGroupBy(groupBy);
       return specShorthand(this._spec, parsedGroupBy.include, parsedGroupBy.replacer);
     }

@@ -105,6 +105,10 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
 const GROUP_BY_FIELD = [Property.FIELD];
 const PARSED_GROUP_BY_FIELD = parseGroupBy(GROUP_BY_FIELD);
 
+export function getGroupByKey(specM: SpecQueryModel, groupBy: string) {
+  return groupRegistry[groupBy](specM);
+}
+
 registerKeyFn(FIELD, (specM: SpecQueryModel) => {
   return specShorthand(specM.specQuery,
     PARSED_GROUP_BY_FIELD.include,
