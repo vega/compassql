@@ -3539,9 +3539,9 @@ vega-event-selector@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/vega-event-selector/-/vega-event-selector-2.0.0.tgz#6af8dc7345217017ceed74e9155b8d33bad05d42"
 
-vega-lite@2.0.0-beta.11:
-  version "2.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/vega-lite/-/vega-lite-2.0.0-beta.11.tgz#54cfaf5d3236995d6cc1185b3e3d4a40f5e97024"
+vega-lite@2.0.0-beta.13:
+  version "2.0.0-beta.13"
+  resolved "https://registry.yarnpkg.com/vega-lite/-/vega-lite-2.0.0-beta.13.tgz#ffbe4504debdf0b5e81ec225135407c28b5a9647"
   dependencies:
     json-stable-stringify "^1.0.1"
     tslib "^1.7.1"
