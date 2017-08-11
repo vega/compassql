@@ -22,9 +22,6 @@ else
   git status
   exit 1
 fi
-
-# 1. BOWER PUBLISH
-
 # read version
 gitsha=$(git rev-parse HEAD)
 version=$(cat package.json | jq .version | sed -e 's/^"//'  -e 's/"$//')
@@ -32,6 +29,18 @@ version=$(cat package.json | jq .version | sed -e 's/^"//'  -e 's/"$//')
 # swap to head so we don't commit compiled file to master along with tags
 git checkout head
 npm run build
+
+# 1. NPM PUBLISH
+
+npm publish
+# exit if npm publish failed
+rc=$?
+if [[ $rc != 0 ]]; then
+  echo "${RED} npm publish failed.  Publishing cancelled (Make sure you sure npm run deploy, not yarn run deploy). ${NC} \n\n"
+  exit $rc;
+fi
+
+# 2. BOWER PUBLISH
 
 # add the compiled files, commit and tag!
 git add build/compassql* -f
@@ -43,14 +52,5 @@ git tag -am "Release v$version." "v$version"
 # now swap back to the clean master and push the new tag
 git checkout master
 git push --tags
-npm run build # rebuild -- so compiled files are back for linked bower
 
-# 2. NPM PUBLISH
-
-npm publish
-# exit if npm publish failed
-rc=$?
-if [[ $rc != 0 ]]; then
-  echo "${RED} npm publish failed.  Publishing cancelled. ${NC} \n\n"
-  exit $rc;
-fi
+npm run build # rebuild so we have the build files back like before running deploy script.
