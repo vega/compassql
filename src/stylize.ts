@@ -96,7 +96,7 @@ export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schem
 
     if (colorEncQ.scale) {
       if (!(colorEncQ.scale as ScaleQuery).range) {
-        (colorEncQ.scale as ScaleQuery).range = opt.nominalColorScaleForHighCardinality.palette;
+        (colorEncQ.scale as ScaleQuery).scheme = opt.nominalColorScaleForHighCardinality.palette;
       }
     }
   }

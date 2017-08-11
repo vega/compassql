@@ -728,7 +728,7 @@ describe('generate', function () {
         };
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-        assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).range, 'category20');
+        assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).scheme, 'category20');
       });
     });
 

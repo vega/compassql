@@ -147,7 +147,7 @@ describe('stylize', () => {
           }, schema, DEFAULT_QUERY_CONFIG);
 
         specM = nominalColorScaleForHighCardinality(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-        assert.equal(((specM.getEncodingQueryByChannel(Channel.COLOR) as FieldQuery).scale as ScaleQuery).range, 'category20');
+        assert.equal(((specM.getEncodingQueryByChannel(Channel.COLOR) as FieldQuery).scale as ScaleQuery).scheme, 'category20');
     });
 
     it('should not assign a range if cardinality of color is over 10 and scale is false', () => {
@@ -162,7 +162,7 @@ describe('stylize', () => {
         assert.equal(((specM.getEncodingQueryByChannel(Channel.COLOR) as FieldQuery).scale as ScaleQuery).range, undefined);
     });
 
-    it('should assign a range if cardinality of color is over 10 and scale is a Wildcard', () => {
+    it('should assign a scheme if cardinality of color is over 10 and scale is a Wildcard', () => {
         let specM = SpecQueryModel.build({
             mark: Mark.POINT,
             encodings: [
@@ -171,7 +171,7 @@ describe('stylize', () => {
           }, schema, DEFAULT_QUERY_CONFIG);
 
         specM = nominalColorScaleForHighCardinality(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-        assert.equal(((specM.getEncodingQueryByChannel(Channel.COLOR) as FieldQuery).scale as ScaleQuery).range, 'category20');
+        assert.equal(((specM.getEncodingQueryByChannel(Channel.COLOR) as FieldQuery).scale as ScaleQuery).scheme, 'category20');
     });
 
     it('should not assign a range if cardinality of color is over 10 and scale.range is wildcard', () => {
