@@ -106,7 +106,7 @@ export function spec(specQ: SpecQuery,
       const includeExceptType = include.duplicate().set('type', false);
 
       const field = fieldDef(_stack.fieldEncQ, includeExceptType, replace);
-      const groupby = fieldDef(_stack.groupByEncQ, includeExceptType, replace);
+      const groupby = _stack.groupByEncQ ? fieldDef(_stack.groupByEncQ, includeExceptType, replace) : undefined;
 
       parts.push(
         'stack={field:' + field + ',' +
