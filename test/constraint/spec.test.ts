@@ -409,7 +409,7 @@ describe('constraints/spec', () => {
         });
       });
 
-      it('should return false for graphics with one temporal field and one quantitative field on x/y', () => {
+      it('should return true for graphics with one temporal field and one quantitative field on x/y', () => {
         [Mark.BAR, Mark.TICK].forEach((mark) => {
           const specM = buildSpecQueryModel({
             mark: mark,
@@ -418,7 +418,7 @@ describe('constraints/spec', () => {
               {channel: Channel.Y, field: 'Q', type: Type.QUANTITATIVE}
             ]
           });
-          assert.isFalse(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['hasAppropriateGraphicTypeForMark'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
     });

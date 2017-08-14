@@ -135,7 +135,7 @@ export function isContinuous(encQ: EncodingQuery) {
 
 export function isMeasure(encQ: EncodingQuery) {
   if (isFieldQuery(encQ)) {
-    return !isDimension(encQ);
+    return !isDimension(encQ) && encQ.type !== 'temporal';
   }
   return isAutoCountQuery(encQ);
 }

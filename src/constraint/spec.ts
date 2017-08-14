@@ -16,7 +16,7 @@ import {PropIndex} from '../propindex';
 import {Schema} from '../schema';
 import {contains, every, some} from '../util';
 
-import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, isContinuous} from '../query/encoding';
+import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery} from '../query/encoding';
 
 const NONSPATIAL_CHANNELS_INDEX = NONSPATIAL_CHANNELS.reduce((m, channel) => {
   m[channel] = true;
@@ -625,18 +625,16 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           if (specM.isAggregate()) { // TODO: refactor based on profiling statistics
             const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
             const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
-            const xIsNonTemporalMeasure = isMeasure(xEncQ) &&
-              !(isFieldQuery(xEncQ) && xEncQ.type === 'temporal');
-            const yIsNonTemporalMeasure = isMeasure(yEncQ) &&
-              !(isFieldQuery(yEncQ) && yEncQ.type === 'temporal');
+            const xIsMeasure = isMeasure(xEncQ);
+            const yIsMeasure = isMeasure(yEncQ);
 
             // for aggregate line / area, we need at least one group-by axis and one measure axis.
-            return xEncQ && yEncQ && (xIsNonTemporalMeasure !== yIsNonTemporalMeasure) &&
+            return xEncQ && yEncQ && (xIsMeasure !== yIsMeasure) &&
               // and the dimension axis should not be nominal
               // TODO: make this clause optional
 
-              !(isFieldQuery(xEncQ) && !xIsNonTemporalMeasure && contains(['nominal', 'key'], xEncQ.type)) &&
-              !(isFieldQuery(yEncQ) && !yIsNonTemporalMeasure && contains(['nominal', 'key'], yEncQ.type));
+              !(isFieldQuery(xEncQ) && !xIsMeasure && contains(['nominal', 'key'], xEncQ.type)) &&
+              !(isFieldQuery(yEncQ) && !yIsMeasure && contains(['nominal', 'key'], yEncQ.type));
             // TODO: allow connected scatterplot
           }
           return true;
@@ -649,13 +647,12 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           if (specM.channelUsed(Channel.SIZE)) {
             return false;
           } else {
-            // Tick and Bar should have one and only one continuous axis
+            // Tick and Bar should have one and only one measure
             const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
             const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
-            const xIsContinuous = isContinuous(xEncQ);
-            const yIsContinuous = isContinuous(yEncQ);
-            if (xIsContinuous !== yIsContinuous) {
-              // TODO: Bar and tick's dimension should not be continuous (quant/time) scale
+            const xIsMeasure = isMeasure(xEncQ);
+            const yIsMeasure = isMeasure(yEncQ);
+            if (xIsMeasure !== yIsMeasure) {
               return true;
             }
             return false;
