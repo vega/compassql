@@ -248,7 +248,7 @@ const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
 
 // Use FullEnumIndex to make sure we have all properties specified here!
 export const DEFAULT_ENUM_INDEX: EnumIndex = {
-  mark: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK], // Mark.TEXT
+  mark: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK, Mark.TEXT],
   channel: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT
 
   aggregate: [undefined, 'mean'],
