@@ -259,7 +259,7 @@ export class SpecQueryModel {
   public toShorthand(groupBy?: string | (string | ExtendedGroupBy)[]): string {
     if (groupBy) {
       if (isString(groupBy)) {
-        return getGroupByKey(this, groupBy);
+        return getGroupByKey(this.specQuery, groupBy);
       }
       const parsedGroupBy = parseGroupBy(groupBy);
       return specShorthand(this._spec, parsedGroupBy.include, parsedGroupBy.replacer);

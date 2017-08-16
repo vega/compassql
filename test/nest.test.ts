@@ -8,7 +8,7 @@ import {Type} from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
 import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
-import {nest, FIELD, FIELD_TRANSFORM, ENCODING, TRANSPOSE} from '../src/nest';
+import {nest, FIELD, FIELD_TRANSFORM, ENCODING} from '../src/nest';
 import {Property} from '../src/property';
 import {Query} from '../src/query/query';
 import {REPLACE_BLANK_FIELDS, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS} from '../src/query/groupby';
@@ -599,7 +599,7 @@ describe('nest', () => {
             type: Type.NOMINAL
           }]
         },
-        nest: [{groupBy: ENCODING}, {groupBy: TRANSPOSE}],
+        nest: [{groupBy: ENCODING}],
         config: DEFAULT_QUERY_CONFIG
       };
 
@@ -607,19 +607,12 @@ describe('nest', () => {
       const groups = nest(answerSet, query.nest).items;
       assert.equal(groups.length, 2);
       assert.equal((groups[0] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q)');
-      (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModelGroup) => {
-        return !contains([Mark.BAR, Mark.AREA], (item.items[0] as SpecQueryModel).getMark());
-      });
-
       assert.equal((groups[1] as SpecQueryModelGroup).name, 'stack={field:sum(Q),by:N,offset:zero}|style:N1,n|xy:N,n|xy:sum(Q,q)');
-      (groups[1] as SpecQueryModelGroup).items.forEach((item: SpecQueryModelGroup) => {
-        return contains([Mark.BAR, Mark.AREA], (item.items[0] as SpecQueryModel).getMark());
-      });
     });
   });
 
-  describe('encoding/transpose', () => {
-    [ENCODING, TRANSPOSE].forEach((groupBy) => {
+  describe('encoding', () => {
+    [ENCODING].forEach((groupBy) => {
         it(groupBy + ' should group transposed visualizations', () => {
         const query: Query = {
           spec: {
@@ -634,7 +627,7 @@ describe('nest', () => {
               type: Type.QUANTITATIVE
             }]
           },
-          nest: [{groupBy: groupBy}],
+          nest: [{groupBy: ENCODING}],
           config: DEFAULT_QUERY_CONFIG
         };
 
