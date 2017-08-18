@@ -1,6 +1,6 @@
 {
   "name": "compassql",
-  "version": "0.19.14",
+  "version": "0.19.15",
   "description": "CompassQL visualization query language",
   "main": "build/src/cql.js",
   "typings": "./build/src/cql",
