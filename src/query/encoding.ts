@@ -18,6 +18,8 @@ export type EncodingQuery = FieldQuery | ValueQuery | AutoCountQuery;
 
 export interface EncodingQueryBase {
   channel: WildcardProperty<Channel>;
+
+  metadata?: any;
 }
 
 export interface ValueQuery extends EncodingQueryBase {
