@@ -15,7 +15,6 @@ import {
 } from '../../src/query/shorthand';
 
 import {REPLACE_BLANK_FIELDS} from '../../src/query/groupby';
-import {EncodingQuery} from '../../src/query/encoding';
 import {SpecQuery} from '../../src/query/spec';
 
 import {assert} from 'chai';
@@ -99,9 +98,7 @@ describe('query/shorthand', () => {
   describe('shorthandParser', () => {
     describe('encoding', () => {
       it('should correctly parse an encoding query given a channel and fieldDefShorthand', () => {
-        let encQ: EncodingQuery = {} as EncodingQuery;
-
-        encQ = shorthandParser.encoding(
+        const encQ = shorthandParser.encoding(
           'x',
           'bin(a,q,maxbins=20,scale={"type":"linear"})'
         );
@@ -118,26 +115,22 @@ describe('query/shorthand', () => {
 
     describe('fn', () => {
       it('should correctly parse an encoding query given a fieldDefShorthand with aggregation function', () => {
-        let encQ: EncodingQuery = {} as EncodingQuery;
-        shorthandParser.fn(encQ, 'sum(horsepower,q)');
+        const encQ = shorthandParser.fn('sum(horsepower,q)');
         assert.deepEqual(encQ, {aggregate: 'sum', field: 'horsepower', type: Type.QUANTITATIVE});
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with count function', () => {
-        let encQ: EncodingQuery = {} as EncodingQuery;
-        shorthandParser.fn(encQ, 'count(*,q)');
+        const encQ = shorthandParser.fn('count(*,q)');
         assert.deepEqual(encQ,{aggregate: 'count', field: '*', type: Type.QUANTITATIVE});
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with timeunit function', () => {
-        let encQ: EncodingQuery = {} as EncodingQuery;
-        shorthandParser.fn(encQ, 'hours(a,t)');
+        const encQ = shorthandParser.fn('hours(a,t)');
         assert.deepEqual(encQ, {field: 'a', timeUnit: TimeUnit.HOURS, type: Type.TEMPORAL});
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with maxbins bin function', () => {
-        let encQ: EncodingQuery = {} as EncodingQuery;
-        shorthandParser.fn(encQ, 'bin(a,q,maxbins=20)');
+        const encQ = shorthandParser.fn('bin(a,q,maxbins=20)');
         assert.deepEqual(encQ, {
           bin: {maxbins: 20},
           field: 'a',
@@ -146,8 +139,7 @@ describe('query/shorthand', () => {
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with min bin function', () => {
-        let encQ: EncodingQuery = {} as EncodingQuery;
-        shorthandParser.fn(encQ, 'bin(a,q,min=20)');
+        const encQ = shorthandParser.fn('bin(a,q,min=20)');
         assert.deepEqual(encQ, {
           bin: {min: 20},
           field: 'a',
@@ -156,8 +148,7 @@ describe('query/shorthand', () => {
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with max bin function', () => {
-        let encQ: EncodingQuery = {} as EncodingQuery;
-        shorthandParser.fn(encQ, 'bin(a,q,max=20)');
+        const encQ = shorthandParser.fn('bin(a,q,max=20)');
         assert.deepEqual(encQ, {
           bin: {max: 20},
           field: 'a',
@@ -166,8 +157,7 @@ describe('query/shorthand', () => {
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with base bin function', () => {
-        let encQ: EncodingQuery = {} as EncodingQuery;
-        shorthandParser.fn(encQ, 'bin(a,q,base=20)');
+        const encQ = shorthandParser.fn('bin(a,q,base=20)');
         assert.deepEqual(encQ, {
           bin: {base: 20},
           field: 'a',
@@ -176,8 +166,7 @@ describe('query/shorthand', () => {
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with step bin function', () => {
-        let encQ: EncodingQuery = {} as EncodingQuery;
-        shorthandParser.fn(encQ, 'bin(a,q,step=20)');
+        const encQ = shorthandParser.fn('bin(a,q,step=20)');
         assert.deepEqual(encQ, {
           bin: {step: 20},
           field: 'a',
@@ -186,8 +175,7 @@ describe('query/shorthand', () => {
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with steps bin function', () => {
-        let encQ: EncodingQuery = {} as EncodingQuery;
-        shorthandParser.fn(encQ, 'bin(a,q,steps=[2,5])');
+        const encQ = shorthandParser.fn('bin(a,q,steps=[2,5])');
         assert.deepEqual(encQ, {
           bin: {steps: [2, 5]},
           field: 'a',
@@ -196,18 +184,17 @@ describe('query/shorthand', () => {
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with minstep bin function', () => {
-        let encQ: EncodingQuery = {} as EncodingQuery;
-        shorthandParser.fn(encQ, 'bin(a,q,minstep=20)');
+        const encQ = shorthandParser.fn('bin(a,q,step=20)');
         assert.deepEqual(encQ, {
-          bin: {minstep: 20},
+          bin: {step: 20},
           field: 'a',
           type: Type.QUANTITATIVE,
         });
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with div bin function', () => {
-        let encQ: EncodingQuery = {} as EncodingQuery;
-        shorthandParser.fn(encQ, 'bin(a,q,div=[5,2])');
+
+        const encQ = shorthandParser.fn('bin(a,q,div=[5,2])');
         assert.deepEqual(encQ, {
           bin: {div: [5, 2]},
           field: 'a',
@@ -218,14 +205,14 @@ describe('query/shorthand', () => {
 
     describe('rawFieldDef', () => {
       it('should correctly parse an encoding query from fieldDef parts', () => {
-        let encQ = shorthandParser.rawFieldDef({} as EncodingQuery,
+        let encQ = shorthandParser.rawFieldDef(
           splitWithTail('a,q,scale={"domain":[1,2],"exponent":3,"type":"pow"},axis={"orient":"top"}', ',', 2)
         );
         assert.deepEqual(encQ, {axis: {orient: 'top'}, field: 'a', scale: {domain: [1, 2], exponent: 3, type: ScaleType.POW}, type: Type.QUANTITATIVE});
       });
 
       it('should correctly parse an encoding query from fieldDef parts', () => {
-        let encQ = shorthandParser.rawFieldDef({} as EncodingQuery,
+        let encQ = shorthandParser.rawFieldDef(
           splitWithTail('a,n,sort={"field":"a","op":"mean","order":"descending"}', ',', 2)
         );
         assert.deepEqual(encQ, {field: 'a', sort: {field: 'a', op: 'mean', order: 'descending'}, type: Type.NOMINAL});
@@ -548,16 +535,14 @@ describe('query/shorthand', () => {
     it('should return correct fieldDefShorthand string for axis with orient, shortTimeLabels, ticks, and title', () => {
       const str = specShorthand({
         mark: Mark.POINT,
-        encodings: [
-          {
-            channel: Channel.X,
-            field: 'a',
-            type: Type.QUANTITATIVE,
-            axis: {orient: 'top', ticks: 5, title: 'test x channel'}
-          }
-        ]
+        encodings: [ {
+          channel: Channel.X,
+          field: 'a',
+          type: Type.QUANTITATIVE,
+          axis: {orient: 'top', tickCount: 5, title: 'test x channel'}
+        }]
       });
-      assert.equal(str, 'point|x:a,q,axis={"orient":"top","ticks":5,"title":"test x channel"}');
+      assert.equal(str, 'point|x:a,q,axis={"orient":"top","tickCount":5,"title":"test x channel"}');
     });
 
     it('should return correct fieldDefShorthand string for legend with properties ordered alphabetically', () => {

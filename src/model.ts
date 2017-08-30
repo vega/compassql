@@ -104,15 +104,17 @@ export class SpecQueryModel {
     // AUTO COUNT
     // Add Auto Count Field
     if (opt.autoAddCount) {
+      const channel: Wildcard<Channel> = {
+        name: getDefaultName(Property.CHANNEL) + specQ.encodings.length,
+        enum: getDefaultEnumValues(Property.CHANNEL, schema, opt)
+      };
+      const autoCount: Wildcard<boolean> = {
+        name: getDefaultName(Property.AUTOCOUNT) + specQ.encodings.length,
+        enum: [false, true]
+      };
       const countEncQ: AutoCountQuery = {
-        channel: {
-          name: getDefaultName(Property.CHANNEL) + specQ.encodings.length,
-          enum: getDefaultEnumValues(Property.CHANNEL, schema, opt)
-        },
-        autoCount: {
-          name: getDefaultName(Property.AUTOCOUNT) + specQ.encodings.length,
-          enum: [false, true]
-        },
+        channel,
+        autoCount,
         type: Type.QUANTITATIVE
       };
       specQ.encodings.push(countEncQ);
@@ -120,8 +122,8 @@ export class SpecQueryModel {
       const index = specQ.encodings.length - 1;
 
       // Add index of the encoding mapping to the property's wildcard index.
-      wildcardIndex.setEncodingProperty(index, Property.CHANNEL, countEncQ.channel);
-      wildcardIndex.setEncodingProperty(index, Property.AUTOCOUNT, countEncQ.autoCount);
+      wildcardIndex.setEncodingProperty(index, Property.CHANNEL, channel);
+      wildcardIndex.setEncodingProperty(index, Property.AUTOCOUNT, autoCount);
     }
 
     return new SpecQueryModel(specQ, wildcardIndex, schema, opt, {});

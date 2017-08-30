@@ -330,15 +330,15 @@ describe('enumerator', () => {
       });
     });
 
-    describe('scaleExponent', () => {
-      it('should correctly enumerate scaleExponent', () => {
+    describe('scaleBase', () => {
+      it('should correctly enumerate scaleBase', () => {
         const specM = buildSpecQueryModel({
           mark: Mark.POINT,
           encodings: [
             {
               channel: Channel.X,
               scale: {
-                exponent: {enum: [0.5, 1, 2, undefined]},
+                base: {enum: [0.5, 1, 2, undefined]},
                 type: ScaleType.LOG
               },
               field: 'Q',
@@ -346,14 +346,14 @@ describe('enumerator', () => {
             }
           ]
         });
-        const enumerator = getEnumerator({parent: 'scale', child: 'exponent'})(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
+        const enumerator = getEnumerator({parent: 'scale', child: 'base'})(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 4);
-        assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).exponent, 0.5);
-        assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).exponent, 1);
-        assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).exponent, 2);
-        assert.deepEqual(((answerSet[3].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).exponent, undefined);
+        assert.deepEqual(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).base, 0.5);
+        assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).base, 1);
+        assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).base, 2);
+        assert.deepEqual(((answerSet[3].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).base, undefined);
 
       });
     });

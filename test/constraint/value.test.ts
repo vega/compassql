@@ -24,10 +24,10 @@ describe('constraints/value', () => {
     });
 
     it('should return false if value is a constant', () => {
-      [['row', Channel.ROW], ['column', Channel.COLUMN], ['x', Channel.X], ['y', Channel.Y], ['detail', Channel.DETAIL]].forEach((type) => {
+      ['row', 'column', 'x', 'y', 'detail'].forEach((channel: Channel) => {
         const invalidValueQ: ValueQuery = {
-          value: type[0],
-          channel: type[1],
+          value: channel,
+          channel,
         };
 
         assert.isFalse(VALUE_CONSTRAINT_INDEX['doesNotSupportConstantValue'].satisfy(invalidValueQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));

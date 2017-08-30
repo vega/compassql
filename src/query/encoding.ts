@@ -1,5 +1,5 @@
 import {Axis} from 'vega-lite/build/src/axis';
-import {Bin} from 'vega-lite/build/src/bin';
+import {BinParams} from 'vega-lite/build/src/bin';
 import {Channel} from 'vega-lite/build/src/channel';
 import * as vlFieldDef from 'vega-lite/build/src/fielddef';
 import {Mark} from 'vega-lite/build/src/mark';
@@ -7,7 +7,7 @@ import {Scale} from 'vega-lite/build/src/scale';
 import {Legend} from 'vega-lite/build/src/legend';
 import {SortOrder, SortField} from 'vega-lite/build/src/sort';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
-import {Type as VLType} from 'vega-lite/build/src/type';
+import {Type as VLType, Type} from 'vega-lite/build/src/type';
 import {ExpandedType} from './expandedtype';
 import {scaleType as compileScaleType} from 'vega-lite/build/src/compile/scale/type';
 import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
@@ -51,9 +51,7 @@ export interface AutoCountQuery extends EncodingQueryBase {
   type: 'quantitative';
 }
 
-export interface FieldQuery extends EncodingQueryBase {
-  channel: WildcardProperty<Channel>;
-
+export interface FieldQueryBase {
   // FieldDef
   aggregate?: WildcardProperty<AggregateOp>;
   timeUnit?: WildcardProperty<TimeUnit>;
@@ -70,11 +68,12 @@ export interface FieldQuery extends EncodingQueryBase {
 
   field?: WildcardProperty<string>;
   type?: WildcardProperty<ExpandedType>;
-  // TODO: value
 
   axis?: boolean | AxisQuery | SHORT_WILDCARD;
   legend?: boolean | LegendQuery | SHORT_WILDCARD;
 }
+
+export type FieldQuery = EncodingQueryBase & FieldQueryBase;
 
 // Using Mapped Type from TS2.1 to declare query for an object without nested property
 // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-1.html#mapped-types
@@ -84,7 +83,7 @@ export type FlatQuery<T> = {
 
 export type FlatQueryWithEnableFlag<T> = (Wildcard<boolean> | {}) & FlatQuery<T>;
 
-export type BinQuery = FlatQueryWithEnableFlag<Bin>;
+export type BinQuery = FlatQueryWithEnableFlag<BinParams>;
 export type ScaleQuery =  FlatQueryWithEnableFlag<Scale>;
 export type AxisQuery =  FlatQueryWithEnableFlag<Axis>;
 export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
@@ -94,10 +93,15 @@ export function toFieldDef(encQ: FieldQuery | AutoCountQuery,
     props: (keyof (FieldQuery))[] = ['aggregate', 'bin', 'timeUnit', 'field', 'type']): FieldDef<string> {
   if (isFieldQuery(encQ)) {
     return props.reduce((fieldDef: FieldDef<string>, prop: keyof FieldQuery) => {
-      if (isWildcard(encQ[prop])) {
+      const propValue = encQ[prop];
+      if (isWildcard(propValue)) {
         throw new Error(`Cannot convert ${JSON.stringify(encQ)} to fielddef: ${prop} is wildcard`);
-      } else if (encQ[prop] !== undefined) {
-        fieldDef[prop] = encQ[prop];
+      } else if (propValue !== undefined) {
+        if (prop === 'type') {
+          fieldDef.type = propValue as Type;
+        } else {
+          fieldDef[prop] = propValue;
+        }
       }
       return fieldDef;
     }, {} as FieldDef<string>);
@@ -214,6 +218,6 @@ export function scaleType(fieldQ: FieldQuery) {
 
   let vegaLiteType: VLType = type === ExpandedType.KEY ? 'nominal': type;
 
-  const fieldDef = {type: vegaLiteType, timeUnit: timeUnit as TimeUnit, bin: bin as Bin};
+  const fieldDef = {type: vegaLiteType, timeUnit: timeUnit as TimeUnit, bin: bin as BinParams};
   return compileScaleType(scale.type, channel, fieldDef, markType, rangeStep, scaleConfig);
 }

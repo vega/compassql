@@ -4,7 +4,7 @@ import { Schema } from './schema';
 import { extend, isArray } from './util';
 
 import {Axis, AXIS_PROPERTIES} from 'vega-lite/build/src/axis';
-import {Bin} from 'vega-lite/build/src/bin';
+import {BinParams} from 'vega-lite/build/src/bin';
 import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR} from 'vega-lite/build/src/channel';
 import {FieldDef} from 'vega-lite/build/src/fielddef';
 import {Mark} from 'vega-lite/build/src/mark';
@@ -156,7 +156,7 @@ export type EnumIndex =
     axis: boolean[],
     legend: boolean[],
 
-    binProps: Partial<DefEnumIndex<Bin>>,
+    binProps: Partial<DefEnumIndex<BinParams>>,
     sortProps: Partial<DefEnumIndex<SortField>>,
     scaleProps: Partial<DefEnumIndex<Scale>>,
     axisProps: Partial<DefEnumIndex<Axis>>,
@@ -164,7 +164,7 @@ export type EnumIndex =
   };
 
 
-const DEFAULT_BIN_PROPS_ENUM: DefEnumIndex<Bin> = {
+const DEFAULT_BIN_PROPS_ENUM: DefEnumIndex<BinParams> = {
   maxbins: [5, 10, 20],
   extent: [undefined],
   base: [10],
@@ -183,6 +183,7 @@ const DEFAULT_SORT_PROPS: DefEnumIndex<SortField> = {
 const DEFAULT_SCALE_PROPS_ENUM: DefEnumIndex<Scale> = {
   type: [undefined, ScaleType.LOG],
   domain: [undefined],
+  base: [undefined],
   exponent: [1, 2],
 
   clamp: DEFAULT_BOOLEAN_ENUM,

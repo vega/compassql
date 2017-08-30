@@ -292,7 +292,7 @@ describe('SpecQueryModel', () => {
             channel: Channel.X,
             field: 'Q',
             type: Type.QUANTITATIVE,
-            axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'},
+            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'},
           },
           {
             channel: Channel.COLOR,
@@ -309,7 +309,7 @@ describe('SpecQueryModel', () => {
         transform: [{filter: 'datum.Q===1'}],
         mark: Mark.BAR,
         encoding: {
-          x: {field: 'Q', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
+          x: {field: 'Q', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'}},
           color: {field: 'Q2', type: Type.QUANTITATIVE, legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}}
         },
         config: DEFAULT_SPEC_CONFIG
@@ -326,7 +326,7 @@ describe('SpecQueryModel', () => {
             channel: Channel.X,
             field: 'Q',
             type: Type.QUANTITATIVE,
-            axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'},
+            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'},
             legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'},
           }
         ]
@@ -338,14 +338,14 @@ describe('SpecQueryModel', () => {
         transform: [{filter: 'datum.Q===1'}],
         mark: Mark.BAR,
         encoding: {
-          x: {field: 'Q', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'}},
+          x: {field: 'Q', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'}},
         },
         config: DEFAULT_SPEC_CONFIG
       });
     });
 
     it('should return a Vega-Lite spec that does not output inapplicable axis', () => {
-      const specM = buildSpecQueryModel({
+      const specQ: SpecQuery = {
         data: {values: [{Q: 1}]},
         transform: [{filter: 'datum.Q===1'}],
         mark: Mark.BAR,
@@ -354,11 +354,12 @@ describe('SpecQueryModel', () => {
             channel: Channel.COLOR,
             field: 'Q2',
             type: Type.QUANTITATIVE,
-            axis: {orient: 'top', shortTimeLabels: true, ticks: 5, title: 'test x channel'},
+            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'},
             legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'},
           }
         ]
-      });
+      };
+      const specM = buildSpecQueryModel(specQ);
 
       const spec = specM.toSpec();
       assert.deepEqual(spec, {

@@ -1,5 +1,3 @@
-import {AGGREGATE_OPS} from 'vega-lite/build/src/aggregate';
-import {TIMEUNITS} from 'vega-lite/build/src/timeunit';
 import {Type} from 'vega-lite/build/src/type';
 
 import {RuleSet, testRuleSet} from './rule';
@@ -11,6 +9,8 @@ import {EncodingQuery} from '../../src/query/encoding';
 
 import {score} from '../../src/ranking/aggregation';
 import {schema} from '../fixture';
+import {isTimeUnit} from 'vega-lite/build/src/timeunit';
+import {isAggregateOp} from 'vega-lite/build/src/aggregate';
 
 function getScore(shortenedFields: string) {
   const encodings: EncodingQuery[] = shortenedFields.split('x')
@@ -26,9 +26,9 @@ function getScore(shortenedFields: string) {
         const fn = split[0];
         if (fn === 'bin') {
           encQ.bin = true;
-        } else if (TIMEUNITS.indexOf(fn as any) !== -1) {
+        } else if (isTimeUnit(fn)) {
           encQ.timeUnit = fn;
-        } else if (AGGREGATE_OPS.indexOf(fn as any) !== -1) {
+        } else if (isAggregateOp(fn)) {
           encQ.aggregate = fn;
         }
       }

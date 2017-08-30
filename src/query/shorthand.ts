@@ -1,13 +1,12 @@
-import {AGGREGATE_OPS} from 'vega-lite/build/src/aggregate';
-import {Channel, CHANNELS} from 'vega-lite/build/src/channel';
+import {isAggregateOp} from 'vega-lite/build/src/aggregate';
+import {Channel, isChannel} from 'vega-lite/build/src/channel';
+import {Mark} from 'vega-lite/build/src/mark';
 import {FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
-import {SINGLE_TIMEUNITS, MULTI_TIMEUNITS} from 'vega-lite/build/src/timeunit';
+import {isTimeUnit} from 'vega-lite/build/src/timeunit';
 import {Type, getFullName} from 'vega-lite/build/src/type';
-import {toMap, isString} from 'datalib/src/util';
-
-import {EncodingQuery, isFieldQuery, FieldQuery, isValueQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, isAutoCountQuery} from './encoding';
+import {isString} from 'datalib/src/util';
+import {EncodingQuery, isFieldQuery, FieldQuery, isValueQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, isAutoCountQuery, FieldQueryBase} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
-
 import {isWildcard, isShortWildcard, SHORT_WILDCARD} from '../wildcard';
 import {getEncodingNestedProp, Property, hasNestedProperty, DEFAULT_PROP_PRECEDENCE, SORT_PROPS, EncodingNestedChildProp} from '../property';
 import {PropIndex} from '../propindex';
@@ -325,17 +324,15 @@ function fieldDefProps(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer
   return props;
 }
 
-const CHANNEL_INDEX = toMap(CHANNELS);
-const AGGREGATE_OP_INDEX = toMap(AGGREGATE_OPS);
-const SINGLE_TIMEUNIT_INDEX = toMap(SINGLE_TIMEUNITS);
-const MULTI_TIMEUNIT_INDEX = toMap(MULTI_TIMEUNITS);
-
 export function parse(shorthand: string): SpecQuery {
   // TODO(https://github.com/uwdata/compassql/issues/259):
   // Do not split directly, but use an upgraded version of `getClosingBraceIndex()`
   let splitShorthand = shorthand.split('|');
 
-  let specQ: SpecQuery = {mark: splitShorthand[0], encodings: [] as EncodingQuery[]};
+  let specQ: SpecQuery = {
+    mark: splitShorthand[0] as Mark,
+    encodings: [] as EncodingQuery[]
+  };
 
   for (let i = 1; i < splitShorthand.length; i++) {
     let part = splitShorthand[i];
@@ -343,7 +340,7 @@ export function parse(shorthand: string): SpecQuery {
     const splitPartKey = splitPart[0];
     const splitPartValue = splitPart[1];
 
-    if (CHANNEL_INDEX[splitPartKey] || splitPartKey === '?') {
+    if (isChannel(splitPartKey) || splitPartKey === '?') {
       const encQ = shorthandParser.encoding(splitPartKey, splitPartValue);
       specQ.encodings.push(encQ);
       continue;
@@ -393,19 +390,18 @@ export function splitWithTail(str: string, delim: string, count: number): string
 }
 
 export namespace shorthandParser {
-  export function encoding(channel: string, fieldDefShorthand: string): EncodingQuery {
-    let encQ: EncodingQuery = {channel: channel};
-
-    if (fieldDefShorthand.indexOf('(') !== -1) {
-      encQ = fn(encQ, fieldDefShorthand);
-    } else {
-      encQ = rawFieldDef(encQ, splitWithTail(fieldDefShorthand, ',', 2));
-    }
-
-    return encQ;
+  export function encoding(channel: Channel | SHORT_WILDCARD, fieldDefShorthand: string): EncodingQuery {
+    let encQMixins = fieldDefShorthand.indexOf('(') !== -1 ?
+      fn(fieldDefShorthand) :
+      rawFieldDef(splitWithTail(fieldDefShorthand, ',', 2));
+    return {
+      channel,
+      ...encQMixins
+    };
   }
 
-  export function rawFieldDef(fieldQ: FieldQuery, fieldDefPart: string[]): FieldQuery {
+  export function rawFieldDef(fieldDefPart: string[]): FieldQueryBase {
+    const fieldQ: FieldQueryBase = {};
     fieldQ.field = fieldDefPart[0];
     fieldQ.type = getFullName(fieldDefPart[1].toUpperCase()) || '?';
 
@@ -457,6 +453,7 @@ export namespace shorthandParser {
           fieldQ[prop] = parsedValue;
         } else {
           // prop is a property of the aggregation function such as bin
+          fieldQ.bin = fieldQ.bin || {};
           fieldQ.bin[prop] = parsedValue;
         }
       } else {
@@ -477,7 +474,8 @@ export namespace shorthandParser {
     }
   }
 
-  export function fn(fieldQ: FieldQuery, fieldDefShorthand: string): EncodingQuery {
+  export function fn(fieldDefShorthand: string): FieldQueryBase {
+    const fieldQ: FieldQueryBase = {};
     // Aggregate, Bin, TimeUnit as wildcard case
     if (fieldDefShorthand[0] === '?') {
       let closingBraceIndex = getClosingIndex(1, fieldDefShorthand, '}');
@@ -492,23 +490,32 @@ export namespace shorthandParser {
         }
       }
 
-      return rawFieldDef(fieldQ,
-        splitWithTail(fieldDefShorthand.substring(closingBraceIndex + 2, fieldDefShorthand.length - 1), ',', 2)
-      );
+      return {
+        ...fieldQ,
+        ...rawFieldDef(
+          splitWithTail(fieldDefShorthand.substring(closingBraceIndex + 2, fieldDefShorthand.length - 1), ',', 2)
+        )
+      };
     } else {
       let func = fieldDefShorthand.substring(0, fieldDefShorthand.indexOf('('));
       let insideFn = fieldDefShorthand.substring(func.length + 1, fieldDefShorthand.length - 1);
       let insideFnParts = splitWithTail(insideFn, ',', 2);
 
-      if (AGGREGATE_OP_INDEX[func]) {
-        fieldQ.aggregate = func;
-        return rawFieldDef(fieldQ, insideFnParts);
-      } else if (MULTI_TIMEUNIT_INDEX[func] || SINGLE_TIMEUNIT_INDEX[func]) {
-        fieldQ.timeUnit = func;
-        return rawFieldDef(fieldQ, insideFnParts);
+      if (isAggregateOp(func)) {
+        return {
+          aggregate: func,
+          ...rawFieldDef(insideFnParts)
+        };
+      } else if (isTimeUnit(func)) {
+        return {
+          timeUnit: func,
+          ...rawFieldDef(insideFnParts)
+        };
       } else if (func === 'bin') {
-        fieldQ.bin = {};
-        return rawFieldDef(fieldQ, insideFnParts);
+        return {
+          bin: {},
+          ...rawFieldDef(insideFnParts)
+        };
       }
     }
   }

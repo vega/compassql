@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 
 import {Mark} from 'vega-lite/build/src/mark';
-import {SUM_OPS} from 'vega-lite/build/src/aggregate';
+import {SUM_OPS, AggregateOp} from 'vega-lite/build/src/aggregate';
 import {Channel} from 'vega-lite/build/src/channel';
 // import * as log from 'vega-lite/build/src/log';
 import {ScaleType} from 'vega-lite/build/src/scale';
@@ -10,7 +10,7 @@ import {Type} from 'vega-lite/build/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX, SpecConstraintModel} from '../../src/constraint/spec';
-import {SHORT_WILDCARD} from '../../src/wildcard';
+import {SHORT_WILDCARD, Wildcard} from '../../src/wildcard';
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {SpecQuery} from '../../src/query/spec';
@@ -126,9 +126,10 @@ describe('constraints/spec', () => {
           });
           const autoCountIndex = model.getEncodings().length - 1;
           model.setEncodingProperty(
-            autoCountIndex, 'autoCount',
+            autoCountIndex,
+            'autoCount',
             autoCount,
-            (model.getEncodingQueryByIndex(autoCountIndex) as AutoCountQuery).autoCount
+            (model.getEncodingQueryByIndex(autoCountIndex) as AutoCountQuery).autoCount as Wildcard<any>
           );
 
           assert.equal(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(model, schema, DEFAULT_QUERY_CONFIG), satisfy);
@@ -964,7 +965,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return false if non-summative aggregate (e.g., mean, median) is used.', () => {
-      ['max', 'mean', 'median'].forEach((aggregate) => {
+      ['max', 'mean', 'median'].forEach((aggregate: AggregateOp) => {
         [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
           const specM = buildSpecQueryModel({
             mark: Mark.BAR,

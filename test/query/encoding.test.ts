@@ -1,6 +1,6 @@
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {Type} from 'vega-lite/build/src/type';
-import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import {TIMEUNITS} from 'vega-lite/build/src/timeunit';
 import {assert} from 'chai';
 
 import {scaleType, toFieldDef} from '../../src/query/encoding';
@@ -114,22 +114,8 @@ describe('query/encoding', () => {
       assert.equal(sType, ScaleType.TIME);
     });
 
-    [TimeUnit.HOURS, TimeUnit.DAY, TimeUnit.MONTH, TimeUnit.QUARTER].forEach((timeUnit) => {
-      it('should return ScaleType.POINT if type is temporal and TimeUnit is ' + timeUnit + ' and scale type is not specified', () => {
-        const sType = scaleType({
-          channel: 'x',
-          timeUnit: timeUnit,
-          type: Type.TEMPORAL
-        });
-        assert.equal(sType, ScaleType.POINT);
-      });
-    });
-
-    [TimeUnit.YEAR, TimeUnit.DATE, TimeUnit.MINUTES, TimeUnit.SECONDS, TimeUnit.MILLISECONDS, TimeUnit.YEARMONTH,
-     TimeUnit.YEARMONTHDATE, TimeUnit.YEARMONTHDATEHOURS, TimeUnit.YEARMONTHDATEHOURSMINUTES, TimeUnit.YEARMONTHDATEHOURSMINUTESSECONDS,
-     TimeUnit.HOURSMINUTES, TimeUnit.HOURSMINUTESSECONDS, TimeUnit.MINUTESSECONDS, TimeUnit.SECONDSMILLISECONDS,
-     TimeUnit.YEARQUARTER, TimeUnit.QUARTERMONTH, TimeUnit.YEARQUARTERMONTH].forEach((timeUnit) => {
-       it('should return ScaleType.TIME if type is temporal and TimeUnit is ' + timeUnit + ' and scale type is not specified', () => {
+    TIMEUNITS.forEach((timeUnit) => {
+       it('should return ScaleType.TIME if type is temporal and has timeUnit', () => {
          const sType = scaleType({
           channel: 'x',
           timeUnit: timeUnit,

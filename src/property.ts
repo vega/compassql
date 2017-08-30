@@ -1,5 +1,5 @@
 import {Axis, AXIS_PROPERTIES} from 'vega-lite/build/src/axis';
-import {Bin} from 'vega-lite/build/src/bin';
+import {BinParams} from 'vega-lite/build/src/bin';
 import {Scale, SCALE_PROPERTIES} from 'vega-lite/build/src/scale';
 import {Legend, LEGEND_PROPERTIES} from 'vega-lite/build/src/legend';
 import {SortField} from 'vega-lite/build/src/sort';
@@ -16,14 +16,14 @@ export type TransformProp = keyof TransformQuery;
 export type EncodingTopLevelProp = keyof (FieldQuery & ValueQuery & AutoCountQuery);
 export type EncodingNestedProp = BinProp | SortProp | ScaleProp | AxisProp | LegendProp;
 
-export type EncodingNestedChildProp = keyof Bin | keyof SortField | keyof Scale | keyof Axis | keyof Legend;
+export type EncodingNestedChildProp = keyof BinParams | keyof SortField | keyof Scale | keyof Axis | keyof Legend;
 
 export type BaseEncodingNestedProp<P, T> = {
   parent: P,
   child: keyof T
 };
 
-export type BinProp = BaseEncodingNestedProp<'bin', Bin>;
+export type BinProp = BaseEncodingNestedProp<'bin', BinParams>;
 export type SortProp = BaseEncodingNestedProp<'sort', SortField>;
 export type ScaleProp = BaseEncodingNestedProp<'scale', Scale>;
 export type AxisProp = BaseEncodingNestedProp<'axis', Axis>;
@@ -62,10 +62,9 @@ export function hasNestedProperty(prop: string) {
   return ENCODING_NESTED_PROP_PARENT_INDEX[prop as string];
 }
 
-export const BIN_CHILD_PROPS: (keyof Bin)[] = ['maxbins', 'divide', 'extent', 'base', 'step', 'steps', 'minstep'];
+// FIXME -- we should not have to manually specify these
+export const BIN_CHILD_PROPS: (keyof BinParams)[] = ['maxbins', 'divide', 'extent', 'base', 'step', 'steps', 'minstep'];
 export const SORT_CHILD_PROPS: (keyof SortField)[] = ['field', 'op', 'order'];
-export const SCALE_CHILD_PROPS: (keyof Scale)[] =
-  ['clamp', 'domain', 'exponent', 'nice', 'range', 'rangeStep', 'round', 'type', 'zero'];
 
 const BIN_PROPS = BIN_CHILD_PROPS.map((c): BinProp => {
   return {parent: 'bin', child: c};

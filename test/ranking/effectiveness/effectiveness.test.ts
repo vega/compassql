@@ -3,14 +3,12 @@ import {Channel, X, Y, SIZE, COLOR, OPACITY, ROW, COLUMN, SHAPE} from 'vega-lite
 import {AREA, BAR, POINT, SQUARE, CIRCLE, TICK, LINE, RULE, Mark} from 'vega-lite/build/src/mark';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
 import {Type} from 'vega-lite/build/src/type';
-
 import {DEFAULT_QUERY_CONFIG} from '../../../src/config';
 import {SpecQueryModel} from '../../../src/model';
 import {EncodingQuery} from '../../../src/query/encoding';
 import {SpecQuery} from '../../../src/query/spec';
 import {extend, nestedMap} from '../../../src/util';
 import {effectiveness} from '../../../src/ranking/effectiveness';
-import {ExtendedType} from '../../../src/ranking/effectiveness/type';
 import {schema} from '../../fixture';
 import {RuleSet, Rule, testRuleSet} from '../rule';
 
@@ -26,7 +24,7 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
   rules: function() {
     const rules: Rule<SpecQueryModel>[] = [];
 
-    function plot1d(mark: Mark, channel: Channel, type: ExtendedType) {
+    function plot1d(mark: Mark, channel: Channel, type: Type) {
       return SpecQueryModel.build({
         mark: mark,
         encodings: [
@@ -42,7 +40,7 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
     rules.push({
       name: 'N with varying mark',
       items: nestedMap([[POINT /*, RECT */], TICK, [LINE, BAR, AREA], RULE], (mark) => {
-        return plot1d(mark, X, ExtendedType.N);
+        return plot1d(mark, X, Type.NOMINAL);
       })
     });
 
@@ -81,7 +79,7 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
     rules.push({
       name: 'Q dot plot with varying mark',
       items: nestedMap([TICK, POINT, [LINE, BAR, AREA], RULE], (mark) => {
-        return plot1d(mark, X, ExtendedType.Q);
+        return plot1d(mark, X, Type.QUANTITATIVE);
       })
     });
 
@@ -114,7 +112,7 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
     rules.push({
       name: 'T dot plot with varying mark',
       items: nestedMap([TICK, POINT, [LINE, BAR, AREA], RULE], (mark) => {
-        return plot1d(mark, X, ExtendedType.T);
+        return plot1d(mark, X, Type.TEMPORAL);
       })
     });
 

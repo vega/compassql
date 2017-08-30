@@ -1,11 +1,10 @@
 import {Type as VLType} from 'vega-lite/build/src/type';
 import {Channel} from 'vega-lite/build/src/channel';
 import {autoMaxBins} from 'vega-lite/build/src/bin';
-import {TimeUnit, containsTimeUnit, convert, SINGLE_TIMEUNITS} from 'vega-lite/build/src/timeunit';
+import {TimeUnit, containsTimeUnit, convert, TIMEUNIT_PARTS} from 'vega-lite/build/src/timeunit';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
 import * as dlBin from 'datalib/src/bins/bins';
-
 import {BinQuery, EncodingQuery, FieldQuery, isAutoCountQuery} from './query/encoding';
 import { ExpandedType } from './query/expandedtype';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
@@ -262,6 +261,10 @@ export class Schema {
         bin = {
           maxbins: autoMaxBins(fieldQ.channel as Channel)
         };
+      } else if (fieldQ.bin === '?') {
+        bin = {
+          enum: [true, false]
+        };
       } else {
         bin = fieldQ.bin;
       }
@@ -336,10 +339,10 @@ export class Schema {
     }
 
     let fullTimeUnit = fieldQ.timeUnit;
-    for (let singleUnit of SINGLE_TIMEUNITS) {
-      if (containsTimeUnit(fullTimeUnit as TimeUnit, singleUnit)) {
+    for (let timeUnitPart of TIMEUNIT_PARTS) {
+      if (containsTimeUnit(fullTimeUnit as TimeUnit, timeUnitPart)) {
         // Create a clone of encQ, but with singleTimeUnit
-        const singleUnitEncQ = extend({}, fieldQ, {timeUnit: singleUnit});
+        const singleUnitEncQ = extend({}, fieldQ, {timeUnit: timeUnitPart});
         if (this.cardinality(singleUnitEncQ, false, true) <= 1) {
           return false;
         }

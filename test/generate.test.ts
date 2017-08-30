@@ -22,7 +22,7 @@ describe('generate', function () {
   describe('1D', () => {
     describe('Q with mark=?, channel=size', () => {
       it('should enumerate mark=point and generate a point plot', () => {
-        const query = {
+        const specQ: SpecQuery = {
           mark: '?',
           encodings: [{
             channel: Channel.SIZE,
@@ -30,7 +30,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema);
+        const answerSet = generate(specQ, schema);
         assert.equal(answerSet.length, 1);
         assert.equal(answerSet[0].getMark(), Mark.POINT);
       });
@@ -38,7 +38,7 @@ describe('generate', function () {
 
     describe('Q with mark=point, channel=?', () => {
       it('should only enumerate channel x and y', () => {
-        const query = {
+        const specQ: SpecQuery = {
           mark: Mark.POINT,
           encodings: [{
             channel: '?',
@@ -46,14 +46,14 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema);
+        const answerSet = generate(specQ, schema);
         assert.equal(answerSet.length, 2);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).channel, Channel.Y);
       });
 
       it('should only enumerate channel x and channel y even if omitNonPositionalOrFacetOverPositionalChannels turned off', () => {
-        const query = {
+        const specQ: SpecQuery = {
           mark: Mark.POINT,
           encodings: [{
             channel: '?',
@@ -61,7 +61,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOrFacetOverPositionalChannels: false}));
+        const answerSet = generate(specQ, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOrFacetOverPositionalChannels: false}));
         assert.equal(answerSet.length, 2);
         assert.equal(answerSet[0].getEncodingQueryByIndex(0).channel, Channel.X);
         assert.equal(answerSet[1].getEncodingQueryByIndex(0).channel, Channel.Y);
@@ -70,7 +70,7 @@ describe('generate', function () {
 
     describe('Q with mark=?, channel=column, bin', () => {
       it('should generate point marks', () => {
-        const query = {
+        const specQ: SpecQuery = {
           mark: '?',
           encodings: [{
             channel: Channel.COLUMN,
@@ -79,7 +79,7 @@ describe('generate', function () {
             bin: {}
           }]
         };
-        const answerSet = generate(query, schema);
+        const answerSet = generate(specQ, schema);
         assert.equal(answerSet.length, 1);
         assert.equal(answerSet[0].getMark(), Mark.POINT);
       });
@@ -87,7 +87,7 @@ describe('generate', function () {
 
     describe('Q with mark=?, channel=?', () => {
       it('should enumerate tick or point mark with x or y channel', () => {
-        const query = {
+        const specQ: SpecQuery = {
           mark: '?',
           encodings: [{
             channel: '?',
@@ -96,7 +96,7 @@ describe('generate', function () {
           }]
         };
 
-        const answerSet = generate(query, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOrFacetOverPositionalChannels: false}));
+        const answerSet = generate(specQ, schema, extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOrFacetOverPositionalChannels: false}));
         assert.equal(answerSet.length, 4);
 
         assert.equal(answerSet[0].getMark(), Mark.POINT);
@@ -112,7 +112,7 @@ describe('generate', function () {
 
     describe('Q with aggregate=?, bin=?', () => {
       it('should enumerate raw, bin, aggregate', () => {
-        const query = {
+        const specQ: SpecQuery = {
           mark: Mark.POINT,
           encodings: [{
             channel: Channel.X,
@@ -122,7 +122,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
+        const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
         assert.equal(answerSet.length, 3);
       });
     });
@@ -164,7 +164,7 @@ describe('generate', function () {
 
   describe('2D', () => {
     describe('x:N,y:N', () => {
-      const query = {
+      const specQ: SpecQuery = {
         mark: SHORT_WILDCARD,
         encodings: [{
           channel: Channel.X,
@@ -178,7 +178,7 @@ describe('generate', function () {
         config: CONFIG_WITH_AUTO_ADD_COUNT
       };
 
-      const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
+      const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
 
       it('should return counted heatmaps', () => {
         assert.isTrue(answerSet.length > 0);
@@ -200,7 +200,7 @@ describe('generate', function () {
     });
 
     describe('NxO', () => {
-      const query = {
+      const specQ: SpecQuery = {
         mark: '?',
         encodings: [
           {channel: Channel.Y, field: 'O', type: Type.ORDINAL},
@@ -208,7 +208,7 @@ describe('generate', function () {
         ]
       };
 
-      const answerSet = generate(query, schema);
+      const answerSet = generate(specQ, schema);
 
       it('should generate a table with x and y as dimensions with autocount turned off', () => {
         answerSet.forEach((specM) => {
@@ -222,7 +222,7 @@ describe('generate', function () {
 
     describe('QxQ', () => {
       it('should not return any of bar, tick, line, or area', () => {
-        const query = {
+        const specQ: SpecQuery = {
           mark: SHORT_WILDCARD,
           encodings: [{
             channel: Channel.X,
@@ -234,7 +234,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
+        const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
         answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), Mark.AREA);
           assert.notEqual(specM.getMark(), Mark.LINE);
@@ -246,7 +246,7 @@ describe('generate', function () {
 
     describe('A(Q) x A(Q)', () => {
       it('should return neither line nor area', () => {
-        const query = {
+        const specQ: SpecQuery = {
           mark: SHORT_WILDCARD,
           encodings: [{
             channel: Channel.X,
@@ -260,7 +260,7 @@ describe('generate', function () {
             type: Type.QUANTITATIVE
           }]
         };
-        const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
+        const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
         answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), Mark.AREA);
           assert.notEqual(specM.getMark(), Mark.LINE);
@@ -271,7 +271,7 @@ describe('generate', function () {
 
   describe('3D', () => {
     describe('NxNxQ', () => {
-      const query = {
+      const specQ: SpecQuery = {
         mark: SHORT_WILDCARD,
         encodings: [{
           channel: SHORT_WILDCARD,
@@ -288,7 +288,7 @@ describe('generate', function () {
         }]
       };
 
-      const answerSet = generate(query, schema, CONFIG_WITH_AUTO_ADD_COUNT);
+      const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
 
       it('should not generate a plot with both x and y as dimensions with auto add count enabled', () => {
         answerSet.forEach((specM) => {
@@ -344,16 +344,16 @@ describe('generate', function () {
     });
   });
 
-  describe('scale-clamp', () => {
+  describe('scale-exponent', () => {
     it('should enumerate correct scale type when scale clamp is used with scale exponent and Type.Quantitative', () => {
-      const specQ = {
+      const specQ: SpecQuery = {
         mark: Mark.POINT,
         encodings: [
           {
             channel: Channel.X,
             scale: {
               clamp: true,
-              exponent: [1,2],
+              exponent: 1,
               type: {enum: [undefined, ScaleType.LINEAR, ScaleType.LOG, ScaleType.POINT,
                             ScaleType.POW, ScaleType.SQRT,
                             // TODO: add these back ScaleType.QUANTILE, ScaleType.QUANTIZE,
@@ -365,9 +365,8 @@ describe('generate', function () {
         ]
       };
       const answerSet = generate(specQ, schema);
-      assert.equal(answerSet.length, 2);
-      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.LOG);
-      assert.equal(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.POW);
+      assert.equal(answerSet.length, 1);
+      assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).type, ScaleType.POW);
     });
   });
 
@@ -551,7 +550,7 @@ describe('generate', function () {
     });
 
     it('should enumerate correct scale type for ordinal field', () => {
-      const specQ = {
+      const specQ: SpecQuery = {
         mark: Mark.POINT,
         encodings: [
           {

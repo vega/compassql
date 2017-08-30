@@ -11,13 +11,13 @@ import {EncodingConstraintModel, EncodingConstraint} from './base';
 export const VALUE_CONSTRAINTS: EncodingConstraintModel<ValueQuery>[] = [
   {
     name: 'doesNotSupportConstantValue',
-    description: 'row, column, x, y, and detail should not work with constant values.',
+    description: 'row, column, x, y, order, and detail should not work with constant values.',
     properties: [Property.TYPE, Property.AGGREGATE],
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (valueQ: ValueQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
 
-     return !(contains(['row', 'column', 'x', 'y', 'detail'], valueQ.channel));
+     return !(contains(['row', 'column', 'x', 'y', 'detail', 'order'], valueQ.channel));
     }
   }
 ].map((ec: EncodingConstraint<ValueQuery>) => new EncodingConstraintModel<ValueQuery>(ec));

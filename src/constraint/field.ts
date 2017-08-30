@@ -56,7 +56,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     description: 'bin should be applied to quantitative field only.',
     properties: [Property.TYPE, Property.BIN],
     allowWildcardForProperties: false,
-    strict: true,
+    strict: true, // FIXME VL2.0 actually support ordinal type for bin
     satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
       if (fieldQ.bin) {
         // If binned, the type must be quantitative

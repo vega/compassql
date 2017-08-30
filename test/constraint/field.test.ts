@@ -1,11 +1,8 @@
 import {assert} from 'chai';
-
 import {Channel} from 'vega-lite/build/src/channel';
-
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
 import {Type} from 'vega-lite/build/src/type';
-
 import {Property} from '../../src/property';
 import {PropIndex} from '../../src/propindex';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
@@ -14,8 +11,8 @@ import {FIELD_CONSTRAINTS, FIELD_CONSTRAINT_INDEX} from '../../src/constraint/fi
 import {EncodingQuery, ScaleQuery, FieldQuery} from '../../src/query/encoding';
 import {SHORT_WILDCARD, Wildcard} from '../../src/wildcard';
 import {duplicate, extend} from '../../src/util';
-
 import {schema} from '../fixture';
+import {AggregateOp} from 'vega-lite/build/src/aggregate';
 
 describe('constraints/field', () => {
   const defaultOpt = DEFAULT_QUERY_CONFIG;
@@ -197,116 +194,116 @@ describe('constraints/field', () => {
   describe('channelFieldCompatible', () => {
     [Channel.X, Channel.Y, Channel.COLOR, Channel.TEXT, Channel.DETAIL].forEach((channel) => {
       it(channel + ' supports raw measure.', () => {
-        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
+        const encQ: EncodingQuery = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports aggregate measure.', () => {
-        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'};
+        const encQ: EncodingQuery = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports aggregate measure.', () => {
-        const encQ = {channel: channel, type: Type.QUANTITATIVE, autoCount: true};
+        const encQ: EncodingQuery = {channel: channel, type: Type.QUANTITATIVE, autoCount: true};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports raw temporal measure.', () => {
-        const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL};
+        const encQ: EncodingQuery = {channel: channel, field: 'T', type: Type.TEMPORAL};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports timeUnit temporal dimension.', () => {
-        const encQ = {channel: channel, field: 'T', type: Type.QUANTITATIVE, timeUnit: TimeUnit.MONTH};
+        const encQ: EncodingQuery = {channel: channel, field: 'T', type: Type.QUANTITATIVE, timeUnit: TimeUnit.MONTH};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports binned quantitative dimension.', () => {
-        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
+        const encQ: EncodingQuery = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports ordinal dimension.', () => {
-        const encQ = {channel: channel, field: 'O', type: Type.ORDINAL};
+        const encQ: EncodingQuery = {channel: channel, field: 'O', type: Type.ORDINAL};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports nominal dimension.', () => {
-        const encQ = {channel: channel, field: 'N', type: Type.NOMINAL};
+        const encQ: EncodingQuery = {channel: channel, field: 'N', type: Type.NOMINAL};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
     [Channel.ROW, Channel.COLUMN].forEach((channel) => {
       it(channel + ' does not support raw measure.', () => {
-        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
+        const encQ: EncodingQuery = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
         assert.isFalse(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' does not support aggregate measure.', () => {
-        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'};
+        const encQ: EncodingQuery = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'};
         assert.isFalse(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' does not support raw temporal measure.', () => {
-        const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL};
+        const encQ: EncodingQuery = {channel: channel, field: 'T', type: Type.TEMPORAL};
         assert.isFalse(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports timeUnit temporal dimension.', () => {
-        const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL, timeUnit: TimeUnit.MONTH};
+        const encQ: EncodingQuery = {channel: channel, field: 'T', type: Type.TEMPORAL, timeUnit: TimeUnit.MONTH};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports binned quantitative dimension.', () => {
-        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
+        const encQ: EncodingQuery = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports ordinal dimension.', () => {
-        const encQ = {channel: channel, field: 'O', type: Type.ORDINAL};
+        const encQ: EncodingQuery = {channel: channel, field: 'O', type: Type.ORDINAL};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports nominal dimension.', () => {
-        const encQ = {channel: channel, field: 'N', type: Type.NOMINAL};
+        const encQ: EncodingQuery = {channel: channel, field: 'N', type: Type.NOMINAL};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
     [Channel.SIZE].forEach((channel) => {
       it(channel + ' supports raw measure.', () => {
-        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
+        const encQ: EncodingQuery = {channel: channel, field: 'Q', type: Type.QUANTITATIVE};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports aggregate measure.', () => {
-        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'};
+        const encQ: EncodingQuery = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, aggregate: 'mean'};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports raw temporal measure.', () => {
-        const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL};
+        const encQ: EncodingQuery = {channel: channel, field: 'T', type: Type.TEMPORAL};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
-      it(channel + ' does not support timeUnit temporal dimension.', () => {
-        const encQ = {channel: channel, field: 'T', type: Type.TEMPORAL, timeUnit: TimeUnit.MONTH};
+      it(channel + ' does not support timeUnit dimension.', () => {
+        const encQ: EncodingQuery = {channel: channel, field: 'T', type: Type.ORDINAL, timeUnit: TimeUnit.MONTH};
         assert.isFalse(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' supports binned quantitative dimension.', () => {
-        const encQ = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
+        const encQ: EncodingQuery = {channel: channel, field: 'Q', type: Type.QUANTITATIVE, bin: true};
         assert.isTrue(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' does not support ordinal dimension.', () => {
-        const encQ = {channel: channel, field: 'O', type: Type.ORDINAL};
+        const encQ: EncodingQuery = {channel: channel, field: 'O', type: Type.ORDINAL};
         assert.isFalse(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
 
       it(channel + ' does not support  nominal dimension.', () => {
-        const encQ = {channel: channel, field: 'N', type: Type.NOMINAL};
+        const encQ: EncodingQuery = {channel: channel, field: 'N', type: Type.NOMINAL};
         assert.isFalse(FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
@@ -511,7 +508,8 @@ describe('constraints/field', () => {
         });
       });
 
-   [ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, ScaleType.QUANTILE, ScaleType.QUANTIZE, ScaleType.LINEAR].forEach((scaleType) => {
+   [ScaleType.LOG, ScaleType.POW, ScaleType.SQRT, // ScaleType.QUANTILE, ScaleType.QUANTIZE,
+     ScaleType.LINEAR].forEach((scaleType) => {
      it('scaleType of ' + scaleType + ' matches data type quantitative', () => {
        const encQ: EncodingQuery = {channel: Channel.X, field: 'Q', scale: {type: scaleType}, type: Type.QUANTITATIVE};
        assert.isTrue(FIELD_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
@@ -548,9 +546,9 @@ describe('constraints/field', () => {
         ['mean', TimeUnit.MONTH, undefined],
         [undefined, TimeUnit.MONTH, true],
       ].forEach((tuple) => {
-        encQ.aggregate = tuple[0];
-        encQ.timeUnit = tuple[1];
-        encQ.bin = tuple[2];
+        encQ.aggregate = tuple[0] as AggregateOp;
+        encQ.timeUnit = tuple[1] as TimeUnit;
+        encQ.bin = tuple[2] as boolean;
 
         assert.isFalse(FIELD_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
       });
@@ -625,7 +623,7 @@ describe('constraints/field', () => {
         type: 'nominal',
         scale: {
           // type: point
-          clamp: 20 // clamp should not work with discreteDomain scale
+          clamp: true // clamp should not work with discreteDomain scale
         }
       };
 
