@@ -187,25 +187,6 @@ export function scaleType(fieldQ: FieldQuery) {
     return scale.type;
   }
 
-  let rangeStep: number = undefined;
-  // Note: Range step currently does not matter as we don't pass mark into compileScaleType anyway.
-  // However, if we pass mark, we could use a rule like the following.
-  // I also have few test cases listed in encoding.test.ts
-  // if (channel === 'x' || channel === 'y') {
-  //   if (isWildcard(scale.rangeStep)) {
-  //     if (isShortWildcard(scale.rangeStep)) {
-  //       return undefined;
-  //     } else if (scale.rangeStep.enum) {
-  //       const e = scale.rangeStep.enum;
-  //       // if enumerated value contains enum then we can't be sure
-  //       if (contains(e, undefined) || contains(e, null)) {
-  //         return undefined;
-  //       }
-  //       rangeStep = e[0];
-  //     }
-  //   }
-  // }
-
   // if type is fixed and it's not temporal, we can ignore time unit.
   if (type === 'temporal' && isWildcard(timeUnit)) {
     return undefined;
@@ -219,5 +200,5 @@ export function scaleType(fieldQ: FieldQuery) {
   let vegaLiteType: VLType = type === ExpandedType.KEY ? 'nominal': type;
 
   const fieldDef = {type: vegaLiteType, timeUnit: timeUnit as TimeUnit, bin: bin as BinParams};
-  return compileScaleType(scale.type, channel, fieldDef, markType, rangeStep, scaleConfig);
+  return compileScaleType(scale.type, channel, fieldDef, markType, scaleConfig);
 }
