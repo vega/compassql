@@ -5,3 +5,4 @@ export import groupBy = require('./groupby');
 export import shorthand = require('./shorthand');
 export import spec = require('./spec');
 export import transform = require('./transform');
+export {Query} from './query';
