@@ -226,7 +226,6 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
 
   ticks: DEFAULT_BOOLEAN_ENUM,
   tickCount: [undefined],
-  tickExtra: [undefined],
   tickSize: [undefined],
 
   title: [undefined],
