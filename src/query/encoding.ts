@@ -98,7 +98,7 @@ export function toFieldDef(encQ: FieldQuery | AutoCountQuery,
         throw new Error(`Cannot convert ${JSON.stringify(encQ)} to fielddef: ${prop} is wildcard`);
       } else if (propValue !== undefined) {
         if (prop === 'type') {
-          fieldDef.type = propValue as Type;
+          fieldDef.type = propValue === 'key' ? 'nominal' : propValue as Type;
         } else {
           fieldDef[prop] = propValue;
         }
