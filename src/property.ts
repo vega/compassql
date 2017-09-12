@@ -3,6 +3,7 @@ import {BinParams} from 'vega-lite/build/src/bin';
 import {Scale, SCALE_PROPERTIES} from 'vega-lite/build/src/scale';
 import {Legend, LEGEND_PROPERTIES} from 'vega-lite/build/src/legend';
 import {SortField} from 'vega-lite/build/src/sort';
+import {Flag} from 'vega-lite/build/src/util';
 
 import {toMap} from './util';
 import {FieldQuery, ValueQuery, AutoCountQuery} from './query/encoding';
@@ -52,13 +53,17 @@ export function isEncodingTopLevelProperty(p: Property) {
   return p in ENCODING_TOPLEVEL_PROPERTY_INDEX;
 }
 
-const ENCODING_NESTED_PROP_PARENTS: EncodingTopLevelProp[] = [
-  'bin', 'scale', 'sort', 'axis', 'legend'
-];
+export type EncodingNestedPropParent = 'bin' | 'scale' | 'sort' | 'axis' | 'legend';
 
-export const ENCODING_NESTED_PROP_PARENT_INDEX = toMap(ENCODING_NESTED_PROP_PARENTS);
+export const ENCODING_NESTED_PROP_PARENT_INDEX: Flag<EncodingNestedPropParent> = {
+  bin: 1,
+  scale: 1,
+  sort: 1,
+  axis: 1,
+  legend: 1
+};
 
-export function hasNestedProperty(prop: string) {
+export function hasNestedProperty(prop: string): prop is EncodingNestedPropParent {
   return ENCODING_NESTED_PROP_PARENT_INDEX[prop as string];
 }
 
