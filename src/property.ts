@@ -3,18 +3,18 @@ import {BinParams} from 'vega-lite/build/src/bin';
 import {Scale, SCALE_PROPERTIES} from 'vega-lite/build/src/scale';
 import {Legend, LEGEND_PROPERTIES} from 'vega-lite/build/src/legend';
 import {SortField} from 'vega-lite/build/src/sort';
-import {Flag} from 'vega-lite/build/src/util';
-
-import {toMap} from './util';
+import {Flag, flagKeys} from 'vega-lite/build/src/util';
 import {FieldQuery, ValueQuery, AutoCountQuery} from './query/encoding';
 import {TransformQuery} from './query/transform';
+import {Diff} from './util';
 
 export type Property = FlatProp | EncodingNestedProp;
 export type FlatProp = MarkProp | TransformProp | EncodingTopLevelProp;
 
 export type MarkProp = 'mark' | 'stack'; // FIXME: determine how 'stack' works;
 export type TransformProp = keyof TransformQuery;
-export type EncodingTopLevelProp = keyof (FieldQuery & ValueQuery & AutoCountQuery);
+export type EncodingTopLevelProp = Diff<keyof (FieldQuery & ValueQuery & AutoCountQuery), 'description'>; // Do not include description since description is simply a metadata
+
 export type EncodingNestedProp = BinProp | SortProp | ScaleProp | AxisProp | LegendProp;
 
 export type EncodingNestedChildProp = keyof BinParams | keyof SortField | keyof Scale | keyof Axis | keyof Legend;
@@ -34,28 +34,24 @@ export function isEncodingNestedProp(p: Property): p is EncodingNestedProp {
   return !!p['parent'];
 }
 
-export const ENCODING_TOPLEVEL_PROPS: EncodingTopLevelProp[] = [
-  // channel
-  'channel',
-  // fn
-  'aggregate', 'autoCount', 'bin', 'timeUnit', 'hasFn',
-  // sort
-  'sort',
-  // field / type
-  'field', 'type',
-  // scale / axis / legend
-  'scale', 'axis', 'legend'
-];
+const ENCODING_TOPLEVEL_PROP_INDEX: Flag<EncodingTopLevelProp> = {
+  channel: 1,
+  aggregate: 1, autoCount: 1, bin: 1, timeUnit: 1, hasFn: 1,
+  sort: 1,
+  field: 1, type: 1,
+  scale: 1, axis: 1, legend: 1,
+  value: 1
+};
 
-const ENCODING_TOPLEVEL_PROPERTY_INDEX = toMap(ENCODING_TOPLEVEL_PROPS);
+export const ENCODING_TOPLEVEL_PROPS = flagKeys(ENCODING_TOPLEVEL_PROP_INDEX);
 
-export function isEncodingTopLevelProperty(p: Property) {
-  return p in ENCODING_TOPLEVEL_PROPERTY_INDEX;
+export function isEncodingTopLevelProperty(p: Property): p is EncodingTopLevelProp {
+  return p in ENCODING_TOPLEVEL_PROP_INDEX;
 }
 
 export type EncodingNestedPropParent = 'bin' | 'scale' | 'sort' | 'axis' | 'legend';
 
-export const ENCODING_NESTED_PROP_PARENT_INDEX: Flag<EncodingNestedPropParent> = {
+const ENCODING_NESTED_PROP_PARENT_INDEX: Flag<EncodingNestedPropParent> = {
   bin: 1,
   scale: 1,
   sort: 1,
@@ -63,7 +59,7 @@ export const ENCODING_NESTED_PROP_PARENT_INDEX: Flag<EncodingNestedPropParent> =
   legend: 1
 };
 
-export function hasNestedProperty(prop: string): prop is EncodingNestedPropParent {
+export function isEncodingNestedParent(prop: string): prop is EncodingNestedPropParent {
   return ENCODING_NESTED_PROP_PARENT_INDEX[prop as string];
 }
 
@@ -130,8 +126,8 @@ export function getEncodingNestedProp(parent: EncodingTopLevelProp, child: Encod
   return (ENCODING_NESTED_PROP_INDEX[parent] || {})[child];
 }
 
-export function isEncodingProperty(prop: Property): boolean {
-  return isEncodingTopLevelProperty(prop) || isEncodingNestedProp(prop);
+export function isEncodingProperty(p: Property): p is EncodingTopLevelProp | EncodingNestedProp {
+  return isEncodingTopLevelProperty(p) || isEncodingNestedProp(p);
 }
 
 export const ALL_ENCODING_PROPS = ([] as Property[]).concat(

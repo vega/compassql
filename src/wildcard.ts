@@ -99,6 +99,7 @@ export const DEFAULT_NAME = {
   scale: 's',
   axis: 'ax',
   legend: 'l',
+  value: 'v',
 
   timeUnit: 'tu',
   field: 'f',
@@ -155,6 +156,7 @@ export type EnumIndex =
     scale: boolean[],
     axis: boolean[],
     legend: boolean[],
+    value: any[],
 
     binProps: Partial<DefEnumIndex<BinParams>>,
     sortProps: Partial<DefEnumIndex<SortField>>,
@@ -261,6 +263,7 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
   type: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
   sort: ['ascending', 'descending'],
+  value: [undefined],
 
   scale: [true],
   axis: DEFAULT_BOOLEAN_ENUM,

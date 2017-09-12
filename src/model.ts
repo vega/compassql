@@ -6,7 +6,7 @@ import {FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
 import {StackProperties} from 'vega-lite/build/src/stack';
 
 import {QueryConfig} from './config';
-import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, hasNestedProperty} from './property';
+import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, isEncodingNestedParent} from './property';
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
@@ -191,7 +191,7 @@ export class SpecQueryModel {
 
     if (isEncodingNestedProp(prop)) { // nested encoding property
       encQ[prop.parent][prop.child] = value;
-    } else if (hasNestedProperty(prop) && value === true) {
+    } else if (isEncodingNestedParent(prop) && value === true) {
       encQ[prop] = extend({},
         encQ[prop], // copy all existing properties
         {enum: undefined, name: undefined} // except name and values to it no longer an wildcard

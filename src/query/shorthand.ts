@@ -8,7 +8,7 @@ import {isString} from 'datalib/src/util';
 import {EncodingQuery, isFieldQuery, FieldQuery, isValueQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, isAutoCountQuery, FieldQueryBase} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
 import {isWildcard, isShortWildcard, SHORT_WILDCARD} from '../wildcard';
-import {getEncodingNestedProp, Property, hasNestedProperty, DEFAULT_PROP_PRECEDENCE, SORT_PROPS, EncodingNestedChildProp} from '../property';
+import {getEncodingNestedProp, Property, isEncodingNestedParent, DEFAULT_PROP_PRECEDENCE, SORT_PROPS, EncodingNestedChildProp} from '../property';
 import {PropIndex} from '../propindex';
 import {Dict, keys, isArray, isBoolean} from '../util';
 
@@ -449,7 +449,7 @@ export namespace shorthandParser {
           );
         }
 
-        if (hasNestedProperty(prop)) {
+        if (isEncodingNestedParent(prop)) {
           fieldQ[prop] = parsedValue;
         } else {
           // prop is a property of the aggregation function such as bin

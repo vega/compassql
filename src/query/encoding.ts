@@ -15,7 +15,7 @@ import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcar
 import {AggregateOp} from 'vega-lite/build/src/aggregate';
 import {Schema} from '../schema';
 import {Encoding} from 'vega-lite/build/src/encoding';
-import {Property, hasNestedProperty, FlatProp} from '../property';
+import {Property, isEncodingNestedParent, FlatProp} from '../property';
 import {PROPERTY_SUPPORTED_CHANNELS} from './shorthand';
 import {isObject} from 'datalib/src/util';
 
@@ -162,7 +162,7 @@ export function toFieldDef(
           continue;
         }
 
-        if (hasNestedProperty(prop) && isObject(encodingProperty)) {
+        if (isEncodingNestedParent(prop) && isObject(encodingProperty)) {
           encodingProperty = {...encodingProperty}; // Make a shallow copy first
           for (const childProp in encodingProperty) {
             // ensure nested properties are not wildcard before assigning to field def
