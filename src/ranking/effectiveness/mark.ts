@@ -7,7 +7,7 @@ import {Dict, forEach} from '../../util';
 import {Schema} from '../../schema';
 
 import {FeatureScore} from '../ranking';
-import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, NONE, ExtendedType, getExtendedType} from './type';
+import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, NONE, ExtendedType, getExtendedType, K} from './type';
 import {Scorer} from './base';
 
 
@@ -46,7 +46,7 @@ export function featurize(xType: ExtendedType, yType: ExtendedType, hasOcclusion
 
 function init() {
   const MEASURES = [Q, T];
-  const DISCRETE = [BIN_Q, TIMEUNIT_O, O, N];
+  const DISCRETE = [BIN_Q, TIMEUNIT_O, O, N, K];
   const DISCRETE_OR_NONE = DISCRETE.concat([NONE]);
 
   let SCORE = {} as Dict<number>;
@@ -131,7 +131,7 @@ function init() {
     });
 
     // NO OCCLUSION
-    [NONE, N, O].forEach((yType) => {
+    [NONE, N, O, K].forEach((yType) => {
       const noOccludedQxN = {
         bar: 0,
         point: -0.2,

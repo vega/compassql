@@ -6,11 +6,11 @@ import {QueryConfig} from '../../config';
 import {SpecQueryModel} from '../../model';
 import {fieldDef as fieldDefShorthand} from '../../query/shorthand';
 import {EncodingQuery} from '../../query/encoding';
-import {Dict, extend, forEach, keys} from '../../util';
+import {Dict, extend, forEach, keys, contains} from '../../util';
 
 import {Schema} from '../../schema';
 import {FeatureScore} from '../ranking';
-import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, ExtendedType, getExtendedType} from './type';
+import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, ExtendedType, getExtendedType, K} from './type';
 
 
 import {Scorer} from './base';
@@ -83,6 +83,10 @@ export class TypeChannelScorer extends Scorer {
 
     keys(NOMINAL_TYPE_CHANNEL_SCORE).forEach((channel: Channel) => {
       SCORE[this.featurize(N, channel)] = NOMINAL_TYPE_CHANNEL_SCORE[channel];
+      SCORE[this.featurize(K, channel)] =
+        // Putting key on position or detail isn't terrible
+        contains(['x', 'y', 'detail'], channel) ? -1 :
+        NOMINAL_TYPE_CHANNEL_SCORE[channel] - 2;
     });
 
     return SCORE;
