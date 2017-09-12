@@ -3,7 +3,7 @@ import {Type} from 'vega-lite/build/src/type';
 import {TIMEUNITS} from 'vega-lite/build/src/timeunit';
 import {assert} from 'chai';
 
-import {scaleType, toFieldDef} from '../../src/query/encoding';
+import {scaleType, toFieldDef, toValueDef} from '../../src/query/encoding';
 import {SHORT_WILDCARD} from '../../src/wildcard';
 
 describe('query/encoding', () => {
@@ -11,7 +11,33 @@ describe('query/encoding', () => {
     it('return correct fieldDef for autoCount', () => {
       assert.deepEqual(
         toFieldDef({channel: 'x', autoCount: true, type: 'quantitative'}),
-        {aggregate: 'count', type: 'quantitative'}
+        {aggregate: 'count', field: '*', type: 'quantitative'}
+      );
+    });
+
+    it('return correct fieldDef for FieldQuery', () => {
+      assert.deepEqual(
+        toFieldDef(
+          {bin: false, channel: 'x', field: 'Q', type: 'quantitative'},
+          {props: ['bin', 'timeUnit', 'type'], wildcardMode: 'skip'}
+        ),
+        {type: 'quantitative'}
+      );
+    });
+  });
+
+  describe('toValueDef', () => {
+    it('return correct ValueDef for ValueQuery with constant', () => {
+      assert.deepEqual(
+        toValueDef({channel: 'x', value: 5}),
+        {value: 5}
+      );
+    });
+
+    it('return correct null for ValueQuery with wildcard', () => {
+      assert.deepEqual(
+        toValueDef({channel: 'x', value: '?'}),
+        null
       );
     });
   });

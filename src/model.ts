@@ -1,23 +1,21 @@
 import {Channel} from 'vega-lite/build/src/channel';
 import {Data} from 'vega-lite/build/src/data';
-import {Encoding} from 'vega-lite/build/src/encoding';
-import {FieldDef} from 'vega-lite/build/src/fielddef';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Type} from 'vega-lite/build/src/type';
 import {FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
 import {StackProperties} from 'vega-lite/build/src/stack';
 
 import {QueryConfig} from './config';
-import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, ENCODING_NESTED_PROP_PARENT_INDEX, isEncodingNestedProp, hasNestedProperty} from './property';
+import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, hasNestedProperty} from './property';
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
-import {AutoCountQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, EncodingQuery} from './query/encoding';
+import {AutoCountQuery, isFieldQuery, isAutoCountQuery, isDisabledAutoCountQuery, EncodingQuery, toEncoding} from './query/encoding';
 import {GroupBy, ExtendedGroupBy, parseGroupBy} from './query/groupby';
-import {spec as specShorthand, PROPERTY_SUPPORTED_CHANNELS} from './query/shorthand';
+import {spec as specShorthand} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
-import {Dict, duplicate, extend, isObject} from './util';
+import {Dict, duplicate, extend} from './util';
 import {isString} from 'datalib/src/util';
 import {getGroupByKey} from './nest';
 
@@ -269,79 +267,6 @@ export class SpecQueryModel {
     return specShorthand(this._spec);
   }
 
-  private _encoding(): Encoding<string> {
-    let encoding: Encoding<string> = {};
-
-    for (const encQ of this._spec.encodings) {
-      // Need to cast here so we can assign properties later
-      let fieldDef = {} as FieldDef<string>;
-
-      // For count field that is automatically added, convert to correct vega-lite fieldDef
-      if (isEnabledAutoCountQuery(encQ)) {
-        fieldDef = {
-          aggregate: 'count',
-          field: '*',
-          type: 'quantitative'
-        };
-      } else if (isValueQuery(encQ) || isDisabledAutoCountQuery(encQ)) {
-        continue; // Do not include this in the output.
-      }
-
-      // if channel is a wildcard, return null
-      if (isWildcard(encQ.channel)) return null;
-
-      // assemble other property into a field def.
-      const PROPERTIES = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND];
-
-      for (const prop of PROPERTIES) {
-        // if the property's a wildcard, return null
-        let encodingProperty = encQ[prop];
-        if (isWildcard(encodingProperty)) {
-          return null;
-        } else {
-          // all channels support this prop
-          const isSupportedByChannel = (!PROPERTY_SUPPORTED_CHANNELS[prop] || PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel]);
-
-          if (isSupportedByChannel) {
-            if (encodingProperty !== undefined) {
-
-              if (ENCODING_NESTED_PROP_PARENT_INDEX[prop]) {
-                for (const childProp in encQ[prop]) {
-                  // ensure nested properties are not wildcard before assigning to field def
-                  if (isWildcard(encQ[prop][childProp])) {
-                    return null;
-                  }
-                }
-              }
-
-              fieldDef[prop] = encodingProperty;
-            }
-
-            if (prop === Property.SCALE && isFieldQuery(encQ) && encQ.type === Type.ORDINAL) {
-              const scale = encQ.scale;
-              const {ordinalDomain} = this._schema.fieldSchema(encQ.field as string);
-
-              if (scale !== null && ordinalDomain) {
-                fieldDef[Property.SCALE] = {
-                  domain: ordinalDomain,
-                  // explicitly specfied domain property should override ordinalDomain
-                  ...(isObject(scale) ? scale : {})
-                };
-              }
-            }
-          }
-        }
-      }
-
-      if (fieldDef.bin === false) {
-        // exclude bin false
-        delete fieldDef.bin;
-      }
-
-      encoding[encQ.channel as Channel] = fieldDef;
-    }
-    return encoding;
-  }
   /**
    * Convert a query to a Vega-Lite spec if it is completed.
    * @return a Vega-Lite spec if completed, null otherwise.
@@ -360,7 +285,7 @@ export class SpecQueryModel {
     }
 
     spec.mark = this._spec.mark as Mark;
-    spec.encoding = this._encoding();
+    spec.encoding = toEncoding(this.specQuery.encodings, {schema: this._schema, wildcardMode: 'null'});
     if (spec.encoding === null) {
       return null;
     }

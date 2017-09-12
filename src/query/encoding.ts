@@ -2,6 +2,7 @@ import {Axis} from 'vega-lite/build/src/axis';
 import {BinParams} from 'vega-lite/build/src/bin';
 import {Channel} from 'vega-lite/build/src/channel';
 import * as vlFieldDef from 'vega-lite/build/src/fielddef';
+import {FieldDef, ValueDef} from 'vega-lite/build/src/fielddef';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Scale} from 'vega-lite/build/src/scale';
 import {Legend} from 'vega-lite/build/src/legend';
@@ -12,7 +13,11 @@ import {ExpandedType} from './expandedtype';
 import {scaleType as compileScaleType} from 'vega-lite/build/src/compile/scale/type';
 import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
 import {AggregateOp} from 'vega-lite/build/src/aggregate';
-import {FieldDef} from 'vega-lite/build/src/fielddef';
+import {Schema} from '../schema';
+import {Encoding} from 'vega-lite/build/src/encoding';
+import {Property, hasNestedProperty, FlatProp} from '../property';
+import {PROPERTY_SUPPORTED_CHANNELS} from './shorthand';
+import {isObject} from 'datalib/src/util';
 
 export type EncodingQuery = FieldQuery | ValueQuery | AutoCountQuery;
 
@@ -88,42 +93,120 @@ export type ScaleQuery =  FlatQueryWithEnableFlag<Scale>;
 export type AxisQuery =  FlatQueryWithEnableFlag<Axis>;
 export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 
+const DEFAULT_PROPS = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND];
 
-export function toFieldDef(encQ: FieldQuery | AutoCountQuery,
-    props: (keyof (FieldQuery))[] = ['aggregate', 'bin', 'timeUnit', 'field', 'type']): FieldDef<string> {
+export interface ConversionParams {
+  schema?: Schema;
+  props?: FlatProp[];
+  wildcardMode?: 'skip' | 'null';
+}
+
+export function toEncoding(encQs: EncodingQuery[], params: ConversionParams): Encoding<string> {
+  const {wildcardMode = 'skip'} = params;
+  let encoding: Encoding<string> = {};
+
+  for (const encQ of encQs) {
+    if (isDisabledAutoCountQuery(encQ)) {
+      continue; // Do not include this in the output.
+    }
+
+    const {channel} = encQ;
+
+    // if channel is a wildcard, return null
+    if (isWildcard(channel)) {
+      throw new Error('Cannot convert wildcard channel to a fixed channel');
+    }
+    const channelDef = isValueQuery(encQ) ? toValueDef(encQ) : toFieldDef(encQ, params);
+
+    if (channelDef === null) {
+      if (params.wildcardMode === 'null') {
+        // contains invalid property (e.g., wildcard, thus cannot return a proper spec.)
+        return null;
+      }
+      continue;
+    }
+    // Otherwise, we can set the channelDef
+    encoding[channel] = channelDef;
+  }
+  return encoding;
+}
+
+export function toValueDef(valueQ: ValueQuery): ValueDef {
+  const {value} = valueQ;
+  if (isWildcard(value)) {
+    return null;
+  }
+  return {value};
+}
+
+export function toFieldDef(
+  encQ: FieldQuery | AutoCountQuery,
+  params: ConversionParams = {}
+): FieldDef<string> {
+
+  const {props = DEFAULT_PROPS, schema, wildcardMode = 'skip'} = params;
+
   if (isFieldQuery(encQ)) {
-    return props.reduce((fieldDef: FieldDef<string>, prop: keyof FieldQuery) => {
-      const propValue = encQ[prop];
-      if (isWildcard(propValue)) {
-        throw new Error(`Cannot convert ${JSON.stringify(encQ)} to fielddef: ${prop} is wildcard`);
-      } else if (propValue !== undefined) {
-        if (prop === 'type') {
-          fieldDef.type = propValue === 'key' ? 'nominal' : propValue as Type;
+    const fieldDef = {} as FieldDef<string>;
+    for (const prop of props) {
+      let encodingProperty = encQ[prop];
+      if (isWildcard(encodingProperty)) {
+        if (wildcardMode === 'skip') continue;
+        return null;
+      }
+
+      if (encodingProperty !== undefined) {
+        // if the channel supports this prop
+        const isSupportedByChannel = (!PROPERTY_SUPPORTED_CHANNELS[prop] || PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel]);
+        if (!isSupportedByChannel) {
+          continue;
+        }
+
+        if (hasNestedProperty(prop) && isObject(encodingProperty)) {
+          encodingProperty = {...encodingProperty}; // Make a shallow copy first
+          for (const childProp in encodingProperty) {
+            // ensure nested properties are not wildcard before assigning to field def
+            if (isWildcard(encodingProperty[childProp])) {
+              if (wildcardMode === 'null') {
+                return null;
+              }
+              delete encodingProperty[childProp]; // skip
+            }
+          }
+        }
+
+        if (prop === 'bin' && encodingProperty === false) {
+          continue;
+        } else if (prop === 'type' && encodingProperty === 'key') {
+          fieldDef.type = 'nominal';
         } else {
-          fieldDef[prop] = propValue;
+          fieldDef[prop] = encodingProperty;
         }
       }
-      return fieldDef;
-    }, {} as FieldDef<string>);
 
+      if (prop === Property.SCALE && schema && encQ.type === Type.ORDINAL) {
+        const scale = encQ.scale;
+        const {ordinalDomain} = schema.fieldSchema(encQ.field as string);
+
+        if (scale !== null && ordinalDomain) {
+          fieldDef[Property.SCALE] = {
+            domain: ordinalDomain,
+            // explicitly specfied domain property should override ordinalDomain
+            ...(isObject(scale) ? scale : {})
+          };
+        }
+      }
+    }
+    return fieldDef;
   } else {
     if (encQ.autoCount === false) {
       throw new Error(`Cannot convert {autoCount: false} into a field def`);
     } else {
-      return props.reduce((fieldDef: FieldDef<string>, prop: keyof FieldQuery) => {
-        if (isWildcard(encQ[prop])) {
-          throw new Error(`Cannot convert ${JSON.stringify(encQ)} to fielddef: ${prop} is wildcard`);
-        }
-        switch (prop) {
-          case 'type':
-            fieldDef.type = 'quantitative';
-            break;
-          case 'aggregate':
-            fieldDef.aggregate = 'count';
-            break;
-        }
-        return fieldDef;
-      }, {} as FieldDef<string>);
+      return {
+        aggregate: 'count',
+        field: '*',
+        type: 'quantitative'
+      };
     }
   }
 }
@@ -134,7 +217,7 @@ export function toFieldDef(encQ: FieldQuery | AutoCountQuery,
  */
 export function isContinuous(encQ: EncodingQuery) {
   if (isFieldQuery(encQ)) {
-    return vlFieldDef.isContinuous(toFieldDef(encQ, ['bin', 'timeUnit', 'field', 'type']));
+    return vlFieldDef.isContinuous(toFieldDef(encQ, {props: ['bin', 'timeUnit', 'field', 'type']}));
   }
   return isAutoCountQuery(encQ);
 }
@@ -152,7 +235,7 @@ export function isMeasure(encQ: EncodingQuery) {
  */
 export function isDimension(encQ: EncodingQuery) {
   if (isFieldQuery(encQ)) {
-    const fieldDef = toFieldDef(encQ, ['bin', 'timeUnit', 'field', 'type']);
+    const fieldDef = toFieldDef(encQ, {props: ['bin', 'timeUnit', 'type']});
     return vlFieldDef.isDiscrete(fieldDef) || !!fieldDef.timeUnit;
   }
   return false;

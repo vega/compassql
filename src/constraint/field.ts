@@ -70,10 +70,10 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     properties: [Property.CHANNEL, Property.TYPE, Property.BIN, Property.TIMEUNIT],
     allowWildcardForProperties: false,
     strict: true,
-    satisfy: (fieldQ: FieldQuery, _: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig) => {
+    satisfy: (fieldQ: FieldQuery, schema: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig) => {
       const fieldDef: FieldDef<string> = {
         field: 'f', // actual field doesn't really matter here
-        ... toFieldDef(fieldQ, ['bin', 'timeUnit', 'type'])
+        ... toFieldDef(fieldQ, {schema, props:['bin', 'timeUnit', 'type']})
       };
       return channelCompatibility(fieldDef, fieldQ.channel as Channel).compatible;
     }
