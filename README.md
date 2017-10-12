@@ -54,10 +54,10 @@ For example source code, please see index.html and its source code and console l
 
 ## Development Instructions
 
-You can install npm dependency with:
+You can install dependencies with:
 
 ```sh
-npm install
+yarn install
 ```
 
 You can use the following npm commands such as
