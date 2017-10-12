@@ -19,6 +19,10 @@ export type SHORT_WILDCARD = '?';
 
 export interface Wildcard<T> {
   name?: string;
+
+  /**
+   * List of values to enumerate
+   */
   enum?: T[];
 }
 
@@ -40,7 +44,11 @@ export function isWildcardDef(prop: any): prop is Wildcard<any> {
   return prop !== undefined && (!!prop.enum || !!prop.name) && !isArray(prop);
 }
 
-export function initWildcard(prop: any, defaultName: string, defaultEnumValues: any[]): ExtendedWildcard<any> {
+export function initWildcard(
+  prop: SHORT_WILDCARD | ExtendedWildcard<any>,
+  defaultName: string,
+  defaultEnumValues: any[]
+): ExtendedWildcard<any> {
   return extend({}, {
       name: defaultName,
       enum: defaultEnumValues

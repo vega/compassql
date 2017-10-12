@@ -33,7 +33,7 @@ var schema = cql.schema.build(data);
 2) Execute a CompassQL query.
 
 ```js
-var output = cql.query(query, schema);
+var output = cql.recommend(query, schema);
 var query = output.query; // normalized query
 var result = output.result; // recommendation result
 ```
@@ -78,7 +78,6 @@ To play with latest CompassQL in the vega-editor, use branch [`cql-vl2`](https:/
 (For CompassQL 0.7 or older, use branch [`compassql`](https://github.com/vega/vega-editor/tree/compassql), which uses Vega-Lite 1.x).
 
 Make sure to link CompassQL to the editor
-
 
 ```
 cd COMPASSQL_DIR
