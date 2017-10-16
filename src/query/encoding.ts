@@ -64,7 +64,7 @@ export interface FieldQueryBase {
   /**
    * Special flag for enforcing that the field should have a fuction (one of timeUnit, bin, or aggregate).
    *
-   * For example, if you enumerate both bin and aggregate the you need `undefined` for both.
+   * For example, if you enumerate both bin and aggregate then you need `undefined` for both.
    *
    * ```
    * {aggregate: {enum: [undefined, 'mean', 'sum']}, bin: {enum: [false, true]}}
