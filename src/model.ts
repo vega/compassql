@@ -36,8 +36,8 @@ export class SpecQueryModel {
 
 
   /**
-   * Build an WildcardIndex by detecting wildcards
-   * in the input specQuery and replace short wildcards ("?")
+   * Build a WildcardIndex by detecting wildcards
+   * in the input specQuery and replacing short wildcards ("?")
    * with full ones (objects with `name` and `enum` values).
    *
    * @return a SpecQueryModel that wraps the specQuery and the WildcardIndex.
