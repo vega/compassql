@@ -62,7 +62,20 @@ export interface FieldQueryBase {
   timeUnit?: WildcardProperty<TimeUnit>;
 
   /**
-   * Special flag for enforcing that the field should have either timeUnit, bin, or aggregate
+   * Special flag for enforcing that the field should have a fuction (one of timeUnit, bin, or aggregate).
+   *
+   * For example, if you enumerate both bin and aggregate then you need `undefined` for both.
+   *
+   * ```
+   * {aggregate: {enum: [undefined, 'mean', 'sum']}, bin: {enum: [false, true]}}
+   * ```
+   *
+   * This would enumerate a fieldDef with "mean", "sum", bin:true, and no function at all.
+   * If you want only "mean", "sum", bin:true, then use `hasFn: true`
+   *
+   * ```
+   * {aggregate: {enum: [undefined, 'mean', 'sum']}, bin: {enum: [false, true]}, hasFn: true}
+   * ```
    */
   hasFn?: boolean;
 

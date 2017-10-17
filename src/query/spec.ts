@@ -16,7 +16,12 @@ import {toMap} from 'datalib/src/util';
 /**
  * This interface follows the same structure as [Vega-Lite](https://github.com/vega/vega-lite)'s `UnitSpec`.
  * The interface name has `Query` suffixes to hint that its instance (which can contain wildcards) is a query that describe a collection of specifications.
+ *
  * Most interfaces under `SpecQuery` similarly describe a "query" version of directives in Vega-Lite.
+ * One thing that is different is that `encodings` here is an array that describes encoding queries while `encoding` in Vega-Lite is an object.
+ * The reason is that channels in CQL can be wildcards.
+ * And if you have multiple wildcards, it can't be a dictionary object. So we flatten it.
+ *
  */
 export interface SpecQuery {
   data?: Data;

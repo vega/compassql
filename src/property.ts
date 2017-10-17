@@ -8,6 +8,13 @@ import {FieldQuery, ValueQuery, AutoCountQuery} from './query/encoding';
 import {TransformQuery} from './query/transform';
 import {Diff} from './util';
 
+
+/**
+ * There are two types of `Property`'s.
+ * One is just flat property names.
+ * (Try to hover `FlatProp` to see all of them.)
+ * Another is an object that describes a parent property (e.g., `scale`) and the child property (e.g., `type`)
+ */
 export type Property = FlatProp | EncodingNestedProp;
 export type FlatProp = MarkProp | TransformProp | EncodingTopLevelProp;
 
@@ -19,6 +26,9 @@ export type EncodingNestedProp = BinProp | SortProp | ScaleProp | AxisProp | Leg
 
 export type EncodingNestedChildProp = keyof BinParams | keyof SortField | keyof Scale | keyof Axis | keyof Legend;
 
+/**
+ * An object that describes a parent property (e.g., `scale`) and the child property (e.g., `type`)
+ */
 export type BaseEncodingNestedProp<P, T> = {
   parent: P,
   child: keyof T
