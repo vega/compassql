@@ -75,7 +75,7 @@ export interface TableSchema<F extends TableSchemaFieldDescriptor> {
  *
  * @return a Schema object
  */
-export function build(data: any,  tableSchema: TableSchema<TableSchemaFieldDescriptor> = {fields:[]}, opt: QueryConfig = {}): Schema {
+export function build(data: any, opt: QueryConfig = {}, tableSchema: TableSchema<TableSchemaFieldDescriptor> = {fields:[]}): Schema {
   opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
 
   // create profiles for each variable
