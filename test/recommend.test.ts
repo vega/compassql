@@ -1,20 +1,18 @@
 /* tslint:disable:quotemark */
 
 import {assert} from 'chai';
-
 import {Mark} from 'vega-lite/build/src/mark';
 import {Channel} from 'vega-lite/build/src/channel';
 import {Type} from 'vega-lite/build/src/type';
-
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
-import {SpecQueryModel, SpecQueryModelGroup, isSpecQueryGroup, getTopSpecQueryItem} from '../src/model';
+import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
+import {isSpecQueryGroup, getTopSpecQueryItem} from '../src/specquerygroup';
 import {Property} from '../src/property';
 import {Query} from '../src/query/query';
 import {recommend} from '../src/recommend';
 import {getScore} from '../src/ranking/ranking';
 import {SHORT_WILDCARD, Wildcard} from '../src/wildcard';
 import {duplicate} from '../src/util';
-
 import {schema} from './fixture';
 
 

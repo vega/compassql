@@ -1,5 +1,6 @@
 import {QueryConfig} from '../config';
-import {SpecQueryModel, SpecQueryModelGroup, getTopSpecQueryItem} from '../model';
+import {SpecQueryModel, SpecQueryModelGroup} from '../model';
+import {getTopSpecQueryItem} from '../specquerygroup';
 import {Query} from '../query/query';
 import {Dict} from '../util';
 import {Schema} from '../schema';

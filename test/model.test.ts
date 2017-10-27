@@ -1,13 +1,10 @@
 import {assert} from 'chai';
-
 import {Channel} from 'vega-lite/build/src/channel';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Type} from 'vega-lite/build/src/type';
-
 import {schema} from './fixture';
-
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
-import {isSpecQueryGroup, SpecQueryModel, SpecQueryModelGroup, getTopSpecQueryItem} from '../src/model';
+import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
 import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, toKey} from '../src/property';
 import {SHORT_WILDCARD, isWildcard, getDefaultEnumValues} from '../src/wildcard';
 import {SpecQuery} from '../src/query/spec';
@@ -699,20 +696,6 @@ describe('SpecQueryModel', () => {
 });
 
 describe('SpecQueryModelGroup', () => {
-  const schema = new Schema({fields:[]});
-
-  function buildSpecQueryModel(specQ: SpecQuery) {
-    return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
-  }
-
-  function buildSpecQueryModelGroup(specQs: SpecQuery[]) {
-    const items = specQs.map((specQ) => buildSpecQueryModel(specQ));
-    return {
-      name: 'a name',
-      path: 'path',
-      items: items
-    };
-  }
 
   describe('constructor', () => {
     const group: SpecQueryModelGroup = {
@@ -730,57 +713,4 @@ describe('SpecQueryModelGroup', () => {
       assert.equal(group.orderGroupBy, undefined);
     });
   });
-
-  describe('getTopSpecQueryModel', () => {
-    it('should get top model', () => {
-      const group = buildSpecQueryModelGroup([
-        {
-          mark: Mark.BAR,
-          encodings: [
-            {channel: Channel.X, autoCount: true}
-          ]
-        },
-        {
-          mark: Mark.POINT,
-          encodings: [
-            {channel: Channel.X, autoCount: true}
-          ]
-        }
-      ]);
-      const top = getTopSpecQueryItem(group);
-      assert.equal(top.getMark(), Mark.BAR);
-    });
-    it('should get handle nested groups', () => {
-      const group = buildSpecQueryModelGroup([
-        {
-          mark: Mark.BAR,
-          encodings: [
-            {channel: Channel.X, autoCount: true}
-          ]
-        }
-      ]);
-
-      const root: SpecQueryModelGroup = {
-        name: 'root',
-        path: '',
-        items: [group],
-      };
-
-      const top = getTopSpecQueryItem(root);
-      assert.equal(top.getMark(), Mark.BAR);
-    });
-  });
-
-  describe('isItemSpecQueryGroup', () => {
-    it('should return true for ItemSpecQueryGroup', () => {
-      const group: SpecQueryModelGroup = {
-        name: '',
-        path: '',
-        items: [],
-      };
-      assert.isTrue(isSpecQueryGroup<SpecQueryModel>(group));
-    });
-  });
-
-
 });

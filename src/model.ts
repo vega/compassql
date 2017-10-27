@@ -4,20 +4,20 @@ import {Mark} from 'vega-lite/build/src/mark';
 import {Type} from 'vega-lite/build/src/type';
 import {FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
 import {StackProperties} from 'vega-lite/build/src/stack';
-
 import {QueryConfig} from './config';
 import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, isEncodingNestedParent} from './property';
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
 import {SpecQuery, isAggregate, stack} from './query/spec';
 import {AutoCountQuery, isFieldQuery, isAutoCountQuery, isDisabledAutoCountQuery, EncodingQuery, toEncoding} from './query/encoding';
-import {GroupBy, ExtendedGroupBy, parseGroupBy} from './query/groupby';
+import {ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand} from './query/shorthand';
 import {RankingScore} from './ranking/ranking';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
 import {isString} from 'datalib/src/util';
 import {getGroupByKey} from './nest';
+import {SpecQueryGroup} from './specquerygroup';
 
 /**
  * Internal class for specQuery that provides helper for the enumeration process.
@@ -303,25 +303,4 @@ export class SpecQueryModel {
     this._rankingScore[rankingName] = score;
   }
 }
-
-export interface SpecQueryGroup<T> {
-  name: string;
-  path: string;
-  items: (SpecQueryGroup<T> | T)[];
-  groupBy?: GroupBy;
-  orderGroupBy?: string | string[];
-}
-
-export function getTopSpecQueryItem<T>(specQuery: SpecQueryGroup<T>): T {
-    let topItem = specQuery.items[0];
-    while (topItem && isSpecQueryGroup(topItem)) {
-      topItem = topItem.items[0];
-    }
-    return <T>topItem;
-}
-
-export function isSpecQueryGroup<T>(item: SpecQueryGroup<T> | T): item is SpecQueryGroup<T> {
-  return (<SpecQueryGroup<T>>item).items !== undefined;
-}
-
 export type SpecQueryModelGroup = SpecQueryGroup<SpecQueryModel>;
