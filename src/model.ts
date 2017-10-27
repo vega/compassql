@@ -17,7 +17,7 @@ import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
 import {isString} from 'datalib/src/util';
 import {getGroupByKey} from './nest';
-import {SpecQueryGroup} from './specquerygroup';
+import {ResultTree} from './result';
 
 /**
  * Internal class for specQuery that provides helper for the enumeration process.
@@ -303,4 +303,4 @@ export class SpecQueryModel {
     this._rankingScore[rankingName] = score;
   }
 }
-export type SpecQueryModelGroup = SpecQueryGroup<SpecQueryModel>;
+export type SpecQueryModelGroup = ResultTree<SpecQueryModel>;

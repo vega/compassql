@@ -6,7 +6,7 @@ import {Channel} from 'vega-lite/build/src/channel';
 import {Type} from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
-import {isSpecQueryGroup, getTopSpecQueryItem} from '../src/specquerygroup';
+import {isResultTree, getTopResultTreeItem} from '../src/result';
 import {Property} from '../src/property';
 import {Query} from '../src/query/query';
 import {recommend} from '../src/recommend';
@@ -49,7 +49,7 @@ describe('recommend()', () => {
       "config": {"autoAddCount": false}
     }, schema);
 
-    assert.equal(getTopSpecQueryItem(group.result).getMark(), 'line');
+    assert.equal(getTopResultTreeItem(group.result).getMark(), 'line');
   });
 
   it('recommends bar for a histogram of a temporal field', () => {
@@ -73,7 +73,7 @@ describe('recommend()', () => {
       "config": {"autoAddCount": true}
     }, schema);
 
-    assert.equal(getTopSpecQueryItem(group.result).getMark(), 'bar');
+    assert.equal(getTopResultTreeItem(group.result).getMark(), 'bar');
   });
 
 
@@ -97,7 +97,7 @@ describe('recommend()', () => {
       "config": {"autoAddCount": true}
     }, schema);
 
-    assert.equal(getTopSpecQueryItem(group.result).getMark(), 'bar');
+    assert.equal(getTopResultTreeItem(group.result).getMark(), 'bar');
   });
 
   describe('omitAggregatePlotWithoutDimension', () => {
@@ -195,10 +195,10 @@ describe('recommend()', () => {
     const result = output.result;
 
     it('enumerates a nested query correctly ', () => {
-      assert.isTrue(isSpecQueryGroup(result.items[0]));
-      if (isSpecQueryGroup(result.items[0])) {
+      assert.isTrue(isResultTree(result.items[0]));
+      if (isResultTree(result.items[0])) {
         const group1: SpecQueryModelGroup = <SpecQueryModelGroup> result.items[0];
-        assert.isFalse(isSpecQueryGroup(group1.items[0]));
+        assert.isFalse(isResultTree(group1.items[0]));
         assert.equal(group1.items.length, 2);
         assert.equal((<SpecQueryModel>group1.items[0]).specQuery.mark, 'tick');
         assert.equal((<SpecQueryModel>group1.items[1]).specQuery.mark, 'point');
@@ -261,7 +261,7 @@ describe('recommend()', () => {
       orderBy: 'effectiveness',
     };
     const result = recommend(q, schema).result;
-    assert.isFalse(isSpecQueryGroup(result.items[0]));
+    assert.isFalse(isResultTree(result.items[0]));
     assert.equal(result.items.length, 2);
     assert.equal((<SpecQueryModel>result.items[0]).specQuery.mark, 'tick');
     assert.equal((<SpecQueryModel>result.items[1]).specQuery.mark, 'point');

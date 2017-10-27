@@ -11,5 +11,6 @@ export import property = require('./property');
 export import query = require('./query');
 export import ranking = require('./ranking/ranking');
 export {recommend} from './recommend';
+export import result   = require('./result');
 export import schema = require('./schema');
 export import util = require('./util');

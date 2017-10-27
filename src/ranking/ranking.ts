@@ -1,11 +1,10 @@
 import {QueryConfig} from '../config';
 import {SpecQueryModel, SpecQueryModelGroup} from '../model';
-import {getTopSpecQueryItem} from '../specquerygroup';
+import {getTopResultTreeItem} from '../result';
 import {Query} from '../query/query';
 import {Dict} from '../util';
 import {Schema} from '../schema';
 import {effectiveness} from './effectiveness';
-
 
 export * from './effectiveness';
 export import aggregation = require('./aggregation');
@@ -91,8 +90,8 @@ export function comparatorFactory(name: string | string[], schema: Schema, opt: 
 
 export function groupComparatorFactory(name: string | string[], schema: Schema, opt: QueryConfig): (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup) => number {
   return (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup): number => {
-    const m1 = getTopSpecQueryItem(g1);
-    const m2 = getTopSpecQueryItem(g2);
+    const m1 = getTopResultTreeItem(g1);
+    const m2 = getTopResultTreeItem(g2);
     if (name instanceof Array) {
       return getScoreDifference(name, m1, m2, schema, opt);
     } else {

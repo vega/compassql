@@ -1,13 +1,13 @@
 import {assert} from 'chai';
 import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
-import {getTopSpecQueryItem, isSpecQueryGroup} from '../src/specquerygroup';
+import {getTopResultTreeItem, isResultTree} from '../src/result';
 import {SpecQuery} from '../src/query/spec';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {schema} from './fixture';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Channel} from 'vega-lite/build/src/channel';
 
-describe('SpecQueryGroup', () => {
+describe('ResultGroup', () => {
 
   function buildSpecQueryModel(specQ: SpecQuery) {
     return SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
@@ -38,7 +38,7 @@ describe('SpecQueryGroup', () => {
           ]
         }
       ]);
-      const top = getTopSpecQueryItem(group);
+      const top = getTopResultTreeItem(group);
       assert.equal(top.getMark(), Mark.BAR);
     });
     it('should get handle nested groups', () => {
@@ -57,19 +57,19 @@ describe('SpecQueryGroup', () => {
         items: [group],
       };
 
-      const top = getTopSpecQueryItem(root);
+      const top = getTopResultTreeItem(root);
       assert.equal(top.getMark(), Mark.BAR);
     });
   });
 
-  describe('isSpecQueryGroup', () => {
-    it('should return true for ItemSpecQueryGroup', () => {
+  describe('isResultGroup', () => {
+    it('should return true for a SpecQueryModelGroup (ResultGroup<SpecQueryModel>)', () => {
       const group: SpecQueryModelGroup = {
         name: '',
         path: '',
         items: [],
       };
-      assert.isTrue(isSpecQueryGroup<SpecQueryModel>(group));
+      assert.isTrue(isResultTree<SpecQueryModel>(group));
     });
   });
 });
