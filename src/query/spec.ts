@@ -14,22 +14,27 @@ import {TopLevel, FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
 import {toMap} from 'datalib/src/util';
 
 /**
- * This interface follows the same structure as [Vega-Lite](https://github.com/vega/vega-lite)'s `UnitSpec`.
- * The interface name has `Query` suffixes to hint that its instance (which can contain wildcards) is a query that describe a collection of specifications.
- *
- * Most interfaces under `SpecQuery` similarly describe a "query" version of directives in Vega-Lite.
- * One thing that is different is that `encodings` here is an array that describes encoding queries while `encoding` in Vega-Lite is an object.
- * The reason is that channels in CQL can be wildcards.
- * And if you have multiple wildcards, it can't be a dictionary object. So we flatten it.
- *
+ * A "query" version of a [Vega-Lite](https://github.com/vega/vega-lite)'s `UnitSpec` (single view specification).
+ * This interface and most of  its children have `Query` suffixes to hint that their instanced are queries that can contain wildcards to describe a collection of specifications.
  */
 export interface SpecQuery {
   data?: Data;
+
+  // TODO: support mark definition object
   mark: WildcardProperty<Mark>;
   transform?: TransformQuery[];
+
+  /**
+   * Array of encoding query mappings.
+   * Note: Vega-Lite's `encoding` is an object whose keys are unique encoding channels.
+   * However, for CompassQL, the `channel` property of encoding query mappings can be wildcards. Thus the `encoding` object in Vega-Lite is flatten as the `encodings` array in CompassQL.
+   */
   encodings: EncodingQuery[];
 
   // TODO: make config query (not important at all, only for the sake of completeness.)
+  /**
+   * Vega-Lite Configuration
+   */
   config?: Config;
 }
 
