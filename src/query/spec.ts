@@ -15,7 +15,8 @@ import {toMap} from 'datalib/src/util';
 
 /**
  * A "query" version of a [Vega-Lite](https://github.com/vega/vega-lite)'s `UnitSpec` (single view specification).
- * This interface and most of  its children have `Query` suffixes to hint that their instanced are queries that can contain wildcards to describe a collection of specifications.
+ * This interface and most of  its children have `Query` suffixes to hint that their instanced are queries that 
+ * can contain wildcards to describe a collection of specifications.
  */
 export interface SpecQuery {
   data?: Data;
@@ -27,7 +28,8 @@ export interface SpecQuery {
   /**
    * Array of encoding query mappings.
    * Note: Vega-Lite's `encoding` is an object whose keys are unique encoding channels.
-   * However, for CompassQL, the `channel` property of encoding query mappings can be wildcards. Thus the `encoding` object in Vega-Lite is flatten as the `encodings` array in CompassQL.
+   * However, for CompassQL, the `channel` property of encoding query mappings can be wildcards. 
+   * Thus the `encoding` object in Vega-Lite is flatten as the `encodings` array in CompassQL.
    */
   encodings: EncodingQuery[];
 
