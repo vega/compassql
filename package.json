@@ -10,6 +10,7 @@
   "scripts": {
     "prebuild": "mkdir -p build",
     "build": "tsc && browserify build/src/cql.js -d -s cql | exorcist build/compassql.js.map > build/compassql.js",
+    "build:examples": "./scripts/build-examples.sh",
     "postbuild": "uglifyjs build/compassql.js -cm --source-map build/compassql.min.js.map > build/compassql.min.js",
     "clean": "rm -rf build",
     "deploy": "npm run clean && npm run lint && npm run test && scripts/deploy.sh",
