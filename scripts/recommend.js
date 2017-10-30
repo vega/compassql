@@ -53,11 +53,12 @@ function processAndRecommend(data, spec) {
   // get the recommendation
   const output = cql.recommend(query, schema, opt);
 
-  // get the result tree
-  const vlTree = cql.result.mapLeaves(output.result, function(item) {
-    return item.toSpec();
+  // get the resulting collapsed specs
+  const results = [];
+  cql.result.collapseTree(output.result, (item) => {
+    results.push(cql.query.shorthand.vlSpec(item.toSpec()));
   });
 
-  const toWrite = JSON.stringify(vlTree, null, 2) + '\n';
+  const toWrite = JSON.stringify(results, {',': ',\n'}, 2);
   process.stdout.write(toWrite)
 }
