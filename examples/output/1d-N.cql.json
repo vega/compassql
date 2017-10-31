@@ -1,0 +1,8 @@
+[
+  "bar|x:count(*,q)|y:Origin,n",
+  "bar|x:Origin,n|y:count(*,q)",
+  "point|x:count(*,q)|y:Origin,n",
+  "point|x:Origin,n|y:count(*,q)",
+  "tick|x:count(*,q)|y:Origin,n",
+  "tick|x:Origin,n|y:count(*,q)"
+]

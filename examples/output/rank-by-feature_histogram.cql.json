@@ -1,0 +1,11 @@
+[
+  "bar|x:count(*,q)|y:Cylinders,n",
+  "bar|x:count(*,q,axis={\"orient\":\"top\"})|y:Name,n,scale={\"rangeStep\":12}",
+  "bar|x:count(*,q)|y:Origin,n",
+  "bar|x:bin(Acceleration,q)|y:count(*,q)",
+  "bar|x:bin(Displacement,q)|y:count(*,q)",
+  "bar|x:bin(Horsepower,q)|y:count(*,q)",
+  "bar|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
+  "bar|x:bin(Weight_in_lbs,q)|y:count(*,q)",
+  "line|x:year(Year,t)|y:count(*,q)"
+]

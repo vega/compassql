@@ -1,0 +1,22 @@
+[
+  "tick|x:Miles_per_Gallon,q",
+  "tick|y:Miles_per_Gallon,q",
+  "point|x:Miles_per_Gallon,q",
+  "point|y:Miles_per_Gallon,q",
+  "bar|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
+  "bar|x:count(*,q)|y:bin(Miles_per_Gallon,q)",
+  "point|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
+  "point|x:count(*,q)|y:bin(Miles_per_Gallon,q)",
+  "tick|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
+  "tick|x:count(*,q)|y:bin(Miles_per_Gallon,q)",
+  "line|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
+  "area|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
+  "line|x:count(*,q)|y:bin(Miles_per_Gallon,q)",
+  "area|x:count(*,q)|y:bin(Miles_per_Gallon,q)",
+  "bar|x:mean(Miles_per_Gallon,q)",
+  "bar|y:mean(Miles_per_Gallon,q)",
+  "point|x:mean(Miles_per_Gallon,q)",
+  "point|y:mean(Miles_per_Gallon,q)",
+  "tick|x:mean(Miles_per_Gallon,q)",
+  "tick|y:mean(Miles_per_Gallon,q)"
+]

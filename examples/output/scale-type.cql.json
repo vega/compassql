@@ -1,0 +1,4 @@
+[
+  "tick|x:Miles_per_Gallon,q",
+  "tick|x:Miles_per_Gallon,q,scale={\"type\":\"log\"}"
+]

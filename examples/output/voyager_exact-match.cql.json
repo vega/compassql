@@ -1,0 +1,5 @@
+[
+  "tick|x:Horsepower,q|y:Cylinders,o",
+  "bar|x:mean(Horsepower,q)|y:Cylinders,o",
+  "point|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o"
+]

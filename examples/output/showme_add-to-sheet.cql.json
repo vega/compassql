@@ -1,0 +1,3 @@
+[
+  "bar|row:Origin,n|x:mean(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}"
+]
