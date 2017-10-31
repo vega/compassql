@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check example outputs for changes.
-if ! git diff --word-diff=color --exit-code HEAD -- ./examples/output/*.json
+if ! git diff --word-diff=color --exit-code HEAD -- ./examples/output/*.results.json
 then
   echo "Output for cql examples are outdated."
   exit 1

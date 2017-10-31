@@ -5,10 +5,10 @@ dir=${dir-"examples/output"}
 
 echo "compiling examples to $dir"
 
-rm -f $dir/*.cql.json
+rm -f $dir/*.results.json
 
 for file in examples/specs/*.json; do
   filename=$(basename "$file")
   name="${filename%.json}"
-  node scripts/recommend.js $file > $dir/$name.cql.json
+  node scripts/cql2shorthand.js $file > $dir/$name.results.json
 done
