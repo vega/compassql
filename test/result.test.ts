@@ -1,6 +1,6 @@
 import {assert} from 'chai';
 import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
-import {getTopResultTreeItem, isResultTree} from '../src/result';
+import {getTopResultTreeItem, isResultTree, collapseTree} from '../src/result';
 import {SpecQuery} from '../src/query/spec';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {schema} from './fixture';
@@ -70,6 +70,35 @@ describe('ResultGroup', () => {
         items: [],
       };
       assert.isTrue(isResultTree<SpecQueryModel>(group));
+    });
+  });
+
+  describe('collapseTree', () => {
+    it('should add leaves to destination list', () => {
+      const item1: SpecQuery = {
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, autoCount: true}
+        ]
+      };
+
+      const item2: SpecQuery = {
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, autoCount: true}
+        ]
+      };
+      const group = buildSpecQueryModelGroup([item1, item2]);
+
+      const root: SpecQueryModelGroup = {
+        name: 'root',
+        path: '',
+        items: [group]
+      };
+
+      const destination: SpecQuery[] = [];
+      collapseTree(root, (item) => destination.push(item.specQuery));
+      assert.deepEqual(destination, [item1, item2]);
     });
   });
 });
