@@ -2,8 +2,6 @@
 /**
  * Outputs a recommendation result for the given compassQL query.
  */
-const EXAMPLE_DIR = 'examples/';
-
 const fs = require('fs');
 const cql = require('../build/compassql');
 
@@ -26,17 +24,13 @@ function loadDataProcessAndRecommend(spec) {
   const dataSpec = spec.spec.data;
   if (dataSpec.url) {
     // load the data from the url
-    const filePath = EXAMPLE_DIR + dataSpec.url;
-    fs.readFile(filePath, 'utf8', (err, text) => {
-      if (err) throw err;
-      const data = JSON.parse(text);
-      processAndRecommend(data, spec);
-    });
+    const data = require(`vega-datasets/${dataSpec.url}`);
+    processAndRecommend(data, spec);
   } else if (dataSpec.data.values) {
     processAndRecommend(dataSpec.data, spec);
   } else {
     // error.
-    console.log('spec missing data');
+    process.stdout.write('spec missing data');
   }
 }
 
