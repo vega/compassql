@@ -1,6 +1,6 @@
 # CompassQL
 
-CompassQL is a visualization query language that powers chart recommendations in [Voyager 2](https://github.com/vega/voyager2).
+CompassQL is a visualization query language that powers chart specifications and recommendations in [Voyager 2](https://github.com/vega/voyager2).
 
 As described in our [vision paper](https://idl.cs.washington.edu/papers/compassql) and [Voyager 2](https://idl.cs.washington.edu/papers/voyager2) paper, a CompassQL query is a JSON object that contains the following components:
 
