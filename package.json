@@ -10,6 +10,8 @@
   "scripts": {
     "prebuild": "mkdir -p build",
     "build": "tsc && browserify build/src/cql.js -d -s cql | exorcist build/compassql.js.map > build/compassql.js",
+    "build:examples": "npm run build && ./scripts/build-examples.sh",
+    "build:examples-only": "./scripts/build-examples.sh",
     "postbuild": "uglifyjs build/compassql.js -cm --source-map build/compassql.min.js.map > build/compassql.min.js",
     "clean": "rm -rf build",
     "deploy": "npm run clean && npm run lint && npm run test && scripts/deploy.sh",
@@ -20,6 +22,7 @@
     "test": "tsc && npm run test:only",
     "posttest": "npm run lint",
     "test:only": "nyc --reporter=html --reporter=text-summary mocha build/test",
+    "check:examples": "./scripts/check-examples.sh",
     "codecov": "nyc report --reporter=json && codecov -f coverage/*.json",
     "test:debug": "mocha --debug-brk build/test"
   },

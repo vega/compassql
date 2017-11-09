@@ -1,0 +1,150 @@
+{
+  "name": "",
+  "path": "",
+  "items": [
+    {
+      "name": "Release_Date",
+      "path": "/Release_Date",
+      "items": [
+        {
+          "name": "xy:Release_Date",
+          "path": "/Release_Date/xy:Release_Date",
+          "items": [
+            {
+              "name": "xy:Release_Date",
+              "path": "/Release_Date/xy:Release_Date/xy:Release_Date",
+              "items": [
+                "point|x:Release_Date,t",
+                "point|y:Release_Date,t"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    },
+    {
+      "name": "year(Release_Date)",
+      "path": "/year(Release_Date)",
+      "items": [
+        {
+          "name": "xy|xy:year(Release_Date)",
+          "path": "/year(Release_Date)/xy|xy:year(Release_Date)",
+          "items": [
+            {
+              "name": "xy|xy:year(Release_Date)",
+              "path": "/year(Release_Date)/xy|xy:year(Release_Date)/xy|xy:year(Release_Date)",
+              "items": [
+                "line|x:year(Release_Date,t)|y:count(*,q)",
+                "line|x:count(*,q)|y:year(Release_Date,t)",
+                "area|x:year(Release_Date,t)|y:count(*,q)",
+                "area|x:count(*,q)|y:year(Release_Date,t)",
+                "bar|x:year(Release_Date,t)|y:count(*,q)",
+                "bar|x:count(*,q)|y:year(Release_Date,t)",
+                "point|x:year(Release_Date,t)|y:count(*,q)",
+                "point|x:count(*,q)|y:year(Release_Date,t)",
+                "tick|x:year(Release_Date,t)|y:count(*,q)",
+                "tick|x:count(*,q)|y:year(Release_Date,t)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    },
+    {
+      "name": "month(Release_Date)",
+      "path": "/month(Release_Date)",
+      "items": [
+        {
+          "name": "xy|xy:month(Release_Date)",
+          "path": "/month(Release_Date)/xy|xy:month(Release_Date)",
+          "items": [
+            {
+              "name": "xy|xy:month(Release_Date)",
+              "path": "/month(Release_Date)/xy|xy:month(Release_Date)/xy|xy:month(Release_Date)",
+              "items": [
+                "line|x:month(Release_Date,t)|y:count(*,q)",
+                "line|x:count(*,q)|y:month(Release_Date,t)",
+                "area|x:month(Release_Date,t)|y:count(*,q)",
+                "area|x:count(*,q)|y:month(Release_Date,t)",
+                "bar|x:month(Release_Date,t)|y:count(*,q)",
+                "bar|x:count(*,q)|y:month(Release_Date,t)",
+                "point|x:month(Release_Date,t)|y:count(*,q)",
+                "point|x:count(*,q)|y:month(Release_Date,t)",
+                "tick|x:month(Release_Date,t)|y:count(*,q)",
+                "tick|x:count(*,q)|y:month(Release_Date,t)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    }
+  ],
+  "groupBy": [
+    "field",
+    "aggregate",
+    "bin",
+    "timeUnit",
+    "stack"
+  ],
+  "orderGroupBy": "aggregationQuality"
+}

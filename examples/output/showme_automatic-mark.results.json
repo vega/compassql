@@ -1,0 +1,7 @@
+{
+  "name": "",
+  "path": "",
+  "items": [
+    "bar|x:mean(Horsepower,q)|y:Cylinders,o"
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "name": "",
+  "path": "",
+  "items": [
+    {
+      "name": "Cylinders|Horsepower",
+      "path": "/Cylinders|Horsepower",
+      "items": [
+        {
+          "name": "xy:Cylinders|xy:Horsepower",
+          "path": "/Cylinders|Horsepower/xy:Cylinders|xy:Horsepower",
+          "items": [
+            {
+              "name": "xy:Cylinders|xy:Horsepower",
+              "path": "/Cylinders|Horsepower/xy:Cylinders|xy:Horsepower/xy:Cylinders|xy:Horsepower",
+              "items": [
+                "tick|x:Horsepower,q|y:Cylinders,o",
+                "tick|x:Cylinders,o|y:Horsepower,q",
+                "point|x:Horsepower,q|y:Cylinders,o",
+                "point|x:Cylinders,o|y:Horsepower,q"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    },
+    {
+      "name": "Cylinders|mean(Horsepower)",
+      "path": "/Cylinders|mean(Horsepower)",
+      "items": [
+        {
+          "name": "xy:Cylinders|xy:mean(Horsepower)",
+          "path": "/Cylinders|mean(Horsepower)/xy:Cylinders|xy:mean(Horsepower)",
+          "items": [
+            {
+              "name": "xy:Cylinders|xy:mean(Horsepower)",
+              "path": "/Cylinders|mean(Horsepower)/xy:Cylinders|xy:mean(Horsepower)/xy:Cylinders|xy:mean(Horsepower)",
+              "items": [
+                "bar|x:mean(Horsepower,q)|y:Cylinders,o",
+                "bar|x:Cylinders,o|y:mean(Horsepower,q)",
+                "point|x:mean(Horsepower,q)|y:Cylinders,o",
+                "point|x:Cylinders,o|y:mean(Horsepower,q)",
+                "tick|x:mean(Horsepower,q)|y:Cylinders,o",
+                "tick|x:Cylinders,o|y:mean(Horsepower,q)",
+                "line|x:mean(Horsepower,q)|y:Cylinders,o",
+                "area|x:mean(Horsepower,q)|y:Cylinders,o",
+                "line|x:Cylinders,o|y:mean(Horsepower,q)",
+                "area|x:Cylinders,o|y:mean(Horsepower,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    },
+    {
+      "name": "Cylinders|bin(Horsepower)",
+      "path": "/Cylinders|bin(Horsepower)",
+      "items": [
+        {
+          "name": "style|xy:Cylinders|xy:bin(Horsepower)",
+          "path": "/Cylinders|bin(Horsepower)/style|xy:Cylinders|xy:bin(Horsepower)",
+          "items": [
+            {
+              "name": "style|xy:Cylinders|xy:bin(Horsepower)",
+              "path": "/Cylinders|bin(Horsepower)/style|xy:Cylinders|xy:bin(Horsepower)/style|xy:Cylinders|xy:bin(Horsepower)",
+              "items": [
+                "point|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o",
+                "point|size:count(*,q)|x:Cylinders,o|y:bin(Horsepower,q)",
+                "point|color:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o",
+                "point|color:count(*,q)|x:Cylinders,o|y:bin(Horsepower,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "facet:bin(Horsepower)|xy|xy:Cylinders",
+          "path": "/Cylinders|bin(Horsepower)/facet:bin(Horsepower)|xy|xy:Cylinders",
+          "items": [
+            {
+              "name": "facet:bin(Horsepower)|xy|xy:Cylinders",
+              "path": "/Cylinders|bin(Horsepower)/facet:bin(Horsepower)|xy|xy:Cylinders/facet:bin(Horsepower)|xy|xy:Cylinders",
+              "items": [
+                "bar|row:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,o,scale={\"rangeStep\":12}",
+                "bar|column:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,o",
+                "bar|row:bin(Horsepower,q)|x:Cylinders,o|y:count(*,q)",
+                "bar|column:bin(Horsepower,q)|x:Cylinders,o,scale={\"rangeStep\":12}|y:count(*,q)",
+                "point|row:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,o,scale={\"rangeStep\":12}",
+                "point|column:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,o",
+                "point|row:bin(Horsepower,q)|x:Cylinders,o|y:count(*,q)",
+                "point|column:bin(Horsepower,q)|x:Cylinders,o,scale={\"rangeStep\":12}|y:count(*,q)",
+                "tick|row:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,o,scale={\"rangeStep\":12}",
+                "tick|column:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,o",
+                "tick|row:bin(Horsepower,q)|x:Cylinders,o|y:count(*,q)",
+                "tick|column:bin(Horsepower,q)|x:Cylinders,o,scale={\"rangeStep\":12}|y:count(*,q)",
+                "line|row:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,o,scale={\"rangeStep\":12}",
+                "area|row:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,o,scale={\"rangeStep\":12}",
+                "area|row:bin(Horsepower,q)|x:Cylinders,o|y:count(*,q)",
+                "line|row:bin(Horsepower,q)|x:Cylinders,o|y:count(*,q)",
+                "line|column:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,o",
+                "area|column:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,o",
+                "area|column:bin(Horsepower,q)|x:Cylinders,o,scale={\"rangeStep\":12}|y:count(*,q)",
+                "line|column:bin(Horsepower,q)|x:Cylinders,o,scale={\"rangeStep\":12}|y:count(*,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "facet:Cylinders|xy|xy:bin(Horsepower)",
+          "path": "/Cylinders|bin(Horsepower)/facet:Cylinders|xy|xy:bin(Horsepower)",
+          "items": [
+            {
+              "name": "facet:Cylinders|xy|xy:bin(Horsepower)",
+              "path": "/Cylinders|bin(Horsepower)/facet:Cylinders|xy|xy:bin(Horsepower)/facet:Cylinders|xy|xy:bin(Horsepower)",
+              "items": [
+                "bar|row:Cylinders,o|x:bin(Horsepower,q)|y:count(*,q)",
+                "bar|column:Cylinders,o|x:bin(Horsepower,q)|y:count(*,q)",
+                "bar|row:Cylinders,o|x:count(*,q)|y:bin(Horsepower,q)",
+                "bar|column:Cylinders,o|x:count(*,q)|y:bin(Horsepower,q)",
+                "point|row:Cylinders,o|x:bin(Horsepower,q)|y:count(*,q)",
+                "point|row:Cylinders,o|x:count(*,q)|y:bin(Horsepower,q)",
+                "point|column:Cylinders,o|x:bin(Horsepower,q)|y:count(*,q)",
+                "point|column:Cylinders,o|x:count(*,q)|y:bin(Horsepower,q)",
+                "tick|row:Cylinders,o|x:bin(Horsepower,q)|y:count(*,q)",
+                "tick|row:Cylinders,o|x:count(*,q)|y:bin(Horsepower,q)",
+                "tick|column:Cylinders,o|x:bin(Horsepower,q)|y:count(*,q)",
+                "tick|column:Cylinders,o|x:count(*,q)|y:bin(Horsepower,q)",
+                "area|row:Cylinders,o|x:bin(Horsepower,q)|y:count(*,q)",
+                "line|row:Cylinders,o|x:bin(Horsepower,q)|y:count(*,q)",
+                "line|row:Cylinders,o|x:count(*,q)|y:bin(Horsepower,q)",
+                "line|column:Cylinders,o|x:bin(Horsepower,q)|y:count(*,q)",
+                "area|row:Cylinders,o|x:count(*,q)|y:bin(Horsepower,q)",
+                "area|column:Cylinders,o|x:bin(Horsepower,q)|y:count(*,q)",
+                "line|column:Cylinders,o|x:count(*,q)|y:bin(Horsepower,q)",
+                "area|column:Cylinders,o|x:count(*,q)|y:bin(Horsepower,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    }
+  ],
+  "groupBy": [
+    "field",
+    "aggregate",
+    "bin",
+    "timeUnit",
+    "stack"
+  ],
+  "orderGroupBy": "aggregationQuality"
+}

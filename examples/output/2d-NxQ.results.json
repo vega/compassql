@@ -1,0 +1,206 @@
+{
+  "name": "",
+  "path": "",
+  "items": [
+    {
+      "name": "Horsepower|Origin",
+      "path": "/Horsepower|Origin",
+      "items": [
+        {
+          "name": "xy:Horsepower|xy:Origin",
+          "path": "/Horsepower|Origin/xy:Horsepower|xy:Origin",
+          "items": [
+            {
+              "name": "xy:Horsepower|xy:Origin",
+              "path": "/Horsepower|Origin/xy:Horsepower|xy:Origin/xy:Horsepower|xy:Origin",
+              "items": [
+                "tick|x:Horsepower,q|y:Origin,n",
+                "tick|x:Origin,n|y:Horsepower,q",
+                "point|x:Horsepower,q|y:Origin,n",
+                "point|x:Origin,n|y:Horsepower,q"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    },
+    {
+      "name": "Origin|mean(Horsepower)",
+      "path": "/Origin|mean(Horsepower)",
+      "items": [
+        {
+          "name": "xy:Origin|xy:mean(Horsepower)",
+          "path": "/Origin|mean(Horsepower)/xy:Origin|xy:mean(Horsepower)",
+          "items": [
+            {
+              "name": "xy:Origin|xy:mean(Horsepower)",
+              "path": "/Origin|mean(Horsepower)/xy:Origin|xy:mean(Horsepower)/xy:Origin|xy:mean(Horsepower)",
+              "items": [
+                "bar|x:mean(Horsepower,q)|y:Origin,n",
+                "bar|x:Origin,n|y:mean(Horsepower,q)",
+                "point|x:mean(Horsepower,q)|y:Origin,n",
+                "point|x:Origin,n|y:mean(Horsepower,q)",
+                "tick|x:mean(Horsepower,q)|y:Origin,n",
+                "tick|x:Origin,n|y:mean(Horsepower,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    },
+    {
+      "name": "Origin|bin(Horsepower)",
+      "path": "/Origin|bin(Horsepower)",
+      "items": [
+        {
+          "name": "style|xy:Origin|xy:bin(Horsepower)",
+          "path": "/Origin|bin(Horsepower)/style|xy:Origin|xy:bin(Horsepower)",
+          "items": [
+            {
+              "name": "style|xy:Origin|xy:bin(Horsepower)",
+              "path": "/Origin|bin(Horsepower)/style|xy:Origin|xy:bin(Horsepower)/style|xy:Origin|xy:bin(Horsepower)",
+              "items": [
+                "point|size:count(*,q)|x:bin(Horsepower,q)|y:Origin,n",
+                "point|size:count(*,q)|x:Origin,n|y:bin(Horsepower,q)",
+                "point|color:count(*,q)|x:bin(Horsepower,q)|y:Origin,n",
+                "point|color:count(*,q)|x:Origin,n|y:bin(Horsepower,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "facet:Origin|xy|xy:bin(Horsepower)",
+          "path": "/Origin|bin(Horsepower)/facet:Origin|xy|xy:bin(Horsepower)",
+          "items": [
+            {
+              "name": "facet:Origin|xy|xy:bin(Horsepower)",
+              "path": "/Origin|bin(Horsepower)/facet:Origin|xy|xy:bin(Horsepower)/facet:Origin|xy|xy:bin(Horsepower)",
+              "items": [
+                "bar|row:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "bar|column:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "bar|row:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "bar|column:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "point|row:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "point|row:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "point|column:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "point|column:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "tick|row:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "tick|row:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "tick|column:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "tick|column:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "area|row:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "line|row:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "line|row:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "line|column:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "area|row:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "area|column:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "line|column:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "area|column:Origin,n|x:count(*,q)|y:bin(Horsepower,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "facet:bin(Horsepower)|xy|xy:Origin",
+          "path": "/Origin|bin(Horsepower)/facet:bin(Horsepower)|xy|xy:Origin",
+          "items": [
+            {
+              "name": "facet:bin(Horsepower)|xy|xy:Origin",
+              "path": "/Origin|bin(Horsepower)/facet:bin(Horsepower)|xy|xy:Origin/facet:bin(Horsepower)|xy|xy:Origin",
+              "items": [
+                "bar|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "bar|column:bin(Horsepower,q)|x:count(*,q)|y:Origin,n",
+                "bar|row:bin(Horsepower,q)|x:Origin,n|y:count(*,q)",
+                "bar|column:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "point|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Horsepower,q)|x:count(*,q)|y:Origin,n",
+                "point|row:bin(Horsepower,q)|x:Origin,n|y:count(*,q)",
+                "point|column:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "tick|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "tick|row:bin(Horsepower,q)|x:Origin,n|y:count(*,q)",
+                "tick|column:bin(Horsepower,q)|x:count(*,q)|y:Origin,n",
+                "tick|column:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:count(*,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    }
+  ],
+  "groupBy": [
+    "field",
+    "aggregate",
+    "bin",
+    "timeUnit",
+    "stack"
+  ],
+  "orderGroupBy": "aggregationQuality"
+}

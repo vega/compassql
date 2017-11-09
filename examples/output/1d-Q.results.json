@@ -1,0 +1,148 @@
+{
+  "name": "",
+  "path": "",
+  "items": [
+    {
+      "name": "Miles_per_Gallon",
+      "path": "/Miles_per_Gallon",
+      "items": [
+        {
+          "name": "xy:Miles_per_Gallon",
+          "path": "/Miles_per_Gallon/xy:Miles_per_Gallon",
+          "items": [
+            {
+              "name": "xy:Miles_per_Gallon",
+              "path": "/Miles_per_Gallon/xy:Miles_per_Gallon/xy:Miles_per_Gallon",
+              "items": [
+                "tick|x:Miles_per_Gallon,q",
+                "tick|y:Miles_per_Gallon,q",
+                "point|x:Miles_per_Gallon,q",
+                "point|y:Miles_per_Gallon,q"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    },
+    {
+      "name": "bin(Miles_per_Gallon)",
+      "path": "/bin(Miles_per_Gallon)",
+      "items": [
+        {
+          "name": "xy|xy:bin(Miles_per_Gallon)",
+          "path": "/bin(Miles_per_Gallon)/xy|xy:bin(Miles_per_Gallon)",
+          "items": [
+            {
+              "name": "xy|xy:bin(Miles_per_Gallon)",
+              "path": "/bin(Miles_per_Gallon)/xy|xy:bin(Miles_per_Gallon)/xy|xy:bin(Miles_per_Gallon)",
+              "items": [
+                "bar|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
+                "bar|x:count(*,q)|y:bin(Miles_per_Gallon,q)",
+                "point|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
+                "point|x:count(*,q)|y:bin(Miles_per_Gallon,q)",
+                "tick|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
+                "tick|x:count(*,q)|y:bin(Miles_per_Gallon,q)",
+                "line|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
+                "area|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
+                "line|x:count(*,q)|y:bin(Miles_per_Gallon,q)",
+                "area|x:count(*,q)|y:bin(Miles_per_Gallon,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    },
+    {
+      "name": "mean(Miles_per_Gallon)",
+      "path": "/mean(Miles_per_Gallon)",
+      "items": [
+        {
+          "name": "xy:mean(Miles_per_Gallon)",
+          "path": "/mean(Miles_per_Gallon)/xy:mean(Miles_per_Gallon)",
+          "items": [
+            {
+              "name": "xy:mean(Miles_per_Gallon)",
+              "path": "/mean(Miles_per_Gallon)/xy:mean(Miles_per_Gallon)/xy:mean(Miles_per_Gallon)",
+              "items": [
+                "bar|x:mean(Miles_per_Gallon,q)",
+                "bar|y:mean(Miles_per_Gallon,q)",
+                "point|x:mean(Miles_per_Gallon,q)",
+                "point|y:mean(Miles_per_Gallon,q)",
+                "tick|x:mean(Miles_per_Gallon,q)",
+                "tick|y:mean(Miles_per_Gallon,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    }
+  ],
+  "groupBy": [
+    "field",
+    "aggregate",
+    "bin",
+    "timeUnit",
+    "stack"
+  ],
+  "orderGroupBy": "aggregationQuality"
+}

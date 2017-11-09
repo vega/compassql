@@ -1,0 +1,54 @@
+{
+  "name": "",
+  "path": "",
+  "items": [
+    {
+      "name": "Horsepower",
+      "path": "/Horsepower",
+      "items": [
+        {
+          "name": "xy:Horsepower",
+          "path": "/Horsepower/xy:Horsepower",
+          "items": [
+            {
+              "name": "xy:Horsepower",
+              "path": "/Horsepower/xy:Horsepower/xy:Horsepower",
+              "items": [
+                "tick|x:Horsepower,q",
+                "point|x:Horsepower,q"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    }
+  ],
+  "groupBy": [
+    "field",
+    "aggregate",
+    "bin",
+    "timeUnit",
+    "stack"
+  ],
+  "orderGroupBy": "aggregationQuality"
+}
