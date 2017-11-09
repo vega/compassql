@@ -15,7 +15,7 @@ import {toMap} from 'datalib/src/util';
 
 /**
  * A "query" version of a [Vega-Lite](https://github.com/vega/vega-lite)'s `UnitSpec` (single view specification).
- * This interface and most of  its children have `Query` suffixes to hint that their instanced are queries that 
+ * This interface and most of  its children have `Query` suffixes to hint that their instanced are queries that
  * can contain wildcards to describe a collection of specifications.
  */
 export interface SpecQuery {
@@ -28,10 +28,16 @@ export interface SpecQuery {
   /**
    * Array of encoding query mappings.
    * Note: Vega-Lite's `encoding` is an object whose keys are unique encoding channels.
-   * However, for CompassQL, the `channel` property of encoding query mappings can be wildcards. 
+   * However, for CompassQL, the `channel` property of encoding query mappings can be wildcards.
    * Thus the `encoding` object in Vega-Lite is flatten as the `encodings` array in CompassQL.
    */
   encodings: EncodingQuery[];
+
+  /**
+   * Width and height
+   */
+  width?: number;
+  height?: number;
 
   // TODO: make config query (not important at all, only for the sake of completeness.)
   /**
@@ -49,6 +55,8 @@ export function fromSpec(spec: TopLevel<FacetedCompositeUnitSpec>): SpecQuery {
   return extend(
     spec.data ? { data: spec.data} : {},
     spec.transform ? { transform: spec.transform } : {},
+    spec.width ? { width: spec.width } : {},
+    spec.height ? { height: spec.height } : {},
     {
       mark: spec.mark,
       encodings: keys(spec.encoding).map((channel: Channel) => {
