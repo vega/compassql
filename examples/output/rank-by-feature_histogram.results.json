@@ -1,11 +1,76 @@
-[
-  "bar|x:count(*,q)|y:Cylinders,n",
-  "bar|x:count(*,q,axis={\"orient\":\"top\"})|y:Name,n,scale={\"rangeStep\":12}",
-  "bar|x:count(*,q)|y:Origin,n",
-  "bar|x:bin(Acceleration,q)|y:count(*,q)",
-  "bar|x:bin(Displacement,q)|y:count(*,q)",
-  "bar|x:bin(Horsepower,q)|y:count(*,q)",
-  "bar|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
-  "bar|x:bin(Weight_in_lbs,q)|y:count(*,q)",
-  "line|x:year(Year,t)|y:count(*,q)"
-]
+{
+  "name": "",
+  "path": "",
+  "items": [
+    {
+      "name": "Cylinders|count(*)",
+      "path": "/Cylinders|count(*)",
+      "items": [
+        "bar|x:count(*,q)|y:Cylinders,n"
+      ]
+    },
+    {
+      "name": "Name|count(*)",
+      "path": "/Name|count(*)",
+      "items": [
+        "bar|x:count(*,q,axis={\"orient\":\"top\"})|y:Name,n,scale={\"rangeStep\":12}"
+      ]
+    },
+    {
+      "name": "Origin|count(*)",
+      "path": "/Origin|count(*)",
+      "items": [
+        "bar|x:count(*,q)|y:Origin,n"
+      ]
+    },
+    {
+      "name": "bin(Acceleration)|count(*)",
+      "path": "/bin(Acceleration)|count(*)",
+      "items": [
+        "bar|x:bin(Acceleration,q)|y:count(*,q)"
+      ]
+    },
+    {
+      "name": "bin(Displacement)|count(*)",
+      "path": "/bin(Displacement)|count(*)",
+      "items": [
+        "bar|x:bin(Displacement,q)|y:count(*,q)"
+      ]
+    },
+    {
+      "name": "bin(Horsepower)|count(*)",
+      "path": "/bin(Horsepower)|count(*)",
+      "items": [
+        "bar|x:bin(Horsepower,q)|y:count(*,q)"
+      ]
+    },
+    {
+      "name": "bin(Miles_per_Gallon)|count(*)",
+      "path": "/bin(Miles_per_Gallon)|count(*)",
+      "items": [
+        "bar|x:bin(Miles_per_Gallon,q)|y:count(*,q)"
+      ]
+    },
+    {
+      "name": "bin(Weight_in_lbs)|count(*)",
+      "path": "/bin(Weight_in_lbs)|count(*)",
+      "items": [
+        "bar|x:bin(Weight_in_lbs,q)|y:count(*,q)"
+      ]
+    },
+    {
+      "name": "count(*)|year(Year)",
+      "path": "/count(*)|year(Year)",
+      "items": [
+        "line|x:year(Year,t)|y:count(*,q)"
+      ]
+    }
+  ],
+  "groupBy": [
+    "field",
+    "aggregate",
+    "bin",
+    "timeUnit",
+    "stack"
+  ]
+}

@@ -1,30 +1,112 @@
-[
-  "point|size:count(*,q)|x:Major_Genre,n,scale={\"rangeStep\":12}|y:Creative_Type,n",
-  "point|size:count(*,q)|x:Creative_Type,n|y:Major_Genre,n,scale={\"rangeStep\":12}",
-  "point|color:count(*,q)|x:Major_Genre,n,scale={\"rangeStep\":12}|y:Creative_Type,n",
-  "point|color:count(*,q)|x:Creative_Type,n|y:Major_Genre,n,scale={\"rangeStep\":12}",
-  "bar|row:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
-  "bar|column:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
-  "bar|row:Creative_Type,n|x:Major_Genre,n,scale={\"rangeStep\":12}|y:count(*,q)",
-  "bar|column:Creative_Type,n|x:Major_Genre,n,scale={\"rangeStep\":12}|y:count(*,q)",
-  "point|row:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
-  "point|column:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
-  "point|row:Creative_Type,n|x:Major_Genre,n,scale={\"rangeStep\":12}|y:count(*,q)",
-  "point|column:Creative_Type,n|x:Major_Genre,n,scale={\"rangeStep\":12}|y:count(*,q)",
-  "tick|row:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
-  "tick|row:Creative_Type,n|x:Major_Genre,n,scale={\"rangeStep\":12}|y:count(*,q)",
-  "tick|column:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
-  "tick|column:Creative_Type,n|x:Major_Genre,n,scale={\"rangeStep\":12}|y:count(*,q)",
-  "bar|row:Major_Genre,n|x:count(*,q)|y:Creative_Type,n,scale={\"rangeStep\":12}",
-  "bar|column:Major_Genre,n|x:count(*,q)|y:Creative_Type,n",
-  "bar|row:Major_Genre,n|x:Creative_Type,n|y:count(*,q)",
-  "bar|column:Major_Genre,n|x:Creative_Type,n,scale={\"rangeStep\":12}|y:count(*,q)",
-  "point|row:Major_Genre,n|x:count(*,q)|y:Creative_Type,n,scale={\"rangeStep\":12}",
-  "point|row:Major_Genre,n|x:Creative_Type,n|y:count(*,q)",
-  "point|column:Major_Genre,n|x:count(*,q)|y:Creative_Type,n",
-  "point|column:Major_Genre,n|x:Creative_Type,n,scale={\"rangeStep\":12}|y:count(*,q)",
-  "tick|row:Major_Genre,n|x:count(*,q)|y:Creative_Type,n,scale={\"rangeStep\":12}",
-  "tick|row:Major_Genre,n|x:Creative_Type,n|y:count(*,q)",
-  "tick|column:Major_Genre,n|x:count(*,q)|y:Creative_Type,n",
-  "tick|column:Major_Genre,n|x:Creative_Type,n,scale={\"rangeStep\":12}|y:count(*,q)"
-]
+{
+  "name": "",
+  "path": "",
+  "items": [
+    {
+      "name": "Creative_Type|Major_Genre",
+      "path": "/Creative_Type|Major_Genre",
+      "items": [
+        {
+          "name": "style|xy:Creative_Type|xy:Major_Genre",
+          "path": "/Creative_Type|Major_Genre/style|xy:Creative_Type|xy:Major_Genre",
+          "items": [
+            {
+              "name": "style|xy:Creative_Type|xy:Major_Genre",
+              "path": "/Creative_Type|Major_Genre/style|xy:Creative_Type|xy:Major_Genre/style|xy:Creative_Type|xy:Major_Genre",
+              "items": [
+                "point|size:count(*,q)|x:Major_Genre,n,scale={\"rangeStep\":12}|y:Creative_Type,n",
+                "point|size:count(*,q)|x:Creative_Type,n|y:Major_Genre,n,scale={\"rangeStep\":12}",
+                "point|color:count(*,q)|x:Major_Genre,n,scale={\"rangeStep\":12}|y:Creative_Type,n",
+                "point|color:count(*,q)|x:Creative_Type,n|y:Major_Genre,n,scale={\"rangeStep\":12}"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "facet:Creative_Type|xy|xy:Major_Genre",
+          "path": "/Creative_Type|Major_Genre/facet:Creative_Type|xy|xy:Major_Genre",
+          "items": [
+            {
+              "name": "facet:Creative_Type|xy|xy:Major_Genre",
+              "path": "/Creative_Type|Major_Genre/facet:Creative_Type|xy|xy:Major_Genre/facet:Creative_Type|xy|xy:Major_Genre",
+              "items": [
+                "bar|row:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
+                "bar|column:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
+                "bar|row:Creative_Type,n|x:Major_Genre,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "bar|column:Creative_Type,n|x:Major_Genre,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "point|row:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
+                "point|column:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
+                "point|row:Creative_Type,n|x:Major_Genre,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "point|column:Creative_Type,n|x:Major_Genre,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "tick|row:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
+                "tick|row:Creative_Type,n|x:Major_Genre,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "tick|column:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
+                "tick|column:Creative_Type,n|x:Major_Genre,n,scale={\"rangeStep\":12}|y:count(*,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "facet:Major_Genre|xy|xy:Creative_Type",
+          "path": "/Creative_Type|Major_Genre/facet:Major_Genre|xy|xy:Creative_Type",
+          "items": [
+            {
+              "name": "facet:Major_Genre|xy|xy:Creative_Type",
+              "path": "/Creative_Type|Major_Genre/facet:Major_Genre|xy|xy:Creative_Type/facet:Major_Genre|xy|xy:Creative_Type",
+              "items": [
+                "bar|row:Major_Genre,n|x:count(*,q)|y:Creative_Type,n,scale={\"rangeStep\":12}",
+                "bar|column:Major_Genre,n|x:count(*,q)|y:Creative_Type,n",
+                "bar|row:Major_Genre,n|x:Creative_Type,n|y:count(*,q)",
+                "bar|column:Major_Genre,n|x:Creative_Type,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "point|row:Major_Genre,n|x:count(*,q)|y:Creative_Type,n,scale={\"rangeStep\":12}",
+                "point|row:Major_Genre,n|x:Creative_Type,n|y:count(*,q)",
+                "point|column:Major_Genre,n|x:count(*,q)|y:Creative_Type,n",
+                "point|column:Major_Genre,n|x:Creative_Type,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "tick|row:Major_Genre,n|x:count(*,q)|y:Creative_Type,n,scale={\"rangeStep\":12}",
+                "tick|row:Major_Genre,n|x:Creative_Type,n|y:count(*,q)",
+                "tick|column:Major_Genre,n|x:count(*,q)|y:Creative_Type,n",
+                "tick|column:Major_Genre,n|x:Creative_Type,n,scale={\"rangeStep\":12}|y:count(*,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    }
+  ],
+  "groupBy": [
+    "field",
+    "aggregate",
+    "bin",
+    "timeUnit",
+    "stack"
+  ],
+  "orderGroupBy": "aggregationQuality"
+}

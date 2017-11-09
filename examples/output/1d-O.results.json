@@ -1,12 +1,62 @@
-[
-  "bar|x:count(*,q)|y:Cylinders,o",
-  "bar|x:Cylinders,o|y:count(*,q)",
-  "point|x:count(*,q)|y:Cylinders,o",
-  "point|x:Cylinders,o|y:count(*,q)",
-  "tick|x:count(*,q)|y:Cylinders,o",
-  "tick|x:Cylinders,o|y:count(*,q)",
-  "line|x:count(*,q)|y:Cylinders,o",
-  "area|x:count(*,q)|y:Cylinders,o",
-  "line|x:Cylinders,o|y:count(*,q)",
-  "area|x:Cylinders,o|y:count(*,q)"
-]
+{
+  "name": "",
+  "path": "",
+  "items": [
+    {
+      "name": "Cylinders",
+      "path": "/Cylinders",
+      "items": [
+        {
+          "name": "xy|xy:Cylinders",
+          "path": "/Cylinders/xy|xy:Cylinders",
+          "items": [
+            {
+              "name": "xy|xy:Cylinders",
+              "path": "/Cylinders/xy|xy:Cylinders/xy|xy:Cylinders",
+              "items": [
+                "bar|x:count(*,q)|y:Cylinders,o",
+                "bar|x:Cylinders,o|y:count(*,q)",
+                "point|x:count(*,q)|y:Cylinders,o",
+                "point|x:Cylinders,o|y:count(*,q)",
+                "tick|x:count(*,q)|y:Cylinders,o",
+                "tick|x:Cylinders,o|y:count(*,q)",
+                "line|x:count(*,q)|y:Cylinders,o",
+                "area|x:count(*,q)|y:Cylinders,o",
+                "line|x:Cylinders,o|y:count(*,q)",
+                "area|x:Cylinders,o|y:count(*,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    }
+  ],
+  "groupBy": [
+    "field",
+    "aggregate",
+    "bin",
+    "timeUnit",
+    "stack"
+  ],
+  "orderGroupBy": "aggregationQuality"
+}

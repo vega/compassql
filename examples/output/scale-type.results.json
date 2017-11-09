@@ -1,4 +1,54 @@
-[
-  "tick|x:Miles_per_Gallon,q",
-  "tick|x:Miles_per_Gallon,q,scale={\"type\":\"log\"}"
-]
+{
+  "name": "",
+  "path": "",
+  "items": [
+    {
+      "name": "Miles_per_Gallon",
+      "path": "/Miles_per_Gallon",
+      "items": [
+        {
+          "name": "xy:Miles_per_Gallon",
+          "path": "/Miles_per_Gallon/xy:Miles_per_Gallon",
+          "items": [
+            {
+              "name": "xy:Miles_per_Gallon",
+              "path": "/Miles_per_Gallon/xy:Miles_per_Gallon/xy:Miles_per_Gallon",
+              "items": [
+                "tick|x:Miles_per_Gallon,q",
+                "tick|x:Miles_per_Gallon,q,scale={\"type\":\"log\"}"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        }
+      ],
+      "groupBy": [
+        {
+          "property": "channel",
+          "replace": {
+            "x": "xy",
+            "y": "xy",
+            "color": "style",
+            "size": "style",
+            "shape": "style",
+            "opacity": "style",
+            "row": "facet",
+            "column": "facet"
+          }
+        }
+      ],
+      "orderGroupBy": "effectiveness"
+    }
+  ],
+  "groupBy": [
+    "field",
+    "aggregate",
+    "bin",
+    "timeUnit",
+    "stack"
+  ],
+  "orderGroupBy": "aggregationQuality"
+}

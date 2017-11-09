@@ -29,15 +29,3 @@ export function mapLeaves<T, U>(group: ResultTree<T>, f: (item: T) => U): Result
     items: group.items.map(item => (isResultTree(item) ? mapLeaves(item, f) : f(item)))
   };
 }
-
-/**
- * Collapses the given tree into a preorder leaf view.
- * @param group The tree to collapse
- * @param f The function with which to process leaves.
- */
-export function collapseTree<T, U>(tree: ResultTree<T>,
-                                   f:(item: T) => U) {
-  tree.items.map(item => {
-    isResultTree(item) ? collapseTree(item, f) : f(item);
-  });
-}

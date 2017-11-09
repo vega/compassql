@@ -1,5 +1,34 @@
-[
-  "tick|x:Horsepower,q|y:Cylinders,o",
-  "bar|x:mean(Horsepower,q)|y:Cylinders,o",
-  "point|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o"
-]
+{
+  "name": "",
+  "path": "",
+  "items": [
+    {
+      "name": "Cylinders|Horsepower",
+      "path": "/Cylinders|Horsepower",
+      "items": [
+        "tick|x:Horsepower,q|y:Cylinders,o"
+      ]
+    },
+    {
+      "name": "Cylinders|mean(Horsepower)",
+      "path": "/Cylinders|mean(Horsepower)",
+      "items": [
+        "bar|x:mean(Horsepower,q)|y:Cylinders,o"
+      ]
+    },
+    {
+      "name": "Cylinders|bin(Horsepower)",
+      "path": "/Cylinders|bin(Horsepower)",
+      "items": [
+        "point|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o"
+      ]
+    }
+  ],
+  "groupBy": [
+    "field",
+    "aggregate",
+    "bin",
+    "timeUnit",
+    "stack"
+  ]
+}
