@@ -692,6 +692,20 @@ describe('SpecQueryModel', () => {
 
       assert.isNull(specM.toSpec());
     });
+
+    it('should return a spec with width and height specified', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        width: 100,
+        height: 120,
+        encodings: [
+          {channel: Channel.X, field: 'O', type: Type.ORDINAL}
+        ]
+      });
+
+      assert.equal(specM.toSpec().width, 100);
+      assert.equal(specM.toSpec().height, 120);
+    });
   });
 });
 
