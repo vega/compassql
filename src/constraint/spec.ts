@@ -695,13 +695,13 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'omitNonSumStack',
     description: 'Stacked plot should use summative aggregation such as sum, count, or distinct',
-    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
+    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.STACK],
     allowWildcardForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       const stack = specM.stack();
       if (stack) {
-        const measureEncQ = specM.getEncodingQueryByChannel(stack.fieldChannel);
+        const measureEncQ = specM.getEncodingQueryByChannel(stack.channel);
         return (isFieldQuery(measureEncQ) &&  contains(SUM_OPS, measureEncQ.aggregate)) || (isAutoCountQuery(measureEncQ) && !!measureEncQ.autoCount);
       }
       return true;
@@ -710,7 +710,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'omitTableWithOcclusionIfAutoAddCount',
     description: 'Plots without aggregation or autocount where x and y are both discrete should be omitted if autoAddCount is enabled as they often lead to occlusion',
-    properties: [Property.CHANNEL, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
+    properties: [Property.CHANNEL, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT, Property.STACK],
     allowWildcardForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {

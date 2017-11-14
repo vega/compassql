@@ -18,6 +18,7 @@ import {Encoding} from 'vega-lite/build/src/encoding';
 import {Property, isEncodingNestedParent, FlatProp} from '../property';
 import {PROPERTY_SUPPORTED_CHANNELS} from './shorthand';
 import {isObject} from 'datalib/src/util';
+import {StackOffset} from 'vega-lite/build/src/stack';
 
 export type EncodingQuery = FieldQuery | ValueQuery | AutoCountQuery;
 
@@ -83,6 +84,7 @@ export interface FieldQueryBase {
   scale?: boolean | ScaleQuery | SHORT_WILDCARD;
 
   sort?: SortOrder | SortField;
+  stack?: StackOffset | SHORT_WILDCARD;
 
   field?: WildcardProperty<string>;
   type?: WildcardProperty<ExpandedType>;
@@ -106,7 +108,7 @@ export type ScaleQuery =  FlatQueryWithEnableFlag<Scale>;
 export type AxisQuery =  FlatQueryWithEnableFlag<Axis>;
 export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 
-const DEFAULT_PROPS = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND];
+const DEFAULT_PROPS = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.STACK, Property.AXIS, Property.LEGEND];
 
 export interface ConversionParams {
   schema?: Schema;
@@ -297,4 +299,23 @@ export function scaleType(fieldQ: FieldQuery) {
 
   const fieldDef = {type: vegaLiteType, timeUnit: timeUnit as TimeUnit, bin: bin as BinParams};
   return compileScaleType(scale.type, channel, fieldDef, markType, scaleConfig);
+}
+
+/**
+ * Returns the stack type of an encoding.
+ * @returns {StackOffset | SHORT_WILDCARD} The type of the stack if the stack specification
+ *     is appropriate.
+ * @returns {undefined} If the stack type was not specified.
+ * @returns {null} If the stack is not appropriate for this encoding.
+ */
+export function stackType(fieldQ: FieldQuery): StackOffset | SHORT_WILDCARD {
+  if (fieldQ.stack) {
+    if (fieldQ.aggregate &&
+        (fieldQ.channel === Channel.X || fieldQ.channel === Channel.Y)) {
+      return fieldQ.stack;
+    } else {
+      return null;
+    }
+  }
+  return undefined;
 }

@@ -47,7 +47,7 @@ export function isEncodingNestedProp(p: Property): p is EncodingNestedProp {
 const ENCODING_TOPLEVEL_PROP_INDEX: Flag<EncodingTopLevelProp> = {
   channel: 1,
   aggregate: 1, autoCount: 1, bin: 1, timeUnit: 1, hasFn: 1,
-  sort: 1,
+  sort: 1, stack: 1,
   field: 1, type: 1,
   scale: 1, axis: 1, legend: 1,
   value: 1

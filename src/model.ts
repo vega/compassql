@@ -3,12 +3,11 @@ import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Type} from 'vega-lite/build/src/type';
 import {FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
-import {StackProperties} from 'vega-lite/build/src/stack';
 import {QueryConfig} from './config';
 import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, isEncodingNestedParent} from './property';
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
-import {SpecQuery, isAggregate, stack} from './query/spec';
+import {SpecQuery, isAggregate, stack, StackSpec} from './query/spec';
 import {AutoCountQuery, isFieldQuery, isAutoCountQuery, isDisabledAutoCountQuery, EncodingQuery, toEncoding} from './query/encoding';
 import {ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand} from './query/shorthand';
@@ -230,7 +229,7 @@ export class SpecQueryModel {
     return this._channelFieldCount[channel] > 0;
   }
 
-  public stack(): StackProperties {
+  public stack(): StackSpec {
     return stack(this._spec);
   }
 

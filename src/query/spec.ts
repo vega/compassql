@@ -1,4 +1,4 @@
-import {Channel, X, Y, NONSPATIAL_CHANNELS} from 'vega-lite/build/src/channel';
+import {Channel, NONSPATIAL_CHANNELS} from 'vega-lite/build/src/channel';
 import {Config} from 'vega-lite/build/src/config';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
@@ -9,13 +9,13 @@ import {isEncodingTopLevelProperty, Property, toKey, FlatProp, EncodingNestedPro
 import {contains, extend, keys, some} from '../util';
 
 import {TransformQuery} from './transform';
-import {EncodingQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isEnabledAutoCountQuery} from './encoding';
+import {EncodingQuery, FieldQuery, isAutoCountQuery, isFieldQuery, isValueQuery, isEnabledAutoCountQuery, stackType} from './encoding';
 import {TopLevel, FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
 import {toMap} from 'datalib/src/util';
 
 /**
  * A "query" version of a [Vega-Lite](https://github.com/vega/vega-lite)'s `UnitSpec` (single view specification).
- * This interface and most of  its children have `Query` suffixes to hint that their instanced are queries that 
+ * This interface and most of  its children have `Query` suffixes to hint that their instanced are queries that
  * can contain wildcards to describe a collection of specifications.
  */
 export interface SpecQuery {
@@ -28,7 +28,7 @@ export interface SpecQuery {
   /**
    * Array of encoding query mappings.
    * Note: Vega-Lite's `encoding` is an object whose keys are unique encoding channels.
-   * However, for CompassQL, the `channel` property of encoding query mappings can be wildcards. 
+   * However, for CompassQL, the `channel` property of encoding query mappings can be wildcards.
    * Thus the `encoding` object in Vega-Lite is flatten as the `encodings` array in CompassQL.
    */
   encodings: EncodingQuery[];
@@ -86,38 +86,14 @@ export function isAggregate(specQ: SpecQuery) {
 }
 
 /**
- * @return the stack offset type for the specQuery
+ * @return {string} The stack type if exactly one stack was specified and that
+ *     isolated specification was valid.
+ * @return {undefined} If stack was not specified.
+ * @return {null} If multiple stack encodings exist or the one is invalid.
  */
 export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQuery, groupByEncQ: EncodingQuery} {
-  const config = specQ.config;
-  const stacked = config ? config.stack : undefined;
-
-  // Should not have stack explicitly disabled
-  if (contains(['none', null, false], stacked)) {
-    return null;
-  }
-
   // Should have stackable mark
-  if (!contains(['bar', 'area'], specQ.mark)) {
-    return null;
-  }
-
-  // Should be aggregate plot
-  if (!isAggregate(specQ)) {
-    return null;
-  }
-
-  const stackBy = specQ.encodings.reduce((sc, encQ: EncodingQuery) => {
-    if (contains(NONSPATIAL_CHANNELS, encQ.channel) && (isValueQuery(encQ) || (isFieldQuery(encQ) &&!encQ.aggregate))) {
-      sc.push({
-        channel: encQ.channel,
-        fieldDef: encQ
-      });
-    }
-    return sc;
-  }, []);
-
-  if (stackBy.length === 0) {
+  if (!contains([Mark.BAR, Mark.AREA], specQ.mark)) {
     return null;
   }
 
@@ -134,18 +110,110 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
   const yIsAggregate = (isFieldQuery(yEncQ) && !!yEncQ.aggregate) || (isAutoCountQuery(yEncQ) &&!!yEncQ.autoCount);
 
   if (xIsAggregate !== yIsAggregate) {
+    // get the stack type
+    let stack;
+    for (let encoding of specQ.encodings) {
+      if (isFieldQuery(encoding)) {
+        encoding = encoding as FieldQuery;
+        const stackT = stackType(encoding);
+        if (typeof stackT === null) {
+          // invalid stack specification
+          return null;
+        } else if (stackT && !stack) {
+          stack = stackT;
+        } else if (stackT && stack) {
+          // can only stack one channel
+          return null;
+        }
+      }
+    }
+
+    const stackBy = specQ.encodings.reduce((sc, encQ: EncodingQuery) => {
+      if (contains(NONSPATIAL_CHANNELS, encQ.channel) && (isValueQuery(encQ) || (isFieldQuery(encQ) &&!encQ.aggregate))) {
+        sc.push({
+          channel: encQ.channel,
+          fieldDef: encQ
+        });
+      }
+      return sc;
+    }, []);
+
     return {
-      groupbyChannel: xIsAggregate ? (!!yEncQ ? Y : null) : (!!xEncQ ? X : null),
+      groupbyChannel: xIsAggregate ?
+          (!!yEncQ ? Channel.Y : null) : (!!xEncQ ? Channel.X : null),
       groupByEncQ: xIsAggregate ? yEncQ : xEncQ,
-      fieldChannel: xIsAggregate ? X : Y,
+      fieldChannel: xIsAggregate ? Channel.X : Channel.Y,
       fieldEncQ: xIsAggregate ? xEncQ : yEncQ,
-      impute: contains(['area', 'line'], specQ.mark),
+      impute: contains([Mark.AREA, Mark.LINE], specQ.mark),
       stackBy: stackBy,
-      offset: stacked || 'zero'
+      offset: stack || 'zero'
     };
   }
-  return null;
+
+  return undefined;
 }
+
+// /**
+//  * @return the stack offset type for the specQuery
+//  */
+// export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQuery, groupByEncQ: EncodingQuery} {
+//   const config = specQ.config;
+//   const stacked = config ? config.stack : undefined;
+
+//   // Should not have stack explicitly disabled
+//   if (contains(['none', null, false], stacked)) {
+//     return null;
+//   }
+
+//   // Should have stackable mark
+//   if (!contains(['bar', 'area'], specQ.mark)) {
+//     return null;
+//   }
+
+//   // Should be aggregate plot
+//   if (!isAggregate(specQ)) {
+//     return null;
+//   }
+
+//   const stackBy = specQ.encodings.reduce((sc, encQ: EncodingQuery) => {
+//     if (contains(NONSPATIAL_CHANNELS, encQ.channel) && (isValueQuery(encQ) || (isFieldQuery(encQ) &&!encQ.aggregate))) {
+//       sc.push({
+//         channel: encQ.channel,
+//         fieldDef: encQ
+//       });
+//     }
+//     return sc;
+//   }, []);
+
+//   if (stackBy.length === 0) {
+//     return null;
+//   }
+
+//   // Has only one aggregate axis
+//   const xEncQ = specQ.encodings.reduce((f, encQ: EncodingQuery) => {
+//     return f || (encQ.channel === Channel.X ? encQ : null);
+//   }, null);
+//   const yEncQ = specQ.encodings.reduce((f, encQ: EncodingQuery) => {
+//     return f || (encQ.channel === Channel.Y ? encQ : null);
+//   }, null);
+
+//   // TODO(akshatsh): Check if autoCount undef is ok
+//   const xIsAggregate = (isFieldQuery(xEncQ) && !!xEncQ.aggregate) || (isAutoCountQuery(xEncQ) &&!!xEncQ.autoCount);
+//   const yIsAggregate = (isFieldQuery(yEncQ) && !!yEncQ.aggregate) || (isAutoCountQuery(yEncQ) &&!!yEncQ.autoCount);
+
+//   if (xIsAggregate !== yIsAggregate) {
+//     return {
+//       groupbyChannel: xIsAggregate ? (!!yEncQ ? Y : null) : (!!xEncQ ? X : null),
+//       groupByEncQ: xIsAggregate ? yEncQ : xEncQ,
+//       fieldChannel: xIsAggregate ? X : Y,
+//       fieldEncQ: xIsAggregate ? xEncQ : yEncQ,
+//       impute: contains(['area', 'line'], specQ.mark),
+//       stackBy: stackBy,
+//       offset: stacked || 'zero'
+//     };
+//   }
+//   return null;
+// }
 
 export function hasWildcard(specQ: SpecQuery, opt: {exclude?: Property[]} = {}) {
   const exclude = opt.exclude ? toMap(opt.exclude.map(toKey)) : {};
