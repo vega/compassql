@@ -34,9 +34,13 @@ export interface SpecQuery {
   encodings: EncodingQuery[];
 
   /**
-   * Width and height
+   * The width of the resulting encodings, does not support wildcards.
    */
   width?: number;
+
+  /**
+   * The height of the resulting encodings, does not support wildcards.
+   */
   height?: number;
 
   // TODO: make config query (not important at all, only for the sake of completeness.)
