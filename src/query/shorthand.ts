@@ -134,6 +134,13 @@ export function spec(specQ: SpecQuery,
     }
   }
 
+  if (!!specQ.width) {
+    parts.push(`width=${specQ.width}`);
+  }
+  if (!!specQ.height) {
+    parts.push(`height=${specQ.height}`);
+  }
+
   return parts.join('|');
 }
 

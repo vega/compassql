@@ -799,4 +799,40 @@ describe('query/shorthand', () => {
        assert.equal(str, 'a,?');
     });
   });
+
+  describe('width and height', () => {
+    it('should return correct shorthand string for width in a SpecQuery', () => {
+      const str = specShorthand({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'a', type: Type.QUANTITATIVE}
+        ],
+        width: 1440
+      });
+      assert.equal(str, 'point|x:a,q|width=1440');
+    });
+
+    it('should return correct shorthand string for height in a SpecQuery', () => {
+      const str = specShorthand({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'a', type: Type.QUANTITATIVE}
+        ],
+        height: 1080
+      });
+      assert.equal(str, 'point|x:a,q|height=1080');
+    });
+
+    it('should return correct shorthand string for width and height in a SpecQuery', () => {
+      const str = specShorthand({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'a', type: Type.QUANTITATIVE}
+        ],
+        width: 1440,
+        height: 1080
+      });
+      assert.equal(str, 'point|x:a,q|width=1440|height=1080');
+    });
+  });
 });
