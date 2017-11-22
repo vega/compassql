@@ -34,12 +34,14 @@ export interface SpecQuery {
   encodings: EncodingQuery[];
 
   /**
-   * The width of the resulting encodings, does not support wildcards.
+   * The width of the resulting encodings.
+   * __NOTE:__ Does not support wildcards.
    */
   width?: number;
 
   /**
-   * The height of the resulting encodings, does not support wildcards.
+   * The height of the resulting encodings.
+   * __NOTE:__ Does not support wildcards.
    */
   height?: number;
 
