@@ -58,7 +58,10 @@ export function isEnabledAutoCountQuery(encQ: EncodingQuery) {
  */
 export interface AutoCountQuery extends EncodingQueryBase {
   /**
-   * A count function that gets added internally if the config.autoCount flag in on.  This allows us to add one extra encoding mapping if needed when the query produces plot that only have discrete fields.  In such cases, adding count make the output plots way more meaningful.
+   * A count function that gets added internally if the config.autoCount flag in on.
+   * This allows us to add one extra encoding mapping if needed when the query produces
+   * plot that only have discrete fields.  
+   * In such cases, adding count make the output plots way more meaningful.
    */
   autoCount: WildcardProperty<boolean>;
   type: 'quantitative';
