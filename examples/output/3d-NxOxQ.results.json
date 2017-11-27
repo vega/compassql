@@ -261,16 +261,16 @@
       "orderGroupBy": "effectiveness"
     },
     {
-      "name": "Cylinders|Origin|bin(Acceleration)",
-      "path": "/Cylinders|Origin|bin(Acceleration)",
+      "name": "Cylinders|Origin|autocount()|bin(Acceleration)",
+      "path": "/Cylinders|Origin|autocount()|bin(Acceleration)",
       "items": [
         {
-          "name": "facet:Cylinders|style|xy:Origin|xy:bin(Acceleration)",
-          "path": "/Cylinders|Origin|bin(Acceleration)/facet:Cylinders|style|xy:Origin|xy:bin(Acceleration)",
+          "name": "facet:Cylinders|style:autocount()|xy:Origin|xy:bin(Acceleration)",
+          "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:Cylinders|style:autocount()|xy:Origin|xy:bin(Acceleration)",
           "items": [
             {
-              "name": "facet:Cylinders|style|xy:Origin|xy:bin(Acceleration)",
-              "path": "/Cylinders|Origin|bin(Acceleration)/facet:Cylinders|style|xy:Origin|xy:bin(Acceleration)/facet:Cylinders|style|xy:Origin|xy:bin(Acceleration)",
+              "name": "facet:Cylinders|style:autocount()|xy:Origin|xy:bin(Acceleration)",
+              "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:Cylinders|style:autocount()|xy:Origin|xy:bin(Acceleration)/facet:Cylinders|style:autocount()|xy:Origin|xy:bin(Acceleration)",
               "items": [
                 "point|row:Cylinders,n|size:count(*,q)|x:bin(Acceleration,q)|y:Origin,o,scale={\"rangeStep\":12}",
                 "point|column:Cylinders,n|size:count(*,q)|x:bin(Acceleration,q)|y:Origin,o",
@@ -289,12 +289,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:Origin|style|xy:Cylinders|xy:bin(Acceleration)",
-          "path": "/Cylinders|Origin|bin(Acceleration)/facet:Origin|style|xy:Cylinders|xy:bin(Acceleration)",
+          "name": "facet:Origin|style:autocount()|xy:Cylinders|xy:bin(Acceleration)",
+          "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:Origin|style:autocount()|xy:Cylinders|xy:bin(Acceleration)",
           "items": [
             {
-              "name": "facet:Origin|style|xy:Cylinders|xy:bin(Acceleration)",
-              "path": "/Cylinders|Origin|bin(Acceleration)/facet:Origin|style|xy:Cylinders|xy:bin(Acceleration)/facet:Origin|style|xy:Cylinders|xy:bin(Acceleration)",
+              "name": "facet:Origin|style:autocount()|xy:Cylinders|xy:bin(Acceleration)",
+              "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:Origin|style:autocount()|xy:Cylinders|xy:bin(Acceleration)/facet:Origin|style:autocount()|xy:Cylinders|xy:bin(Acceleration)",
               "items": [
                 "point|row:Origin,o|size:count(*,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "point|column:Origin,o|size:count(*,q)|x:bin(Acceleration,q)|y:Cylinders,n",
@@ -313,12 +313,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:bin(Acceleration)|style|xy:Cylinders|xy:Origin",
-          "path": "/Cylinders|Origin|bin(Acceleration)/facet:bin(Acceleration)|style|xy:Cylinders|xy:Origin",
+          "name": "facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:Origin",
+          "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:Origin",
           "items": [
             {
-              "name": "facet:bin(Acceleration)|style|xy:Cylinders|xy:Origin",
-              "path": "/Cylinders|Origin|bin(Acceleration)/facet:bin(Acceleration)|style|xy:Cylinders|xy:Origin/facet:bin(Acceleration)|style|xy:Cylinders|xy:Origin",
+              "name": "facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:Origin",
+              "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:Origin/facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:Origin",
               "items": [
                 "point|row:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n|y:Origin,o,scale={\"rangeStep\":12}",
                 "point|row:bin(Acceleration,q)|size:count(*,q)|x:Origin,o|y:Cylinders,n,scale={\"rangeStep\":12}",
@@ -337,12 +337,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:Cylinders|facet:bin(Acceleration)|xy|xy:Origin",
-          "path": "/Cylinders|Origin|bin(Acceleration)/facet:Cylinders|facet:bin(Acceleration)|xy|xy:Origin",
+          "name": "facet:Cylinders|facet:bin(Acceleration)|xy:Origin|xy:autocount()",
+          "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:Cylinders|facet:bin(Acceleration)|xy:Origin|xy:autocount()",
           "items": [
             {
-              "name": "facet:Cylinders|facet:bin(Acceleration)|xy|xy:Origin",
-              "path": "/Cylinders|Origin|bin(Acceleration)/facet:Cylinders|facet:bin(Acceleration)|xy|xy:Origin/facet:Cylinders|facet:bin(Acceleration)|xy|xy:Origin",
+              "name": "facet:Cylinders|facet:bin(Acceleration)|xy:Origin|xy:autocount()",
+              "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:Cylinders|facet:bin(Acceleration)|xy:Origin|xy:autocount()/facet:Cylinders|facet:bin(Acceleration)|xy:Origin|xy:autocount()",
               "items": [
                 "bar|column:Cylinders,n|row:bin(Acceleration,q)|x:count(*,q)|y:Origin,o,scale={\"rangeStep\":12}",
                 "bar|column:bin(Acceleration,q)|row:Cylinders,n|x:count(*,q)|y:Origin,o,scale={\"rangeStep\":12}",
@@ -373,12 +373,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:Cylinders|facet:Origin|xy|xy:bin(Acceleration)",
-          "path": "/Cylinders|Origin|bin(Acceleration)/facet:Cylinders|facet:Origin|xy|xy:bin(Acceleration)",
+          "name": "facet:Cylinders|facet:Origin|xy:autocount()|xy:bin(Acceleration)",
+          "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:Cylinders|facet:Origin|xy:autocount()|xy:bin(Acceleration)",
           "items": [
             {
-              "name": "facet:Cylinders|facet:Origin|xy|xy:bin(Acceleration)",
-              "path": "/Cylinders|Origin|bin(Acceleration)/facet:Cylinders|facet:Origin|xy|xy:bin(Acceleration)/facet:Cylinders|facet:Origin|xy|xy:bin(Acceleration)",
+              "name": "facet:Cylinders|facet:Origin|xy:autocount()|xy:bin(Acceleration)",
+              "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:Cylinders|facet:Origin|xy:autocount()|xy:bin(Acceleration)/facet:Cylinders|facet:Origin|xy:autocount()|xy:bin(Acceleration)",
               "items": [
                 "bar|column:Cylinders,n|row:Origin,o|x:bin(Acceleration,q)|y:count(*,q)",
                 "bar|column:Origin,o|row:Cylinders,n|x:bin(Acceleration,q)|y:count(*,q)",
@@ -409,12 +409,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:Origin|facet:bin(Acceleration)|xy|xy:Cylinders",
-          "path": "/Cylinders|Origin|bin(Acceleration)/facet:Origin|facet:bin(Acceleration)|xy|xy:Cylinders",
+          "name": "facet:Origin|facet:bin(Acceleration)|xy:Cylinders|xy:autocount()",
+          "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:Origin|facet:bin(Acceleration)|xy:Cylinders|xy:autocount()",
           "items": [
             {
-              "name": "facet:Origin|facet:bin(Acceleration)|xy|xy:Cylinders",
-              "path": "/Cylinders|Origin|bin(Acceleration)/facet:Origin|facet:bin(Acceleration)|xy|xy:Cylinders/facet:Origin|facet:bin(Acceleration)|xy|xy:Cylinders",
+              "name": "facet:Origin|facet:bin(Acceleration)|xy:Cylinders|xy:autocount()",
+              "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:Origin|facet:bin(Acceleration)|xy:Cylinders|xy:autocount()/facet:Origin|facet:bin(Acceleration)|xy:Cylinders|xy:autocount()",
               "items": [
                 "bar|column:Origin,o|row:bin(Acceleration,q)|x:count(*,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "bar|column:bin(Acceleration,q)|row:Origin,o|x:count(*,q)|y:Cylinders,n,scale={\"rangeStep\":12}",

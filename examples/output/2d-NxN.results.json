@@ -3,16 +3,16 @@
   "path": "",
   "items": [
     {
-      "name": "Creative_Type|Major_Genre",
-      "path": "/Creative_Type|Major_Genre",
+      "name": "Creative_Type|Major_Genre|autocount()",
+      "path": "/Creative_Type|Major_Genre|autocount()",
       "items": [
         {
-          "name": "style|xy:Creative_Type|xy:Major_Genre",
-          "path": "/Creative_Type|Major_Genre/style|xy:Creative_Type|xy:Major_Genre",
+          "name": "style:autocount()|xy:Creative_Type|xy:Major_Genre",
+          "path": "/Creative_Type|Major_Genre|autocount()/style:autocount()|xy:Creative_Type|xy:Major_Genre",
           "items": [
             {
-              "name": "style|xy:Creative_Type|xy:Major_Genre",
-              "path": "/Creative_Type|Major_Genre/style|xy:Creative_Type|xy:Major_Genre/style|xy:Creative_Type|xy:Major_Genre",
+              "name": "style:autocount()|xy:Creative_Type|xy:Major_Genre",
+              "path": "/Creative_Type|Major_Genre|autocount()/style:autocount()|xy:Creative_Type|xy:Major_Genre/style:autocount()|xy:Creative_Type|xy:Major_Genre",
               "items": [
                 "point|size:count(*,q)|x:Major_Genre,n,scale={\"rangeStep\":12}|y:Creative_Type,n",
                 "point|size:count(*,q)|x:Creative_Type,n|y:Major_Genre,n,scale={\"rangeStep\":12}",
@@ -27,12 +27,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:Creative_Type|xy|xy:Major_Genre",
-          "path": "/Creative_Type|Major_Genre/facet:Creative_Type|xy|xy:Major_Genre",
+          "name": "facet:Creative_Type|xy:Major_Genre|xy:autocount()",
+          "path": "/Creative_Type|Major_Genre|autocount()/facet:Creative_Type|xy:Major_Genre|xy:autocount()",
           "items": [
             {
-              "name": "facet:Creative_Type|xy|xy:Major_Genre",
-              "path": "/Creative_Type|Major_Genre/facet:Creative_Type|xy|xy:Major_Genre/facet:Creative_Type|xy|xy:Major_Genre",
+              "name": "facet:Creative_Type|xy:Major_Genre|xy:autocount()",
+              "path": "/Creative_Type|Major_Genre|autocount()/facet:Creative_Type|xy:Major_Genre|xy:autocount()/facet:Creative_Type|xy:Major_Genre|xy:autocount()",
               "items": [
                 "bar|row:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
                 "bar|column:Creative_Type,n|x:count(*,q)|y:Major_Genre,n,scale={\"rangeStep\":12}",
@@ -55,12 +55,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:Major_Genre|xy|xy:Creative_Type",
-          "path": "/Creative_Type|Major_Genre/facet:Major_Genre|xy|xy:Creative_Type",
+          "name": "facet:Major_Genre|xy:Creative_Type|xy:autocount()",
+          "path": "/Creative_Type|Major_Genre|autocount()/facet:Major_Genre|xy:Creative_Type|xy:autocount()",
           "items": [
             {
-              "name": "facet:Major_Genre|xy|xy:Creative_Type",
-              "path": "/Creative_Type|Major_Genre/facet:Major_Genre|xy|xy:Creative_Type/facet:Major_Genre|xy|xy:Creative_Type",
+              "name": "facet:Major_Genre|xy:Creative_Type|xy:autocount()",
+              "path": "/Creative_Type|Major_Genre|autocount()/facet:Major_Genre|xy:Creative_Type|xy:autocount()/facet:Major_Genre|xy:Creative_Type|xy:autocount()",
               "items": [
                 "bar|row:Major_Genre,n|x:count(*,q)|y:Creative_Type,n,scale={\"rangeStep\":12}",
                 "bar|column:Major_Genre,n|x:count(*,q)|y:Creative_Type,n",

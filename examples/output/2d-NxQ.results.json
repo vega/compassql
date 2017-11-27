@@ -89,16 +89,16 @@
       "orderGroupBy": "effectiveness"
     },
     {
-      "name": "Origin|bin(Horsepower)",
-      "path": "/Origin|bin(Horsepower)",
+      "name": "Origin|autocount()|bin(Horsepower)",
+      "path": "/Origin|autocount()|bin(Horsepower)",
       "items": [
         {
-          "name": "style|xy:Origin|xy:bin(Horsepower)",
-          "path": "/Origin|bin(Horsepower)/style|xy:Origin|xy:bin(Horsepower)",
+          "name": "style:autocount()|xy:Origin|xy:bin(Horsepower)",
+          "path": "/Origin|autocount()|bin(Horsepower)/style:autocount()|xy:Origin|xy:bin(Horsepower)",
           "items": [
             {
-              "name": "style|xy:Origin|xy:bin(Horsepower)",
-              "path": "/Origin|bin(Horsepower)/style|xy:Origin|xy:bin(Horsepower)/style|xy:Origin|xy:bin(Horsepower)",
+              "name": "style:autocount()|xy:Origin|xy:bin(Horsepower)",
+              "path": "/Origin|autocount()|bin(Horsepower)/style:autocount()|xy:Origin|xy:bin(Horsepower)/style:autocount()|xy:Origin|xy:bin(Horsepower)",
               "items": [
                 "point|size:count(*,q)|x:bin(Horsepower,q)|y:Origin,n",
                 "point|size:count(*,q)|x:Origin,n|y:bin(Horsepower,q)",
@@ -113,12 +113,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:Origin|xy|xy:bin(Horsepower)",
-          "path": "/Origin|bin(Horsepower)/facet:Origin|xy|xy:bin(Horsepower)",
+          "name": "facet:Origin|xy:autocount()|xy:bin(Horsepower)",
+          "path": "/Origin|autocount()|bin(Horsepower)/facet:Origin|xy:autocount()|xy:bin(Horsepower)",
           "items": [
             {
-              "name": "facet:Origin|xy|xy:bin(Horsepower)",
-              "path": "/Origin|bin(Horsepower)/facet:Origin|xy|xy:bin(Horsepower)/facet:Origin|xy|xy:bin(Horsepower)",
+              "name": "facet:Origin|xy:autocount()|xy:bin(Horsepower)",
+              "path": "/Origin|autocount()|bin(Horsepower)/facet:Origin|xy:autocount()|xy:bin(Horsepower)/facet:Origin|xy:autocount()|xy:bin(Horsepower)",
               "items": [
                 "bar|row:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
                 "bar|column:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
@@ -149,12 +149,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:bin(Horsepower)|xy|xy:Origin",
-          "path": "/Origin|bin(Horsepower)/facet:bin(Horsepower)|xy|xy:Origin",
+          "name": "facet:bin(Horsepower)|xy:Origin|xy:autocount()",
+          "path": "/Origin|autocount()|bin(Horsepower)/facet:bin(Horsepower)|xy:Origin|xy:autocount()",
           "items": [
             {
-              "name": "facet:bin(Horsepower)|xy|xy:Origin",
-              "path": "/Origin|bin(Horsepower)/facet:bin(Horsepower)|xy|xy:Origin/facet:bin(Horsepower)|xy|xy:Origin",
+              "name": "facet:bin(Horsepower)|xy:Origin|xy:autocount()",
+              "path": "/Origin|autocount()|bin(Horsepower)/facet:bin(Horsepower)|xy:Origin|xy:autocount()/facet:bin(Horsepower)|xy:Origin|xy:autocount()",
               "items": [
                 "bar|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,n,scale={\"rangeStep\":12}",
                 "bar|column:bin(Horsepower,q)|x:count(*,q)|y:Origin,n",

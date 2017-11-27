@@ -161,6 +161,8 @@ export function encoding(encQ: EncodingQuery,
     }
   } else if (isValueQuery(encQ)) {
     parts.push(encQ.value);
+  } else if (isAutoCountQuery(encQ)) {
+    parts.push('autocount()');
   }
 
   return parts.join(':');

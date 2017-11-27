@@ -17,8 +17,8 @@
       ]
     },
     {
-      "name": "Cylinders|bin(Horsepower)",
-      "path": "/Cylinders|bin(Horsepower)",
+      "name": "Cylinders|autocount()|bin(Horsepower)",
+      "path": "/Cylinders|autocount()|bin(Horsepower)",
       "items": [
         "point|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o"
       ]

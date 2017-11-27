@@ -3,16 +3,16 @@
   "path": "",
   "items": [
     {
-      "name": "Cylinders",
-      "path": "/Cylinders",
+      "name": "Cylinders|autocount()",
+      "path": "/Cylinders|autocount()",
       "items": [
         {
-          "name": "xy|xy:Cylinders",
-          "path": "/Cylinders/xy|xy:Cylinders",
+          "name": "xy:Cylinders|xy:autocount()",
+          "path": "/Cylinders|autocount()/xy:Cylinders|xy:autocount()",
           "items": [
             {
-              "name": "xy|xy:Cylinders",
-              "path": "/Cylinders/xy|xy:Cylinders/xy|xy:Cylinders",
+              "name": "xy:Cylinders|xy:autocount()",
+              "path": "/Cylinders|autocount()/xy:Cylinders|xy:autocount()/xy:Cylinders|xy:autocount()",
               "items": [
                 "bar|x:count(*,q)|y:Cylinders,o",
                 "bar|x:Cylinders,o|y:count(*,q)",

@@ -3,16 +3,16 @@
   "path": "",
   "items": [
     {
-      "name": "Origin",
-      "path": "/Origin",
+      "name": "Origin|autocount()",
+      "path": "/Origin|autocount()",
       "items": [
         {
-          "name": "xy|xy:Origin",
-          "path": "/Origin/xy|xy:Origin",
+          "name": "xy:Origin|xy:autocount()",
+          "path": "/Origin|autocount()/xy:Origin|xy:autocount()",
           "items": [
             {
-              "name": "xy|xy:Origin",
-              "path": "/Origin/xy|xy:Origin/xy|xy:Origin",
+              "name": "xy:Origin|xy:autocount()",
+              "path": "/Origin|autocount()/xy:Origin|xy:autocount()/xy:Origin|xy:autocount()",
               "items": [
                 "bar|x:count(*,q)|y:Origin,n",
                 "bar|x:Origin,n|y:count(*,q)",

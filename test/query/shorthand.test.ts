@@ -285,7 +285,7 @@ describe('query/shorthand', () => {
           field: getReplacer(REPLACE_BLANK_FIELDS)
         })
       );
-      assert.equal(str, 'a');
+      assert.equal(str, 'a|autocount()');
     });
 
     it('should return correct spec string for ambiguous mark, channel, field, and type', () => {
