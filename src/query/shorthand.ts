@@ -56,7 +56,8 @@ export const INCLUDE_ALL: PropIndex<boolean> =
   [].concat(
     DEFAULT_PROP_PRECEDENCE,
     SORT_PROPS,
-    [Property.TRANSFORM, Property.STACK]
+    [Property.TRANSFORM, Property.STACK],
+    SIZE_PROPS
   )
   .reduce((pi, prop: Property) => pi.set(prop, true), new PropIndex<boolean>());
 
@@ -135,8 +136,9 @@ export function spec(specQ: SpecQuery,
   }
 
   for (let sizeProp of SIZE_PROPS) {
-    if (include.get(sizeProp) && !!specQ[sizeProp as string]) {
-      parts.push(`${sizeProp}=${specQ[sizeProp as string]}`);
+    const prop = sizeProp.toString();
+    if (include.get(sizeProp) && !!specQ[prop]) {
+      parts.push(`${prop}=${specQ[prop]}`);
     }
   }
 
