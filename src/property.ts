@@ -163,7 +163,7 @@ export const DEFAULT_PROP_PRECEDENCE: Property[] =
   'mark', // 'stack',
 
   'scale', 'sort',
-  'axis', 'legend'
+  'axis', 'legend',
 ] as Property[]).concat(
   BIN_PROPS, SCALE_PROPS, AXIS_PROPS, LEGEND_PROPS, SORT_PROPS
 );

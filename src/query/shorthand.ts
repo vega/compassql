@@ -136,9 +136,9 @@ export function spec(specQ: SpecQuery,
   }
 
   for (let sizeProp of SIZE_PROPS) {
-    const prop = sizeProp.toString();
-    if (include.get(sizeProp) && !!specQ[prop]) {
-      parts.push(`${prop}=${specQ[prop]}`);
+    const propString = sizeProp.toString();
+    if (include.get(sizeProp) && !!specQ[propString]) {
+      parts.push(`${propString}=${specQ[propString]}`);
     }
   }
 
