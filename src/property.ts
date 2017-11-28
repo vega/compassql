@@ -16,10 +16,11 @@ import {Diff} from './util';
  * Another is an object that describes a parent property (e.g., `scale`) and the child property (e.g., `type`)
  */
 export type Property = FlatProp | EncodingNestedProp;
-export type FlatProp = MarkProp | TransformProp | EncodingTopLevelProp;
+export type FlatProp = MarkProp | TransformProp | SizeProp | EncodingTopLevelProp;
 
 export type MarkProp = 'mark' | 'stack'; // FIXME: determine how 'stack' works;
 export type TransformProp = keyof TransformQuery;
+export type SizeProp = 'width' | 'height';
 export type EncodingTopLevelProp = Diff<keyof (FieldQuery & ValueQuery & AutoCountQuery), 'description'>; // Do not include description since description is simply a metadata
 
 export type EncodingNestedProp = BinProp | SortProp | ScaleProp | AxisProp | LegendProp;
@@ -101,6 +102,8 @@ export const ENCODING_NESTED_PROPS = ([] as EncodingNestedProp[]).concat(
   BIN_PROPS, SORT_PROPS, SCALE_PROPS, AXIS_PROPS, LEGEND_PROPS
 );
 
+export const SIZE_PROPS: Property[] = ['width', 'height'] as Property[];
+
 const PROP_KEY_DELIMITER = '.';
 
 export function toKey(p: Property): string {
@@ -160,7 +163,10 @@ export const DEFAULT_PROP_PRECEDENCE: Property[] =
   'mark', // 'stack',
 
   'scale', 'sort',
-  'axis', 'legend'
+  'axis', 'legend',
+
+  // size
+  'width', 'height'
 ] as Property[]).concat(
   BIN_PROPS, SCALE_PROPS, AXIS_PROPS, LEGEND_PROPS, SORT_PROPS
 );
@@ -190,4 +196,7 @@ export namespace Property {
   export const AXIS: 'axis' = 'axis';
 
   export const LEGEND: 'legend' = 'legend';
+
+  export const WIDTH: 'width' = 'width';
+  export const HEIGHT: 'height' = 'height';
 }

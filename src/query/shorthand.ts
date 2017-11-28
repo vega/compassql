@@ -8,7 +8,7 @@ import {isString} from 'datalib/src/util';
 import {EncodingQuery, isFieldQuery, FieldQuery, isValueQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, isAutoCountQuery, FieldQueryBase} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
 import {isWildcard, isShortWildcard, SHORT_WILDCARD} from '../wildcard';
-import {getEncodingNestedProp, Property, isEncodingNestedParent, DEFAULT_PROP_PRECEDENCE, SORT_PROPS, EncodingNestedChildProp} from '../property';
+import {getEncodingNestedProp, Property, isEncodingNestedParent, DEFAULT_PROP_PRECEDENCE, SIZE_PROPS, SORT_PROPS, EncodingNestedChildProp} from '../property';
 import {PropIndex} from '../propindex';
 import {Dict, keys, isArray, isBoolean} from '../util';
 
@@ -134,11 +134,10 @@ export function spec(specQ: SpecQuery,
     }
   }
 
-  if (!!specQ.width) {
-    parts.push(`width=${specQ.width}`);
-  }
-  if (!!specQ.height) {
-    parts.push(`height=${specQ.height}`);
+  for (let sizeProp of SIZE_PROPS) {
+    if (include.get(sizeProp)) {
+      parts.push(`${sizeProp}=${specQ[sizeProp as string]}`);
+    }
   }
 
   return parts.join('|');
