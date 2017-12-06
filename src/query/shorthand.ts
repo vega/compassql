@@ -8,7 +8,7 @@ import {isString} from 'datalib/src/util';
 import {EncodingQuery, isFieldQuery, FieldQuery, isValueQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, isAutoCountQuery, FieldQueryBase} from './encoding';
 import {SpecQuery, stack, fromSpec} from './spec';
 import {isWildcard, isShortWildcard, SHORT_WILDCARD} from '../wildcard';
-import {getEncodingNestedProp, Property, isEncodingNestedParent, DEFAULT_PROP_PRECEDENCE, SORT_PROPS, EncodingNestedChildProp} from '../property';
+import {getEncodingNestedProp, Property, isEncodingNestedParent, DEFAULT_PROP_PRECEDENCE, SIZE_PROPS, SORT_PROPS, EncodingNestedChildProp} from '../property';
 import {PropIndex} from '../propindex';
 import {Dict, keys, isArray, isBoolean} from '../util';
 
@@ -56,7 +56,8 @@ export const INCLUDE_ALL: PropIndex<boolean> =
   [].concat(
     DEFAULT_PROP_PRECEDENCE,
     SORT_PROPS,
-    [Property.TRANSFORM, Property.STACK]
+    [Property.TRANSFORM, Property.STACK],
+    SIZE_PROPS
   )
   .reduce((pi, prop: Property) => pi.set(prop, true), new PropIndex<boolean>());
 
@@ -131,6 +132,13 @@ export function spec(specQ: SpecQuery,
 
     if (encodings) {
       parts.push(encodings);
+    }
+  }
+
+  for (let sizeProp of SIZE_PROPS) {
+    const propString = sizeProp.toString();
+    if (include.get(sizeProp) && !!specQ[propString]) {
+      parts.push(`${propString}=${specQ[propString]}`);
     }
   }
 

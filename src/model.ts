@@ -286,6 +286,14 @@ export class SpecQueryModel {
 
     spec.mark = this._spec.mark as Mark;
     spec.encoding = toEncoding(this.specQuery.encodings, {schema: this._schema, wildcardMode: 'null'});
+
+    if (this._spec.width) {
+      spec.width = this._spec.width;
+    }
+    if (this._spec.height) {
+      spec.height = this._spec.height;
+    }
+
     if (spec.encoding === null) {
       return null;
     }
