@@ -1,9 +1,8 @@
 import {Mark} from 'vega-lite/build/src/mark';
 
 import {Wildcard} from './wildcard';
-import {Property, isEncodingProperty, SIZE_PROPS} from './property';
+import {Property, isEncodingProperty} from './property';
 import {PropIndex} from './propindex';
-import {contains} from './util';
 
 
 export interface EncodingsWildcardIndex {
@@ -51,8 +50,6 @@ export class WildcardIndex {
       return this.encodingIndicesByProperty.has(prop);
     } else if (prop === 'mark') {
       return !!this.mark;
-    } else if (contains(SIZE_PROPS, prop)) {
-      return !!this[prop];
     }
     /* istanbul ignore next */
     throw new Error('Unimplemented for property ' + prop);
