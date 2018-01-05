@@ -103,7 +103,9 @@
                 "point|size:count(*,q)|x:bin(Horsepower,q)|y:Origin,n",
                 "point|size:count(*,q)|x:Origin,n|y:bin(Horsepower,q)",
                 "point|color:count(*,q)|x:bin(Horsepower,q)|y:Origin,n",
-                "point|color:count(*,q)|x:Origin,n|y:bin(Horsepower,q)"
+                "rect|color:count(*,q)|x:bin(Horsepower,q)|y:Origin,n",
+                "point|color:count(*,q)|x:Origin,n|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|x:Origin,n|y:bin(Horsepower,q)"
               ]
             }
           ],

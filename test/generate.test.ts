@@ -189,7 +189,7 @@ describe('generate', function () {
         });
       });
 
-      it('should not use tick, bar, line or area', () => {
+      it('should not use tick, bar, line, area, or rect', () => {
         answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), Mark.AREA);
           assert.notEqual(specM.getMark(), Mark.LINE);
@@ -210,7 +210,7 @@ describe('generate', function () {
 
       const answerSet = generate(specQ, schema);
 
-      it('should generate a table with x and y as dimensions with autocount turned off', () => {
+      it('should generate a rect table with x and y as dimensions with autocount turned off', () => {
         answerSet.forEach((specM) => {
           assert.isTrue(
             (specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).type === Type.NOMINAL &&
@@ -295,6 +295,35 @@ describe('generate', function () {
           assert.isFalse(
             (specM.getEncodingQueryByChannel(Channel.X) as FieldQuery).type === Type.NOMINAL &&
             (specM.getEncodingQueryByChannel(Channel.Y) as FieldQuery).type === Type.NOMINAL
+          );
+        });
+      });
+    });
+
+    describe('NxNxQ with x = N1 and y = N2', () => {
+      const specQ: SpecQuery = {
+        mark: SHORT_WILDCARD,
+        encodings: [{
+          channel: Channel.X,
+          field: 'N',
+          type: Type.NOMINAL
+        },{
+          channel: Channel.Y,
+          field: 'N20',
+          type: Type.NOMINAL
+        },{
+          channel: SHORT_WILDCARD,
+          field: 'Q',
+          type: Type.QUANTITATIVE
+        }]
+      };
+
+      const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
+      it('should generate a rect heatmap with color encoding the quantitative measure', () => {
+        answerSet.forEach((specM) => {
+          assert.isTrue(
+            specM.getMark() === Mark.RECT &&
+            (specM.getEncodingQueryByChannel(Channel.COLOR) as FieldQuery).type === Type.QUANTITATIVE
           );
         });
       });
