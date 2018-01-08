@@ -23,7 +23,7 @@ export interface QueryConfig {
   // SPECIAL MODE
   /**
    * Allow automatically adding a special count (autoCount) field for plots
-   * that contain only discrete fields. In such cases, adding count make the 
+   * that contain only discrete fields. In such cases, adding count make the
    * output plots way more meaningful.
    */
   autoAddCount?: boolean;

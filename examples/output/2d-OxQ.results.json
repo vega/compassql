@@ -107,7 +107,9 @@
                 "point|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o",
                 "point|size:count(*,q)|x:Cylinders,o|y:bin(Horsepower,q)",
                 "point|color:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o",
-                "point|color:count(*,q)|x:Cylinders,o|y:bin(Horsepower,q)"
+                "rect|color:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o",
+                "point|color:count(*,q)|x:Cylinders,o|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|x:Cylinders,o|y:bin(Horsepower,q)"
               ]
             }
           ],

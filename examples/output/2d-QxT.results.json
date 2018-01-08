@@ -315,7 +315,9 @@
                 "point|size:count(*,q)|x:bin(IMDB_Rating,q)|y:year(Release_Date,t)",
                 "point|size:count(*,q)|x:year(Release_Date,t)|y:bin(IMDB_Rating,q)",
                 "point|color:count(*,q)|x:bin(IMDB_Rating,q)|y:year(Release_Date,t)",
-                "point|color:count(*,q)|x:year(Release_Date,t)|y:bin(IMDB_Rating,q)"
+                "point|color:count(*,q)|x:year(Release_Date,t)|y:bin(IMDB_Rating,q)",
+                "rect|color:count(*,q)|x:bin(IMDB_Rating,q)|y:year(Release_Date,t)",
+                "rect|color:count(*,q)|x:year(Release_Date,t)|y:bin(IMDB_Rating,q)"
               ]
             }
           ],
@@ -393,7 +395,9 @@
                 "point|size:count(*,q)|x:bin(IMDB_Rating,q)|y:month(Release_Date,t)",
                 "point|size:count(*,q)|x:month(Release_Date,t)|y:bin(IMDB_Rating,q)",
                 "point|color:count(*,q)|x:bin(IMDB_Rating,q)|y:month(Release_Date,t)",
-                "point|color:count(*,q)|x:month(Release_Date,t)|y:bin(IMDB_Rating,q)"
+                "point|color:count(*,q)|x:month(Release_Date,t)|y:bin(IMDB_Rating,q)",
+                "rect|color:count(*,q)|x:bin(IMDB_Rating,q)|y:month(Release_Date,t)",
+                "rect|color:count(*,q)|x:month(Release_Date,t)|y:bin(IMDB_Rating,q)"
               ]
             }
           ],

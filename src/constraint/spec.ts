@@ -238,6 +238,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         case Mark.SQUARE:
         case Mark.TICK:
         case Mark.RULE:
+        case Mark.RECT:
           return specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
         case Mark.POINT:
           // This allows generating a point plot if channel was not a wildcard.
@@ -657,7 +658,29 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
             }
             return false;
           }
+        case Mark.RECT:
+          // Until CompassQL supports layering, it only makes sense for
+          // rect to encode DxD or 1xD (otherwise just use bar).
+          // Furthermore, color should only be used in a 'heatmap' fashion
+          // (with a measure field).
+          const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
+          const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
+          const xIsDimension = isDimension(xEncQ);
+          const yIsDimension = isDimension(yEncQ);
 
+          const colorEncQ = specM.getEncodingQueryByChannel(Channel.COLOR);
+          const colorIsQuantitative = isMeasure(colorEncQ);
+          const colorIsOrdinal = isFieldQuery(colorEncQ) ?
+              colorEncQ.type === Type.ORDINAL : false;
+
+          const correctChannels = (xIsDimension && yIsDimension) ||
+              (xIsDimension && !specM.channelUsed(Channel.Y)) ||
+              (yIsDimension && !specM.channelUsed(Channel.X));
+
+          const correctColor = !colorEncQ ||
+              (colorEncQ && (colorIsQuantitative || colorIsOrdinal));
+
+          return correctChannels && correctColor;
         case Mark.CIRCLE:
         case Mark.POINT:
         case Mark.SQUARE:

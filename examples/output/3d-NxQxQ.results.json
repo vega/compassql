@@ -432,12 +432,16 @@
               "items": [
                 "point|row:Cylinders,n|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
                 "point|row:Cylinders,n|size:count(*,q)|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
-                "point|column:Cylinders,n|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
                 "point|column:Cylinders,n|size:count(*,q)|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
-                "point|color:count(*,q)|row:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "point|column:Cylinders,n|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
                 "point|color:count(*,q)|row:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|row:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
+                "point|color:count(*,q)|row:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "rect|color:count(*,q)|row:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
                 "point|color:count(*,q)|column:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
-                "point|color:count(*,q)|column:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)"
+                "rect|color:count(*,q)|column:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "point|color:count(*,q)|column:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|column:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)"
               ]
             }
           ],
@@ -459,9 +463,13 @@
                 "point|row:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n|y:bin(Horsepower,q)",
                 "point|column:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)",
                 "point|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "point|color:count(*,q)|column:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
+                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
                 "point|color:count(*,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)",
-                "point|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)"
+                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)",
+                "point|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)"
               ]
             }
           ],
@@ -483,9 +491,13 @@
                 "point|row:bin(Horsepower,q)|size:count(*,q)|x:Cylinders,n|y:bin(Acceleration,q)",
                 "point|column:bin(Horsepower,q)|size:count(*,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
                 "point|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "rect|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "point|color:count(*,q)|column:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
+                "rect|color:count(*,q)|column:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
                 "point|color:count(*,q)|row:bin(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)",
-                "point|color:count(*,q)|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)"
+                "rect|color:count(*,q)|row:bin(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)",
+                "point|color:count(*,q)|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
+                "rect|color:count(*,q)|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)"
               ]
             }
           ],
@@ -627,7 +639,9 @@
                 "point|size:mean(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
                 "point|size:mean(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)",
                 "point|color:mean(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
-                "point|color:mean(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)"
+                "rect|color:mean(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
+                "point|color:mean(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)",
+                "rect|color:mean(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)"
               ]
             }
           ],
@@ -777,7 +791,9 @@
                 "point|size:mean(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
                 "point|size:mean(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)",
                 "point|color:mean(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
-                "point|color:mean(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)"
+                "rect|color:mean(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
+                "point|color:mean(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)",
+                "rect|color:mean(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)"
               ]
             }
           ],

@@ -271,11 +271,13 @@ function init() {
         area: -2,
         rule: -2.5
       };
-      // No difference between has occlusion and no occlusion
+
       forEach(ddMark, (score, mark: Mark) => {
         const feature = featurize(xType, yType, true, mark);
         SCORE[feature] = score;
       });
+
+      // same for no occlusion.
       forEach(ddMark, (score, mark: Mark) => {
         const feature = featurize(xType, yType, false, mark);
         SCORE[feature] = score;
