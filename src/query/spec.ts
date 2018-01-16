@@ -46,7 +46,14 @@ export interface SpecQuery {
   height?: number;
 
   /**
+   * CSS color property to use as the background of visualization.
+   * __NOTE:__ Does not support wildcards.
+   */
+  background?: string;
+
+  /**
    * Title for the plot.
+   * __NOTE:__ Does not support wildcards.
    */
   title?: string;
 
