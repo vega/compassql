@@ -53,6 +53,16 @@ export interface SpecQuery {
   background?: string;
 
   /**
+   * The default visualization padding, in pixels, from the edge of the
+   * visualization canvas to the data rectangle. If a number, specifies
+   * padding for all sides. If an object, the value should have the
+   * format {"left": 5, "top": 5, "right": 5, "bottom": 5}
+   * to specify padding for each side of the visualization.
+   * __NOTE:__ Does not support wildcards.
+   */
+  padding?: number | Object;
+
+  /**
    * Title for the plot.
    * __NOTE:__ Does not support wildcards.
    */
@@ -76,6 +86,7 @@ export function fromSpec(spec: TopLevel<FacetedCompositeUnitSpec>): SpecQuery {
     spec.transform ? { transform: spec.transform } : {},
     spec.width ? { width: spec.width } : {},
     spec.height ? { height: spec.height } : {},
+    spec.background ? { background: spec.background } : {},
     spec.title ? { title: spec.title } : {},
     {
       mark: spec.mark,
