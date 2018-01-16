@@ -138,7 +138,8 @@ export function spec(specQ: SpecQuery,
   for (let viewProp of VIEW_PROPS) {
     const propString = viewProp.toString();
     if (include.get(viewProp) && !!specQ[propString]) {
-      parts.push(`${propString}=${JSON.stringify(specQ[propString])}`);
+      const value = specQ[propString];
+      parts.push(`${propString}=${JSON.stringify(value)}`);
     }
   }
 

@@ -58,6 +58,7 @@ export interface SpecQuery {
    * padding for all sides. If an object, the value should have the
    * format {"left": 5, "top": 5, "right": 5, "bottom": 5}
    * to specify padding for each side of the visualization.
+   *
    * __NOTE:__ Does not support wildcards.
    */
   padding?: number | Object;
