@@ -3,6 +3,7 @@ import {Config} from 'vega-lite/build/src/config';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
 import {StackProperties} from 'vega-lite/build/src/stack';
+import {TitleParams} from 'vega-lite/build/src/title';
 
 import {isWildcard, WildcardProperty, Wildcard} from '../wildcard';
 import {isEncodingTopLevelProperty, Property, toKey, FlatProp, EncodingNestedProp} from '../property';
@@ -55,7 +56,7 @@ export interface SpecQuery {
    * Title for the plot.
    * __NOTE:__ Does not support wildcards.
    */
-  title?: string;
+  title?: string | TitleParams;
 
   // TODO: make config query (not important at all, only for the sake of completeness.)
   /**
