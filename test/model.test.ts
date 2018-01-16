@@ -706,6 +706,18 @@ describe('SpecQueryModel', () => {
       assert.equal(specM.toSpec().width, 100);
       assert.equal(specM.toSpec().height, 120);
     });
+
+    it('should return a spec with a title specified', () => {
+      const specM = buildSpecQueryModel({
+        title: 'Big Title',
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'O', type: Type.ORDINAL}
+        ]
+      });
+
+      assert.equal(specM.toSpec().title, 'Big Title');
+    });
   });
 });
 
