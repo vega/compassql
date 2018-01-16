@@ -45,6 +45,11 @@ export interface SpecQuery {
    */
   height?: number;
 
+  /**
+   * Title for the plot.
+   */
+  title?: string;
+
   // TODO: make config query (not important at all, only for the sake of completeness.)
   /**
    * Vega-Lite Configuration
@@ -63,6 +68,7 @@ export function fromSpec(spec: TopLevel<FacetedCompositeUnitSpec>): SpecQuery {
     spec.transform ? { transform: spec.transform } : {},
     spec.width ? { width: spec.width } : {},
     spec.height ? { height: spec.height } : {},
+    spec.title ? { title: spec.title } : {},
     {
       mark: spec.mark,
       encodings: keys(spec.encoding).map((channel: Channel) => {

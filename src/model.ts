@@ -293,6 +293,9 @@ export class SpecQueryModel {
     if (this._spec.height) {
       spec.height = this._spec.height;
     }
+    if(this._spec.title) {
+      spec.title = this._spec.title;
+    }
 
     if (spec.encoding === null) {
       return null;

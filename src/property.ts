@@ -16,11 +16,11 @@ import {Diff} from './util';
  * Another is an object that describes a parent property (e.g., `scale`) and the child property (e.g., `type`)
  */
 export type Property = FlatProp | EncodingNestedProp;
-export type FlatProp = MarkProp | TransformProp | SizeProp | EncodingTopLevelProp;
+export type FlatProp = MarkProp | TransformProp | ViewProp | EncodingTopLevelProp;
 
 export type MarkProp = 'mark' | 'stack'; // FIXME: determine how 'stack' works;
 export type TransformProp = keyof TransformQuery;
-export type SizeProp = 'width' | 'height';
+export type ViewProp = 'width' | 'height' | 'title';
 export type EncodingTopLevelProp = Diff<keyof (FieldQuery & ValueQuery & AutoCountQuery), 'description'>; // Do not include description since description is simply a metadata
 
 export type EncodingNestedProp = BinProp | SortProp | ScaleProp | AxisProp | LegendProp;
@@ -102,7 +102,7 @@ export const ENCODING_NESTED_PROPS = ([] as EncodingNestedProp[]).concat(
   BIN_PROPS, SORT_PROPS, SCALE_PROPS, AXIS_PROPS, LEGEND_PROPS
 );
 
-export const SIZE_PROPS: Property[] = ['width', 'height'] as Property[];
+export const VIEW_PROPS: Property[] = ['width', 'height', 'title'] as Property[];
 
 const PROP_KEY_DELIMITER = '.';
 
@@ -196,4 +196,5 @@ export namespace Property {
 
   export const WIDTH: 'width' = 'width';
   export const HEIGHT: 'height' = 'height';
+  export const TITLE: 'title' = 'title';
 }
