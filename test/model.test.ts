@@ -720,6 +720,21 @@ describe('SpecQueryModel', () => {
       assert.equal(specM.toSpec().background, 'black');
     });
 
+    it('should return a spec with padding as specified', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        padding: {
+          left: 1, top: 2, right: 3, bottom: 4
+        },
+        encodings: [
+          {channel: Channel.X, field: 'O', type: Type.ORDINAL}
+        ]
+      });
+
+      assert.deepEqual(specM.toSpec().padding,
+                       { left: 1, top: 2, right: 3, bottom: 4 });
+    });
+
     it('should return a spec with a title string specified', () => {
       const specM = buildSpecQueryModel({
         title: 'Big Title',

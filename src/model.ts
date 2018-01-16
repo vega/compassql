@@ -296,6 +296,9 @@ export class SpecQueryModel {
     if (this._spec.background) {
       spec.background = this._spec.background;
     }
+    if (this._spec.padding) {
+      spec.padding = this._spec.padding;
+    }
     if(this._spec.title) {
       spec.title = this._spec.title;
     }

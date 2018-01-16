@@ -87,6 +87,7 @@ export function fromSpec(spec: TopLevel<FacetedCompositeUnitSpec>): SpecQuery {
     spec.width ? { width: spec.width } : {},
     spec.height ? { height: spec.height } : {},
     spec.background ? { background: spec.background } : {},
+    spec.padding ? { padding: spec.padding } : {},
     spec.title ? { title: spec.title } : {},
     {
       mark: spec.mark,

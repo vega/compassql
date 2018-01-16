@@ -20,7 +20,7 @@ export type FlatProp = MarkProp | TransformProp | ViewProp | EncodingTopLevelPro
 
 export type MarkProp = 'mark' | 'stack'; // FIXME: determine how 'stack' works;
 export type TransformProp = keyof TransformQuery;
-export type ViewProp = 'width' | 'height' | 'background' | 'title';
+export type ViewProp = 'width' | 'height' | 'background' | 'padding' | 'title';
 export type EncodingTopLevelProp = Diff<keyof (FieldQuery & ValueQuery & AutoCountQuery), 'description'>; // Do not include description since description is simply a metadata
 
 export type EncodingNestedProp = BinProp | SortProp | ScaleProp | AxisProp | LegendProp;
@@ -102,7 +102,7 @@ export const ENCODING_NESTED_PROPS = ([] as EncodingNestedProp[]).concat(
   BIN_PROPS, SORT_PROPS, SCALE_PROPS, AXIS_PROPS, LEGEND_PROPS
 );
 
-export const VIEW_PROPS: Property[] = ['width', 'height', 'background', 'title'] as Property[];
+export const VIEW_PROPS: Property[] = ['width', 'height', 'background', 'padding', 'title'] as Property[];
 
 const PROP_KEY_DELIMITER = '.';
 
@@ -197,5 +197,6 @@ export namespace Property {
   export const WIDTH: 'width' = 'width';
   export const HEIGHT: 'height' = 'height';
   export const BACKGROUND: 'background' = 'background';
+  export const PADDING: 'padding' = 'padding';
   export const TITLE: 'title' = 'title';
 }
