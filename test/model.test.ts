@@ -2,6 +2,7 @@ import {assert} from 'chai';
 import {Channel} from 'vega-lite/build/src/channel';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Type} from 'vega-lite/build/src/type';
+import {TitleParams} from 'vega-lite/build/src/title';
 import {schema} from './fixture';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
@@ -705,6 +706,62 @@ describe('SpecQueryModel', () => {
 
       assert.equal(specM.toSpec().width, 100);
       assert.equal(specM.toSpec().height, 120);
+    });
+
+    it('should return a spec with background color as specified', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        background: 'black',
+        encodings: [
+          {channel: Channel.X, field: 'O', type: Type.ORDINAL}
+        ]
+      });
+
+      assert.equal(specM.toSpec().background, 'black');
+    });
+
+    it('should return a spec with padding as specified', () => {
+      const specM = buildSpecQueryModel({
+        mark: Mark.BAR,
+        padding: {
+          left: 1, top: 2, right: 3, bottom: 4
+        },
+        encodings: [
+          {channel: Channel.X, field: 'O', type: Type.ORDINAL}
+        ]
+      });
+
+      assert.deepEqual(specM.toSpec().padding,
+                       { left: 1, top: 2, right: 3, bottom: 4 });
+    });
+
+    it('should return a spec with a title string specified', () => {
+      const specM = buildSpecQueryModel({
+        title: 'Big Title',
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'O', type: Type.ORDINAL}
+        ]
+      });
+
+      assert.equal(specM.toSpec().title, 'Big Title');
+    });
+
+    it('should return a spec with a title params specified', () => {
+      const specM = buildSpecQueryModel({
+        title: {
+          text: 'A Simple Bar Chart',
+          anchor: 'start'
+        },
+        mark: Mark.BAR,
+        encodings: [
+          {channel: Channel.X, field: 'O', type: Type.ORDINAL}
+        ]
+      });
+
+      const title = specM.toSpec().title as TitleParams;
+      assert.equal(title.text, 'A Simple Bar Chart');
+      assert.equal(title.anchor, 'start');
     });
   });
 });

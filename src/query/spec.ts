@@ -3,6 +3,7 @@ import {Config} from 'vega-lite/build/src/config';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
 import {StackProperties} from 'vega-lite/build/src/stack';
+import {TitleParams} from 'vega-lite/build/src/title';
 
 import {isWildcard, WildcardProperty, Wildcard} from '../wildcard';
 import {isEncodingTopLevelProperty, Property, toKey, FlatProp, EncodingNestedProp} from '../property';
@@ -45,6 +46,29 @@ export interface SpecQuery {
    */
   height?: number;
 
+  /**
+   * CSS color property to use as the background of visualization.
+   * __NOTE:__ Does not support wildcards.
+   */
+  background?: string;
+
+  /**
+   * The default visualization padding, in pixels, from the edge of the
+   * visualization canvas to the data rectangle. If a number, specifies
+   * padding for all sides. If an object, the value should have the
+   * format {"left": 5, "top": 5, "right": 5, "bottom": 5}
+   * to specify padding for each side of the visualization.
+   *
+   * __NOTE:__ Does not support wildcards.
+   */
+  padding?: number | Object;
+
+  /**
+   * Title for the plot.
+   * __NOTE:__ Does not support wildcards.
+   */
+  title?: string | TitleParams;
+
   // TODO: make config query (not important at all, only for the sake of completeness.)
   /**
    * Vega-Lite Configuration
@@ -63,6 +87,9 @@ export function fromSpec(spec: TopLevel<FacetedCompositeUnitSpec>): SpecQuery {
     spec.transform ? { transform: spec.transform } : {},
     spec.width ? { width: spec.width } : {},
     spec.height ? { height: spec.height } : {},
+    spec.background ? { background: spec.background } : {},
+    spec.padding ? { padding: spec.padding } : {},
+    spec.title ? { title: spec.title } : {},
     {
       mark: spec.mark,
       encodings: keys(spec.encoding).map((channel: Channel) => {
