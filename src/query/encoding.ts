@@ -60,7 +60,7 @@ export interface AutoCountQuery extends EncodingQueryBase {
   /**
    * A count function that gets added internally if the config.autoCount flag in on.
    * This allows us to add one extra encoding mapping if needed when the query produces
-   * plot that only have discrete fields.  
+   * plot that only have discrete fields.
    * In such cases, adding count make the output plots way more meaningful.
    */
   autoCount: WildcardProperty<boolean>;
@@ -93,7 +93,7 @@ export interface FieldQueryBase {
   bin?: boolean | BinQuery | SHORT_WILDCARD;
   scale?: boolean | ScaleQuery | SHORT_WILDCARD;
 
-  sort?: SortOrder | SortField;
+  sort?: SortOrder | SortField<string>;
 
   field?: WildcardProperty<string>;
   type?: WildcardProperty<ExpandedType>;

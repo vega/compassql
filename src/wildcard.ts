@@ -160,14 +160,14 @@ export type EnumIndex =
   } &
   DefEnumIndex<FieldDef<string>> &
   {
-    sort: (SortField | SortOrder)[],
+    sort: (SortField<string> | SortOrder)[],
     scale: boolean[],
     axis: boolean[],
     legend: boolean[],
     value: any[],
 
     binProps: Partial<DefEnumIndex<BinParams>>,
-    sortProps: Partial<DefEnumIndex<SortField>>,
+    sortProps: Partial<DefEnumIndex<SortField<string>>>,
     scaleProps: Partial<DefEnumIndex<Scale>>,
     axisProps: Partial<DefEnumIndex<Axis>>,
     legendProps: Partial<DefEnumIndex<Legend>>
@@ -184,7 +184,7 @@ const DEFAULT_BIN_PROPS_ENUM: DefEnumIndex<BinParams> = {
   divide: [[5, 2]]
 };
 
-const DEFAULT_SORT_PROPS: DefEnumIndex<SortField> = {
+const DEFAULT_SORT_PROPS: DefEnumIndex<SortField<string>> = {
   field: [undefined], // This should be never call and instead read from the schema
   op: ['min', 'mean'],
   order: ['ascending', 'descending']
@@ -220,6 +220,8 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   orient: [undefined],
   values: [undefined],
 
+  encoding: [undefined],
+
   domain: DEFAULT_BOOLEAN_ENUM,
 
   grid: DEFAULT_BOOLEAN_ENUM,
@@ -229,6 +231,8 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   labelAngle: [undefined],
   labelOverlap: [undefined],
   labelPadding: [undefined],
+  labelBound: [undefined],
+  labelFlush: [undefined],
 
   maxExtent: [undefined],
   minExtent: [undefined],
@@ -247,6 +251,7 @@ const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
   entryPadding: [undefined],
   orient: ['left', 'right'],
   offset: [undefined],
+  padding: [undefined],
   format: [undefined],
   values: [undefined],
 
