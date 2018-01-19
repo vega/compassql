@@ -1,4 +1,4 @@
-import {Channel, X, Y, NONSPATIAL_CHANNELS} from 'vega-lite/build/src/channel';
+import {Channel, X, Y, NONPOSITION_CHANNELS} from 'vega-lite/build/src/channel';
 import {Config} from 'vega-lite/build/src/config';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
@@ -149,7 +149,7 @@ export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQ
   }
 
   const stackBy = specQ.encodings.reduce((sc, encQ: EncodingQuery) => {
-    if (contains(NONSPATIAL_CHANNELS, encQ.channel) && (isValueQuery(encQ) || (isFieldQuery(encQ) &&!encQ.aggregate))) {
+    if (contains(NONPOSITION_CHANNELS, encQ.channel) && (isValueQuery(encQ) || (isFieldQuery(encQ) &&!encQ.aggregate))) {
       sc.push({
         channel: encQ.channel,
         fieldDef: encQ

@@ -1,6 +1,6 @@
 
 import {SUM_OPS} from 'vega-lite/build/src/aggregate';
-import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/build/src/channel';
+import {Channel, NONPOSITION_CHANNELS, supportMark} from 'vega-lite/build/src/channel';
 import {Mark} from 'vega-lite/build/src/mark';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {Type} from 'vega-lite/build/src/type';
@@ -18,7 +18,7 @@ import {contains, every, some} from '../util';
 
 import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery} from '../query/encoding';
 
-const NONSPATIAL_CHANNELS_INDEX = NONSPATIAL_CHANNELS.reduce((m, channel) => {
+const NONPOSITION_CHANNELS_INDEX = NONPOSITION_CHANNELS.reduce((m, channel) => {
   m[channel] = true;
   return m;
 }, {});
@@ -411,7 +411,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
         const channel = encQ.channel;
         if (!isWildcard(channel)) {
-          if (NONSPATIAL_CHANNELS_INDEX[channel + '']) {
+          if (NONPOSITION_CHANNELS_INDEX[channel + '']) {
             nonPositionChannelCount += 1;
             if (specM.wildcardIndex.hasEncodingProperty(i, Property.CHANNEL)) {
               hasEnumeratedNonPositionChannel = true;

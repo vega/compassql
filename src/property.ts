@@ -25,7 +25,7 @@ export type EncodingTopLevelProp = Diff<keyof (FieldQuery & ValueQuery & AutoCou
 
 export type EncodingNestedProp = BinProp | SortProp | ScaleProp | AxisProp | LegendProp;
 
-export type EncodingNestedChildProp = keyof BinParams | keyof SortField | keyof Scale | keyof Axis | keyof Legend;
+export type EncodingNestedChildProp = keyof BinParams | keyof SortField<string> | keyof Scale | keyof Axis | keyof Legend;
 
 /**
  * An object that describes a parent property (e.g., `scale`) and the child property (e.g., `type`)
@@ -36,7 +36,7 @@ export type BaseEncodingNestedProp<P, T> = {
 };
 
 export type BinProp = BaseEncodingNestedProp<'bin', BinParams>;
-export type SortProp = BaseEncodingNestedProp<'sort', SortField>;
+export type SortProp = BaseEncodingNestedProp<'sort', SortField<string>>;
 export type ScaleProp = BaseEncodingNestedProp<'scale', Scale>;
 export type AxisProp = BaseEncodingNestedProp<'axis', Axis>;
 export type LegendProp = BaseEncodingNestedProp<'legend', Legend>;
@@ -76,7 +76,7 @@ export function isEncodingNestedParent(prop: string): prop is EncodingNestedProp
 
 // FIXME -- we should not have to manually specify these
 export const BIN_CHILD_PROPS: (keyof BinParams)[] = ['maxbins', 'divide', 'extent', 'base', 'step', 'steps', 'minstep'];
-export const SORT_CHILD_PROPS: (keyof SortField)[] = ['field', 'op', 'order'];
+export const SORT_CHILD_PROPS: (keyof SortField<string>)[] = ['field', 'op', 'order'];
 
 const BIN_PROPS = BIN_CHILD_PROPS.map((c): BinProp => {
   return {parent: 'bin', child: c};

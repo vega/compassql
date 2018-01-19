@@ -676,7 +676,7 @@ describe('constraints/field', () => {
       assert.isTrue(FIELD_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('should return false when scale property range with channel x', () => {
+    it('should return true when scale property range with channel x', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
@@ -687,10 +687,10 @@ describe('constraints/field', () => {
         }
       };
 
-      assert.isFalse(FIELD_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+      assert.isTrue(FIELD_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
-    it('should return false when scale property range with channel y', () => {
+    it('should return true when scale property range with channel y', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'y',
@@ -701,7 +701,7 @@ describe('constraints/field', () => {
         }
       };
 
-      assert.isFalse(FIELD_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
+      assert.isTrue(FIELD_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
 
     it('should return false when scale property range with channel row', () => {
