@@ -22,8 +22,9 @@ export interface QueryConfig {
 
   // SPECIAL MODE
   /**
-   * Allow automatically adding a special count (autoCount) field for
-   * plots that contain neither unbinned quantitative field nor temporal field without time unit.
+   * Allow automatically adding a special count (autoCount) field for plots
+   * that contain only discrete fields. In such cases, adding count make the
+   * output plots way more meaningful.
    */
   autoAddCount?: boolean;
 
@@ -46,6 +47,8 @@ export interface QueryConfig {
   omitNonPositionalOrFacetOverPositionalChannels?: boolean;
   omitTableWithOcclusionIfAutoAddCount?: boolean;
   omitVerticalDotPlot?: boolean;
+  omitInvalidStackSpec?: boolean;
+  omitNonSummativeStackSpec?: boolean;
 
   preferredBinAxis?: Channel;
   preferredTemporalAxis?: Channel;
@@ -106,6 +109,8 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   omitNonPositionalOrFacetOverPositionalChannels: true,
   omitTableWithOcclusionIfAutoAddCount: true,
   omitVerticalDotPlot: false,
+  omitInvalidStackSpec: true,
+  omitNonSummativeStackSpec: true,
 
   preferredBinAxis: Channel.X,
   preferredTemporalAxis: Channel.X,

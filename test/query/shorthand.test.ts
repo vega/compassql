@@ -285,7 +285,7 @@ describe('query/shorthand', () => {
           field: getReplacer(REPLACE_BLANK_FIELDS)
         })
       );
-      assert.equal(str, 'a');
+      assert.equal(str, 'a|autocount()');
     });
 
     it('should return correct spec string for ambiguous mark, channel, field, and type', () => {
@@ -377,7 +377,7 @@ describe('query/shorthand', () => {
           {channel: Channel.COLOR, field: 'n1', type: Type.NOMINAL}
         ]
       });
-      assert.equal(str, 'bar|stack={field:sum(q),by:n,offset:zero}|color:n1,n|x:sum(q,q)|y:n,n');
+      assert.equal(str, 'bar|color:n1,n|x:sum(q,q,stack="zero")|y:n,n');
     });
 
     it('should exclude stack for stacked specQuery if we exclude it', () => {
@@ -797,6 +797,54 @@ describe('query/shorthand', () => {
          channel: Channel.X, field: 'a', type: SHORT_WILDCARD
        });
        assert.equal(str, 'a,?');
+    });
+  });
+
+  describe('width and height', () => {
+    it('should return correct shorthand string for width in a SpecQuery', () => {
+      const str = specShorthand({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'a', type: Type.QUANTITATIVE}
+        ],
+        width: 1440
+      });
+      assert.equal(str, 'point|x:a,q|width=1440');
+    });
+
+    it('should return correct shorthand string for height in a SpecQuery', () => {
+      const str = specShorthand({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'a', type: Type.QUANTITATIVE}
+        ],
+        height: 1080
+      });
+      assert.equal(str, 'point|x:a,q|height=1080');
+    });
+
+    it('should return correct shorthand string for width and height in a SpecQuery', () => {
+      const str = specShorthand({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'a', type: Type.QUANTITATIVE}
+        ],
+        width: 1440,
+        height: 1080
+      });
+      assert.equal(str, 'point|x:a,q|width=1440|height=1080');
+    });
+
+    it('should omit width and height from shorthand string if they are not in include', () => {
+      const str = specShorthand({
+        mark: Mark.POINT,
+        encodings: [
+          {channel: Channel.X, field: 'a', type: Type.QUANTITATIVE}
+        ],
+        width: 1440,
+        height: 1080
+      }, INCLUDE_ALL.duplicate().set('width', false).set('height', false));
+      assert.equal(str, 'point|x:a,q');
     });
   });
 });

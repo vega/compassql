@@ -43,16 +43,16 @@
       "orderGroupBy": "effectiveness"
     },
     {
-      "name": "year(Release_Date)",
-      "path": "/year(Release_Date)",
+      "name": "autocount()|year(Release_Date)",
+      "path": "/autocount()|year(Release_Date)",
       "items": [
         {
-          "name": "xy|xy:year(Release_Date)",
-          "path": "/year(Release_Date)/xy|xy:year(Release_Date)",
+          "name": "xy:autocount()|xy:year(Release_Date)",
+          "path": "/autocount()|year(Release_Date)/xy:autocount()|xy:year(Release_Date)",
           "items": [
             {
-              "name": "xy|xy:year(Release_Date)",
-              "path": "/year(Release_Date)/xy|xy:year(Release_Date)/xy|xy:year(Release_Date)",
+              "name": "xy:autocount()|xy:year(Release_Date)",
+              "path": "/autocount()|year(Release_Date)/xy:autocount()|xy:year(Release_Date)/xy:autocount()|xy:year(Release_Date)",
               "items": [
                 "line|x:year(Release_Date,t)|y:count(*,q)",
                 "line|x:count(*,q)|y:year(Release_Date,t)",
@@ -91,16 +91,16 @@
       "orderGroupBy": "effectiveness"
     },
     {
-      "name": "month(Release_Date)",
-      "path": "/month(Release_Date)",
+      "name": "autocount()|month(Release_Date)",
+      "path": "/autocount()|month(Release_Date)",
       "items": [
         {
-          "name": "xy|xy:month(Release_Date)",
-          "path": "/month(Release_Date)/xy|xy:month(Release_Date)",
+          "name": "xy:autocount()|xy:month(Release_Date)",
+          "path": "/autocount()|month(Release_Date)/xy:autocount()|xy:month(Release_Date)",
           "items": [
             {
-              "name": "xy|xy:month(Release_Date)",
-              "path": "/month(Release_Date)/xy|xy:month(Release_Date)/xy|xy:month(Release_Date)",
+              "name": "xy:autocount()|xy:month(Release_Date)",
+              "path": "/autocount()|month(Release_Date)/xy:autocount()|xy:month(Release_Date)/xy:autocount()|xy:month(Release_Date)",
               "items": [
                 "line|x:month(Release_Date,t)|y:count(*,q)",
                 "line|x:count(*,q)|y:month(Release_Date,t)",

@@ -127,21 +127,23 @@
       "orderGroupBy": "effectiveness"
     },
     {
-      "name": "bin(Horsepower)|bin(Miles_per_Gallon)",
-      "path": "/bin(Horsepower)|bin(Miles_per_Gallon)",
+      "name": "autocount()|bin(Horsepower)|bin(Miles_per_Gallon)",
+      "path": "/autocount()|bin(Horsepower)|bin(Miles_per_Gallon)",
       "items": [
         {
-          "name": "style|xy:bin(Horsepower)|xy:bin(Miles_per_Gallon)",
-          "path": "/bin(Horsepower)|bin(Miles_per_Gallon)/style|xy:bin(Horsepower)|xy:bin(Miles_per_Gallon)",
+          "name": "style:autocount()|xy:bin(Horsepower)|xy:bin(Miles_per_Gallon)",
+          "path": "/autocount()|bin(Horsepower)|bin(Miles_per_Gallon)/style:autocount()|xy:bin(Horsepower)|xy:bin(Miles_per_Gallon)",
           "items": [
             {
-              "name": "style|xy:bin(Horsepower)|xy:bin(Miles_per_Gallon)",
-              "path": "/bin(Horsepower)|bin(Miles_per_Gallon)/style|xy:bin(Horsepower)|xy:bin(Miles_per_Gallon)/style|xy:bin(Horsepower)|xy:bin(Miles_per_Gallon)",
+              "name": "style:autocount()|xy:bin(Horsepower)|xy:bin(Miles_per_Gallon)",
+              "path": "/autocount()|bin(Horsepower)|bin(Miles_per_Gallon)/style:autocount()|xy:bin(Horsepower)|xy:bin(Miles_per_Gallon)/style:autocount()|xy:bin(Horsepower)|xy:bin(Miles_per_Gallon)",
               "items": [
                 "point|size:count(*,q)|x:bin(Miles_per_Gallon,q)|y:bin(Horsepower,q)",
                 "point|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Miles_per_Gallon,q)",
                 "point|color:count(*,q)|x:bin(Miles_per_Gallon,q)|y:bin(Horsepower,q)",
-                "point|color:count(*,q)|x:bin(Horsepower,q)|y:bin(Miles_per_Gallon,q)"
+                "rect|color:count(*,q)|x:bin(Miles_per_Gallon,q)|y:bin(Horsepower,q)",
+                "point|color:count(*,q)|x:bin(Horsepower,q)|y:bin(Miles_per_Gallon,q)",
+                "rect|color:count(*,q)|x:bin(Horsepower,q)|y:bin(Miles_per_Gallon,q)"
               ]
             }
           ],
@@ -151,12 +153,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:bin(Horsepower)|xy|xy:bin(Miles_per_Gallon)",
-          "path": "/bin(Horsepower)|bin(Miles_per_Gallon)/facet:bin(Horsepower)|xy|xy:bin(Miles_per_Gallon)",
+          "name": "facet:bin(Horsepower)|xy:autocount()|xy:bin(Miles_per_Gallon)",
+          "path": "/autocount()|bin(Horsepower)|bin(Miles_per_Gallon)/facet:bin(Horsepower)|xy:autocount()|xy:bin(Miles_per_Gallon)",
           "items": [
             {
-              "name": "facet:bin(Horsepower)|xy|xy:bin(Miles_per_Gallon)",
-              "path": "/bin(Horsepower)|bin(Miles_per_Gallon)/facet:bin(Horsepower)|xy|xy:bin(Miles_per_Gallon)/facet:bin(Horsepower)|xy|xy:bin(Miles_per_Gallon)",
+              "name": "facet:bin(Horsepower)|xy:autocount()|xy:bin(Miles_per_Gallon)",
+              "path": "/autocount()|bin(Horsepower)|bin(Miles_per_Gallon)/facet:bin(Horsepower)|xy:autocount()|xy:bin(Miles_per_Gallon)/facet:bin(Horsepower)|xy:autocount()|xy:bin(Miles_per_Gallon)",
               "items": [
                 "bar|row:bin(Horsepower,q)|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
                 "bar|row:bin(Horsepower,q)|x:count(*,q)|y:bin(Miles_per_Gallon,q)",
@@ -187,12 +189,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:bin(Miles_per_Gallon)|xy|xy:bin(Horsepower)",
-          "path": "/bin(Horsepower)|bin(Miles_per_Gallon)/facet:bin(Miles_per_Gallon)|xy|xy:bin(Horsepower)",
+          "name": "facet:bin(Miles_per_Gallon)|xy:autocount()|xy:bin(Horsepower)",
+          "path": "/autocount()|bin(Horsepower)|bin(Miles_per_Gallon)/facet:bin(Miles_per_Gallon)|xy:autocount()|xy:bin(Horsepower)",
           "items": [
             {
-              "name": "facet:bin(Miles_per_Gallon)|xy|xy:bin(Horsepower)",
-              "path": "/bin(Horsepower)|bin(Miles_per_Gallon)/facet:bin(Miles_per_Gallon)|xy|xy:bin(Horsepower)/facet:bin(Miles_per_Gallon)|xy|xy:bin(Horsepower)",
+              "name": "facet:bin(Miles_per_Gallon)|xy:autocount()|xy:bin(Horsepower)",
+              "path": "/autocount()|bin(Horsepower)|bin(Miles_per_Gallon)/facet:bin(Miles_per_Gallon)|xy:autocount()|xy:bin(Horsepower)/facet:bin(Miles_per_Gallon)|xy:autocount()|xy:bin(Horsepower)",
               "items": [
                 "bar|row:bin(Miles_per_Gallon,q)|x:bin(Horsepower,q)|y:count(*,q)",
                 "bar|column:bin(Miles_per_Gallon,q)|x:bin(Horsepower,q)|y:count(*,q)",

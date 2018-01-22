@@ -16,15 +16,16 @@ import {Diff} from './util';
  * Another is an object that describes a parent property (e.g., `scale`) and the child property (e.g., `type`)
  */
 export type Property = FlatProp | EncodingNestedProp;
-export type FlatProp = MarkProp | TransformProp | EncodingTopLevelProp;
+export type FlatProp = MarkProp | TransformProp | ViewProp | EncodingTopLevelProp;
 
 export type MarkProp = 'mark' | 'stack'; // FIXME: determine how 'stack' works;
 export type TransformProp = keyof TransformQuery;
+export type ViewProp = 'width' | 'height' | 'background' | 'padding' | 'title';
 export type EncodingTopLevelProp = Diff<keyof (FieldQuery & ValueQuery & AutoCountQuery), 'description'>; // Do not include description since description is simply a metadata
 
 export type EncodingNestedProp = BinProp | SortProp | ScaleProp | AxisProp | LegendProp;
 
-export type EncodingNestedChildProp = keyof BinParams | keyof SortField | keyof Scale | keyof Axis | keyof Legend;
+export type EncodingNestedChildProp = keyof BinParams | keyof SortField<string> | keyof Scale | keyof Axis | keyof Legend;
 
 /**
  * An object that describes a parent property (e.g., `scale`) and the child property (e.g., `type`)
@@ -35,7 +36,7 @@ export type BaseEncodingNestedProp<P, T> = {
 };
 
 export type BinProp = BaseEncodingNestedProp<'bin', BinParams>;
-export type SortProp = BaseEncodingNestedProp<'sort', SortField>;
+export type SortProp = BaseEncodingNestedProp<'sort', SortField<string>>;
 export type ScaleProp = BaseEncodingNestedProp<'scale', Scale>;
 export type AxisProp = BaseEncodingNestedProp<'axis', Axis>;
 export type LegendProp = BaseEncodingNestedProp<'legend', Legend>;
@@ -47,7 +48,7 @@ export function isEncodingNestedProp(p: Property): p is EncodingNestedProp {
 const ENCODING_TOPLEVEL_PROP_INDEX: Flag<EncodingTopLevelProp> = {
   channel: 1,
   aggregate: 1, autoCount: 1, bin: 1, timeUnit: 1, hasFn: 1,
-  sort: 1,
+  sort: 1, stack: 1,
   field: 1, type: 1,
   scale: 1, axis: 1, legend: 1,
   value: 1
@@ -75,7 +76,7 @@ export function isEncodingNestedParent(prop: string): prop is EncodingNestedProp
 
 // FIXME -- we should not have to manually specify these
 export const BIN_CHILD_PROPS: (keyof BinParams)[] = ['maxbins', 'divide', 'extent', 'base', 'step', 'steps', 'minstep'];
-export const SORT_CHILD_PROPS: (keyof SortField)[] = ['field', 'op', 'order'];
+export const SORT_CHILD_PROPS: (keyof SortField<string>)[] = ['field', 'op', 'order'];
 
 const BIN_PROPS = BIN_CHILD_PROPS.map((c): BinProp => {
   return {parent: 'bin', child: c};
@@ -100,6 +101,8 @@ const LEGEND_PROPS = LEGEND_PROPERTIES.map((c): LegendProp => {
 export const ENCODING_NESTED_PROPS = ([] as EncodingNestedProp[]).concat(
   BIN_PROPS, SORT_PROPS, SCALE_PROPS, AXIS_PROPS, LEGEND_PROPS
 );
+
+export const VIEW_PROPS: Property[] = ['width', 'height', 'background', 'padding', 'title'] as Property[];
 
 const PROP_KEY_DELIMITER = '.';
 
@@ -157,10 +160,10 @@ export const DEFAULT_PROP_PRECEDENCE: Property[] =
   'channel',
 
   // Mark
-  'mark', // 'stack',
+  'mark', 'stack',
 
   'scale', 'sort',
-  'axis', 'legend'
+  'axis', 'legend',
 ] as Property[]).concat(
   BIN_PROPS, SCALE_PROPS, AXIS_PROPS, LEGEND_PROPS, SORT_PROPS
 );
@@ -190,4 +193,10 @@ export namespace Property {
   export const AXIS: 'axis' = 'axis';
 
   export const LEGEND: 'legend' = 'legend';
+
+  export const WIDTH: 'width' = 'width';
+  export const HEIGHT: 'height' = 'height';
+  export const BACKGROUND: 'background' = 'background';
+  export const PADDING: 'padding' = 'padding';
+  export const TITLE: 'title' = 'title';
 }

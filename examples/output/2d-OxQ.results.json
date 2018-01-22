@@ -93,21 +93,23 @@
       "orderGroupBy": "effectiveness"
     },
     {
-      "name": "Cylinders|bin(Horsepower)",
-      "path": "/Cylinders|bin(Horsepower)",
+      "name": "Cylinders|autocount()|bin(Horsepower)",
+      "path": "/Cylinders|autocount()|bin(Horsepower)",
       "items": [
         {
-          "name": "style|xy:Cylinders|xy:bin(Horsepower)",
-          "path": "/Cylinders|bin(Horsepower)/style|xy:Cylinders|xy:bin(Horsepower)",
+          "name": "style:autocount()|xy:Cylinders|xy:bin(Horsepower)",
+          "path": "/Cylinders|autocount()|bin(Horsepower)/style:autocount()|xy:Cylinders|xy:bin(Horsepower)",
           "items": [
             {
-              "name": "style|xy:Cylinders|xy:bin(Horsepower)",
-              "path": "/Cylinders|bin(Horsepower)/style|xy:Cylinders|xy:bin(Horsepower)/style|xy:Cylinders|xy:bin(Horsepower)",
+              "name": "style:autocount()|xy:Cylinders|xy:bin(Horsepower)",
+              "path": "/Cylinders|autocount()|bin(Horsepower)/style:autocount()|xy:Cylinders|xy:bin(Horsepower)/style:autocount()|xy:Cylinders|xy:bin(Horsepower)",
               "items": [
                 "point|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o",
                 "point|size:count(*,q)|x:Cylinders,o|y:bin(Horsepower,q)",
                 "point|color:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o",
-                "point|color:count(*,q)|x:Cylinders,o|y:bin(Horsepower,q)"
+                "rect|color:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o",
+                "point|color:count(*,q)|x:Cylinders,o|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|x:Cylinders,o|y:bin(Horsepower,q)"
               ]
             }
           ],
@@ -117,12 +119,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:bin(Horsepower)|xy|xy:Cylinders",
-          "path": "/Cylinders|bin(Horsepower)/facet:bin(Horsepower)|xy|xy:Cylinders",
+          "name": "facet:bin(Horsepower)|xy:Cylinders|xy:autocount()",
+          "path": "/Cylinders|autocount()|bin(Horsepower)/facet:bin(Horsepower)|xy:Cylinders|xy:autocount()",
           "items": [
             {
-              "name": "facet:bin(Horsepower)|xy|xy:Cylinders",
-              "path": "/Cylinders|bin(Horsepower)/facet:bin(Horsepower)|xy|xy:Cylinders/facet:bin(Horsepower)|xy|xy:Cylinders",
+              "name": "facet:bin(Horsepower)|xy:Cylinders|xy:autocount()",
+              "path": "/Cylinders|autocount()|bin(Horsepower)/facet:bin(Horsepower)|xy:Cylinders|xy:autocount()/facet:bin(Horsepower)|xy:Cylinders|xy:autocount()",
               "items": [
                 "bar|row:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,o,scale={\"rangeStep\":12}",
                 "bar|column:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,o",
@@ -153,12 +155,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:Cylinders|xy|xy:bin(Horsepower)",
-          "path": "/Cylinders|bin(Horsepower)/facet:Cylinders|xy|xy:bin(Horsepower)",
+          "name": "facet:Cylinders|xy:autocount()|xy:bin(Horsepower)",
+          "path": "/Cylinders|autocount()|bin(Horsepower)/facet:Cylinders|xy:autocount()|xy:bin(Horsepower)",
           "items": [
             {
-              "name": "facet:Cylinders|xy|xy:bin(Horsepower)",
-              "path": "/Cylinders|bin(Horsepower)/facet:Cylinders|xy|xy:bin(Horsepower)/facet:Cylinders|xy|xy:bin(Horsepower)",
+              "name": "facet:Cylinders|xy:autocount()|xy:bin(Horsepower)",
+              "path": "/Cylinders|autocount()|bin(Horsepower)/facet:Cylinders|xy:autocount()|xy:bin(Horsepower)/facet:Cylinders|xy:autocount()|xy:bin(Horsepower)",
               "items": [
                 "bar|row:Cylinders,o|x:bin(Horsepower,q)|y:count(*,q)",
                 "bar|column:Cylinders,o|x:bin(Horsepower,q)|y:count(*,q)",

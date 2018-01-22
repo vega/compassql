@@ -5,6 +5,7 @@ import * as vlFieldDef from 'vega-lite/build/src/fielddef';
 import {FieldDef, ValueDef} from 'vega-lite/build/src/fielddef';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Scale} from 'vega-lite/build/src/scale';
+import {StackOffset} from 'vega-lite/build/src/stack';
 import {Legend} from 'vega-lite/build/src/legend';
 import {SortOrder, SortField} from 'vega-lite/build/src/sort';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
@@ -51,7 +52,18 @@ export function isEnabledAutoCountQuery(encQ: EncodingQuery) {
   return isAutoCountQuery(encQ) && encQ.autoCount === true;
 }
 
+/**
+ * A special encoding query that gets added internally if the `config.autoCount` flag is on. See SpecQueryModel.build for its generation.
+ *
+ * __Note:__ this type of query should not be specified by users.
+ */
 export interface AutoCountQuery extends EncodingQueryBase {
+  /**
+   * A count function that gets added internally if the config.autoCount flag in on.
+   * This allows us to add one extra encoding mapping if needed when the query produces
+   * plot that only have discrete fields.
+   * In such cases, adding count make the output plots way more meaningful.
+   */
   autoCount: WildcardProperty<boolean>;
   type: 'quantitative';
 }
@@ -82,7 +94,8 @@ export interface FieldQueryBase {
   bin?: boolean | BinQuery | SHORT_WILDCARD;
   scale?: boolean | ScaleQuery | SHORT_WILDCARD;
 
-  sort?: SortOrder | SortField;
+  sort?: SortOrder | SortField<string>;
+  stack?: StackOffset | SHORT_WILDCARD;
 
   field?: WildcardProperty<string>;
   type?: WildcardProperty<ExpandedType>;
@@ -106,7 +119,7 @@ export type ScaleQuery =  FlatQueryWithEnableFlag<Scale>;
 export type AxisQuery =  FlatQueryWithEnableFlag<Axis>;
 export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 
-const DEFAULT_PROPS = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND];
+const DEFAULT_PROPS = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND, Property.STACK];
 
 export interface ConversionParams {
   schema?: Schema;

@@ -45,16 +45,16 @@
       "orderGroupBy": "effectiveness"
     },
     {
-      "name": "bin(Miles_per_Gallon)",
-      "path": "/bin(Miles_per_Gallon)",
+      "name": "autocount()|bin(Miles_per_Gallon)",
+      "path": "/autocount()|bin(Miles_per_Gallon)",
       "items": [
         {
-          "name": "xy|xy:bin(Miles_per_Gallon)",
-          "path": "/bin(Miles_per_Gallon)/xy|xy:bin(Miles_per_Gallon)",
+          "name": "xy:autocount()|xy:bin(Miles_per_Gallon)",
+          "path": "/autocount()|bin(Miles_per_Gallon)/xy:autocount()|xy:bin(Miles_per_Gallon)",
           "items": [
             {
-              "name": "xy|xy:bin(Miles_per_Gallon)",
-              "path": "/bin(Miles_per_Gallon)/xy|xy:bin(Miles_per_Gallon)/xy|xy:bin(Miles_per_Gallon)",
+              "name": "xy:autocount()|xy:bin(Miles_per_Gallon)",
+              "path": "/autocount()|bin(Miles_per_Gallon)/xy:autocount()|xy:bin(Miles_per_Gallon)/xy:autocount()|xy:bin(Miles_per_Gallon)",
               "items": [
                 "bar|x:bin(Miles_per_Gallon,q)|y:count(*,q)",
                 "bar|x:count(*,q)|y:bin(Miles_per_Gallon,q)",

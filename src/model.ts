@@ -2,13 +2,13 @@ import {Channel} from 'vega-lite/build/src/channel';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Type} from 'vega-lite/build/src/type';
-import {FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
-import {StackProperties} from 'vega-lite/build/src/stack';
+import {TopLevel, FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
+import {StackOffset, StackProperties} from 'vega-lite/build/src/stack';
 import {QueryConfig} from './config';
 import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, isEncodingNestedParent} from './property';
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
-import {SpecQuery, isAggregate, stack} from './query/spec';
+import {SpecQuery, isAggregate, getVlStack, getStackOffset, getStackChannel} from './query/spec';
 import {AutoCountQuery, isFieldQuery, isAutoCountQuery, isDisabledAutoCountQuery, EncodingQuery, toEncoding} from './query/encoding';
 import {ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand} from './query/shorthand';
@@ -230,10 +230,6 @@ export class SpecQueryModel {
     return this._channelFieldCount[channel] > 0;
   }
 
-  public stack(): StackProperties {
-    return stack(this._spec);
-  }
-
   public getEncodings(): EncodingQuery[] {
     // do not include encoding that has autoCount = false because it is not a part of the output spec.
     return this._spec.encodings.filter(encQ => !isDisabledAutoCountQuery(encQ));
@@ -256,6 +252,30 @@ export class SpecQueryModel {
     return isAggregate(this._spec);
   }
 
+  /**
+   * @return The Vega-Lite `StackProperties` object that describes the stack
+   * configuration of `this`. Returns `null` if this is not stackable.
+   */
+  public getVlStack(): StackProperties {
+    return getVlStack(this._spec);
+  }
+
+  /**
+   * @return The `StackOffset` specified in `this`, `undefined` if none
+   * is specified.
+   */
+  public getStackOffset(): StackOffset {
+    return getStackOffset(this._spec);
+  }
+
+  /**
+   * @return The `Channel` in which `stack` is specified in `this`, or
+   * `null` if none is specified.
+   */
+  public getStackChannel(): Channel {
+    return getStackChannel(this._spec);
+  }
+
   public toShorthand(groupBy?: string | (string | ExtendedGroupBy)[]): string {
     if (groupBy) {
       if (isString(groupBy)) {
@@ -271,7 +291,7 @@ export class SpecQueryModel {
    * Convert a query to a Vega-Lite spec if it is completed.
    * @return a Vega-Lite spec if completed, null otherwise.
    */
-  public toSpec(data?: Data): FacetedCompositeUnitSpec {
+  public toSpec(data?: Data): TopLevel<FacetedCompositeUnitSpec> {
     if (isWildcard(this._spec.mark)) return null;
 
     let spec: any = {};
@@ -286,6 +306,23 @@ export class SpecQueryModel {
 
     spec.mark = this._spec.mark as Mark;
     spec.encoding = toEncoding(this.specQuery.encodings, {schema: this._schema, wildcardMode: 'null'});
+
+    if (this._spec.width) {
+      spec.width = this._spec.width;
+    }
+    if (this._spec.height) {
+      spec.height = this._spec.height;
+    }
+    if (this._spec.background) {
+      spec.background = this._spec.background;
+    }
+    if (this._spec.padding) {
+      spec.padding = this._spec.padding;
+    }
+    if(this._spec.title) {
+      spec.title = this._spec.title;
+    }
+
     if (spec.encoding === null) {
       return null;
     }

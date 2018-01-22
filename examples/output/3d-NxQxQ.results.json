@@ -419,25 +419,29 @@
       "orderGroupBy": "effectiveness"
     },
     {
-      "name": "Cylinders|bin(Acceleration)|bin(Horsepower)",
-      "path": "/Cylinders|bin(Acceleration)|bin(Horsepower)",
+      "name": "Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)",
+      "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)",
       "items": [
         {
-          "name": "facet:Cylinders|style|xy:bin(Acceleration)|xy:bin(Horsepower)",
-          "path": "/Cylinders|bin(Acceleration)|bin(Horsepower)/facet:Cylinders|style|xy:bin(Acceleration)|xy:bin(Horsepower)",
+          "name": "facet:Cylinders|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)",
+          "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:Cylinders|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)",
           "items": [
             {
-              "name": "facet:Cylinders|style|xy:bin(Acceleration)|xy:bin(Horsepower)",
-              "path": "/Cylinders|bin(Acceleration)|bin(Horsepower)/facet:Cylinders|style|xy:bin(Acceleration)|xy:bin(Horsepower)/facet:Cylinders|style|xy:bin(Acceleration)|xy:bin(Horsepower)",
+              "name": "facet:Cylinders|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)",
+              "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:Cylinders|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)/facet:Cylinders|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)",
               "items": [
                 "point|row:Cylinders,n|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
                 "point|row:Cylinders,n|size:count(*,q)|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
-                "point|column:Cylinders,n|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
                 "point|column:Cylinders,n|size:count(*,q)|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
-                "point|color:count(*,q)|row:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "point|column:Cylinders,n|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
                 "point|color:count(*,q)|row:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|row:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
+                "point|color:count(*,q)|row:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "rect|color:count(*,q)|row:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
                 "point|color:count(*,q)|column:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
-                "point|color:count(*,q)|column:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)"
+                "rect|color:count(*,q)|column:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "point|color:count(*,q)|column:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|column:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)"
               ]
             }
           ],
@@ -447,21 +451,25 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:bin(Acceleration)|style|xy:Cylinders|xy:bin(Horsepower)",
-          "path": "/Cylinders|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|style|xy:Cylinders|xy:bin(Horsepower)",
+          "name": "facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:bin(Horsepower)",
+          "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:bin(Horsepower)",
           "items": [
             {
-              "name": "facet:bin(Acceleration)|style|xy:Cylinders|xy:bin(Horsepower)",
-              "path": "/Cylinders|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|style|xy:Cylinders|xy:bin(Horsepower)/facet:bin(Acceleration)|style|xy:Cylinders|xy:bin(Horsepower)",
+              "name": "facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:bin(Horsepower)",
+              "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:bin(Horsepower)/facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:bin(Horsepower)",
               "items": [
                 "point|row:bin(Acceleration,q)|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "point|column:bin(Acceleration,q)|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,n",
                 "point|row:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n|y:bin(Horsepower,q)",
                 "point|column:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)",
                 "point|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "point|color:count(*,q)|column:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
+                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
                 "point|color:count(*,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)",
-                "point|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)"
+                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)",
+                "point|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)"
               ]
             }
           ],
@@ -471,21 +479,25 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:bin(Horsepower)|style|xy:Cylinders|xy:bin(Acceleration)",
-          "path": "/Cylinders|bin(Acceleration)|bin(Horsepower)/facet:bin(Horsepower)|style|xy:Cylinders|xy:bin(Acceleration)",
+          "name": "facet:bin(Horsepower)|style:autocount()|xy:Cylinders|xy:bin(Acceleration)",
+          "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Horsepower)|style:autocount()|xy:Cylinders|xy:bin(Acceleration)",
           "items": [
             {
-              "name": "facet:bin(Horsepower)|style|xy:Cylinders|xy:bin(Acceleration)",
-              "path": "/Cylinders|bin(Acceleration)|bin(Horsepower)/facet:bin(Horsepower)|style|xy:Cylinders|xy:bin(Acceleration)/facet:bin(Horsepower)|style|xy:Cylinders|xy:bin(Acceleration)",
+              "name": "facet:bin(Horsepower)|style:autocount()|xy:Cylinders|xy:bin(Acceleration)",
+              "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Horsepower)|style:autocount()|xy:Cylinders|xy:bin(Acceleration)/facet:bin(Horsepower)|style:autocount()|xy:Cylinders|xy:bin(Acceleration)",
               "items": [
                 "point|row:bin(Horsepower,q)|size:count(*,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "point|column:bin(Horsepower,q)|size:count(*,q)|x:bin(Acceleration,q)|y:Cylinders,n",
                 "point|row:bin(Horsepower,q)|size:count(*,q)|x:Cylinders,n|y:bin(Acceleration,q)",
                 "point|column:bin(Horsepower,q)|size:count(*,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
                 "point|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "rect|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "point|color:count(*,q)|column:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
+                "rect|color:count(*,q)|column:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
                 "point|color:count(*,q)|row:bin(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)",
-                "point|color:count(*,q)|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)"
+                "rect|color:count(*,q)|row:bin(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)",
+                "point|color:count(*,q)|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
+                "rect|color:count(*,q)|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)"
               ]
             }
           ],
@@ -495,12 +507,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:Cylinders|facet:bin(Acceleration)|xy|xy:bin(Horsepower)",
-          "path": "/Cylinders|bin(Acceleration)|bin(Horsepower)/facet:Cylinders|facet:bin(Acceleration)|xy|xy:bin(Horsepower)",
+          "name": "facet:Cylinders|facet:bin(Acceleration)|xy:autocount()|xy:bin(Horsepower)",
+          "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:Cylinders|facet:bin(Acceleration)|xy:autocount()|xy:bin(Horsepower)",
           "items": [
             {
-              "name": "facet:Cylinders|facet:bin(Acceleration)|xy|xy:bin(Horsepower)",
-              "path": "/Cylinders|bin(Acceleration)|bin(Horsepower)/facet:Cylinders|facet:bin(Acceleration)|xy|xy:bin(Horsepower)/facet:Cylinders|facet:bin(Acceleration)|xy|xy:bin(Horsepower)",
+              "name": "facet:Cylinders|facet:bin(Acceleration)|xy:autocount()|xy:bin(Horsepower)",
+              "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:Cylinders|facet:bin(Acceleration)|xy:autocount()|xy:bin(Horsepower)/facet:Cylinders|facet:bin(Acceleration)|xy:autocount()|xy:bin(Horsepower)",
               "items": [
                 "bar|column:Cylinders,n|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:count(*,q)",
                 "bar|column:bin(Acceleration,q)|row:Cylinders,n|x:bin(Horsepower,q)|y:count(*,q)",
@@ -531,12 +543,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:Cylinders|facet:bin(Horsepower)|xy|xy:bin(Acceleration)",
-          "path": "/Cylinders|bin(Acceleration)|bin(Horsepower)/facet:Cylinders|facet:bin(Horsepower)|xy|xy:bin(Acceleration)",
+          "name": "facet:Cylinders|facet:bin(Horsepower)|xy:autocount()|xy:bin(Acceleration)",
+          "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:Cylinders|facet:bin(Horsepower)|xy:autocount()|xy:bin(Acceleration)",
           "items": [
             {
-              "name": "facet:Cylinders|facet:bin(Horsepower)|xy|xy:bin(Acceleration)",
-              "path": "/Cylinders|bin(Acceleration)|bin(Horsepower)/facet:Cylinders|facet:bin(Horsepower)|xy|xy:bin(Acceleration)/facet:Cylinders|facet:bin(Horsepower)|xy|xy:bin(Acceleration)",
+              "name": "facet:Cylinders|facet:bin(Horsepower)|xy:autocount()|xy:bin(Acceleration)",
+              "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:Cylinders|facet:bin(Horsepower)|xy:autocount()|xy:bin(Acceleration)/facet:Cylinders|facet:bin(Horsepower)|xy:autocount()|xy:bin(Acceleration)",
               "items": [
                 "bar|column:Cylinders,n|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:count(*,q)",
                 "bar|column:bin(Horsepower,q)|row:Cylinders,n|x:bin(Acceleration,q)|y:count(*,q)",
@@ -567,12 +579,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:bin(Acceleration)|facet:bin(Horsepower)|xy|xy:Cylinders",
-          "path": "/Cylinders|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|facet:bin(Horsepower)|xy|xy:Cylinders",
+          "name": "facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Cylinders|xy:autocount()",
+          "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Cylinders|xy:autocount()",
           "items": [
             {
-              "name": "facet:bin(Acceleration)|facet:bin(Horsepower)|xy|xy:Cylinders",
-              "path": "/Cylinders|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|facet:bin(Horsepower)|xy|xy:Cylinders/facet:bin(Acceleration)|facet:bin(Horsepower)|xy|xy:Cylinders",
+              "name": "facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Cylinders|xy:autocount()",
+              "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Cylinders|xy:autocount()/facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Cylinders|xy:autocount()",
               "items": [
                 "bar|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "bar|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
@@ -627,7 +639,9 @@
                 "point|size:mean(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
                 "point|size:mean(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)",
                 "point|color:mean(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
-                "point|color:mean(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)"
+                "rect|color:mean(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
+                "point|color:mean(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)",
+                "rect|color:mean(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)"
               ]
             }
           ],
@@ -777,7 +791,9 @@
                 "point|size:mean(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
                 "point|size:mean(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)",
                 "point|color:mean(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
-                "point|color:mean(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)"
+                "rect|color:mean(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
+                "point|color:mean(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)",
+                "rect|color:mean(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)"
               ]
             }
           ],

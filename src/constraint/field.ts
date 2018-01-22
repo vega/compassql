@@ -339,6 +339,19 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
       }
       return true;
     }
+  },
+  {
+    name: 'stackMatchesChannel',
+    description: 'stack should only be allowed for x and y channels',
+    properties: [Property.STACK, Property.CHANNEL],
+    allowWildcardForProperties: false,
+    strict: true,
+    satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
+      if (!!fieldQ.stack) {
+        return fieldQ.channel === Channel.X || fieldQ.channel === Channel.Y;
+      }
+      return true;
+    }
   }
 ].map((ec: EncodingConstraint<FieldQuery>) => new EncodingConstraintModel<FieldQuery>(ec));
 

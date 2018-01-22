@@ -265,16 +265,16 @@
       "orderGroupBy": "effectiveness"
     },
     {
-      "name": "bin(IMDB_Rating)|year(Release_Date)",
-      "path": "/bin(IMDB_Rating)|year(Release_Date)",
+      "name": "autocount()|bin(IMDB_Rating)|year(Release_Date)",
+      "path": "/autocount()|bin(IMDB_Rating)|year(Release_Date)",
       "items": [
         {
-          "name": "facet:bin(IMDB_Rating)|xy|xy:year(Release_Date)",
-          "path": "/bin(IMDB_Rating)|year(Release_Date)/facet:bin(IMDB_Rating)|xy|xy:year(Release_Date)",
+          "name": "facet:bin(IMDB_Rating)|xy:autocount()|xy:year(Release_Date)",
+          "path": "/autocount()|bin(IMDB_Rating)|year(Release_Date)/facet:bin(IMDB_Rating)|xy:autocount()|xy:year(Release_Date)",
           "items": [
             {
-              "name": "facet:bin(IMDB_Rating)|xy|xy:year(Release_Date)",
-              "path": "/bin(IMDB_Rating)|year(Release_Date)/facet:bin(IMDB_Rating)|xy|xy:year(Release_Date)/facet:bin(IMDB_Rating)|xy|xy:year(Release_Date)",
+              "name": "facet:bin(IMDB_Rating)|xy:autocount()|xy:year(Release_Date)",
+              "path": "/autocount()|bin(IMDB_Rating)|year(Release_Date)/facet:bin(IMDB_Rating)|xy:autocount()|xy:year(Release_Date)/facet:bin(IMDB_Rating)|xy:autocount()|xy:year(Release_Date)",
               "items": [
                 "line|row:bin(IMDB_Rating,q)|x:year(Release_Date,t)|y:count(*,q)",
                 "line|column:bin(IMDB_Rating,q)|x:year(Release_Date,t)|y:count(*,q)",
@@ -305,17 +305,19 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "style|xy:bin(IMDB_Rating)|xy:year(Release_Date)",
-          "path": "/bin(IMDB_Rating)|year(Release_Date)/style|xy:bin(IMDB_Rating)|xy:year(Release_Date)",
+          "name": "style:autocount()|xy:bin(IMDB_Rating)|xy:year(Release_Date)",
+          "path": "/autocount()|bin(IMDB_Rating)|year(Release_Date)/style:autocount()|xy:bin(IMDB_Rating)|xy:year(Release_Date)",
           "items": [
             {
-              "name": "style|xy:bin(IMDB_Rating)|xy:year(Release_Date)",
-              "path": "/bin(IMDB_Rating)|year(Release_Date)/style|xy:bin(IMDB_Rating)|xy:year(Release_Date)/style|xy:bin(IMDB_Rating)|xy:year(Release_Date)",
+              "name": "style:autocount()|xy:bin(IMDB_Rating)|xy:year(Release_Date)",
+              "path": "/autocount()|bin(IMDB_Rating)|year(Release_Date)/style:autocount()|xy:bin(IMDB_Rating)|xy:year(Release_Date)/style:autocount()|xy:bin(IMDB_Rating)|xy:year(Release_Date)",
               "items": [
                 "point|size:count(*,q)|x:bin(IMDB_Rating,q)|y:year(Release_Date,t)",
                 "point|size:count(*,q)|x:year(Release_Date,t)|y:bin(IMDB_Rating,q)",
                 "point|color:count(*,q)|x:bin(IMDB_Rating,q)|y:year(Release_Date,t)",
-                "point|color:count(*,q)|x:year(Release_Date,t)|y:bin(IMDB_Rating,q)"
+                "point|color:count(*,q)|x:year(Release_Date,t)|y:bin(IMDB_Rating,q)",
+                "rect|color:count(*,q)|x:bin(IMDB_Rating,q)|y:year(Release_Date,t)",
+                "rect|color:count(*,q)|x:year(Release_Date,t)|y:bin(IMDB_Rating,q)"
               ]
             }
           ],
@@ -343,16 +345,16 @@
       "orderGroupBy": "effectiveness"
     },
     {
-      "name": "bin(IMDB_Rating)|month(Release_Date)",
-      "path": "/bin(IMDB_Rating)|month(Release_Date)",
+      "name": "autocount()|bin(IMDB_Rating)|month(Release_Date)",
+      "path": "/autocount()|bin(IMDB_Rating)|month(Release_Date)",
       "items": [
         {
-          "name": "facet:bin(IMDB_Rating)|xy|xy:month(Release_Date)",
-          "path": "/bin(IMDB_Rating)|month(Release_Date)/facet:bin(IMDB_Rating)|xy|xy:month(Release_Date)",
+          "name": "facet:bin(IMDB_Rating)|xy:autocount()|xy:month(Release_Date)",
+          "path": "/autocount()|bin(IMDB_Rating)|month(Release_Date)/facet:bin(IMDB_Rating)|xy:autocount()|xy:month(Release_Date)",
           "items": [
             {
-              "name": "facet:bin(IMDB_Rating)|xy|xy:month(Release_Date)",
-              "path": "/bin(IMDB_Rating)|month(Release_Date)/facet:bin(IMDB_Rating)|xy|xy:month(Release_Date)/facet:bin(IMDB_Rating)|xy|xy:month(Release_Date)",
+              "name": "facet:bin(IMDB_Rating)|xy:autocount()|xy:month(Release_Date)",
+              "path": "/autocount()|bin(IMDB_Rating)|month(Release_Date)/facet:bin(IMDB_Rating)|xy:autocount()|xy:month(Release_Date)/facet:bin(IMDB_Rating)|xy:autocount()|xy:month(Release_Date)",
               "items": [
                 "line|row:bin(IMDB_Rating,q)|x:month(Release_Date,t)|y:count(*,q)",
                 "line|column:bin(IMDB_Rating,q)|x:month(Release_Date,t)|y:count(*,q)",
@@ -383,17 +385,19 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "style|xy:bin(IMDB_Rating)|xy:month(Release_Date)",
-          "path": "/bin(IMDB_Rating)|month(Release_Date)/style|xy:bin(IMDB_Rating)|xy:month(Release_Date)",
+          "name": "style:autocount()|xy:bin(IMDB_Rating)|xy:month(Release_Date)",
+          "path": "/autocount()|bin(IMDB_Rating)|month(Release_Date)/style:autocount()|xy:bin(IMDB_Rating)|xy:month(Release_Date)",
           "items": [
             {
-              "name": "style|xy:bin(IMDB_Rating)|xy:month(Release_Date)",
-              "path": "/bin(IMDB_Rating)|month(Release_Date)/style|xy:bin(IMDB_Rating)|xy:month(Release_Date)/style|xy:bin(IMDB_Rating)|xy:month(Release_Date)",
+              "name": "style:autocount()|xy:bin(IMDB_Rating)|xy:month(Release_Date)",
+              "path": "/autocount()|bin(IMDB_Rating)|month(Release_Date)/style:autocount()|xy:bin(IMDB_Rating)|xy:month(Release_Date)/style:autocount()|xy:bin(IMDB_Rating)|xy:month(Release_Date)",
               "items": [
                 "point|size:count(*,q)|x:bin(IMDB_Rating,q)|y:month(Release_Date,t)",
                 "point|size:count(*,q)|x:month(Release_Date,t)|y:bin(IMDB_Rating,q)",
                 "point|color:count(*,q)|x:bin(IMDB_Rating,q)|y:month(Release_Date,t)",
-                "point|color:count(*,q)|x:month(Release_Date,t)|y:bin(IMDB_Rating,q)"
+                "point|color:count(*,q)|x:month(Release_Date,t)|y:bin(IMDB_Rating,q)",
+                "rect|color:count(*,q)|x:bin(IMDB_Rating,q)|y:month(Release_Date,t)",
+                "rect|color:count(*,q)|x:month(Release_Date,t)|y:bin(IMDB_Rating,q)"
               ]
             }
           ],
@@ -403,12 +407,12 @@
           "orderGroupBy": "effectiveness"
         },
         {
-          "name": "facet:month(Release_Date)|xy|xy:bin(IMDB_Rating)",
-          "path": "/bin(IMDB_Rating)|month(Release_Date)/facet:month(Release_Date)|xy|xy:bin(IMDB_Rating)",
+          "name": "facet:month(Release_Date)|xy:autocount()|xy:bin(IMDB_Rating)",
+          "path": "/autocount()|bin(IMDB_Rating)|month(Release_Date)/facet:month(Release_Date)|xy:autocount()|xy:bin(IMDB_Rating)",
           "items": [
             {
-              "name": "facet:month(Release_Date)|xy|xy:bin(IMDB_Rating)",
-              "path": "/bin(IMDB_Rating)|month(Release_Date)/facet:month(Release_Date)|xy|xy:bin(IMDB_Rating)/facet:month(Release_Date)|xy|xy:bin(IMDB_Rating)",
+              "name": "facet:month(Release_Date)|xy:autocount()|xy:bin(IMDB_Rating)",
+              "path": "/autocount()|bin(IMDB_Rating)|month(Release_Date)/facet:month(Release_Date)|xy:autocount()|xy:bin(IMDB_Rating)/facet:month(Release_Date)|xy:autocount()|xy:bin(IMDB_Rating)",
               "items": [
                 "bar|row:month(Release_Date,t)|x:bin(IMDB_Rating,q)|y:count(*,q)",
                 "bar|row:month(Release_Date,t)|x:count(*,q)|y:bin(IMDB_Rating,q)",

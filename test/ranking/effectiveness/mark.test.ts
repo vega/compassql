@@ -1,4 +1,4 @@
-import {POINT, TICK, BAR, LINE, AREA, RULE, TEXT as TEXTMARK, Mark} from 'vega-lite/build/src/mark';
+import {POINT, TICK, BAR, LINE, AREA, RECT, RULE, TEXT as TEXTMARK, Mark} from 'vega-lite/build/src/mark';
 
 import {BIN_Q, TIMEUNIT_O, TIMEUNIT_T, Q, N, O, T} from '../../../src/ranking/effectiveness/type';
 import {MarkScorer, featurize} from '../../../src/ranking/effectiveness/mark';
@@ -217,10 +217,7 @@ export const DD_RULESET = {
     const _rules: Rule[] = [];
     [TIMEUNIT_O, O, BIN_Q, N].forEach((xType) => {
       [TIMEUNIT_O, O, BIN_Q, N].forEach((yType) => {
-        const ddRank = [POINT, TEXTMARK, TICK, [BAR, LINE, AREA], RULE];
-
-        // TODO: RECT is not bad here.
-
+        const ddRank = [[POINT, RECT], TEXTMARK, TICK, [BAR, LINE, AREA], RULE];
         _rules.push({
           name: xType + ' x ' + yType + ' (with occlusion)',
           items: nestedMap(ddRank, (mark: Mark) => {
@@ -228,6 +225,7 @@ export const DD_RULESET = {
           })
         });
 
+        // the same for no occlusion.
         _rules.push({
           name: xType + ' x ' + yType + ' (without occlusion)',
           items: nestedMap(ddRank, (mark: Mark) => {

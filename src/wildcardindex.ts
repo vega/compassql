@@ -48,7 +48,7 @@ export class WildcardIndex {
   public hasProperty(prop: Property) {
     if (isEncodingProperty(prop)) {
       return this.encodingIndicesByProperty.has(prop);
-    } if (prop === 'mark') {
+    } else if (prop === 'mark') {
       return !!this.mark;
     }
     /* istanbul ignore next */

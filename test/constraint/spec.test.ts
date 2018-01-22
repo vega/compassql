@@ -10,13 +10,13 @@ import {Type} from 'vega-lite/build/src/type';
 
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX, SpecConstraintModel} from '../../src/constraint/spec';
-import {SHORT_WILDCARD, Wildcard} from '../../src/wildcard';
+import {SHORT_WILDCARD, Wildcard, DEFAULT_ENUM_INDEX} from '../../src/wildcard';
 import {SpecQueryModel} from '../../src/model';
 import {Schema} from '../../src/schema';
 import {SpecQuery} from '../../src/query/spec';
 import {AutoCountQuery} from '../../src/query/encoding';
 import {Property} from '../../src/property';
-import {duplicate, extend} from '../../src/util';
+import {duplicate, extend, without} from '../../src/util';
 
 describe('constraints/spec', () => {
   const schema = new Schema({fields:[]});
@@ -870,53 +870,81 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('omitNonLinearScaleTypeWithStack', () => {
+  describe('omitInvalidStackSpec', () => {
+    const NON_NULL_STACK_OFFSETS = without(DEFAULT_ENUM_INDEX.stack, [null]);
+
     it('should return false for stack with non linear scale type', () => {
       [
         ScaleType.LOG, ScaleType.POINT, ScaleType.BAND, ScaleType.POINT, ScaleType.POW,
         ScaleType.SQRT, ScaleType.TIME, ScaleType.UTC
       ].forEach((scaleType) => {
-        const specM = buildSpecQueryModel({
-          mark: Mark.BAR,
-          encodings: [
-            {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: scaleType}, aggregate: 'sum'},
-            {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
-            {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
-          ]
+        NON_NULL_STACK_OFFSETS.forEach((stackOffset) => {
+          const specM = buildSpecQueryModel({
+            mark: Mark.BAR,
+            encodings: [
+              {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, stack: stackOffset, scale: {type: scaleType}, aggregate: 'sum'},
+              {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+              {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
+            ]
+          });
+          specM.wildcardIndex.setEncodingProperty(0, Property.STACK, {name: 'stack', enum: DEFAULT_ENUM_INDEX.stack});
+
+          assert.isFalse(
+            SPEC_CONSTRAINT_INDEX['omitInvalidStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG),
+            'for '+ scaleType
+          );
         });
-        assert.isFalse(
-          SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG),
-          'for '+ scaleType
-        );
       });
     });
 
     it('should return true for stack with linear scale type', () => {
-      const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: ScaleType.LINEAR}, aggregate: 'sum'},
-          {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
-          {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
-        ]
+      NON_NULL_STACK_OFFSETS.forEach((stackOffset) => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, stack: stackOffset, scale: {type: ScaleType.LINEAR}, aggregate: 'sum'},
+            {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+            {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
+          ]
+        });
+        specM.wildcardIndex.setEncodingProperty(0, Property.STACK, {name: 'stack', enum: DEFAULT_ENUM_INDEX.stack});
+
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitInvalidStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
     it('should return true if color uses a non-linear scale when it is mapped to a non-X or non-Y channel that is aggregate', () => {
-      const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: 'sum'},
-          {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
-          {channel: Channel.COLOR, field: 'C', type: Type.QUANTITATIVE, scale: {type: ScaleType.POW}},
-          {channel: Channel.DETAIL, field: 'A', type: Type.NOMINAL}
-        ]
+      NON_NULL_STACK_OFFSETS.forEach((stackOffset) => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.X, field: 'A', stack: stackOffset, type: Type.QUANTITATIVE, aggregate: 'sum'},
+            {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+            {channel: Channel.COLOR, field: 'C', type: Type.QUANTITATIVE, scale: {type: ScaleType.POW}},
+            {channel: Channel.DETAIL, field: 'A', type: Type.NOMINAL}
+          ]
+        });
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitInvalidStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
-      assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should return true for non-stack', () => {
+    it('should return true for stack with linear scale type', () => {
+      NON_NULL_STACK_OFFSETS.forEach((stackOffset) => {
+        const specM = buildSpecQueryModel({
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, stack: stackOffset, scale: {type: ScaleType.LINEAR}, aggregate: 'sum'},
+            {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+            {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
+          ]
+        });
+        specM.wildcardIndex.setEncodingProperty(0, Property.STACK, {name: 'stack', enum: DEFAULT_ENUM_INDEX.stack});
+
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitInvalidStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+      });
+    });
+
+    it('should return true if stack was not specified', () => {
       [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
         const specM = buildSpecQueryModel({
           mark: Mark.BAR,
@@ -926,45 +954,119 @@ describe('constraints/spec', () => {
             {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
           ]
         });
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonLinearScaleTypeWithStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+
+        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitInvalidStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
-  });
 
-  describe('omitNonSumStack', () => {
-    it('should return true if summative-based aggregate is used.', () => {
-      SUM_OPS.forEach((aggregate) => {
-        [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
+    it('should return true if stack defined without wildcard', () => {
+      [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
+        NON_NULL_STACK_OFFSETS.forEach((stackOffset) => {
           const specM = buildSpecQueryModel({
             mark: Mark.BAR,
             encodings: [
-              {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: aggregate},
+              {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, stack: stackOffset, scale: {type: ScaleType.LINEAR}, aggregate: 'sum'},
               {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
-              {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
+              {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
             ]
           });
-          assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+
+          assert.isTrue(SPEC_CONSTRAINT_INDEX['omitInvalidStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
+      });
+    });
+
+    it('should return false for stack specified in incorrect channel', () => {
+      NON_NULL_STACK_OFFSETS.forEach((stackOffset) => {
+        const specStackInY = buildSpecQueryModel({
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: ScaleType.LINEAR}, aggregate: 'sum'},
+            {channel: Channel.Y, field: 'B', stack: stackOffset, type: Type.NOMINAL},
+            {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
+          ]
+        });
+        specStackInY.wildcardIndex.setEncodingProperty(0, Property.STACK, {name: 'stack', enum: DEFAULT_ENUM_INDEX.stack});
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitInvalidStackSpec'].satisfy(specStackInY, schema, DEFAULT_QUERY_CONFIG));
+
+        const specStackInColor = buildSpecQueryModel({
+          mark: Mark.BAR,
+          encodings: [
+            {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, scale: {type: ScaleType.LINEAR}, aggregate: 'sum'},
+            {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+            {channel: Channel.COLOR, field: 'C', stack: stackOffset, type: Type.NOMINAL}
+          ]
+        });
+        specStackInColor.wildcardIndex.setEncodingProperty(0, Property.STACK, {name: 'stack', enum: DEFAULT_ENUM_INDEX.stack});
+        assert.isFalse(SPEC_CONSTRAINT_INDEX['omitInvalidStackSpec'].satisfy(specStackInColor, schema, DEFAULT_QUERY_CONFIG));
       });
     });
 
     it('should return true for stack with autoCount.', () => {
       SUM_OPS.forEach((_) => {
         [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
-          const specM = buildSpecQueryModel({
-            mark: Mark.BAR,
-            encodings: [
-              {channel: Channel.X, autoCount: true, type: Type.QUANTITATIVE},
-              {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
-              {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
-            ]
+          NON_NULL_STACK_OFFSETS.forEach((stackOffset) => {
+            const specM = buildSpecQueryModel({
+              mark: Mark.BAR,
+              encodings: [
+                {channel: Channel.X, autoCount: true, stack: stackOffset, type: Type.QUANTITATIVE},
+                {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+                {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
+              ]
+            });
+            specM.wildcardIndex.setEncodingProperty(0, Property.STACK, {name: 'stack', enum: DEFAULT_ENUM_INDEX.stack});
+
+            assert.isTrue(SPEC_CONSTRAINT_INDEX['omitInvalidStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
           });
-          assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+        });
+      });
+    });
+  });
+
+  describe('omitNonSummativeStackSpec', () => {
+    const NON_NULL_STACK_OFFSETS = without(DEFAULT_ENUM_INDEX.stack, [null]);
+
+    it('should return true if summative-based aggregate is used.', () => {
+      SUM_OPS.forEach((aggregate) => {
+        [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
+          NON_NULL_STACK_OFFSETS.forEach((stackOffset) => {
+            const specM = buildSpecQueryModel({
+              mark: Mark.BAR,
+              encodings: [
+                {channel: Channel.X, field: 'A', stack: stackOffset, type: Type.QUANTITATIVE, aggregate: aggregate},
+                {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+                {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
+              ]
+            });
+            specM.wildcardIndex.setEncodingProperty(0, Property.STACK, {name: 'stack', enum: DEFAULT_ENUM_INDEX.stack});
+
+            assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSummativeStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+          });
         });
       });
     });
 
-    it('should return false if non-summative aggregate (e.g., mean, median) is used.', () => {
+    it('should return false if non-summative aggregate (e.g., mean, median) is used for explicit stack specs.', () => {
+      ['max', 'mean', 'median'].forEach((aggregate: AggregateOp) => {
+        [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
+          NON_NULL_STACK_OFFSETS.forEach((stackOffset) => {
+            const specM = buildSpecQueryModel({
+              mark: Mark.BAR,
+              encodings: [
+                {channel: Channel.X, field: 'A', stack: stackOffset, type: Type.QUANTITATIVE, aggregate: aggregate},
+                {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
+                {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
+              ]
+            });
+            specM.wildcardIndex.setEncodingProperty(0, Property.STACK, {name: 'stack', enum: DEFAULT_ENUM_INDEX.stack});
+
+            assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonSummativeStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+          });
+        });
+      });
+    });
+
+    it('should return false if non-summative aggregate (e.g., mean, median) is used for implicit stack specs.', () => {
       ['max', 'mean', 'median'].forEach((aggregate: AggregateOp) => {
         [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
           const specM = buildSpecQueryModel({
@@ -975,22 +1077,8 @@ describe('constraints/spec', () => {
               {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
             ]
           });
-          assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonSummativeStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
-      });
-    });
-
-    it('should return true for non-stack.', () => {
-      [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
-        const specM = buildSpecQueryModel({
-          mark: Mark.BAR,
-          encodings: [
-            {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE},
-            {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
-            {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
-          ]
-        });
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
       });
     });
   });

@@ -1,13 +1,10 @@
-
 import {SUM_OPS} from 'vega-lite/build/src/aggregate';
-import {Channel, NONSPATIAL_CHANNELS, supportMark} from 'vega-lite/build/src/channel';
+import {Channel, NONPOSITION_CHANNELS, supportMark} from 'vega-lite/build/src/channel';
 import {Mark} from 'vega-lite/build/src/mark';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {Type} from 'vega-lite/build/src/type';
 import {ExpandedType} from '../query/expandedtype';
-
 import {AbstractConstraint, AbstractConstraintModel} from './base';
-
 import {QueryConfig} from '../config';
 import {isWildcard, Wildcard} from '../wildcard';
 import {SpecQueryModel} from '../model';
@@ -15,10 +12,9 @@ import {isEncodingNestedProp, getEncodingNestedProp, Property, isEncodingPropert
 import {PropIndex} from '../propindex';
 import {Schema} from '../schema';
 import {contains, every, some} from '../util';
+import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery, isFieldQuery, FieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery} from '../query/encoding';
 
-import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery} from '../query/encoding';
-
-const NONSPATIAL_CHANNELS_INDEX = NONSPATIAL_CHANNELS.reduce((m, channel) => {
+const NONPOSITION_CHANNELS_INDEX = NONPOSITION_CHANNELS.reduce((m, channel) => {
   m[channel] = true;
   return m;
 }, {});
@@ -238,6 +234,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         case Mark.SQUARE:
         case Mark.TICK:
         case Mark.RULE:
+        case Mark.RECT:
           return specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
         case Mark.POINT:
           // This allows generating a point plot if channel was not a wildcard.
@@ -410,7 +407,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
         const channel = encQ.channel;
         if (!isWildcard(channel)) {
-          if (NONSPATIAL_CHANNELS_INDEX[channel + '']) {
+          if (NONPOSITION_CHANNELS_INDEX[channel + '']) {
             nonPositionChannelCount += 1;
             if (specM.wildcardIndex.hasEncodingProperty(i, Property.CHANNEL)) {
               hasEnumeratedNonPositionChannel = true;
@@ -657,7 +654,29 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
             }
             return false;
           }
+        case Mark.RECT:
+          // Until CompassQL supports layering, it only makes sense for
+          // rect to encode DxD or 1xD (otherwise just use bar).
+          // Furthermore, color should only be used in a 'heatmap' fashion
+          // (with a measure field).
+          const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
+          const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
+          const xIsDimension = isDimension(xEncQ);
+          const yIsDimension = isDimension(yEncQ);
 
+          const colorEncQ = specM.getEncodingQueryByChannel(Channel.COLOR);
+          const colorIsQuantitative = isMeasure(colorEncQ);
+          const colorIsOrdinal = isFieldQuery(colorEncQ) ?
+              colorEncQ.type === Type.ORDINAL : false;
+
+          const correctChannels = (xIsDimension && yIsDimension) ||
+              (xIsDimension && !specM.channelUsed(Channel.Y)) ||
+              (yIsDimension && !specM.channelUsed(Channel.X));
+
+          const correctColor = !colorEncQ ||
+              (colorEncQ && (colorIsQuantitative || colorIsOrdinal));
+
+          return correctChannels && correctColor;
         case Mark.CIRCLE:
         case Mark.POINT:
         case Mark.SQUARE:
@@ -669,40 +688,40 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'omitNonLinearScaleTypeWithStack',
-    description: 'Stacked plot should only use linear scale',
-    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, getEncodingNestedProp('scale', 'type'), Property.TYPE],
-    // TODO: Property.STACK
+    name: 'omitInvalidStackSpec',
+    description: 'If stack is specified, must follow Vega-Lite stack rules',
+    properties: [Property.STACK, Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, getEncodingNestedProp('scale', 'type'), Property.TYPE],
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
-      const stack = specM.stack();
-      if (stack) {
-        for (let encQ of specM.getEncodings()) {
-          if (isValueQuery(encQ)) continue;
-          if (((isFieldQuery(encQ) && !!encQ.aggregate) || isEnabledAutoCountQuery(encQ)) &&
-             encQ.type === Type.QUANTITATIVE &&
-             contains([Channel.X, Channel.Y], encQ.channel)) {
-              if (scaleType(encQ) !== ScaleType.LINEAR) {
-                return false;
-            }
-          }
-        }
+      if (!specM.wildcardIndex.hasProperty(Property.STACK)) {
+        return true;
       }
+      const specStack = specM.getVlStack();
+      if (specStack == null) {
+        return false;
+      }
+
+      if (specStack.fieldChannel !== specM.getStackChannel()) {
+        return false;
+      }
+
       return true;
     }
   },
   {
-    name: 'omitNonSumStack',
-    description: 'Stacked plot should use summative aggregation such as sum, count, or distinct',
-    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
+    name: 'omitNonSummativeStackSpec',
+    description: 'Stack specifications that use non-summative aggregates should be omitted (even implicit ones)',
+    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, getEncodingNestedProp('scale', 'type'), Property.TYPE],
     allowWildcardForProperties: false,
-    strict: false,
+    strict: true,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
-      const stack = specM.stack();
-      if (stack) {
-        const measureEncQ = specM.getEncodingQueryByChannel(stack.fieldChannel);
-        return (isFieldQuery(measureEncQ) &&  contains(SUM_OPS, measureEncQ.aggregate)) || (isAutoCountQuery(measureEncQ) && !!measureEncQ.autoCount);
+      const specStack = specM.getVlStack();
+      if (specStack != null) {
+        const stackParentEncQ = specM.getEncodingQueryByChannel(specStack.fieldChannel) as FieldQuery;
+        if (!contains(SUM_OPS, stackParentEncQ.aggregate)) {
+          return false;
+        }
       }
       return true;
     }

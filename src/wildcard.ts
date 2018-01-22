@@ -11,6 +11,7 @@ import {Mark} from 'vega-lite/build/src/mark';
 import {Scale, ScaleType, SCALE_PROPERTIES} from 'vega-lite/build/src/scale';
 import {Legend, LEGEND_PROPERTIES} from 'vega-lite/build/src/legend';
 import {SortField, SortOrder} from 'vega-lite/build/src/sort';
+import {StackOffset} from 'vega-lite/build/src/stack';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
 import {Type} from 'vega-lite/build/src/type';
 
@@ -41,7 +42,7 @@ export function isShortWildcard(prop: any): prop is SHORT_WILDCARD {
 }
 
 export function isWildcardDef(prop: any): prop is Wildcard<any> {
-  return prop !== undefined && (!!prop.enum || !!prop.name) && !isArray(prop);
+  return prop !== undefined && prop != null && (!!prop.enum || !!prop.name) && !isArray(prop);
 }
 
 export function initWildcard(
@@ -104,6 +105,7 @@ export const DEFAULT_NAME = {
   hasFn: 'h',
   bin: 'b',
   sort: 'so',
+  stack: 'st',
   scale: 's',
   axis: 'ax',
   legend: 'l',
@@ -160,14 +162,15 @@ export type EnumIndex =
   } &
   DefEnumIndex<FieldDef<string>> &
   {
-    sort: (SortField | SortOrder)[],
+    sort: (SortField<string> | SortOrder)[],
+    stack: StackOffset[],
     scale: boolean[],
     axis: boolean[],
     legend: boolean[],
     value: any[],
 
     binProps: Partial<DefEnumIndex<BinParams>>,
-    sortProps: Partial<DefEnumIndex<SortField>>,
+    sortProps: Partial<DefEnumIndex<SortField<string>>>,
     scaleProps: Partial<DefEnumIndex<Scale>>,
     axisProps: Partial<DefEnumIndex<Axis>>,
     legendProps: Partial<DefEnumIndex<Legend>>
@@ -184,7 +187,7 @@ const DEFAULT_BIN_PROPS_ENUM: DefEnumIndex<BinParams> = {
   divide: [[5, 2]]
 };
 
-const DEFAULT_SORT_PROPS: DefEnumIndex<SortField> = {
+const DEFAULT_SORT_PROPS: DefEnumIndex<SortField<string>> = {
   field: [undefined], // This should be never call and instead read from the schema
   op: ['min', 'mean'],
   order: ['ascending', 'descending']
@@ -220,6 +223,8 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   orient: [undefined],
   values: [undefined],
 
+  encoding: [undefined],
+
   domain: DEFAULT_BOOLEAN_ENUM,
 
   grid: DEFAULT_BOOLEAN_ENUM,
@@ -229,6 +234,8 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   labelAngle: [undefined],
   labelOverlap: [undefined],
   labelPadding: [undefined],
+  labelBound: [undefined],
+  labelFlush: [undefined],
 
   maxExtent: [undefined],
   minExtent: [undefined],
@@ -247,6 +254,7 @@ const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
   entryPadding: [undefined],
   orient: ['left', 'right'],
   offset: [undefined],
+  padding: [undefined],
   format: [undefined],
   values: [undefined],
 
@@ -258,7 +266,7 @@ const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
 
 // Use FullEnumIndex to make sure we have all properties specified here!
 export const DEFAULT_ENUM_INDEX: EnumIndex = {
-  mark: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.TICK, Mark.TEXT],
+  mark: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.RECT, Mark.TICK, Mark.TEXT],
   channel: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT
 
   aggregate: [undefined, 'mean'],
@@ -271,6 +279,7 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
   type: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
 
   sort: ['ascending', 'descending'],
+  stack: ['zero', 'normalize', 'center', null],
   value: [undefined],
 
   scale: [true],
