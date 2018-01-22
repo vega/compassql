@@ -1,4 +1,4 @@
-import {Channel, X, Y, NONPOSITION_CHANNELS} from 'vega-lite/build/src/channel';
+import {Channel} from 'vega-lite/build/src/channel';
 import {Config} from 'vega-lite/build/src/config';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
