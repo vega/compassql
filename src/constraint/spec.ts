@@ -690,19 +690,19 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'omitInvalidStackSpec',
     description: 'If stack is specified, must follow Vega-Lite stack rules',
-    properties: [Property.STACK, Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, getEncodingNestedProp('scale', 'type'), Property.TYPE],
+    properties: [Property.STACK, Property.FIELD, Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, getEncodingNestedProp('scale', 'type'), Property.TYPE],
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       if (!specM.wildcardIndex.hasProperty(Property.STACK)) {
         return true;
       }
-      const specStack = specM.getVlStack();
-      if (specStack == null) {
+      const stackProps = specM.getVlStack();
+      if (stackProps == null) {
         return false;
       }
 
-      if (specStack.fieldChannel !== specM.getStackChannel()) {
+      if (stackProps.fieldChannel !== specM.getStackChannel()) {
         return false;
       }
 
@@ -710,7 +710,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     }
   },
   {
-    name: 'omitNonSummativeStackSpec',
+    name: 'omitNonSumStack',
     description: 'Stack specifications that use non-summative aggregates should be omitted (even implicit ones)',
     properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, getEncodingNestedProp('scale', 'type'), Property.TYPE],
     allowWildcardForProperties: false,

@@ -6,8 +6,8 @@ import {TitleParams} from 'vega-lite/build/src/title';
 import {stack, StackOffset, StackProperties} from 'vega-lite/build/src/stack';
 
 import {isWildcard, WildcardProperty} from '../wildcard';
-import {isEncodingTopLevelProperty, Property, toKey} from '../property';
-import {contains, extend, keys, some} from '../util';
+import {ALL_ENCODING_PROPS, isEncodingTopLevelProperty, getEncodingNestedProp, Property, toKey} from '../property';
+import {contains, extend, keys, some, isObject, without} from '../util';
 
 import {TransformQuery} from './transform';
 import {EncodingQuery, isFieldQuery, isEnabledAutoCountQuery, isDisabledAutoCountQuery, toEncoding} from './encoding';
@@ -148,7 +148,7 @@ export function getVlStack(specQ: SpecQuery): StackProperties {
  */
 export function getStackOffset(specQ: SpecQuery): StackOffset {
   for (const encQ of specQ.encodings) {
-    if (typeof encQ[Property.STACK] !== 'undefined' && !isWildcard(encQ[Property.STACK])) {
+    if (encQ[Property.STACK] !== undefined && !isWildcard(encQ[Property.STACK])) {
       return encQ[Property.STACK];
     }
   }
@@ -161,7 +161,7 @@ export function getStackOffset(specQ: SpecQuery): StackOffset {
  */
 export function getStackChannel(specQ: SpecQuery): Channel {
   for (const encQ of specQ.encodings) {
-    if (typeof encQ[Property.STACK] !== 'undefined' && !isWildcard(encQ.channel)) {
+    if (encQ[Property.STACK] !== undefined && !isWildcard(encQ.channel)) {
       return encQ.channel;
     }
   }
@@ -174,9 +174,20 @@ export function getStackChannel(specQ: SpecQuery): Channel {
  * @param specQ The SpecQuery in question.
  */
 export function hasRequiredStackProperties(specQ: SpecQuery) {
-  const requiredProps = [specQ.mark, specQ.encodings.filter(encQ => !isDisabledAutoCountQuery(encQ))];
-  for (const prop of requiredProps) {
-    if (isWildcard(prop) || containsWildcard(prop)) {
+  // TODO(haldenl): make this leaner, a lot of encQ properties aren't required for stack.
+  // TODO(haldenl): check mark, then encodings
+  if (isWildcard(specQ.mark)) {
+    return false;
+  }
+
+  const requiredEncodingProps = [Property.STACK, Property.CHANNEL,
+      Property.MARK, Property.FIELD, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE,
+      getEncodingNestedProp('scale', 'type'), Property.TYPE];
+  const exclude = toMap(without(ALL_ENCODING_PROPS, requiredEncodingProps));
+
+  const encodings = specQ.encodings.filter(encQ => !isDisabledAutoCountQuery(encQ));
+  for (const encQ of encodings) {
+    if (objectContainsWildcard(encQ, {exclude: exclude})) {
       return false;
     }
   }
@@ -184,21 +195,22 @@ export function hasRequiredStackProperties(specQ: SpecQuery) {
 }
 
 /**
- * Returns true iff the given property does not contain a nested wildcard.
- * @param prop The property in question.
+ * Returns true iff the given object does not contain a nested wildcard.
+ * @param obj The object in question.
  * @param opt With optional `exclude` property, which defines properties to
  * ignore when testing for wildcards.
  */
-function containsWildcard(prop: any, opt: {exclude?: {[key: string]: 1}} = {}) {
-  if (prop !== Object(prop)) {
+// TODO(haldenl): rename to objectHasWildcard, rename prop to obj
+function objectContainsWildcard(obj: any, opt: {exclude?: {[key: string]: 1}} = {}) {
+  if (!isObject(obj)) {
     return false;
   }
 
-  for (const childProp in prop) {
-    if (prop.hasOwnProperty(childProp)) {
-      const wildcard = isWildcard(prop[childProp]);
+  for (const childProp in obj) {
+    if (obj.hasOwnProperty(childProp)) {
+      const wildcard = isWildcard(obj[childProp]);
       if ((wildcard && (!opt.exclude || !opt.exclude[childProp])) ||
-          containsWildcard(prop[childProp], opt)) {
+          objectContainsWildcard(obj[childProp], opt)) {
         return true;
       }
     }
@@ -219,7 +231,7 @@ export function hasWildcard(specQ: SpecQuery, opt: {exclude?: Property[]} = {}) 
   }
 
   for (const encQ of specQ.encodings) {
-    if (containsWildcard(encQ, exclude)) {
+    if (objectContainsWildcard(encQ, exclude)) {
       return true;
     }
   }

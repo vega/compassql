@@ -341,7 +341,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     }
   },
   {
-    name: 'stackMatchesChannel',
+    name: 'stackIsOnlyUsedWithXY',
     description: 'stack should only be allowed for x and y channels',
     properties: [Property.STACK, Property.CHANNEL],
     allowWildcardForProperties: false,

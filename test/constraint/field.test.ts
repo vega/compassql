@@ -934,7 +934,7 @@ describe('constraints/field', () => {
     });
   });
 
-  describe('stackMatchesChannel', () => {
+  describe('stackIsOnlyUsedWithXY', () => {
     it('should return true for stack specified in X or Y channel', () => {
       [Channel.X, Channel.Y].forEach((_channel) => {
         const encQ: FieldQuery = {
@@ -942,7 +942,7 @@ describe('constraints/field', () => {
           stack: 'zero'
         };
 
-        assert.isTrue(FIELD_CONSTRAINT_INDEX['stackMatchesChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isTrue(FIELD_CONSTRAINT_INDEX['stackIsOnlyUsedWithXY'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
 
@@ -954,7 +954,7 @@ describe('constraints/field', () => {
           stack: 'zero'
         };
 
-        assert.isFalse(FIELD_CONSTRAINT_INDEX['stackMatchesChannel'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+        assert.isFalse(FIELD_CONSTRAINT_INDEX['stackIsOnlyUsedWithXY'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
   });

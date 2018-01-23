@@ -928,22 +928,6 @@ describe('constraints/spec', () => {
       });
     });
 
-    it('should return true for stack with linear scale type', () => {
-      NON_NULL_STACK_OFFSETS.forEach((stackOffset) => {
-        const specM = buildSpecQueryModel({
-          mark: Mark.BAR,
-          encodings: [
-            {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, stack: stackOffset, scale: {type: ScaleType.LINEAR}, aggregate: 'sum'},
-            {channel: Channel.Y, field: 'B', type: Type.NOMINAL},
-            {channel: Channel.COLOR, field: 'C', type: Type.NOMINAL}
-          ]
-        });
-        specM.wildcardIndex.setEncodingProperty(0, Property.STACK, {name: 'stack', enum: DEFAULT_ENUM_INDEX.stack});
-
-        assert.isTrue(SPEC_CONSTRAINT_INDEX['omitInvalidStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
-      });
-    });
-
     it('should return true if stack was not specified', () => {
       [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
         const specM = buildSpecQueryModel({
@@ -959,7 +943,7 @@ describe('constraints/spec', () => {
       });
     });
 
-    it('should return true if stack defined without wildcard', () => {
+    it('should return true if stack is defined without wildcard', () => {
       [Channel.OPACITY, Channel.DETAIL, Channel.COLOR].forEach((stackByChannel) => {
         NON_NULL_STACK_OFFSETS.forEach((stackOffset) => {
           const specM = buildSpecQueryModel({
@@ -1023,7 +1007,7 @@ describe('constraints/spec', () => {
     });
   });
 
-  describe('omitNonSummativeStackSpec', () => {
+  describe('omitNonSumStack', () => {
     const NON_NULL_STACK_OFFSETS = without(DEFAULT_ENUM_INDEX.stack, [null]);
 
     it('should return true if summative-based aggregate is used.', () => {
@@ -1040,7 +1024,7 @@ describe('constraints/spec', () => {
             });
             specM.wildcardIndex.setEncodingProperty(0, Property.STACK, {name: 'stack', enum: DEFAULT_ENUM_INDEX.stack});
 
-            assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSummativeStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+            assert.isTrue(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
           });
         });
       });
@@ -1060,7 +1044,7 @@ describe('constraints/spec', () => {
             });
             specM.wildcardIndex.setEncodingProperty(0, Property.STACK, {name: 'stack', enum: DEFAULT_ENUM_INDEX.stack});
 
-            assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonSummativeStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+            assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
           });
         });
       });
@@ -1077,7 +1061,7 @@ describe('constraints/spec', () => {
               {channel: stackByChannel, field: 'C', type: Type.NOMINAL}
             ]
           });
-          assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonSummativeStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
+          assert.isFalse(SPEC_CONSTRAINT_INDEX['omitNonSumStack'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
         });
       });
     });
