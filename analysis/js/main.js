@@ -10,8 +10,14 @@ const TYPES = ['quantitative', 'temporal', 'nominal', 'ordinal'];
 function main() {
   const schema = new Schema(SCHEMA_FILE);
 
-  const results = generateQueries(DATA_URL, schema, TYPES, 2);
-  console.log(results);
+  const queries = generateQueries(DATA_URL, schema, TYPES, 2);
+
+  const rec = new Recommender();
+  const results = [];
+  for (const query of queries) {
+    const result = rec.generate(query[1]);
+    results.push(result);
+  }
 }
 
 /**

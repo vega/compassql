@@ -39,7 +39,8 @@ class Schema {
    */
   ready() {
     for (const type of this.types.keys()) {
-      this.typesIterator[type] = this.types.get(type);
+      const fieldsCopy = JSON.parse(JSON.stringify(this.types.get(type)));
+      this.typesIterator.set(type, fieldsCopy);
     }
   }
 
@@ -50,16 +51,11 @@ class Schema {
    * @param {string} type The type requested: e.g. 'nominal', 'quantitative'.
    */
   getNextField(type) {
-    console.log(type);
-    console.log(this.typesIterator);
-    console.log(this.typesIterator.get('nominal'));
-    // console.log(this.typesIterator.get(type));
     if (!this.typesIterator.has(type)) {
       return null;
     }
 
     const fields = this.typesIterator.get(type);
-    // console.log(fields);
     if (fields.length == 0) {
       return null;
     }
