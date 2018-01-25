@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-
-const fs = require('fs');
 const cql = require('../../build/compassql');
 
 /**
@@ -29,9 +27,9 @@ class Recommender {
     const schema = cql.schema.build(data);
     const opt = {};
 
-    const recommendations = cql.recommend(query, schema, opt);
+    const recs = cql.recommend(query, schema, opt)['result'];
 
-    const vlTree = cql.result.mapLeaves(recommendations, (item) => {
+    const vlTree = cql.result.mapLeaves(recs, (item) => {
       return item.toSpec();
     });
 

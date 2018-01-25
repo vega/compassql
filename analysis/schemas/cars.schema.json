@@ -1,0 +1,11 @@
+{
+  "Name": "nominal",
+  "Miles_per_Gallon": "quantitative",
+  "Cylinders": "ordinal",
+  "Displacement": "quantitative",
+  "Horsepower": "quantitative",
+  "Weight_in_lbs": "quantitative",
+  "Acceleration": "quantitative",
+  "Year": "temporal",
+  "Origin": "nominal"
+}
