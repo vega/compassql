@@ -65,12 +65,13 @@
     "tslint": "~4.3.1",
     "typescript": "^2.3.4",
     "uglify-js": "~2.6.1",
+    "vega": "^3.0.10",
     "vega-datasets": "latest"
   },
   "dependencies": {
     "datalib": "~1.7.0",
     "typescript-json-schema": "^0.9.0",
-    "vega-lite": "2.0.4"
+    "vega-lite": "^2.0.4"
   },
   "browserify": {
     "transform": [

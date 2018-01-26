@@ -12,7 +12,7 @@ class Schema {
     this.typesIterator = new Map();
 
     // read the schema file
-    this.schema = require(schemaFile);
+    this.schema = JSON.parse(fs.readFileSync(schemaFile).toString());
 
     // create types => fields map
     for (const field in this.schema) {

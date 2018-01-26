@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 const cql = require('../../build/compassql');
-
+const fs = require('fs');
 /**
  * A Recommender generates vega-lite specifications for a
  * given compassQL query.
@@ -22,7 +22,7 @@ class Recommender {
    */
   generate(query) {
     const dataUrl = query['spec']['data']['url'];
-    const data = require(`vega-datasets/${dataUrl}`);
+    const data = JSON.parse(fs.readFileSync(dataUrl, 'utf8').toString());
 
     const schema = cql.schema.build(data);
     const opt = {};
