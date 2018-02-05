@@ -698,7 +698,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         return true;
       }
       const stackProps = specM.getVlStack();
-      if (stackProps == null) {
+      if (stackProps === null && specM.getStackOffset() !== null) {
         return false;
       }
 
