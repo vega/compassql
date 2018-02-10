@@ -5,6 +5,7 @@ import * as vlFieldDef from 'vega-lite/build/src/fielddef';
 import {FieldDef, ValueDef} from 'vega-lite/build/src/fielddef';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Scale} from 'vega-lite/build/src/scale';
+import {StackOffset} from 'vega-lite/build/src/stack';
 import {Legend} from 'vega-lite/build/src/legend';
 import {SortOrder, SortField} from 'vega-lite/build/src/sort';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
@@ -94,6 +95,7 @@ export interface FieldQueryBase {
   scale?: boolean | ScaleQuery | SHORT_WILDCARD;
 
   sort?: SortOrder | SortField<string>;
+  stack?: StackOffset | SHORT_WILDCARD;
 
   field?: WildcardProperty<string>;
   type?: WildcardProperty<ExpandedType>;
@@ -117,7 +119,7 @@ export type ScaleQuery =  FlatQueryWithEnableFlag<Scale>;
 export type AxisQuery =  FlatQueryWithEnableFlag<Axis>;
 export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 
-const DEFAULT_PROPS = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND];
+const DEFAULT_PROPS = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND, Property.STACK];
 
 export interface ConversionParams {
   schema?: Schema;

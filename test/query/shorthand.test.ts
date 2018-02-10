@@ -377,7 +377,7 @@ describe('query/shorthand', () => {
           {channel: Channel.COLOR, field: 'n1', type: Type.NOMINAL}
         ]
       });
-      assert.equal(str, 'bar|stack={field:sum(q),by:n,offset:zero}|color:n1,n|x:sum(q,q)|y:n,n');
+      assert.equal(str, 'bar|color:n1,n|x:sum(q,q,stack="zero")|y:n,n');
     });
 
     it('should exclude stack for stacked specQuery if we exclude it', () => {

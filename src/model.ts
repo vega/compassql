@@ -3,12 +3,12 @@ import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Type} from 'vega-lite/build/src/type';
 import {TopLevel, FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
-import {StackProperties} from 'vega-lite/build/src/stack';
+import {StackOffset, StackProperties} from 'vega-lite/build/src/stack';
 import {QueryConfig} from './config';
 import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, isEncodingNestedParent} from './property';
 import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
 import {WildcardIndex} from './wildcardindex';
-import {SpecQuery, isAggregate, stack} from './query/spec';
+import {SpecQuery, isAggregate, getVlStack, getStackOffset, getStackChannel} from './query/spec';
 import {AutoCountQuery, isFieldQuery, isAutoCountQuery, isDisabledAutoCountQuery, EncodingQuery, toEncoding} from './query/encoding';
 import {ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand} from './query/shorthand';
@@ -230,10 +230,6 @@ export class SpecQueryModel {
     return this._channelFieldCount[channel] > 0;
   }
 
-  public stack(): StackProperties {
-    return stack(this._spec);
-  }
-
   public getEncodings(): EncodingQuery[] {
     // do not include encoding that has autoCount = false because it is not a part of the output spec.
     return this._spec.encodings.filter(encQ => !isDisabledAutoCountQuery(encQ));
@@ -254,6 +250,30 @@ export class SpecQueryModel {
 
   public isAggregate() {
     return isAggregate(this._spec);
+  }
+
+  /**
+   * @return The Vega-Lite `StackProperties` object that describes the stack
+   * configuration of `this`. Returns `null` if this is not stackable.
+   */
+  public getVlStack(): StackProperties {
+    return getVlStack(this._spec);
+  }
+
+  /**
+   * @return The `StackOffset` specified in `this`, `undefined` if none
+   * is specified.
+   */
+  public getStackOffset(): StackOffset {
+    return getStackOffset(this._spec);
+  }
+
+  /**
+   * @return The `Channel` in which `stack` is specified in `this`, or
+   * `null` if none is specified.
+   */
+  public getStackChannel(): Channel {
+    return getStackChannel(this._spec);
   }
 
   public toShorthand(groupBy?: string | (string | ExtendedGroupBy)[]): string {

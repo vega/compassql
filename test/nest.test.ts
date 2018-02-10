@@ -313,7 +313,7 @@ describe('nest', () => {
         return !contains([Mark.BAR, Mark.AREA], item.getMark());
       });
 
-      assert.equal((groups[1] as SpecQueryModelGroup).name, 'stack={field:sum(Q),by:N,offset:zero}|style:N1,n|xy:N,n|xy:sum(Q,q)');
+      assert.equal((groups[1] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q,stack="zero")');
       (groups[1] as SpecQueryModelGroup).items.forEach((item: SpecQueryModel) => {
         return contains([Mark.BAR, Mark.AREA], item.getMark());
       });
@@ -364,7 +364,7 @@ describe('nest', () => {
         return !contains([Mark.BAR, Mark.AREA], (item.items[0] as SpecQueryModel).getMark());
       });
 
-      assert.equal((groups[1] as SpecQueryModelGroup).name, 'stack={field:sum(Q),by:N,offset:zero}|style:N1,n|xy:N,n|xy:sum(Q,q)');
+      assert.equal((groups[1] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q,stack="zero")');
       (groups[1] as SpecQueryModelGroup).items.forEach((item: SpecQueryModelGroup) => {
         return contains([Mark.BAR, Mark.AREA], (item.items[0] as SpecQueryModel).getMark());
       });
@@ -574,7 +574,7 @@ describe('nest', () => {
         return !contains([Mark.BAR, Mark.AREA], item.getMark());
       });
 
-      assert.equal((groups[1] as SpecQueryModelGroup).name, 'stack={field:sum(Q),by:N,offset:zero}|style:N1,n|xy:N,n|xy:sum(Q,q)');
+      assert.equal((groups[1] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q,stack="zero")');
       (groups[1] as SpecQueryModelGroup).items.forEach((item: SpecQueryModel) => {
         return contains([Mark.BAR, Mark.AREA], item.getMark());
       });
@@ -607,7 +607,7 @@ describe('nest', () => {
       const groups = nest(answerSet, query.nest).items;
       assert.equal(groups.length, 2);
       assert.equal((groups[0] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q)');
-      assert.equal((groups[1] as SpecQueryModelGroup).name, 'stack={field:sum(Q),by:N,offset:zero}|style:N1,n|xy:N,n|xy:sum(Q,q)');
+      assert.equal((groups[1] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q,stack="zero")');
     });
   });
 

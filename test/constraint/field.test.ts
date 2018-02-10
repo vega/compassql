@@ -2,6 +2,7 @@ import {assert} from 'chai';
 import {Channel} from 'vega-lite/build/src/channel';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import {CHANNELS} from 'vega-lite/build/src/channel';
 import {Type} from 'vega-lite/build/src/type';
 import {Property} from '../../src/property';
 import {PropIndex} from '../../src/propindex';
@@ -10,7 +11,7 @@ import {EncodingConstraintModel} from '../../src/constraint/base';
 import {FIELD_CONSTRAINTS, FIELD_CONSTRAINT_INDEX} from '../../src/constraint/field';
 import {EncodingQuery, ScaleQuery, FieldQuery} from '../../src/query/encoding';
 import {SHORT_WILDCARD, Wildcard} from '../../src/wildcard';
-import {duplicate, extend} from '../../src/util';
+import {duplicate, extend, without} from '../../src/util';
 import {schema} from '../fixture';
 import {AggregateOp} from 'vega-lite/build/src/aggregate';
 
@@ -929,6 +930,31 @@ describe('constraints/field', () => {
           type: type
         };
         assert.isTrue(FIELD_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(countEncQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+      });
+    });
+  });
+
+  describe('stackIsOnlyUsedWithXY', () => {
+    it('should return true for stack specified in X or Y channel', () => {
+      [Channel.X, Channel.Y].forEach((_channel) => {
+        const encQ: FieldQuery = {
+          channel: _channel,
+          stack: 'zero'
+        };
+
+        assert.isTrue(FIELD_CONSTRAINT_INDEX['stackIsOnlyUsedWithXY'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
+      });
+    });
+
+    it('should return false for stack specified in non X or Y channel', () => {
+      const NON_XY_CHANNELS = without(CHANNELS, [Channel.X, Channel.Y]);
+      NON_XY_CHANNELS.forEach((_channel) => {
+        const encQ: FieldQuery = {
+          channel: _channel,
+          stack: 'zero'
+        };
+
+        assert.isFalse(FIELD_CONSTRAINT_INDEX['stackIsOnlyUsedWithXY'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), CONSTRAINT_MANUALLY_SPECIFIED_CONFIG));
       });
     });
   });

@@ -1,18 +1,19 @@
-import {Channel, X, Y, NONPOSITION_CHANNELS} from 'vega-lite/build/src/channel';
+import {Channel} from 'vega-lite/build/src/channel';
 import {Config} from 'vega-lite/build/src/config';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
-import {StackProperties} from 'vega-lite/build/src/stack';
 import {TitleParams} from 'vega-lite/build/src/title';
+import {stack, StackOffset, StackProperties} from 'vega-lite/build/src/stack';
 
-import {isWildcard, WildcardProperty, Wildcard} from '../wildcard';
-import {isEncodingTopLevelProperty, Property, toKey, FlatProp, EncodingNestedProp} from '../property';
-import {contains, extend, keys, some} from '../util';
+import {isWildcard, WildcardProperty} from '../wildcard';
+import {ALL_ENCODING_PROPS, isEncodingTopLevelProperty, getEncodingNestedProp, Property, toKey} from '../property';
+import {contains, extend, keys, some, isObject, without} from '../util';
 
 import {TransformQuery} from './transform';
-import {EncodingQuery, isFieldQuery, isValueQuery, isAutoCountQuery, isEnabledAutoCountQuery} from './encoding';
+import {EncodingQuery, isFieldQuery, isEnabledAutoCountQuery, isDisabledAutoCountQuery, toEncoding} from './encoding';
 import {TopLevel, FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
 import {toMap} from 'datalib/src/util';
+
 
 /**
  * A "query" version of a [Vega-Lite](https://github.com/vega/vega-lite)'s `UnitSpec` (single view specification).
@@ -127,67 +128,102 @@ export function isAggregate(specQ: SpecQuery) {
 }
 
 /**
- * @return the stack offset type for the specQuery
+ * @return The Vega-Lite `StackProperties` object that describes the stack
+ * configuration of `specQ`. Returns `null` if this is not stackable.
  */
-export function stack(specQ: SpecQuery): StackProperties & {fieldEncQ: EncodingQuery, groupByEncQ: EncodingQuery} {
-  const config = specQ.config;
-  const stacked = config ? config.stack : undefined;
-
-  // Should not have stack explicitly disabled
-  if (contains(['none', null, false], stacked)) {
+export function getVlStack(specQ: SpecQuery): StackProperties {
+  if (!hasRequiredStackProperties(specQ)) {
     return null;
   }
 
-  // Should have stackable mark
-  if (!contains(['bar', 'area'], specQ.mark)) {
-    return null;
-  }
+  const encoding = toEncoding(specQ.encodings, {schema: null, wildcardMode: 'null'});
+  const mark = specQ.mark as Mark;
 
-  // Should be aggregate plot
-  if (!isAggregate(specQ)) {
-    return null;
-  }
+  return stack(mark, encoding, getStackOffset(specQ));
+}
 
-  const stackBy = specQ.encodings.reduce((sc, encQ: EncodingQuery) => {
-    if (contains(NONPOSITION_CHANNELS, encQ.channel) && (isValueQuery(encQ) || (isFieldQuery(encQ) &&!encQ.aggregate))) {
-      sc.push({
-        channel: encQ.channel,
-        fieldDef: encQ
-      });
+/**
+ * @return The `StackOffset` specified in `specQ`, `undefined` if none
+ * is specified.
+ */
+export function getStackOffset(specQ: SpecQuery): StackOffset {
+  for (const encQ of specQ.encodings) {
+    if (encQ[Property.STACK] !== undefined && !isWildcard(encQ[Property.STACK])) {
+      return encQ[Property.STACK];
     }
-    return sc;
-  }, []);
-
-  if (stackBy.length === 0) {
-    return null;
   }
+  return undefined;
+}
 
-  // Has only one aggregate axis
-  const xEncQ = specQ.encodings.reduce((f, encQ: EncodingQuery) => {
-    return f || (encQ.channel === Channel.X ? encQ : null);
-  }, null);
-  const yEncQ = specQ.encodings.reduce((f, encQ: EncodingQuery) => {
-    return f || (encQ.channel === Channel.Y ? encQ : null);
-  }, null);
-
-  // TODO(akshatsh): Check if autoCount undef is ok
-  const xIsAggregate = (isFieldQuery(xEncQ) && !!xEncQ.aggregate) || (isAutoCountQuery(xEncQ) &&!!xEncQ.autoCount);
-  const yIsAggregate = (isFieldQuery(yEncQ) && !!yEncQ.aggregate) || (isAutoCountQuery(yEncQ) &&!!yEncQ.autoCount);
-
-  if (xIsAggregate !== yIsAggregate) {
-    return {
-      groupbyChannel: xIsAggregate ? (!!yEncQ ? Y : null) : (!!xEncQ ? X : null),
-      groupByEncQ: xIsAggregate ? yEncQ : xEncQ,
-      fieldChannel: xIsAggregate ? X : Y,
-      fieldEncQ: xIsAggregate ? xEncQ : yEncQ,
-      impute: contains(['area', 'line'], specQ.mark),
-      stackBy: stackBy,
-      offset: stacked || 'zero'
-    };
+/**
+ * @return The `Channel` in which `stack` is specified in `specQ`, or
+ * `null` if none is specified.
+ */
+export function getStackChannel(specQ: SpecQuery): Channel {
+  for (const encQ of specQ.encodings) {
+    if (encQ[Property.STACK] !== undefined && !isWildcard(encQ.channel)) {
+      return encQ.channel;
+    }
   }
   return null;
 }
 
+/**
+ * Returns true iff the given SpecQuery has the properties defined
+ * to be a potential Stack spec.
+ * @param specQ The SpecQuery in question.
+ */
+export function hasRequiredStackProperties(specQ: SpecQuery) {
+  // TODO(haldenl): make this leaner, a lot of encQ properties aren't required for stack.
+  // TODO(haldenl): check mark, then encodings
+  if (isWildcard(specQ.mark)) {
+    return false;
+  }
+
+  const requiredEncodingProps = [Property.STACK, Property.CHANNEL,
+      Property.MARK, Property.FIELD, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE,
+      getEncodingNestedProp('scale', 'type'), Property.TYPE];
+  const exclude = toMap(without(ALL_ENCODING_PROPS, requiredEncodingProps));
+
+  const encodings = specQ.encodings.filter(encQ => !isDisabledAutoCountQuery(encQ));
+  for (const encQ of encodings) {
+    if (objectContainsWildcard(encQ, {exclude: exclude})) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * Returns true iff the given object does not contain a nested wildcard.
+ * @param obj The object in question.
+ * @param opt With optional `exclude` property, which defines properties to
+ * ignore when testing for wildcards.
+ */
+// TODO(haldenl): rename to objectHasWildcard, rename prop to obj
+function objectContainsWildcard(obj: any, opt: {exclude?: {[key: string]: 1}} = {}) {
+  if (!isObject(obj)) {
+    return false;
+  }
+
+  for (const childProp in obj) {
+    if (obj.hasOwnProperty(childProp)) {
+      const wildcard = isWildcard(obj[childProp]);
+      if ((wildcard && (!opt.exclude || !opt.exclude[childProp])) ||
+          objectContainsWildcard(obj[childProp], opt)) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Returns true iff the given `specQ` contains a wildcard.
+ * @param specQ The `SpecQuery` in question.
+ * @param opt With optional `exclude` property, which defines properties to
+ * ignore when testing for wildcards.
+ */
 export function hasWildcard(specQ: SpecQuery, opt: {exclude?: Property[]} = {}) {
   const exclude = opt.exclude ? toMap(opt.exclude.map(toKey)) : {};
   if (isWildcard(specQ.mark) && !exclude['mark']) {
@@ -195,29 +231,8 @@ export function hasWildcard(specQ: SpecQuery, opt: {exclude?: Property[]} = {}) 
   }
 
   for (const encQ of specQ.encodings) {
-    // TODO: implement more efficiently, just check only properties of encQ
-    for (const key in encQ) {
-      const parentProp = key as FlatProp;
-      if (encQ.hasOwnProperty(parentProp) && isEncodingTopLevelProperty(parentProp)) {
-
-        if(isWildcard(encQ[parentProp]) && !exclude[parentProp]) {
-          return true;
-        }
-
-        const propObj = encQ[parentProp];
-        for (const childProp in propObj) {
-          if (propObj.hasOwnProperty(childProp) && !contains(['enum', 'name'] as (keyof Wildcard<any>)[], childProp)) {
-            const prop: EncodingNestedProp = {
-              parent: parentProp,
-              child: childProp
-            } as EncodingNestedProp;
-
-            if (isWildcard(propObj[childProp]) && !exclude[toKey(prop)]) {
-              return true;
-            }
-          }
-        }
-      }
+    if (objectContainsWildcard(encQ, exclude)) {
+      return true;
     }
   }
   return false;
