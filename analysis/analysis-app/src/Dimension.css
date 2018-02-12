@@ -1,0 +1,88 @@
+.Dimension {
+  font-size: 24px;
+  display: flex;
+  flex-direction: row;
+  border-style: dotted;
+  border-width: 1px;
+  border-radius: 4px;
+  border-color: #b5b5b5;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.id {
+  font-weight: 300;
+  width: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #e8e8e8;
+  border-radius: 4px 0 0 4px;
+  color: #3f3f3f;
+}
+
+.remove {
+  font-size: 16px;
+  width: 44px;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  background-color: #ffb7b7;
+  border-radius: 0 4px 4px 0;
+  cursor: pointer;
+}
+
+.remove:hover {
+  background-color: #f36d6d;
+}
+
+.remove-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.field-list {
+  width: 104px;
+  list-style-type: none;
+  margin: 0;
+  padding: 8px 8px 8px 16px;
+}
+
+.field-item {
+  font-size: 16px;
+  padding: 4px 8px 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 220ms;
+}
+
+.field-item:hover {
+  background-color: #dae6fa;
+}
+
+.field-item.selected {
+  background-color: #adccff;
+}
+
+.transformation-list {
+  width: 64px;
+  list-style-type: none;
+  margin: 0;
+  padding: 8px 16px 8px 8px;
+}
+
+.option-item {
+  font-size: 16px;
+  padding: 4px 8px 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 220ms;
+}
+
+.option-item:hover {
+  background-color: #ffede1;
+}
+
+.option-item.selected {
+  background-color: #f7c39e;
+}

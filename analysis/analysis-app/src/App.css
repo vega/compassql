@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700');
+
+.App {
+  display: flex;
+  flex-direction: row;
+  font-family: 'Roboto', sans-serif;
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+.add-dimension-button-container {
+  display: flex;
+  justify-content: center;
+}
+.add-dimension-button {
+  width: 240px;
+  height: 40px;
+  background-color: #538ce8;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  border-radius: 4px;
+}
+
+.add-dimension-button:hover {
+  background-color: #184da3;
+}
+
+.dimension-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 8px;
+}
