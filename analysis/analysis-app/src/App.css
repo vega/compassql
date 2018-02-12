@@ -12,6 +12,9 @@
   width: 300px;
 }
 
+.display {
+}
+
 .add-dimension-button-container {
   display: flex;
   justify-content: center;

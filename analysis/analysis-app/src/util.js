@@ -1,6 +1,5 @@
 const vl = require('vega-lite/build/src');
 const vega = require('vega');
-const fs = require('fs');
 
 /**
  * Returns a deep copy of the given object (must be serializable).
@@ -8,7 +7,7 @@ const fs = require('fs');
  * @param {Object} obj The object to clone.
  * @return {Object} A deep copy of obj.
  */
-exports.clone = (obj) => {
+export function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
@@ -19,7 +18,7 @@ exports.clone = (obj) => {
  * @param {Spec} vlSpec The vega-lite spec to
  *        translate.
  */
-exports.vl2png = (vlSpec, outfile) => {
+export function vl2svg(vlSpec, callback) {
   const spec =  vl.compile(vlSpec).spec;
 
   const view = new vega.View(vega.parse(spec), {
@@ -27,10 +26,8 @@ exports.vl2png = (vlSpec, outfile) => {
     logLevel: vega.Warn,
     renderer: 'none'
   }).initialize()
-    .toCanvas()
-    .then((canvas) => {
-      const out = fs.createWriteStream(outfile);
-      const stream = canvas.createPNGStream();
-      stream.on('data', function(chunk) { out.write(chunk); });
+    .toSVG()
+    .then((svg) => {
+      callback(svg);
     });
 }

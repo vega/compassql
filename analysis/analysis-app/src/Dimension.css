@@ -6,6 +6,7 @@
   border-width: 1px;
   border-radius: 4px;
   border-color: #b5b5b5;
+  box-sizing: border-box;
   margin-bottom: 8px;
   width: 100%;
 }
@@ -19,6 +20,7 @@
   background-color: #e8e8e8;
   border-radius: 4px 0 0 4px;
   color: #3f3f3f;
+  user-select: none;
 }
 
 .remove {
@@ -30,6 +32,7 @@
   background-color: #ffb7b7;
   border-radius: 0 4px 4px 0;
   cursor: pointer;
+  user-select: none;
 }
 
 .remove:hover {
@@ -54,6 +57,7 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 220ms;
+  user-select: none;
 }
 
 .field-item:hover {
@@ -62,6 +66,12 @@
 
 .field-item.selected {
   background-color: #adccff;
+}
+
+.field-item.unavailable {
+  color: #bebebe;
+  pointer-events: none;
+  cursor: default;
 }
 
 .transformation-list {
@@ -77,6 +87,7 @@
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 220ms;
+  user-select: none;
 }
 
 .option-item:hover {

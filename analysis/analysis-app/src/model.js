@@ -18,6 +18,8 @@ class Model {
     this.data = data;
     this.schema = schema;
     this.fieldTypes = fieldTypes;
+    this.fieldAggregates = fieldAggregates;
+    this.fieldBins = fieldBins;
   }
 
   /**
@@ -27,7 +29,10 @@ class Model {
     this.schema.ready();
 
     const spec = {};
-    spec['data'] = this.data;
+    spec['data'] = {
+      values: this.data
+    };
+
     spec['mark'] = '?';
 
     const encodings = [];
@@ -41,6 +46,13 @@ class Model {
         return null;
       }
       encoding['field'] = field;
+
+      if (this.fieldBins[i]) {
+        encoding['bin'] = this.fieldBins[i];
+      }
+      if (this.fieldAggregates[i]) {
+        encoding['aggregate'] = this.fieldAggregates[i];
+      }
 
       encodings.push(encoding);
     }

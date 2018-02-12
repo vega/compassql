@@ -35,6 +35,8 @@ class Dimension extends Component {
         const fieldTypeClasses = classnames({
           'field-item': true,
           'selected': fieldType === this.props.fieldType,
+          'unavailable': fieldType !== this.props.fieldType &&
+                         this.props.availableFieldTypes.indexOf(fieldType) === -1,
         });
 
         fieldTypes.push(

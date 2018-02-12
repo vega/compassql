@@ -4,6 +4,7 @@ import './App.css';
 import Dimension from './Dimension';
 import Display from './Display';
 import Schema from './schema';
+import Recommender from './recommender';
 
 const carsSchema = require('./cars.schema.json');
 const carsData = require('./cars.json');
@@ -15,12 +16,12 @@ const DEFAULT_DIMENSION_CONFIG = {
   fieldTransformationLocked: false,
 };
 
-const FIELD_TYPES = ['Quantitative', 'Temporal', 'Ordinal', 'Nominal']
+const FIELD_TYPES = ['quantitative', 'temporal', 'ordinal', 'nominal'];
 const FIELD_TRANSFORMATIONS = {
-  'Quantitative': ['None', 'Bin', 'Mean', 'Sum'],
-  'Temporal': ['None', 'Bin'],
-  'Ordinal': ['None'],
-  'Nominal': ['None']
+  'quantitative': ['none', 'bin', 'mean', 'sum'],
+  'temporal': ['none', 'bin'],
+  'ordinal': ['none'],
+  'nominal': ['none']
 };
 
 class App extends Component {
@@ -32,9 +33,16 @@ class App extends Component {
 
     this.schema = new Schema(carsSchema);
     this.data = carsData;
+    this.recommender = new Recommender();
   }
 
   render() {
+    const fieldTypes = this.getFieldTypes();
+    const fieldAggregates = this.getFieldAggregates();
+    const fieldBins = this.getFieldBins();
+
+    const availableFieldTypes = this.getAvailableFieldTypes(fieldTypes);
+
     const dimensionComponents = [];
     for (let i = 0; i < this.state.dimensions.length; i++) {
       const dimensionState = this.state.dimensions[i];
@@ -52,6 +60,7 @@ class App extends Component {
           setFieldTransformationLock={this.setFieldTransformationLock.bind(this)}
           removeDimension={this.removeDimension.bind(this)}
           fieldTypes={FIELD_TYPES}
+          availableFieldTypes={availableFieldTypes}
           fieldTransformations={FIELD_TRANSFORMATIONS}
         />
       )
@@ -63,18 +72,13 @@ class App extends Component {
       </ul>
     );
 
-    const fieldTypes = [];
-    for (const dimension of this.state.dimensions) {
-      if (dimension.fieldType !== null) {
-        fieldTypes.push(dimension.fieldType.toLowerCase());
-      }
-    }
-
     const display = (
       <Display
         schema={this.schema}
         data={this.data}
         fieldTypes={fieldTypes}
+        fieldBins={fieldBins}
+        fieldAggregates={fieldAggregates}
       />
     );
 
@@ -95,6 +99,58 @@ class App extends Component {
     );
   }
 
+  getFieldTypes() {
+    const fieldTypes = [];
+    for (const dimension of this.state.dimensions) {
+      if (dimension.fieldType !== null) {
+        fieldTypes.push(dimension.fieldType);
+      }
+    }
+
+    return fieldTypes;
+  }
+
+  getAvailableFieldTypes(currentFieldTypes) {
+    this.schema.ready();
+    for (const type of currentFieldTypes) {
+      this.schema.getNextField(type);
+    }
+
+    const available = [];
+    for (const nextType of FIELD_TYPES) {
+      if (this.schema.getNextField(nextType) !== null) {
+        available.push(nextType);
+      }
+    }
+
+    return available;
+  }
+
+  getFieldBins() {
+    const binTypes = [];
+    for (const dimension of this.state.dimensions) {
+      if (dimension.fieldTransformation !== null &&
+          dimension.fieldTransformation === 'bin') {
+        binTypes.push(true);
+      }
+    }
+
+    return binTypes;
+  }
+
+  getFieldAggregates() {
+    const aggTypes = [];
+    for (const dimension of this.state.dimensions) {
+      if (dimension.fieldTransformation !== null &&
+          (dimension.fieldTransformation === 'mean' ||
+          dimension.fieldTransformation === 'sum')) {
+        aggTypes.push(dimension.fieldTransformation);
+      }
+    }
+
+    return aggTypes;
+  }
+
   addDimension() {
     const dimensions = this.state.dimensions.slice(0);
     dimensions.push(Object.assign({}, DEFAULT_DIMENSION_CONFIG));
@@ -113,7 +169,7 @@ class App extends Component {
     dimension.fieldType = fieldType;
 
     if (FIELD_TRANSFORMATIONS[fieldType].length === 1) {
-      this.setFieldTransformation(id, 'None');
+      this.setFieldTransformation(id, 'none');
       this.setFieldTransformationLock(id, true);
     }
     this.forceUpdate();
