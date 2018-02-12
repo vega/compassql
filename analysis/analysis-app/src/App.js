@@ -2,6 +2,11 @@ import React, { Component } from 'react';
 import './App.css';
 
 import Dimension from './Dimension';
+import Display from './Display';
+import Schema from './schema';
+
+const carsSchema = require('./cars.schema.json');
+const carsData = require('./cars.json');
 
 const DEFAULT_DIMENSION_CONFIG = {
   fieldType: null,
@@ -24,6 +29,9 @@ class App extends Component {
     this.state = {
       dimensions: []
     }
+
+    this.schema = new Schema(carsSchema);
+    this.data = carsData;
   }
 
   render() {
@@ -55,6 +63,21 @@ class App extends Component {
       </ul>
     );
 
+    const fieldTypes = [];
+    for (const dimension of this.state.dimensions) {
+      if (dimension.fieldType !== null) {
+        fieldTypes.push(dimension.fieldType.toLowerCase());
+      }
+    }
+
+    const display = (
+      <Display
+        schema={this.schema}
+        data={this.data}
+        fieldTypes={fieldTypes}
+      />
+    );
+
     return (
       <div className="App">
         <div className="dashboard">
@@ -64,6 +87,9 @@ class App extends Component {
               Add a Dimension
             </div>
           </div>
+        </div>
+        <div className="display">
+          {display}
         </div>
       </div>
     );
@@ -79,9 +105,14 @@ class App extends Component {
 
   setFieldType(id, fieldType) {
     const dimension = this.state.dimensions[id];
+    if (fieldType !== dimension.fieldType) {
+      this.setFieldTransformation(id, null);
+      this.setFieldTransformationLock(id, false);
+    }
+
     dimension.fieldType = fieldType;
 
-    if (FIELD_TRANSFORMATIONS[fieldType].length == 1) {
+    if (FIELD_TRANSFORMATIONS[fieldType].length === 1) {
       this.setFieldTransformation(id, 'None');
       this.setFieldTransformationLock(id, true);
     }
