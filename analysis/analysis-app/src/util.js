@@ -18,7 +18,7 @@ export function clone(obj) {
  * @param {Spec} vlSpec The vega-lite spec to
  *        translate.
  */
-export function vl2svg(vlSpec, callback) {
+export async function vl2svg(vlSpec, callback) {
   const spec =  vl.compile(vlSpec).spec;
 
   const view = new vega.View(vega.parse(spec), {
@@ -26,8 +26,10 @@ export function vl2svg(vlSpec, callback) {
     logLevel: vega.Warn,
     renderer: 'none'
   }).initialize()
-    .toSVG()
-    .then((svg) => {
-      callback(svg);
-    });
+    .toSVG();
+    // .then((svg) => {
+    //   callback(svg);
+    // });
+
+    return view;
 }

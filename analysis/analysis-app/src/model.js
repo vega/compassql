@@ -60,9 +60,20 @@ class Model {
 
     spec['encodings'] = encodings;
 
-
     const query = {};
 
+    query['nest'] = [
+      {
+        'groupBy': [{
+          'property': 'channel',
+          'replace': {
+            'x': 'xy', 'y': 'xy',
+            'row': 'facet', 'column': 'facet'
+          }
+        }],
+        'orderGroupBy': 'effectiveness'
+      }
+    ];
     query['spec'] = spec;
     query['orderBy'] = 'effectiveness';
 

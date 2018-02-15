@@ -33,6 +33,7 @@
   border-radius: 0 4px 4px 0;
   cursor: pointer;
   user-select: none;
+  transition: background-color 220ms;
 }
 
 .remove:hover {

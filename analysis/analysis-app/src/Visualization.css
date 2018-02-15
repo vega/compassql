@@ -1,0 +1,13 @@
+.Visualization {
+  border-style: dotted;
+  border-width: 1px;
+  border-radius: 4px;
+  border-color: #b5b5b5;
+  box-sizing: border-box;
+  padding: 8px;
+  margin: 8px;
+}
+
+.score-box {
+  font-size: 12px;
+}

@@ -2,16 +2,12 @@ import React, { Component } from 'react';
 import './Display.css';
 import Model from './model';
 import Recommender from './recommender';
-import { vl2svg } from './util';
+import Visualization from './Visualization';
 
 class Display extends Component {
   constructor(props) {
     super(props);
-    this.recommender = new Recommender();
-    this.state = {
-      loaded: false,
-      svg: null
-    }
+    this.recommender = new Recommender(this.props.schema.getCqlSchema());
   }
 
   render() {
@@ -19,32 +15,30 @@ class Display extends Component {
       return null;
     }
 
-    if (this.state.loaded) {
-      this.state.loaded = false;
-      return <span dangerouslySetInnerHTML={{__html: this.state.svg}} />;
-    } else {
-      this.state.loaded = false;
+    const model = new Model(
+      this.props.data,
+      this.props.schema,
+      this.props.fieldTypes,
+      this.props.fieldAggregates,
+      this.props.fieldBins
+    );
+    const query = model.generate();
 
-      const model = new Model(
-        this.props.data,
-        this.props.schema,
-        this.props.fieldTypes,
-        this.props.fieldAggregates,
-        this.props.fieldBins
+    const results = this.recommender.generate(query);
+
+    const visualizations = [];
+    for (let i = 0; i < results.length; i++) {
+      const result = results[i];
+      visualizations.push(
+        <Visualization key={i} id={i} vlSpec={result.spec} score={result.score}/>
       );
-
-      const query = model.generate();
-      const result = this.recommender.generate(query);
-
-      vl2svg(result[0], (svg) => {
-        this.setState({
-          loaded: true,
-          svg: svg
-        });
-      });
-
-      return null;
     }
+
+    return (
+      <div className="Display">
+        {visualizations}
+      </div>
+    );
   }
 }
 

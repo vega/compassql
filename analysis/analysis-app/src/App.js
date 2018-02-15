@@ -6,7 +6,6 @@ import Display from './Display';
 import Schema from './schema';
 import Recommender from './recommender';
 
-const carsSchema = require('./cars.schema.json');
 const carsData = require('./cars.json');
 
 const DEFAULT_DIMENSION_CONFIG = {
@@ -31,7 +30,7 @@ class App extends Component {
       dimensions: []
     }
 
-    this.schema = new Schema(carsSchema);
+    this.schema = new Schema(carsData);
     this.data = carsData;
     this.recommender = new Recommender();
   }
@@ -102,7 +101,9 @@ class App extends Component {
   getFieldTypes() {
     const fieldTypes = [];
     for (const dimension of this.state.dimensions) {
-      if (dimension.fieldType !== null) {
+      if (dimension.fieldType !== null &&
+          dimension.fieldTypeLocked &&
+          dimension.fieldTransformationLocked) {
         fieldTypes.push(dimension.fieldType);
       }
     }
@@ -130,7 +131,9 @@ class App extends Component {
     const binTypes = [];
     for (const dimension of this.state.dimensions) {
       if (dimension.fieldTransformation !== null &&
-          dimension.fieldTransformation === 'bin') {
+          dimension.fieldTransformation === 'bin' &&
+          dimension.fieldTypeLocked &&
+          dimension.fieldTransformationLocked) {
         binTypes.push(true);
       }
     }
@@ -143,7 +146,9 @@ class App extends Component {
     for (const dimension of this.state.dimensions) {
       if (dimension.fieldTransformation !== null &&
           (dimension.fieldTransformation === 'mean' ||
-          dimension.fieldTransformation === 'sum')) {
+          dimension.fieldTransformation === 'sum') &&
+          dimension.fieldTypeLocked &&
+          dimension.fieldTransformationLocked) {
         aggTypes.push(dimension.fieldTransformation);
       }
     }

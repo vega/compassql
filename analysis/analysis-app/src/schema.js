@@ -1,20 +1,21 @@
+const compassql = require('compassql');
+
 class Schema {
   /**
    * Constructs a new Schema for the given dataset.
    *
-   * @param {string} schemaFile The path to the .json
-   *        file describing the schema.
+   * @param {Object} data The path data to construct a schema for.
    */
-  constructor(schemaSpec) {
+  constructor(data) {
     this.types = new Map();
     this.typesIterator = new Map();
 
     // read the schema file
-    this.schema = schemaSpec;
+    this.schema = compassql.schema.build(data);
 
     // create types => fields map
-    for (const field in this.schema) {
-      const type = this.schema[field];
+    for (const field of this.schema.fieldNames()) {
+      const type = this.schema.fieldSchema(field).vlType;
       if (!this.types.has(type)) {
         this.types.set(type, []);
       }
@@ -23,12 +24,12 @@ class Schema {
   }
 
   /**
-   * Returns the schema backing this
+   * Returns the compassQL schema backing this
    *
    * @return {Object} The object mapping fieldName to type for the data
-   *        this represents.
+   *        this represents and various other data.
    */
-  getSchema() {
+  getCqlSchema() {
     return this.schema;
   }
 
