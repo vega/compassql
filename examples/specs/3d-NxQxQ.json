@@ -6,7 +6,7 @@
       {
         "channel": "?",
         "field": "Cylinders",
-        "type": "nominal"
+        "type": "ordinal"
       },{
         "channel": "?",
         "bin": "?",
