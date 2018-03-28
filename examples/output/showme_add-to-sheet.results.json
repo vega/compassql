@@ -2,6 +2,6 @@
   "name": "",
   "path": "",
   "items": [
-    "bar|row:Origin,n|x:mean(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}"
+    "bar|row:Origin,n|x:mean(Horsepower,q)|y:Cylinders,o,scale={\"rangeStep\":12}"
   ]
 }
