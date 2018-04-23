@@ -1,4 +1,5 @@
 import {isArray} from 'datalib/src/util';
+
 export {cmp, keys, duplicate, extend, isObject, isArray, isBoolean, toMap} from 'datalib/src/util';
 
 export interface Dict<T> {
