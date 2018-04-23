@@ -13,12 +13,12 @@ import {Type as VLType, Type} from 'vega-lite/build/src/type';
 import {ExpandedType} from './expandedtype';
 import {scaleType as compileScaleType} from 'vega-lite/build/src/compile/scale/type';
 import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
-import {AggregateOp} from 'vega-lite/build/src/aggregate';
 import {Schema} from '../schema';
 import {Encoding} from 'vega-lite/build/src/encoding';
 import {Property, isEncodingNestedParent, FlatProp} from '../property';
 import {PROPERTY_SUPPORTED_CHANNELS} from './shorthand';
 import {isObject} from 'datalib/src/util';
+import {AggregateOp} from 'vega';
 
 export type EncodingQuery = FieldQuery | ValueQuery | AutoCountQuery;
 

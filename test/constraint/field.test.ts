@@ -13,7 +13,7 @@ import {EncodingQuery, ScaleQuery, FieldQuery} from '../../src/query/encoding';
 import {SHORT_WILDCARD, Wildcard} from '../../src/wildcard';
 import {duplicate, extend, without} from '../../src/util';
 import {schema} from '../fixture';
-import {AggregateOp} from 'vega-lite/build/src/aggregate';
+import {AggregateOp} from 'vega';
 
 describe('constraints/field', () => {
   const defaultOpt = DEFAULT_QUERY_CONFIG;
