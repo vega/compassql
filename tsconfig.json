@@ -20,8 +20,5 @@
         "typings/*.d.ts",
         "node_modules/vega-lite/typings/*.d.ts",
         "node_modules/@types/**/*.d.ts"
-    ],
-    "atom": {
-        "rewriteTsconfig": true
-    }
+    ]
 }
