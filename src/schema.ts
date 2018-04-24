@@ -4,11 +4,13 @@ import {autoMaxBins} from 'vega-lite/build/src/bin';
 import {TimeUnit, containsTimeUnit, convert, TIMEUNIT_PARTS} from 'vega-lite/build/src/timeunit';
 import {summary} from 'datalib/src/stats';
 import {inferAll} from 'datalib/src/import/type';
-import * as dlBin from 'datalib/src/bins/bins';
+import * as dlBin_ from 'datalib/src/bins/bins';
 import {BinQuery, EncodingQuery, FieldQuery, isAutoCountQuery} from './query/encoding';
 import { ExpandedType } from './query/expandedtype';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
 import {cmp, duplicate, extend, keys} from './util';
+
+const dlBin = dlBin_;
 
 /**
  * Table Schema Field Descriptor interface
