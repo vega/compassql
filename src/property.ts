@@ -50,7 +50,7 @@ const ENCODING_TOPLEVEL_PROP_INDEX: Flag<EncodingTopLevelProp> = {
   aggregate: 1, autoCount: 1, bin: 1, timeUnit: 1, hasFn: 1,
   sort: 1, stack: 1,
   field: 1, type: 1,
-  scale: 1, axis: 1, legend: 1,
+  format: 1, scale: 1, axis: 1, legend: 1,
   value: 1
 };
 
@@ -174,6 +174,9 @@ export namespace Property {
   export const TRANSFORM: 'transform' = 'transform';
   // Layout
   export const STACK: 'stack' = 'stack';
+
+  export const FORMAT: 'format' = 'format';
+
   // TODO: sub parts of stack
 
   // Encoding Properties
