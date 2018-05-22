@@ -138,19 +138,10 @@ describe('query/shorthand', () => {
         });
       });
 
-      it('should correctly parse an encoding query given a fieldDefShorthand with min bin function', () => {
-        const encQ = shorthandParser.fn('bin(a,q,min=20)');
+      it('should correctly parse an encoding query given a fieldDefShorthand with bin extent', () => {
+        const encQ = shorthandParser.fn('bin(a,q,extent=[20,20])');
         assert.deepEqual(encQ, {
-          bin: {min: 20},
-          field: 'a',
-          type: Type.QUANTITATIVE,
-        });
-      });
-
-      it('should correctly parse an encoding query given a fieldDefShorthand with max bin function', () => {
-        const encQ = shorthandParser.fn('bin(a,q,max=20)');
-        assert.deepEqual(encQ, {
-          bin: {max: 20},
+          bin: {extent: [20, 20]},
           field: 'a',
           type: Type.QUANTITATIVE,
         });
@@ -194,9 +185,9 @@ describe('query/shorthand', () => {
 
       it('should correctly parse an encoding query given a fieldDefShorthand with div bin function', () => {
 
-        const encQ = shorthandParser.fn('bin(a,q,div=[5,2])');
+        const encQ = shorthandParser.fn('bin(a,q,divide=[5,2])');
         assert.deepEqual(encQ, {
-          bin: {div: [5, 2]},
+          bin: {divide: [5, 2]},
           field: 'a',
           type: Type.QUANTITATIVE,
         });
