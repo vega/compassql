@@ -102,6 +102,8 @@ export interface FieldQueryBase {
 
   axis?: boolean | AxisQuery | SHORT_WILDCARD;
   legend?: boolean | LegendQuery | SHORT_WILDCARD;
+
+  format?: string;
 }
 
 export type FieldQuery = EncodingQueryBase & FieldQueryBase;
@@ -119,7 +121,7 @@ export type ScaleQuery =  FlatQueryWithEnableFlag<Scale>;
 export type AxisQuery =  FlatQueryWithEnableFlag<Axis>;
 export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 
-const DEFAULT_PROPS = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND, Property.STACK];
+const DEFAULT_PROPS = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND, Property.STACK, Property.FORMAT];
 
 export interface ConversionParams {
   schema?: Schema;

@@ -24,6 +24,16 @@ describe('query/encoding', () => {
         {type: 'quantitative'}
       );
     });
+
+    it('return correct fieldDef for Text FieldQuery with format', () => {
+      assert.deepEqual(
+        toFieldDef(
+          {format: '.3f', channel: 'text', field: 'Q', type: 'quantitative'},
+          {props: ['field', 'format', 'type'], wildcardMode: 'skip'}
+        ),
+        {format: '.3f', field: 'Q', type: 'quantitative'}
+      );
+    });
   });
 
   describe('toValueDef', () => {
