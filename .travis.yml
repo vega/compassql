@@ -1,22 +1,21 @@
 language: node_js
 node_js:
-  - "4"
-  - "5"
   - "6"
-  - "7"
+  - "8"
+
 install: yarn install
+
 script:
-  - npm run lint
-  - npm test
-  - npm run codecov
-  - npm run clean && npm run build
-  - npm run build:examples-only && npm run check:examples
+  - yarn lint
+  - yarn test
+  - yarn codecov
+  - yarn clean && yarn build
+  - yarn build:examples-only && yarn check:examples
 after_success:
 - bash <(curl -s https://codecov.io/bash)
+
 cache: yarn
-cache:
-  directories:
-  - $HOME/.yarn-cache
+
 notifications:
   email: never
   slack:

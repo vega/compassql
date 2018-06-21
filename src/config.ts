@@ -80,7 +80,7 @@ export interface QueryConfig {
 export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   verbose: false,
   defaultSpecConfig: {
-    overlay: {line: true},
+    line: {point: true},
     scale: {useUnaggregatedDomain: true}
   },
   propertyPrecedence: DEFAULT_PROP_PRECEDENCE.map(toKey),
