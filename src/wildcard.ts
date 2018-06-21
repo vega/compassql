@@ -107,6 +107,7 @@ export const DEFAULT_NAME = {
   sort: 'so',
   stack: 'st',
   scale: 's',
+  format: 'f',
   axis: 'ax',
   legend: 'l',
   value: 'v',
@@ -164,6 +165,7 @@ export type EnumIndex =
   {
     sort: (SortField<string> | SortOrder)[],
     stack: StackOffset[],
+    format: string[],
     scale: boolean[],
     axis: boolean[],
     legend: boolean[],
@@ -282,6 +284,7 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
   stack: ['zero', 'normalize', 'center', null],
   value: [undefined],
 
+  format: [undefined],
   scale: [true],
   axis: DEFAULT_BOOLEAN_ENUM,
   legend: DEFAULT_BOOLEAN_ENUM,
