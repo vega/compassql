@@ -39,7 +39,7 @@ describe('recommend()', () => {
           }
         ],
         "config": {
-          "overlay": {"line": true},
+          // "overlay": {"line": true},
           "scale": {"useUnaggregatedDomain": true}
         }
       },

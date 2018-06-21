@@ -7,8 +7,10 @@ import {Schema} from '../schema';
 import {effectiveness} from './effectiveness';
 
 export * from './effectiveness';
-export import aggregation = require('./aggregation');
-export import fieldOrder = require('./fieldorder');
+import * as aggregation from './aggregation';
+import * as fieldOrder from './fieldorder';
+
+export {aggregation, fieldOrder};
 
 export interface RankingScore {
   score: number;

@@ -9,22 +9,18 @@
   },
   "scripts": {
     "prebuild": "mkdir -p build",
-    "build": "tsc && browserify build/src/cql.js -d -s cql | exorcist build/compassql.js.map > build/compassql.js",
+    "build": "tsc && cp package.json build/src/ && rollup -c",
     "build:examples": "npm run build && ./scripts/build-examples.sh",
     "build:examples-only": "./scripts/build-examples.sh",
     "postbuild": "uglifyjs build/compassql.js -cm --source-map build/compassql.min.js.map > build/compassql.min.js",
     "clean": "rm -rf build",
     "deploy": "npm run clean && npm run lint && npm run test && scripts/deploy.sh",
     "lint": "tslint -c tslint.json src/**/*.ts test/**/*.ts",
-    "watch": "nodemon -x 'npm run build && npm run test:only && npm run lint'",
     "schema": "npm run prebuild && typescript-json-schema --required true src/query.ts Query > build/compassql-schema.json",
-    "tsc": "tsc",
-    "test": "tsc && npm run test:only",
-    "posttest": "npm run lint",
-    "test:only": "nyc --reporter=html --reporter=text-summary mocha build/test",
+    "test": "jest --forceExit --maxWorkers=4 && npm run lint",
     "check:examples": "./scripts/check-examples.sh",
-    "codecov": "nyc report --reporter=json && codecov -f coverage/*.json",
-    "test:debug": "mocha --debug-brk build/test"
+    "watch:build": "npm run build && concurrently --kill-others -n Typescript,Rollup 'tsc -w' 'rollup -c -w'",
+    "watch:test": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -49,19 +45,21 @@
   },
   "homepage": "https://github.com/uwdata/compassql#readme",
   "devDependencies": {
-    "@types/chai": "^3.4.34",
-    "@types/mocha": "^2.2.38",
-    "browserify": "~13.0.0",
-    "browserify-versionify": "~1.0.6",
-    "chai": "~3.5.0",
+    "@types/chai": "^4.1.3",
+    "@types/d3": "^4.13.0",
+    "@types/jest": "^22.2.3",
+    "chai": "^4.1.2",
     "codecov": "~1.0.1",
+    "concurrently": "^3.5.1",
     "d3": "~4",
     "exorcist": "~0.4.0",
-    "mocha": "~2.4.4",
-    "nodemon": "~1.9.2",
-    "nyc": "~6.4.4",
+    "jest": "^22.4.3",
+    "rollup": "^0.58.2",
+    "rollup-plugin-commonjs": "^9.1.0",
+    "rollup-plugin-json": "^2.3.0",
+    "rollup-plugin-node-resolve": "^3.3.0",
     "source-map-support": "~0.4.0",
-    "tsify": "~3.0.0",
+    "ts-jest": "^22.4.4",
     "tslint": "~4.3.1",
     "typescript": "^2.3.4",
     "uglify-js": "~2.6.1",
@@ -70,11 +68,29 @@
   "dependencies": {
     "datalib": "~1.7.0",
     "typescript-json-schema": "^0.9.0",
-    "vega-lite": "2.0.4"
+    "vega-lite": "2.4.0",
+    "vega-typings": "^0.2.15"
   },
-  "browserify": {
-    "transform": [
-      "browserify-versionify"
-    ]
+  "jest": {
+    "transform": {
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ],
+    "testPathIgnorePatterns": [
+      "node_modules",
+      "<rootDir>/build",
+      "scripts",
+      "src"
+    ],
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true
   }
 }

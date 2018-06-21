@@ -1,7 +1,8 @@
 import {assert} from 'chai';
+import {AggregateOp} from 'vega';
 
 import {Mark} from 'vega-lite/build/src/mark';
-import {SUM_OPS, AggregateOp} from 'vega-lite/build/src/aggregate';
+import {SUM_OPS} from 'vega-lite/build/src/aggregate';
 import {Channel} from 'vega-lite/build/src/channel';
 // import * as log from 'vega-lite/build/src/log';
 import {ScaleType} from 'vega-lite/build/src/scale';
