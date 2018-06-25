@@ -5,6 +5,7 @@ import {assert} from 'chai';
 
 import {scaleType, toFieldDef, toValueDef} from '../../src/query/encoding';
 import {SHORT_WILDCARD} from '../../src/wildcard';
+import {TextFieldDef} from 'vega-lite/build/src/fielddef';
 
 describe('query/encoding', () => {
   describe('toFieldDef', () => {
@@ -26,7 +27,7 @@ describe('query/encoding', () => {
     });
 
     it('return correct fieldDef for Text FieldQuery with format', () => {
-      assert.deepEqual(
+      assert.deepEqual<TextFieldDef<string>>(
         toFieldDef(
           {format: '.3f', channel: 'text', field: 'Q', type: 'quantitative'},
           {props: ['field', 'format', 'type'], wildcardMode: 'skip'}
