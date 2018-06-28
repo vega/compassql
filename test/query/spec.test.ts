@@ -380,6 +380,7 @@ describe('query/spec', () => {
           x: {field: 'x', type: Type.QUANTITATIVE},
           y: {field: 'x', type: Type.QUANTITATIVE, scale: null}
         },
+        data: undefined
       });
       assert.deepEqual(specQ, {
         mark: Mark.POINT,

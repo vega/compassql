@@ -331,6 +331,7 @@ describe('SpecQueryModel', () => {
       });
 
       const spec = specM.toSpec();
+      console.log(JSON.stringify(spec));
       assert.deepEqual(spec, {
         data: {values: [{Q: 1}]},
         transform: [{filter: 'datum.Q===1'}],
@@ -617,7 +618,14 @@ describe('SpecQueryModel', () => {
         encodings: [
           {channel: Channel.X, field: 'O', type: Type.ORDINAL},
           {channel: Channel.Y, autoCount: true, type: Type.QUANTITATIVE}
-        ]
+        ],
+        data: {
+          format: {
+            parse: 'auto',
+            type: 'json'
+          },
+          name: 'testName'
+        }
       });
 
       const spec = specM.toSpec();
@@ -626,6 +634,13 @@ describe('SpecQueryModel', () => {
         encoding: {
           x: {field: 'O', type: Type.ORDINAL},
           y: {aggregate: 'count', field: '*', type: Type.QUANTITATIVE}
+        },
+        data: {
+          format: {
+            parse: 'auto',
+            type: 'json'
+          },
+          name: 'testName'
         },
         config: DEFAULT_SPEC_CONFIG
       });
@@ -637,7 +652,14 @@ describe('SpecQueryModel', () => {
         encodings: [
           {channel: Channel.X, field: 'O', type: Type.ORDINAL},
           {channel: Channel.Y, autoCount: false}
-        ]
+        ],
+        data: {
+          format: {
+            parse: 'auto',
+            type: 'json'
+          },
+          name: 'testName'
+        },
       });
 
       const spec = specM.toSpec();
@@ -645,6 +667,13 @@ describe('SpecQueryModel', () => {
         mark: Mark.BAR,
         encoding: {
           x: {field: 'O', type: Type.ORDINAL}
+        },
+        data: {
+          format: {
+            parse: 'auto',
+            type: 'json'
+          },
+          name: 'testName'
         },
         config: DEFAULT_SPEC_CONFIG
       });
@@ -658,7 +687,14 @@ describe('SpecQueryModel', () => {
         encodings: [
           {channel: Channel.X, field: 'O', type: Type.ORDINAL},
           {channel: SHORT_WILDCARD, autoCount: false}
-        ]
+        ],
+        data: {
+          format: {
+            parse: 'auto',
+            type: 'json'
+          },
+          name: 'testName'
+        },
       });
 
       const spec = specM.toSpec();
@@ -666,6 +702,13 @@ describe('SpecQueryModel', () => {
         mark: Mark.BAR,
         encoding: {
           x: {field: 'O', type: Type.ORDINAL}
+        },
+        data: {
+          format: {
+            parse: 'auto',
+            type: 'json'
+          },
+          name: 'testName'
         },
         config: DEFAULT_SPEC_CONFIG
       });

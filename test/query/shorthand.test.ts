@@ -30,6 +30,13 @@ describe('query/shorthand', () => {
         mark: Mark.POINT,
         encoding: {
           x: {field: 'x', type: Type.QUANTITATIVE}
+        },
+        data: {
+          format: {
+            parse: 'auto',
+            type: 'json'
+          },
+          name: 'testName'
         }
       }), 'point|transform:[{"filter":"datum.x === 5"},{"calculate":"datum.x*2","as":"x2"}]|x:x,q');
     });
