@@ -11,7 +11,7 @@ import {contains, extend, keys, some, isObject, without} from '../util';
 
 import {TransformQuery} from './transform';
 import {EncodingQuery, isFieldQuery, isEnabledAutoCountQuery, isDisabledAutoCountQuery, toEncoding} from './encoding';
-import {TopLevel, FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
+import {TopLevelFacetedUnitSpec} from 'vega-lite/build/src/spec';
 import {toMap} from 'datalib/src/util';
 
 
@@ -82,7 +82,7 @@ export interface SpecQuery {
  * @param {ExtendedUnitSpec} spec
  * @returns
  */
-export function fromSpec(spec: TopLevel<FacetedCompositeUnitSpec>): SpecQuery {
+export function fromSpec(spec: TopLevelFacetedUnitSpec): SpecQuery {
   return extend(
     spec.data ? { data: spec.data} : {},
     spec.transform ? { transform: spec.transform } : {},

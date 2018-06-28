@@ -2,7 +2,7 @@ import {Channel} from 'vega-lite/build/src/channel';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Type} from 'vega-lite/build/src/type';
-import {TopLevel, FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
+import {TopLevelFacetedUnitSpec} from 'vega-lite/build/src/spec';
 import {StackOffset, StackProperties} from 'vega-lite/build/src/stack';
 import {QueryConfig} from './config';
 import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, isEncodingNestedParent} from './property';
@@ -291,7 +291,7 @@ export class SpecQueryModel {
    * Convert a query to a Vega-Lite spec if it is completed.
    * @return a Vega-Lite spec if completed, null otherwise.
    */
-  public toSpec(data?: Data): TopLevel<FacetedCompositeUnitSpec> {
+  public toSpec(data?: Data): TopLevelFacetedUnitSpec {
     if (isWildcard(this._spec.mark)) return null;
 
     let spec: any = {};

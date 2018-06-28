@@ -1,7 +1,7 @@
 import {isAggregateOp} from 'vega-lite/build/src/aggregate';
 import {Channel, isChannel} from 'vega-lite/build/src/channel';
 import {Mark} from 'vega-lite/build/src/mark';
-import {FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
+import {TopLevelFacetedUnitSpec} from 'vega-lite/build/src/spec';
 import {isTimeUnit} from 'vega-lite/build/src/timeunit';
 import {Type, getFullName} from 'vega-lite/build/src/type';
 import {StackProperties} from 'vega-lite/build/src/stack';
@@ -63,7 +63,7 @@ export const INCLUDE_ALL: PropIndex<boolean> =
   .reduce((pi, prop: Property) => pi.set(prop, true), new PropIndex<boolean>());
 
 
-export function vlSpec(vlspec: FacetedCompositeUnitSpec,
+export function vlSpec(vlspec: TopLevelFacetedUnitSpec,
     include: PropIndex<boolean> = INCLUDE_ALL,
     replace: PropIndex<Replacer> = REPLACE_NONE) {
   const specQ = fromSpec(vlspec);
