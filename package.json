@@ -2,7 +2,11 @@
   "name": "compassql",
   "version": "0.20.1",
   "description": "CompassQL visualization query language",
-  "main": "build/src/cql.js",
+  "main": "build/compassql.js",
+  "unpkg": "build/compassql.min.js",
+  "jsdelivr": "build/compassql.min.js",
+  "module": "build/src/index",
+  "types": "build/src/index.d.ts",
   "typings": "./build/src/cql",
   "directories": {
     "test": "test"
