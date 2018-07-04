@@ -5,8 +5,8 @@
   "main": "build/compassql.js",
   "unpkg": "build/compassql.min.js",
   "jsdelivr": "build/compassql.min.js",
-  "module": "build/src/index",
-  "types": "build/src/index.d.ts",
+  "module": "build/src/cql.ts",
+  "types": "build/src/cql.d.ts",
   "typings": "./build/src/cql",
   "directories": {
     "test": "test"
