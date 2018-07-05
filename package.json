@@ -1,6 +1,6 @@
 {
   "name": "compassql",
-  "version": "0.20.1",
+  "version": "0.20.2",
   "description": "CompassQL visualization query language",
   "main": "build/compassql.js",
   "unpkg": "build/compassql.min.js",
