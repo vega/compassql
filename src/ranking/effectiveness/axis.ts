@@ -6,7 +6,7 @@ import {Channel} from 'vega-lite/build/src/channel';
 
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../../config';
 import {SpecQueryModel} from '../../model';
-import {EncodingQuery} from '../../query/encoding';
+import {EncodingQuery, isFieldQuery} from '../../query/encoding';
 import {Dict} from '../../util';
 
 import {Schema} from '../../schema';
@@ -67,14 +67,16 @@ export class AxisScorer extends Scorer {
 
   public getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     return specM.getEncodings().reduce((features, encQ: EncodingQuery) => {
-      const type = getExtendedType(encQ);
-      const feature = this.featurize(type, encQ.channel as Channel);
-      const featureScore = this.getFeatureScore(feature);
+      if (isFieldQuery(encQ)) {
+        const type = getExtendedType(encQ);
+        const feature = this.featurize(type, encQ.channel as Channel);
+        const featureScore = this.getFeatureScore(feature);
 
-      if (featureScore) {
-        features.push(featureScore);
+        if (featureScore) {
+          features.push(featureScore);
+        }
+        return features;
       }
-      return features;
     }, []);
   }
 }
