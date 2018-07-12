@@ -101,9 +101,9 @@
               "path": "/Origin|autocount()|bin(Horsepower)/style:autocount()|xy:Origin|xy:bin(Horsepower)/style:autocount()|xy:Origin|xy:bin(Horsepower)",
               "items": [
                 "point|size:count(*,q)|x:bin(Horsepower,q)|y:Origin,n",
-                "point|size:count(*,q)|x:Origin,n|y:bin(Horsepower,q)",
                 "point|color:count(*,q)|x:bin(Horsepower,q)|y:Origin,n",
                 "rect|color:count(*,q)|x:bin(Horsepower,q)|y:Origin,n",
+                "point|size:count(*,q)|x:Origin,n|y:bin(Horsepower,q)",
                 "point|color:count(*,q)|x:Origin,n|y:bin(Horsepower,q)",
                 "rect|color:count(*,q)|x:Origin,n|y:bin(Horsepower,q)"
               ]

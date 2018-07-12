@@ -431,17 +431,17 @@
               "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:Cylinders|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)/facet:Cylinders|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)",
               "items": [
                 "point|row:Cylinders,n|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "rect|color:count(*,q)|row:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
                 "point|row:Cylinders,n|size:count(*,q)|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
-                "point|column:Cylinders,n|size:count(*,q)|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
-                "point|column:Cylinders,n|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
                 "point|color:count(*,q)|row:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
                 "rect|color:count(*,q)|row:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
                 "point|color:count(*,q)|row:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
-                "rect|color:count(*,q)|row:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "rect|color:count(*,q)|column:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
                 "point|color:count(*,q)|column:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
                 "rect|color:count(*,q)|column:Cylinders,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "point|column:Cylinders,n|size:count(*,q)|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
                 "point|color:count(*,q)|column:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
-                "rect|color:count(*,q)|column:Cylinders,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)"
+                "point|column:Cylinders,n|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Acceleration,q)"
               ]
             }
           ],
@@ -459,17 +459,17 @@
               "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:bin(Horsepower)/facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:bin(Horsepower)",
               "items": [
                 "point|row:bin(Acceleration,q)|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "point|column:bin(Acceleration,q)|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,n",
-                "point|row:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n|y:bin(Horsepower,q)",
-                "point|column:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)",
-                "point|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "rect|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "point|color:count(*,q)|column:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
+                "point|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Acceleration,q)|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,n",
                 "rect|color:count(*,q)|column:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
+                "point|color:count(*,q)|column:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
                 "point|color:count(*,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)",
                 "rect|color:count(*,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)",
+                "point|row:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)",
                 "point|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)",
-                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)"
+                "point|column:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)"
               ]
             }
           ],
@@ -487,17 +487,17 @@
               "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Horsepower)|style:autocount()|xy:Cylinders|xy:bin(Acceleration)/facet:bin(Horsepower)|style:autocount()|xy:Cylinders|xy:bin(Acceleration)",
               "items": [
                 "point|row:bin(Horsepower,q)|size:count(*,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "point|column:bin(Horsepower,q)|size:count(*,q)|x:bin(Acceleration,q)|y:Cylinders,n",
-                "point|row:bin(Horsepower,q)|size:count(*,q)|x:Cylinders,n|y:bin(Acceleration,q)",
-                "point|column:bin(Horsepower,q)|size:count(*,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
-                "point|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "rect|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "point|color:count(*,q)|column:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
+                "point|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Horsepower,q)|size:count(*,q)|x:bin(Acceleration,q)|y:Cylinders,n",
                 "rect|color:count(*,q)|column:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
+                "point|color:count(*,q)|column:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
                 "point|color:count(*,q)|row:bin(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)",
                 "rect|color:count(*,q)|row:bin(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)",
+                "point|row:bin(Horsepower,q)|size:count(*,q)|x:Cylinders,n|y:bin(Acceleration,q)",
+                "rect|color:count(*,q)|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
                 "point|color:count(*,q)|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
-                "rect|color:count(*,q)|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)"
+                "point|column:bin(Horsepower,q)|size:count(*,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)"
               ]
             }
           ],

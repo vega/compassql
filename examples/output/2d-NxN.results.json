@@ -15,9 +15,9 @@
               "path": "/Creative_Type|Major_Genre|autocount()/style:autocount()|xy:Creative_Type|xy:Major_Genre/style:autocount()|xy:Creative_Type|xy:Major_Genre",
               "items": [
                 "point|size:count(*,q)|x:Major_Genre,n,scale={\"rangeStep\":12}|y:Creative_Type,n",
-                "point|size:count(*,q)|x:Creative_Type,n|y:Major_Genre,n,scale={\"rangeStep\":12}",
                 "point|color:count(*,q)|x:Major_Genre,n,scale={\"rangeStep\":12}|y:Creative_Type,n",
                 "rect|color:count(*,q)|x:Major_Genre,n,scale={\"rangeStep\":12}|y:Creative_Type,n",
+                "point|size:count(*,q)|x:Creative_Type,n|y:Major_Genre,n,scale={\"rangeStep\":12}",
                 "point|color:count(*,q)|x:Creative_Type,n|y:Major_Genre,n,scale={\"rangeStep\":12}",
                 "rect|color:count(*,q)|x:Creative_Type,n|y:Major_Genre,n,scale={\"rangeStep\":12}"
               ]
