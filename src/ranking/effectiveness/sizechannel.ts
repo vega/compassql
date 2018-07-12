@@ -23,7 +23,9 @@ export class SizeChannelScorer extends Scorer {
 
   public getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     const mark = specM.getMark();
-    return specM.getEncodings().reduce((featureScores, encQ) => {
+    return specM.getEncodings().filter(encQ => {
+      return isFieldQuery(encQ);
+    }).reduce((featureScores, encQ) => {
       if (isFieldQuery(encQ)) {
         const feature = mark + '_' + encQ.channel;
         const featureScore = this.getFeatureScore(feature);

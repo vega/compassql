@@ -97,19 +97,19 @@ export class TypeChannelScorer extends Scorer {
   }
 
   public getScore(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore[] {
-    const encodingQueryByField = specM.getEncodings().reduce((m, encQ) => {
-      if (isFieldQuery(encQ)) {
-        const fieldKey = fieldDefShorthand(encQ);
-        (m[fieldKey] = m[fieldKey] || []).push(encQ);
-        return m;
-      }
+    const encodingQueryByField = specM.getEncodings().filter(encQ => {
+      return isFieldQuery(encQ);
+    }).reduce((m, encQ) => {
+      const fieldKey = fieldDefShorthand(encQ);
+      (m[fieldKey] = m[fieldKey] || []).push(encQ);
+      return m;
     }, {});
 
     const features: FeatureScore[] = [];
 
     forEach(encodingQueryByField, (encQs: EncodingQuery[]) => {
-      const bestFieldFeature = encQs.reduce((best: FeatureScore, encQ) => {
-        if (isFieldQuery(encQ)) {
+      const bestFieldFeature = encQs.filter(encQ => { return isFieldQuery(encQ); })
+        .reduce((best: FeatureScore, encQ) => {
           const type = getExtendedType(encQ);
           const feature = this.featurize(type, encQ.channel as Channel);
           const featureScore = this.getFeatureScore(feature);
@@ -118,8 +118,7 @@ export class TypeChannelScorer extends Scorer {
             return featureScore;
           }
           return best;
-        }
-      }, null);
+        }, null);
 
       features.push(bestFieldFeature);
 
