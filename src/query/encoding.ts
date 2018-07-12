@@ -33,7 +33,7 @@ export interface ValueQuery extends EncodingQueryBase {
 }
 
 export function isValueQuery(encQ: EncodingQuery): encQ is ValueQuery {
-  return encQ !== null && encQ !== undefined && encQ['value'];
+  return encQ !== null && encQ !== undefined && encQ['value'] !== undefined;
 }
 
 export function isFieldQuery(encQ: EncodingQuery): encQ is FieldQuery {

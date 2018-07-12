@@ -20,7 +20,7 @@
       "name": "Cylinders|autocount()|bin(Horsepower)",
       "path": "/Cylinders|autocount()|bin(Horsepower)",
       "items": [
-        "rect|color:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o"
+        "point|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,o"
       ]
     }
   ],

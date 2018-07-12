@@ -139,9 +139,9 @@
               "path": "/autocount()|bin(Horsepower)|bin(Miles_per_Gallon)/style:autocount()|xy:bin(Horsepower)|xy:bin(Miles_per_Gallon)/style:autocount()|xy:bin(Horsepower)|xy:bin(Miles_per_Gallon)",
               "items": [
                 "point|size:count(*,q)|x:bin(Miles_per_Gallon,q)|y:bin(Horsepower,q)",
+                "point|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Miles_per_Gallon,q)",
                 "point|color:count(*,q)|x:bin(Miles_per_Gallon,q)|y:bin(Horsepower,q)",
                 "rect|color:count(*,q)|x:bin(Miles_per_Gallon,q)|y:bin(Horsepower,q)",
-                "point|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Miles_per_Gallon,q)",
                 "point|color:count(*,q)|x:bin(Horsepower,q)|y:bin(Miles_per_Gallon,q)",
                 "rect|color:count(*,q)|x:bin(Horsepower,q)|y:bin(Miles_per_Gallon,q)"
               ]

@@ -275,17 +275,17 @@
               "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:Cylinders|style:autocount()|xy:Origin|xy:bin(Acceleration)/facet:Cylinders|style:autocount()|xy:Origin|xy:bin(Acceleration)",
               "items": [
                 "point|row:Cylinders,n|size:count(*,q)|x:bin(Acceleration,q)|y:Origin,o,scale={\"rangeStep\":12}",
+                "point|column:Cylinders,n|size:count(*,q)|x:bin(Acceleration,q)|y:Origin,o",
+                "point|row:Cylinders,n|size:count(*,q)|x:Origin,o|y:bin(Acceleration,q)",
+                "point|column:Cylinders,n|size:count(*,q)|x:Origin,o,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
                 "point|color:count(*,q)|row:Cylinders,n|x:bin(Acceleration,q)|y:Origin,o,scale={\"rangeStep\":12}",
                 "rect|color:count(*,q)|row:Cylinders,n|x:bin(Acceleration,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "rect|color:count(*,q)|column:Cylinders,n|x:bin(Acceleration,q)|y:Origin,o",
                 "point|color:count(*,q)|column:Cylinders,n|x:bin(Acceleration,q)|y:Origin,o",
-                "point|column:Cylinders,n|size:count(*,q)|x:bin(Acceleration,q)|y:Origin,o",
+                "rect|color:count(*,q)|column:Cylinders,n|x:bin(Acceleration,q)|y:Origin,o",
                 "point|color:count(*,q)|row:Cylinders,n|x:Origin,o|y:bin(Acceleration,q)",
                 "rect|color:count(*,q)|row:Cylinders,n|x:Origin,o|y:bin(Acceleration,q)",
-                "point|row:Cylinders,n|size:count(*,q)|x:Origin,o|y:bin(Acceleration,q)",
-                "rect|color:count(*,q)|column:Cylinders,n|x:Origin,o,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
                 "point|color:count(*,q)|column:Cylinders,n|x:Origin,o,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
-                "point|column:Cylinders,n|size:count(*,q)|x:Origin,o,scale={\"rangeStep\":12}|y:bin(Acceleration,q)"
+                "rect|color:count(*,q)|column:Cylinders,n|x:Origin,o,scale={\"rangeStep\":12}|y:bin(Acceleration,q)"
               ]
             }
           ],
@@ -303,17 +303,17 @@
               "path": "/Cylinders|Origin|autocount()|bin(Acceleration)/facet:Origin|style:autocount()|xy:Cylinders|xy:bin(Acceleration)/facet:Origin|style:autocount()|xy:Cylinders|xy:bin(Acceleration)",
               "items": [
                 "point|row:Origin,o|size:count(*,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "rect|color:count(*,q)|row:Origin,o|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "point|color:count(*,q)|row:Origin,o|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "point|column:Origin,o|size:count(*,q)|x:bin(Acceleration,q)|y:Cylinders,n",
-                "rect|color:count(*,q)|column:Origin,o|x:bin(Acceleration,q)|y:Cylinders,n",
+                "point|row:Origin,o|size:count(*,q)|x:Cylinders,n|y:bin(Acceleration,q)",
+                "point|column:Origin,o|size:count(*,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
+                "point|color:count(*,q)|row:Origin,o|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "rect|color:count(*,q)|row:Origin,o|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "point|color:count(*,q)|column:Origin,o|x:bin(Acceleration,q)|y:Cylinders,n",
+                "rect|color:count(*,q)|column:Origin,o|x:bin(Acceleration,q)|y:Cylinders,n",
                 "point|color:count(*,q)|row:Origin,o|x:Cylinders,n|y:bin(Acceleration,q)",
                 "rect|color:count(*,q)|row:Origin,o|x:Cylinders,n|y:bin(Acceleration,q)",
-                "point|row:Origin,o|size:count(*,q)|x:Cylinders,n|y:bin(Acceleration,q)",
-                "rect|color:count(*,q)|column:Origin,o|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
                 "point|color:count(*,q)|column:Origin,o|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
-                "point|column:Origin,o|size:count(*,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)"
+                "rect|color:count(*,q)|column:Origin,o|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)"
               ]
             }
           ],
@@ -332,14 +332,14 @@
               "items": [
                 "point|row:bin(Acceleration,q)|size:count(*,q)|x:Origin,o|y:Cylinders,n,scale={\"rangeStep\":12}",
                 "point|row:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n|y:Origin,o,scale={\"rangeStep\":12}",
-                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:Origin,o,scale={\"rangeStep\":12}",
-                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:Origin,o|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "point|color:count(*,q)|row:bin(Acceleration,q)|x:Origin,o|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "point|color:count(*,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:Origin,o,scale={\"rangeStep\":12}",
-                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:Origin,o",
-                "point|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:Origin,o",
                 "point|column:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:Origin,o",
                 "point|column:bin(Acceleration,q)|size:count(*,q)|x:Origin,o,scale={\"rangeStep\":12}|y:Cylinders,n",
+                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:Origin,o,scale={\"rangeStep\":12}",
+                "point|color:count(*,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:Origin,o,scale={\"rangeStep\":12}",
+                "point|color:count(*,q)|row:bin(Acceleration,q)|x:Origin,o|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:Origin,o|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "point|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:Origin,o",
+                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:Origin,o",
                 "point|color:count(*,q)|column:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:Cylinders,n",
                 "rect|color:count(*,q)|column:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:Cylinders,n"
               ]
