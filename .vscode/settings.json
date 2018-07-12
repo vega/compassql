@@ -9,6 +9,6 @@
   },
   "files.trimTrailingWhitespace": true,
   "tslint.autoFixOnSave": true,
-  "tsimporter.spaceBetweenBraces": false,
+  "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
   "typescript.tsdk": "./node_modules/typescript/lib"
 }
