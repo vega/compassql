@@ -75,8 +75,8 @@ export class AxisScorer extends Scorer {
         if (featureScore) {
           features.push(featureScore);
         }
-        return features;
       }
+      return features;
     }, []);
   }
 }

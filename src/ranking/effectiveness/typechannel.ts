@@ -13,7 +13,8 @@ import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, ExtendedType, getExtendedType
 
 
 import {Scorer} from './base';
-import {Channel} from '../../../node_modules/vega-lite/build/src/channel';
+import {Channel} from 'vega-lite/build/src/channel';
+
 
 
 export const TERRIBLE = -10;
@@ -86,7 +87,7 @@ export class TypeChannelScorer extends Scorer {
       SCORE[this.featurize(K, channel)] =
         // Putting key on position or detail isn't terrible
         contains(['x', 'y', 'detail'], channel) ? -1 :
-        NOMINAL_TYPE_CHANNEL_SCORE[channel] - 2;
+          NOMINAL_TYPE_CHANNEL_SCORE[channel] - 2;
     });
 
     return SCORE;
@@ -101,8 +102,8 @@ export class TypeChannelScorer extends Scorer {
       if (isFieldQuery(encQ)) {
         const fieldKey = fieldDefShorthand(encQ);
         (m[fieldKey] = m[fieldKey] || []).push(encQ);
-        return m;
       }
+      return m;
     }, {});
 
     const features: FeatureScore[] = [];
@@ -117,8 +118,8 @@ export class TypeChannelScorer extends Scorer {
           if (best === null || featureScore.score > best.score) {
             return featureScore;
           }
-          return best;
         }
+        return best;
       }, null);
 
       features.push(bestFieldFeature);

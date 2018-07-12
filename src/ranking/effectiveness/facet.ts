@@ -35,8 +35,8 @@ export class FacetScorer extends Scorer {
         if (featureScore) {
           features.push(featureScore);
         }
-        return features;
       }
+      return features;
     }, []);
   }
 };

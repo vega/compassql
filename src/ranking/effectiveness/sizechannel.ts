@@ -30,9 +30,8 @@ export class SizeChannelScorer extends Scorer {
         if (featureScore) {
           featureScores.push(featureScore);
         }
-
-        return featureScores;
       }
+      return featureScores;
     }, []);
   }
 }
