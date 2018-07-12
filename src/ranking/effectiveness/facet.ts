@@ -29,9 +29,7 @@ export class FacetScorer extends Scorer {
     return score;
   }
   public getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
-    return specM.getEncodings().filter(encQ => {
-      return isFieldQuery(encQ);
-    }).reduce((features, encQ: EncodingQuery) => {
+    return specM.getEncodings().reduce((features, encQ: EncodingQuery) => {
       if (isFieldQuery(encQ)) {
         const featureScore = this.getFeatureScore(encQ.channel as string);
         if (featureScore) {

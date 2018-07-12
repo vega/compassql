@@ -66,18 +66,17 @@ export class AxisScorer extends Scorer {
   }
 
   public getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
-    const encodings = specM.getEncodings().filter(encQ => {
-      return isFieldQuery(encQ);
-    });
-    return encodings.reduce((features, encQ: EncodingQuery) => {
-      const type = getExtendedType(encQ);
-      const feature = this.featurize(type, encQ.channel as Channel);
-      const featureScore = this.getFeatureScore(feature);
+    return specM.getEncodings().reduce((features, encQ: EncodingQuery) => {
+      if (isFieldQuery(encQ)) {
+        const type = getExtendedType(encQ);
+        const feature = this.featurize(type, encQ.channel as Channel);
+        const featureScore = this.getFeatureScore(feature);
 
-      if (featureScore) {
-        features.push(featureScore);
+        if (featureScore) {
+          features.push(featureScore);
+        }
+        return features;
       }
-      return features;
     }, []);
   }
 }

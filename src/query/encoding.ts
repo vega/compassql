@@ -142,7 +142,7 @@ export function toEncoding(encQs: EncodingQuery[], params: ConversionParams): En
 
     // if channel is a wildcard, return null
     if (isWildcard(channel)) {
-      throw new Error('Cannot convert wildcard channel to a fixed channel');
+      return null;
     }
     const channelDef = isValueQuery(encQ) ? toValueDef(encQ) : toFieldDef(encQ, params);
 
