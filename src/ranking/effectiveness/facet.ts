@@ -3,7 +3,7 @@ import {SpecQueryModel} from '../../model';
 import {Schema} from '../../schema';
 import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../../config';
 import {FeatureScore} from '../ranking';
-import {EncodingQuery, isFieldQuery} from '../../query/encoding';
+import {EncodingQuery, isFieldQuery, isAutoCountQuery} from '../../query/encoding';
 import {Channel} from 'vega-lite/build/src/channel';
 import {Dict} from '../../util';
 
@@ -30,7 +30,7 @@ export class FacetScorer extends Scorer {
   }
   public getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     return specM.getEncodings().reduce((features, encQ: EncodingQuery) => {
-      if (isFieldQuery(encQ)) {
+      if (isFieldQuery(encQ) || isAutoCountQuery(encQ)) {
         const featureScore = this.getFeatureScore(encQ.channel as string);
         if (featureScore) {
           features.push(featureScore);

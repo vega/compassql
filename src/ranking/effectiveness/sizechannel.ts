@@ -4,7 +4,7 @@ import {SpecQueryModel} from '../../model';
 import {Schema} from '../../schema';
 import {QueryConfig} from '../../config';
 import {FeatureScore} from '../ranking';
-import {isFieldQuery} from '../../query/encoding';
+import {isFieldQuery, isAutoCountQuery} from '../../query/encoding';
 
 /**
  * Effectivenss score that penalize size for bar and tick
@@ -24,7 +24,7 @@ export class SizeChannelScorer extends Scorer {
   public getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     const mark = specM.getMark();
     return specM.getEncodings().reduce((featureScores, encQ) => {
-      if (isFieldQuery(encQ)) {
+      if (isFieldQuery(encQ) || isAutoCountQuery(encQ)) {
         const feature = mark + '_' + encQ.channel;
         const featureScore = this.getFeatureScore(feature);
         if (featureScore) {
