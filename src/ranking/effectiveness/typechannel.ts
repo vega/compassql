@@ -1,11 +1,10 @@
 
 
-import {Channel} from 'vega-lite/build/src/channel';
 
 import {QueryConfig} from '../../config';
 import {SpecQueryModel} from '../../model';
 import {fieldDef as fieldDefShorthand} from '../../query/shorthand';
-import {EncodingQuery} from '../../query/encoding';
+import {EncodingQuery, isFieldQuery, isAutoCountQuery} from '../../query/encoding';
 import {Dict, extend, forEach, keys, contains} from '../../util';
 
 import {Schema} from '../../schema';
@@ -14,6 +13,8 @@ import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, ExtendedType, getExtendedType
 
 
 import {Scorer} from './base';
+import {Channel} from 'vega-lite/build/src/channel';
+
 
 
 export const TERRIBLE = -10;
@@ -86,7 +87,7 @@ export class TypeChannelScorer extends Scorer {
       SCORE[this.featurize(K, channel)] =
         // Putting key on position or detail isn't terrible
         contains(['x', 'y', 'detail'], channel) ? -1 :
-        NOMINAL_TYPE_CHANNEL_SCORE[channel] - 2;
+          NOMINAL_TYPE_CHANNEL_SCORE[channel] - 2;
     });
 
     return SCORE;
@@ -98,8 +99,10 @@ export class TypeChannelScorer extends Scorer {
 
   public getScore(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore[] {
     const encodingQueryByField = specM.getEncodings().reduce((m, encQ) => {
-      const fieldKey = fieldDefShorthand(encQ);
-      (m[fieldKey] = m[fieldKey] || []).push(encQ);
+      if (isFieldQuery(encQ) || isAutoCountQuery(encQ)) {
+        const fieldKey = fieldDefShorthand(encQ);
+        (m[fieldKey] = m[fieldKey] || []).push(encQ);
+      }
       return m;
     }, {});
 
@@ -107,12 +110,14 @@ export class TypeChannelScorer extends Scorer {
 
     forEach(encodingQueryByField, (encQs: EncodingQuery[]) => {
       const bestFieldFeature = encQs.reduce((best: FeatureScore, encQ) => {
-        const type = getExtendedType(encQ);
-        const feature = this.featurize(type, encQ.channel as Channel);
-        const featureScore = this.getFeatureScore(feature);
+        if (isFieldQuery(encQ) || isAutoCountQuery(encQ)) {
+          const type = getExtendedType(encQ);
+          const feature = this.featurize(type, encQ.channel as Channel);
+          const featureScore = this.getFeatureScore(feature);
 
-        if (best === null || featureScore.score > best.score) {
-          return featureScore;
+          if (best === null || featureScore.score > best.score) {
+            return featureScore;
+          }
         }
         return best;
       }, null);
