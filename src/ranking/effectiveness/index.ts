@@ -24,7 +24,7 @@ const SCORERS = [
 // TODO: Penalize over encoding
 export function effectiveness(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): RankingScore {
   const features = SCORERS.reduce((f, scorer) => {
-    const scores = scorer.getScore(specM, schema, opt).filter(p => p !== undefined);
+    const scores = scorer.getScore(specM, schema, opt);
     return f.concat(scores);
   }, [] as FeatureScore[]);
 

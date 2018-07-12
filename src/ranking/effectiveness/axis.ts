@@ -2,19 +2,19 @@
  * Field Type (with Bin and TimeUnit) and Channel Score (Cleveland / Mackinlay based)
  */
 
-import { Channel } from 'vega-lite/build/src/channel';
+import {Channel} from 'vega-lite/build/src/channel';
 
-import { QueryConfig, DEFAULT_QUERY_CONFIG } from '../../config';
-import { SpecQueryModel } from '../../model';
-import { EncodingQuery, isFieldQuery } from '../../query/encoding';
-import { Dict } from '../../util';
+import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../../config';
+import {SpecQueryModel} from '../../model';
+import {EncodingQuery, isFieldQuery} from '../../query/encoding';
+import {Dict} from '../../util';
 
-import { Schema } from '../../schema';
-import { FeatureScore } from '../ranking';
-import { BIN_Q, TIMEUNIT_T, TIMEUNIT_O, N, O, T, ExtendedType, getExtendedType } from './type';
+import {Schema} from '../../schema';
+import {FeatureScore} from '../ranking';
+import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, N, O, T, ExtendedType, getExtendedType} from './type';
 
 
-import { Scorer } from './base';
+import {Scorer} from './base';
 
 
 /**
@@ -25,7 +25,7 @@ export class AxisScorer extends Scorer {
     super('Axis');
   }
   protected initScore(opt: QueryConfig = {}) {
-    opt = { ...DEFAULT_QUERY_CONFIG, ...opt };
+    opt = {...DEFAULT_QUERY_CONFIG, ...opt};
     let score: Dict<number> = {};
 
     const preferredAxes = [{
