@@ -141,7 +141,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         // Auto count should only be applied if all fields are nominal, ordinal, temporal with timeUnit, binned quantitative, or autoCount
         return every(specM.getEncodings(), (encQ: EncodingQuery) => {
           if (isValueQuery(encQ)) {
-            return false;
+            return true;
           }
 
           if (isAutoCountQuery(encQ)) {
@@ -333,7 +333,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();
       if (contains([Mark.TICK, Mark.BAR], mark)) {
-        if (specM.channelUsed(Channel.SIZE)) {
+        if (specM.channelEncodingField(Channel.SIZE)) {
           if (opt.constraintManuallySpecifiedValue) {
             // If size is used and we constraintManuallySpecifiedValue,
             // then the spec violates this constraint.
@@ -641,7 +641,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         case Mark.BAR:
         case Mark.TICK:
           // Bar and tick should not use size.
-          if (specM.channelUsed(Channel.SIZE)) {
+          if (specM.channelEncodingField(Channel.SIZE)) {
             return false;
           } else {
             // Tick and Bar should have one and only one measure

@@ -52,6 +52,48 @@ describe('recommend()', () => {
     assert.equal(getTopResultTreeItem(group.result).getMark(), 'line');
   });
 
+  it('recommends bar chart given 1 nominal field and specifying value for size channel', () => {
+    const group = recommend({
+      "spec": {
+        "data": {"url": "data/cars.json"},
+        "mark": "?",
+        "encodings": [
+          {"channel": "?","field": "Origin","type": "nominal"},
+          {"channel": "size", value: 52}
+        ]
+      },
+      "nest": [
+        {
+          "groupBy": ["field","aggregate","bin","timeUnit","stack"],
+          "orderGroupBy": "aggregationQuality"
+        },
+        {
+          "groupBy": [
+            {
+              "property": "channel",
+              "replace": {
+                "x": "xy",
+                "y": "xy",
+                "color": "style",
+                "size": "style",
+                "shape": "style",
+                "opacity": "style",
+                "row": "facet",
+                "column": "facet"
+              }
+            }
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {"groupBy": ["channel"],"orderGroupBy": "effectiveness"}
+      ],
+      "orderBy": "effectiveness",
+      "config": {"autoAddCount": true}
+    }, schema);
+
+    assert.equal(getTopResultTreeItem(group.result).getMark(), 'bar');
+  });
+
   it('recommends bar for a histogram of a temporal field', () => {
     const group = recommend({
       "spec": {

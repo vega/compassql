@@ -1,12 +1,13 @@
 {
     "version": "0.2.0",
-    "configurations": [{
-            "name": "Launch",
+    "configurations": [
+        {
+            "name": "Tests",
             "type": "node",
             "request": "launch",
-            "program": "${workspaceRoot}/compassql.js",
+            "program": "${workspaceRoot}/node_modules/jest-cli/bin/jest.js",
             "stopOnEntry": false,
-            "args": [],
+            "args": ["--runInBand"],
             "cwd": "${workspaceRoot}",
             "preLaunchTask": null,
             "runtimeExecutable": null,
@@ -17,20 +18,8 @@
                 "NODE_ENV": "development"
             },
             "externalConsole": false,
-            "sourceMaps": true,
+            "sourceMaps": false,
             "outDir": null
-        },
-        {
-            "name": "Attach",
-            "type": "node",
-            "request": "attach",
-            "port": 5858,
-            "address": "localhost",
-            "restart": false,
-            "sourceMaps": true,
-            "outFiles": ["${workspaceRoot}/build/**/*.js"],
-            "localRoot": "${workspaceRoot}",
-            "remoteRoot": null
         }
     ]
 }
