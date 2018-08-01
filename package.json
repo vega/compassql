@@ -22,6 +22,7 @@
     "lint": "tslint -c tslint.json src/**/*.ts test/**/*.ts",
     "schema": "npm run prebuild && typescript-json-schema --required true src/query.ts Query > build/compassql-schema.json",
     "test": "jest --maxWorkers=4 && npm run lint",
+    "test:inspect": "node --inspect-brk ./node_modules/.bin/jest --runInBand",
     "check:examples": "./scripts/check-examples.sh",
     "watch:build": "npm run build && concurrently --kill-others -n Typescript,Rollup 'tsc -w' 'rollup -c -w'",
     "watch:test": "jest --watch"

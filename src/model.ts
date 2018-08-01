@@ -69,7 +69,7 @@ export class SpecQueryModel {
 
       // For each property of the encodingQuery, enumerate
       ENCODING_TOPLEVEL_PROPS.forEach((prop) => {
-        if(isWildcard(encQ[prop])) {
+        if (isWildcard(encQ[prop])) {
           // Assign default wildcard name and enum values.
           const defaultWildcardName = getDefaultName(prop) + index;
           const defaultEnumValues = getDefaultEnumValues(prop, schema, opt);
@@ -230,6 +230,11 @@ export class SpecQueryModel {
     return this._channelFieldCount[channel] > 0;
   }
 
+  public channelEncodingField(channel: Channel) {
+    const encodingQuery = this.getEncodingQueryByChannel(channel);
+    return isFieldQuery(encodingQuery);
+  }
+
   public getEncodings(): EncodingQuery[] {
     // do not include encoding that has autoCount = false because it is not a part of the output spec.
     return this._spec.encodings.filter(encQ => !isDisabledAutoCountQuery(encQ));
@@ -319,7 +324,7 @@ export class SpecQueryModel {
     if (this._spec.padding) {
       spec.padding = this._spec.padding;
     }
-    if(this._spec.title) {
+    if (this._spec.title) {
       spec.title = this._spec.title;
     }
 
@@ -327,7 +332,7 @@ export class SpecQueryModel {
       return null;
     }
     if (this._spec.config || this._opt.defaultSpecConfig)
-    spec.config = extend({}, this._opt.defaultSpecConfig, this._spec.config);
+      spec.config = extend({}, this._opt.defaultSpecConfig, this._spec.config);
 
     return spec;
   }
