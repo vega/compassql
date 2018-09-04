@@ -7,50 +7,6 @@
       "path": "/Acceleration|Horsepower|Origin",
       "items": [
         {
-          "name": "style:Acceleration|xy:Horsepower|xy:Origin",
-          "path": "/Acceleration|Horsepower|Origin/style:Acceleration|xy:Horsepower|xy:Origin",
-          "items": [
-            {
-              "name": "style:Acceleration|xy:Horsepower|xy:Origin",
-              "path": "/Acceleration|Horsepower|Origin/style:Acceleration|xy:Horsepower|xy:Origin/style:Acceleration|xy:Horsepower|xy:Origin",
-              "items": [
-                "tick|color:Acceleration,q|x:Horsepower,q|y:Origin,o",
-                "tick|color:Acceleration,q|x:Origin,o|y:Horsepower,q",
-                "point|size:Acceleration,q|x:Horsepower,q|y:Origin,o",
-                "point|size:Acceleration,q|x:Origin,o|y:Horsepower,q",
-                "point|color:Acceleration,q|x:Horsepower,q|y:Origin,o",
-                "point|color:Acceleration,q|x:Origin,o|y:Horsepower,q"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
-          "name": "style:Horsepower|xy:Acceleration|xy:Origin",
-          "path": "/Acceleration|Horsepower|Origin/style:Horsepower|xy:Acceleration|xy:Origin",
-          "items": [
-            {
-              "name": "style:Horsepower|xy:Acceleration|xy:Origin",
-              "path": "/Acceleration|Horsepower|Origin/style:Horsepower|xy:Acceleration|xy:Origin/style:Horsepower|xy:Acceleration|xy:Origin",
-              "items": [
-                "tick|color:Horsepower,q|x:Acceleration,q|y:Origin,o",
-                "tick|color:Horsepower,q|x:Origin,o|y:Acceleration,q",
-                "point|size:Horsepower,q|x:Acceleration,q|y:Origin,o",
-                "point|size:Horsepower,q|x:Origin,o|y:Acceleration,q",
-                "point|color:Horsepower,q|x:Acceleration,q|y:Origin,o",
-                "point|color:Horsepower,q|x:Origin,o|y:Acceleration,q"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
           "name": "style:Origin|xy:Acceleration|xy:Horsepower",
           "path": "/Acceleration|Horsepower|Origin/style:Origin|xy:Acceleration|xy:Horsepower",
           "items": [
@@ -58,8 +14,8 @@
               "name": "style:Origin|xy:Acceleration|xy:Horsepower",
               "path": "/Acceleration|Horsepower|Origin/style:Origin|xy:Acceleration|xy:Horsepower/style:Origin|xy:Acceleration|xy:Horsepower",
               "items": [
-                "point|color:Origin,o|x:Horsepower,q|y:Acceleration,q",
-                "point|color:Origin,o|x:Acceleration,q|y:Horsepower,q"
+                "point|color:Origin,n|x:Horsepower,q|y:Acceleration,q",
+                "point|color:Origin,n|x:Acceleration,q|y:Horsepower,q"
               ]
             }
           ],
@@ -76,10 +32,54 @@
               "name": "facet:Origin|xy:Acceleration|xy:Horsepower",
               "path": "/Acceleration|Horsepower|Origin/facet:Origin|xy:Acceleration|xy:Horsepower/facet:Origin|xy:Acceleration|xy:Horsepower",
               "items": [
-                "point|row:Origin,o|x:Horsepower,q|y:Acceleration,q",
-                "point|row:Origin,o|x:Acceleration,q|y:Horsepower,q",
-                "point|column:Origin,o|x:Horsepower,q|y:Acceleration,q",
-                "point|column:Origin,o|x:Acceleration,q|y:Horsepower,q"
+                "point|row:Origin,n|x:Horsepower,q|y:Acceleration,q",
+                "point|row:Origin,n|x:Acceleration,q|y:Horsepower,q",
+                "point|column:Origin,n|x:Horsepower,q|y:Acceleration,q",
+                "point|column:Origin,n|x:Acceleration,q|y:Horsepower,q"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "style:Acceleration|xy:Horsepower|xy:Origin",
+          "path": "/Acceleration|Horsepower|Origin/style:Acceleration|xy:Horsepower|xy:Origin",
+          "items": [
+            {
+              "name": "style:Acceleration|xy:Horsepower|xy:Origin",
+              "path": "/Acceleration|Horsepower|Origin/style:Acceleration|xy:Horsepower|xy:Origin/style:Acceleration|xy:Horsepower|xy:Origin",
+              "items": [
+                "tick|color:Acceleration,q|x:Horsepower,q|y:Origin,n",
+                "tick|color:Acceleration,q|x:Origin,n|y:Horsepower,q",
+                "point|size:Acceleration,q|x:Horsepower,q|y:Origin,n",
+                "point|size:Acceleration,q|x:Origin,n|y:Horsepower,q",
+                "point|color:Acceleration,q|x:Horsepower,q|y:Origin,n",
+                "point|color:Acceleration,q|x:Origin,n|y:Horsepower,q"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "style:Horsepower|xy:Acceleration|xy:Origin",
+          "path": "/Acceleration|Horsepower|Origin/style:Horsepower|xy:Acceleration|xy:Origin",
+          "items": [
+            {
+              "name": "style:Horsepower|xy:Acceleration|xy:Origin",
+              "path": "/Acceleration|Horsepower|Origin/style:Horsepower|xy:Acceleration|xy:Origin/style:Horsepower|xy:Acceleration|xy:Origin",
+              "items": [
+                "tick|color:Horsepower,q|x:Acceleration,q|y:Origin,n",
+                "tick|color:Horsepower,q|x:Origin,n|y:Acceleration,q",
+                "point|size:Horsepower,q|x:Acceleration,q|y:Origin,n",
+                "point|size:Horsepower,q|x:Origin,n|y:Acceleration,q",
+                "point|color:Horsepower,q|x:Acceleration,q|y:Origin,n",
+                "point|color:Horsepower,q|x:Origin,n|y:Acceleration,q"
               ]
             }
           ],
@@ -111,28 +111,6 @@
       "path": "/Horsepower|Origin|bin(Acceleration)",
       "items": [
         {
-          "name": "style:bin(Acceleration)|xy:Horsepower|xy:Origin",
-          "path": "/Horsepower|Origin|bin(Acceleration)/style:bin(Acceleration)|xy:Horsepower|xy:Origin",
-          "items": [
-            {
-              "name": "style:bin(Acceleration)|xy:Horsepower|xy:Origin",
-              "path": "/Horsepower|Origin|bin(Acceleration)/style:bin(Acceleration)|xy:Horsepower|xy:Origin/style:bin(Acceleration)|xy:Horsepower|xy:Origin",
-              "items": [
-                "tick|color:bin(Acceleration,q)|x:Horsepower,q|y:Origin,o",
-                "tick|color:bin(Acceleration,q)|x:Origin,o|y:Horsepower,q",
-                "point|size:bin(Acceleration,q)|x:Horsepower,q|y:Origin,o",
-                "point|size:bin(Acceleration,q)|x:Origin,o|y:Horsepower,q",
-                "point|color:bin(Acceleration,q)|x:Horsepower,q|y:Origin,o",
-                "point|color:bin(Acceleration,q)|x:Origin,o|y:Horsepower,q"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
           "name": "style:Origin|xy:Horsepower|xy:bin(Acceleration)",
           "path": "/Horsepower|Origin|bin(Acceleration)/style:Origin|xy:Horsepower|xy:bin(Acceleration)",
           "items": [
@@ -140,34 +118,10 @@
               "name": "style:Origin|xy:Horsepower|xy:bin(Acceleration)",
               "path": "/Horsepower|Origin|bin(Acceleration)/style:Origin|xy:Horsepower|xy:bin(Acceleration)/style:Origin|xy:Horsepower|xy:bin(Acceleration)",
               "items": [
-                "tick|color:Origin,o|x:bin(Acceleration,q)|y:Horsepower,q",
-                "tick|color:Origin,o|x:Horsepower,q|y:bin(Acceleration,q)",
-                "point|color:Origin,o|x:bin(Acceleration,q)|y:Horsepower,q",
-                "point|color:Origin,o|x:Horsepower,q|y:bin(Acceleration,q)"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
-          "name": "facet:bin(Acceleration)|xy:Horsepower|xy:Origin",
-          "path": "/Horsepower|Origin|bin(Acceleration)/facet:bin(Acceleration)|xy:Horsepower|xy:Origin",
-          "items": [
-            {
-              "name": "facet:bin(Acceleration)|xy:Horsepower|xy:Origin",
-              "path": "/Horsepower|Origin|bin(Acceleration)/facet:bin(Acceleration)|xy:Horsepower|xy:Origin/facet:bin(Acceleration)|xy:Horsepower|xy:Origin",
-              "items": [
-                "tick|row:bin(Acceleration,q)|x:Horsepower,q|y:Origin,o,scale={\"rangeStep\":12}",
-                "tick|row:bin(Acceleration,q)|x:Origin,o|y:Horsepower,q",
-                "tick|column:bin(Acceleration,q)|x:Horsepower,q|y:Origin,o",
-                "tick|column:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:Horsepower,q",
-                "point|row:bin(Acceleration,q)|x:Horsepower,q|y:Origin,o,scale={\"rangeStep\":12}",
-                "point|row:bin(Acceleration,q)|x:Origin,o|y:Horsepower,q",
-                "point|column:bin(Acceleration,q)|x:Horsepower,q|y:Origin,o",
-                "point|column:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:Horsepower,q"
+                "tick|color:Origin,n|x:bin(Acceleration,q)|y:Horsepower,q",
+                "tick|color:Origin,n|x:Horsepower,q|y:bin(Acceleration,q)",
+                "point|color:Origin,n|x:bin(Acceleration,q)|y:Horsepower,q",
+                "point|color:Origin,n|x:Horsepower,q|y:bin(Acceleration,q)"
               ]
             }
           ],
@@ -184,14 +138,60 @@
               "name": "facet:Origin|xy:Horsepower|xy:bin(Acceleration)",
               "path": "/Horsepower|Origin|bin(Acceleration)/facet:Origin|xy:Horsepower|xy:bin(Acceleration)/facet:Origin|xy:Horsepower|xy:bin(Acceleration)",
               "items": [
-                "tick|row:Origin,o|x:bin(Acceleration,q)|y:Horsepower,q",
-                "tick|row:Origin,o|x:Horsepower,q|y:bin(Acceleration,q)",
-                "tick|column:Origin,o|x:bin(Acceleration,q)|y:Horsepower,q",
-                "tick|column:Origin,o|x:Horsepower,q|y:bin(Acceleration,q)",
-                "point|row:Origin,o|x:bin(Acceleration,q)|y:Horsepower,q",
-                "point|row:Origin,o|x:Horsepower,q|y:bin(Acceleration,q)",
-                "point|column:Origin,o|x:bin(Acceleration,q)|y:Horsepower,q",
-                "point|column:Origin,o|x:Horsepower,q|y:bin(Acceleration,q)"
+                "tick|row:Origin,n|x:bin(Acceleration,q)|y:Horsepower,q",
+                "tick|row:Origin,n|x:Horsepower,q|y:bin(Acceleration,q)",
+                "tick|column:Origin,n|x:bin(Acceleration,q)|y:Horsepower,q",
+                "tick|column:Origin,n|x:Horsepower,q|y:bin(Acceleration,q)",
+                "point|row:Origin,n|x:bin(Acceleration,q)|y:Horsepower,q",
+                "point|row:Origin,n|x:Horsepower,q|y:bin(Acceleration,q)",
+                "point|column:Origin,n|x:bin(Acceleration,q)|y:Horsepower,q",
+                "point|column:Origin,n|x:Horsepower,q|y:bin(Acceleration,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "style:bin(Acceleration)|xy:Horsepower|xy:Origin",
+          "path": "/Horsepower|Origin|bin(Acceleration)/style:bin(Acceleration)|xy:Horsepower|xy:Origin",
+          "items": [
+            {
+              "name": "style:bin(Acceleration)|xy:Horsepower|xy:Origin",
+              "path": "/Horsepower|Origin|bin(Acceleration)/style:bin(Acceleration)|xy:Horsepower|xy:Origin/style:bin(Acceleration)|xy:Horsepower|xy:Origin",
+              "items": [
+                "tick|color:bin(Acceleration,q)|x:Horsepower,q|y:Origin,n",
+                "tick|color:bin(Acceleration,q)|x:Origin,n|y:Horsepower,q",
+                "point|size:bin(Acceleration,q)|x:Horsepower,q|y:Origin,n",
+                "point|size:bin(Acceleration,q)|x:Origin,n|y:Horsepower,q",
+                "point|color:bin(Acceleration,q)|x:Horsepower,q|y:Origin,n",
+                "point|color:bin(Acceleration,q)|x:Origin,n|y:Horsepower,q"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "facet:bin(Acceleration)|xy:Horsepower|xy:Origin",
+          "path": "/Horsepower|Origin|bin(Acceleration)/facet:bin(Acceleration)|xy:Horsepower|xy:Origin",
+          "items": [
+            {
+              "name": "facet:bin(Acceleration)|xy:Horsepower|xy:Origin",
+              "path": "/Horsepower|Origin|bin(Acceleration)/facet:bin(Acceleration)|xy:Horsepower|xy:Origin/facet:bin(Acceleration)|xy:Horsepower|xy:Origin",
+              "items": [
+                "tick|row:bin(Acceleration,q)|x:Horsepower,q|y:Origin,n,scale={\"rangeStep\":12}",
+                "tick|row:bin(Acceleration,q)|x:Origin,n|y:Horsepower,q",
+                "tick|column:bin(Acceleration,q)|x:Horsepower,q|y:Origin,n",
+                "tick|column:bin(Acceleration,q)|x:Origin,n,scale={\"rangeStep\":12}|y:Horsepower,q",
+                "point|row:bin(Acceleration,q)|x:Horsepower,q|y:Origin,n,scale={\"rangeStep\":12}",
+                "point|row:bin(Acceleration,q)|x:Origin,n|y:Horsepower,q",
+                "point|column:bin(Acceleration,q)|x:Horsepower,q|y:Origin,n",
+                "point|column:bin(Acceleration,q)|x:Origin,n,scale={\"rangeStep\":12}|y:Horsepower,q"
               ]
             }
           ],
@@ -223,28 +223,6 @@
       "path": "/Acceleration|Origin|bin(Horsepower)",
       "items": [
         {
-          "name": "style:bin(Horsepower)|xy:Acceleration|xy:Origin",
-          "path": "/Acceleration|Origin|bin(Horsepower)/style:bin(Horsepower)|xy:Acceleration|xy:Origin",
-          "items": [
-            {
-              "name": "style:bin(Horsepower)|xy:Acceleration|xy:Origin",
-              "path": "/Acceleration|Origin|bin(Horsepower)/style:bin(Horsepower)|xy:Acceleration|xy:Origin/style:bin(Horsepower)|xy:Acceleration|xy:Origin",
-              "items": [
-                "tick|color:bin(Horsepower,q)|x:Acceleration,q|y:Origin,o",
-                "tick|color:bin(Horsepower,q)|x:Origin,o|y:Acceleration,q",
-                "point|size:bin(Horsepower,q)|x:Acceleration,q|y:Origin,o",
-                "point|size:bin(Horsepower,q)|x:Origin,o|y:Acceleration,q",
-                "point|color:bin(Horsepower,q)|x:Acceleration,q|y:Origin,o",
-                "point|color:bin(Horsepower,q)|x:Origin,o|y:Acceleration,q"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
           "name": "style:Origin|xy:Acceleration|xy:bin(Horsepower)",
           "path": "/Acceleration|Origin|bin(Horsepower)/style:Origin|xy:Acceleration|xy:bin(Horsepower)",
           "items": [
@@ -252,34 +230,10 @@
               "name": "style:Origin|xy:Acceleration|xy:bin(Horsepower)",
               "path": "/Acceleration|Origin|bin(Horsepower)/style:Origin|xy:Acceleration|xy:bin(Horsepower)/style:Origin|xy:Acceleration|xy:bin(Horsepower)",
               "items": [
-                "tick|color:Origin,o|x:bin(Horsepower,q)|y:Acceleration,q",
-                "tick|color:Origin,o|x:Acceleration,q|y:bin(Horsepower,q)",
-                "point|color:Origin,o|x:bin(Horsepower,q)|y:Acceleration,q",
-                "point|color:Origin,o|x:Acceleration,q|y:bin(Horsepower,q)"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
-          "name": "facet:bin(Horsepower)|xy:Acceleration|xy:Origin",
-          "path": "/Acceleration|Origin|bin(Horsepower)/facet:bin(Horsepower)|xy:Acceleration|xy:Origin",
-          "items": [
-            {
-              "name": "facet:bin(Horsepower)|xy:Acceleration|xy:Origin",
-              "path": "/Acceleration|Origin|bin(Horsepower)/facet:bin(Horsepower)|xy:Acceleration|xy:Origin/facet:bin(Horsepower)|xy:Acceleration|xy:Origin",
-              "items": [
-                "tick|row:bin(Horsepower,q)|x:Acceleration,q|y:Origin,o,scale={\"rangeStep\":12}",
-                "tick|row:bin(Horsepower,q)|x:Origin,o|y:Acceleration,q",
-                "tick|column:bin(Horsepower,q)|x:Acceleration,q|y:Origin,o",
-                "tick|column:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:Acceleration,q",
-                "point|row:bin(Horsepower,q)|x:Acceleration,q|y:Origin,o,scale={\"rangeStep\":12}",
-                "point|row:bin(Horsepower,q)|x:Origin,o|y:Acceleration,q",
-                "point|column:bin(Horsepower,q)|x:Acceleration,q|y:Origin,o",
-                "point|column:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:Acceleration,q"
+                "tick|color:Origin,n|x:bin(Horsepower,q)|y:Acceleration,q",
+                "tick|color:Origin,n|x:Acceleration,q|y:bin(Horsepower,q)",
+                "point|color:Origin,n|x:bin(Horsepower,q)|y:Acceleration,q",
+                "point|color:Origin,n|x:Acceleration,q|y:bin(Horsepower,q)"
               ]
             }
           ],
@@ -296,14 +250,60 @@
               "name": "facet:Origin|xy:Acceleration|xy:bin(Horsepower)",
               "path": "/Acceleration|Origin|bin(Horsepower)/facet:Origin|xy:Acceleration|xy:bin(Horsepower)/facet:Origin|xy:Acceleration|xy:bin(Horsepower)",
               "items": [
-                "tick|row:Origin,o|x:bin(Horsepower,q)|y:Acceleration,q",
-                "tick|row:Origin,o|x:Acceleration,q|y:bin(Horsepower,q)",
-                "tick|column:Origin,o|x:bin(Horsepower,q)|y:Acceleration,q",
-                "tick|column:Origin,o|x:Acceleration,q|y:bin(Horsepower,q)",
-                "point|row:Origin,o|x:bin(Horsepower,q)|y:Acceleration,q",
-                "point|row:Origin,o|x:Acceleration,q|y:bin(Horsepower,q)",
-                "point|column:Origin,o|x:bin(Horsepower,q)|y:Acceleration,q",
-                "point|column:Origin,o|x:Acceleration,q|y:bin(Horsepower,q)"
+                "tick|row:Origin,n|x:bin(Horsepower,q)|y:Acceleration,q",
+                "tick|row:Origin,n|x:Acceleration,q|y:bin(Horsepower,q)",
+                "tick|column:Origin,n|x:bin(Horsepower,q)|y:Acceleration,q",
+                "tick|column:Origin,n|x:Acceleration,q|y:bin(Horsepower,q)",
+                "point|row:Origin,n|x:bin(Horsepower,q)|y:Acceleration,q",
+                "point|row:Origin,n|x:Acceleration,q|y:bin(Horsepower,q)",
+                "point|column:Origin,n|x:bin(Horsepower,q)|y:Acceleration,q",
+                "point|column:Origin,n|x:Acceleration,q|y:bin(Horsepower,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "style:bin(Horsepower)|xy:Acceleration|xy:Origin",
+          "path": "/Acceleration|Origin|bin(Horsepower)/style:bin(Horsepower)|xy:Acceleration|xy:Origin",
+          "items": [
+            {
+              "name": "style:bin(Horsepower)|xy:Acceleration|xy:Origin",
+              "path": "/Acceleration|Origin|bin(Horsepower)/style:bin(Horsepower)|xy:Acceleration|xy:Origin/style:bin(Horsepower)|xy:Acceleration|xy:Origin",
+              "items": [
+                "tick|color:bin(Horsepower,q)|x:Acceleration,q|y:Origin,n",
+                "tick|color:bin(Horsepower,q)|x:Origin,n|y:Acceleration,q",
+                "point|size:bin(Horsepower,q)|x:Acceleration,q|y:Origin,n",
+                "point|size:bin(Horsepower,q)|x:Origin,n|y:Acceleration,q",
+                "point|color:bin(Horsepower,q)|x:Acceleration,q|y:Origin,n",
+                "point|color:bin(Horsepower,q)|x:Origin,n|y:Acceleration,q"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "facet:bin(Horsepower)|xy:Acceleration|xy:Origin",
+          "path": "/Acceleration|Origin|bin(Horsepower)/facet:bin(Horsepower)|xy:Acceleration|xy:Origin",
+          "items": [
+            {
+              "name": "facet:bin(Horsepower)|xy:Acceleration|xy:Origin",
+              "path": "/Acceleration|Origin|bin(Horsepower)/facet:bin(Horsepower)|xy:Acceleration|xy:Origin/facet:bin(Horsepower)|xy:Acceleration|xy:Origin",
+              "items": [
+                "tick|row:bin(Horsepower,q)|x:Acceleration,q|y:Origin,n,scale={\"rangeStep\":12}",
+                "tick|row:bin(Horsepower,q)|x:Origin,n|y:Acceleration,q",
+                "tick|column:bin(Horsepower,q)|x:Acceleration,q|y:Origin,n",
+                "tick|column:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:Acceleration,q",
+                "point|row:bin(Horsepower,q)|x:Acceleration,q|y:Origin,n,scale={\"rangeStep\":12}",
+                "point|row:bin(Horsepower,q)|x:Origin,n|y:Acceleration,q",
+                "point|column:bin(Horsepower,q)|x:Acceleration,q|y:Origin,n",
+                "point|column:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:Acceleration,q"
               ]
             }
           ],
@@ -335,6 +335,24 @@
       "path": "/Origin|mean(Acceleration)|mean(Horsepower)",
       "items": [
         {
+          "name": "style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
+          "path": "/Origin|mean(Acceleration)|mean(Horsepower)/style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
+          "items": [
+            {
+              "name": "style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
+              "path": "/Origin|mean(Acceleration)|mean(Horsepower)/style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)/style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
+              "items": [
+                "point|color:Origin,n|x:mean(Horsepower,q)|y:mean(Acceleration,q)",
+                "point|color:Origin,n|x:mean(Acceleration,q)|y:mean(Horsepower,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
           "name": "style:mean(Acceleration)|xy:Origin|xy:mean(Horsepower)",
           "path": "/Origin|mean(Acceleration)|mean(Horsepower)/style:mean(Acceleration)|xy:Origin|xy:mean(Horsepower)",
           "items": [
@@ -342,20 +360,14 @@
               "name": "style:mean(Acceleration)|xy:Origin|xy:mean(Horsepower)",
               "path": "/Origin|mean(Acceleration)|mean(Horsepower)/style:mean(Acceleration)|xy:Origin|xy:mean(Horsepower)/style:mean(Acceleration)|xy:Origin|xy:mean(Horsepower)",
               "items": [
-                "bar|color:mean(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "bar|color:mean(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "point|size:mean(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "point|size:mean(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "point|color:mean(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "point|color:mean(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "tick|color:mean(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "tick|color:mean(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "line|size:mean(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "line|size:mean(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "line|color:mean(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "area|color:mean(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "line|color:mean(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "area|color:mean(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)"
+                "bar|color:mean(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,n",
+                "bar|color:mean(Acceleration,q)|x:Origin,n|y:mean(Horsepower,q)",
+                "point|size:mean(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,n",
+                "point|size:mean(Acceleration,q)|x:Origin,n|y:mean(Horsepower,q)",
+                "point|color:mean(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,n",
+                "point|color:mean(Acceleration,q)|x:Origin,n|y:mean(Horsepower,q)",
+                "tick|color:mean(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,n",
+                "tick|color:mean(Acceleration,q)|x:Origin,n|y:mean(Horsepower,q)"
               ]
             }
           ],
@@ -372,38 +384,14 @@
               "name": "style:mean(Horsepower)|xy:Origin|xy:mean(Acceleration)",
               "path": "/Origin|mean(Acceleration)|mean(Horsepower)/style:mean(Horsepower)|xy:Origin|xy:mean(Acceleration)/style:mean(Horsepower)|xy:Origin|xy:mean(Acceleration)",
               "items": [
-                "bar|color:mean(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "bar|color:mean(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "point|size:mean(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "point|size:mean(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "point|color:mean(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "point|color:mean(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "tick|color:mean(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "tick|color:mean(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "line|size:mean(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "line|size:mean(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "line|color:mean(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "area|color:mean(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "line|color:mean(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "area|color:mean(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
-          "name": "style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
-          "path": "/Origin|mean(Acceleration)|mean(Horsepower)/style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
-          "items": [
-            {
-              "name": "style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
-              "path": "/Origin|mean(Acceleration)|mean(Horsepower)/style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)/style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
-              "items": [
-                "point|color:Origin,o|x:mean(Horsepower,q)|y:mean(Acceleration,q)",
-                "point|color:Origin,o|x:mean(Acceleration,q)|y:mean(Horsepower,q)"
+                "bar|color:mean(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,n",
+                "bar|color:mean(Horsepower,q)|x:Origin,n|y:mean(Acceleration,q)",
+                "point|size:mean(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,n",
+                "point|size:mean(Horsepower,q)|x:Origin,n|y:mean(Acceleration,q)",
+                "point|color:mean(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,n",
+                "point|color:mean(Horsepower,q)|x:Origin,n|y:mean(Acceleration,q)",
+                "tick|color:mean(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,n",
+                "tick|color:mean(Horsepower,q)|x:Origin,n|y:mean(Acceleration,q)"
               ]
             }
           ],
@@ -435,6 +423,34 @@
       "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)",
       "items": [
         {
+          "name": "facet:Origin|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)",
+          "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)/facet:Origin|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)",
+          "items": [
+            {
+              "name": "facet:Origin|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)",
+              "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)/facet:Origin|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)/facet:Origin|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)",
+              "items": [
+                "point|row:Origin,n|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "point|row:Origin,n|size:count(*,q)|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
+                "point|column:Origin,n|size:count(*,q)|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
+                "point|column:Origin,n|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "point|color:count(*,q)|row:Origin,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|row:Origin,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
+                "point|color:count(*,q)|row:Origin,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "rect|color:count(*,q)|row:Origin,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "point|color:count(*,q)|column:Origin,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "rect|color:count(*,q)|column:Origin,n|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
+                "point|color:count(*,q)|column:Origin,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|column:Origin,n|x:bin(Acceleration,q)|y:bin(Horsepower,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
           "name": "facet:bin(Acceleration)|style:autocount()|xy:Origin|xy:bin(Horsepower)",
           "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|style:autocount()|xy:Origin|xy:bin(Horsepower)",
           "items": [
@@ -442,18 +458,18 @@
               "name": "facet:bin(Acceleration)|style:autocount()|xy:Origin|xy:bin(Horsepower)",
               "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|style:autocount()|xy:Origin|xy:bin(Horsepower)/facet:bin(Acceleration)|style:autocount()|xy:Origin|xy:bin(Horsepower)",
               "items": [
-                "point|row:bin(Acceleration,q)|size:count(*,q)|x:bin(Horsepower,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "point|column:bin(Acceleration,q)|size:count(*,q)|x:bin(Horsepower,q)|y:Origin,o",
-                "point|row:bin(Acceleration,q)|size:count(*,q)|x:Origin,o|y:bin(Horsepower,q)",
-                "point|column:bin(Acceleration,q)|size:count(*,q)|x:Origin,o,scale={\"rangeStep\":12}|y:bin(Horsepower,q)",
-                "point|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "point|color:count(*,q)|column:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,o",
-                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,o",
-                "point|color:count(*,q)|row:bin(Acceleration,q)|x:Origin,o|y:bin(Horsepower,q)",
-                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:Origin,o|y:bin(Horsepower,q)",
-                "point|color:count(*,q)|column:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:bin(Horsepower,q)",
-                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:bin(Horsepower,q)"
+                "point|row:bin(Acceleration,q)|size:count(*,q)|x:bin(Horsepower,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Acceleration,q)|size:count(*,q)|x:bin(Horsepower,q)|y:Origin,n",
+                "point|row:bin(Acceleration,q)|size:count(*,q)|x:Origin,n|y:bin(Horsepower,q)",
+                "point|column:bin(Acceleration,q)|size:count(*,q)|x:Origin,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)",
+                "point|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "point|color:count(*,q)|column:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,n",
+                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,n",
+                "point|color:count(*,q)|row:bin(Acceleration,q)|x:Origin,n|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:Origin,n|y:bin(Horsepower,q)",
+                "point|color:count(*,q)|column:bin(Acceleration,q)|x:Origin,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)",
+                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:Origin,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)"
               ]
             }
           ],
@@ -470,82 +486,18 @@
               "name": "facet:bin(Horsepower)|style:autocount()|xy:Origin|xy:bin(Acceleration)",
               "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Horsepower)|style:autocount()|xy:Origin|xy:bin(Acceleration)/facet:bin(Horsepower)|style:autocount()|xy:Origin|xy:bin(Acceleration)",
               "items": [
-                "point|row:bin(Horsepower,q)|size:count(*,q)|x:bin(Acceleration,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "point|column:bin(Horsepower,q)|size:count(*,q)|x:bin(Acceleration,q)|y:Origin,o",
-                "point|row:bin(Horsepower,q)|size:count(*,q)|x:Origin,o|y:bin(Acceleration,q)",
-                "point|column:bin(Horsepower,q)|size:count(*,q)|x:Origin,o,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
-                "point|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "rect|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "point|color:count(*,q)|column:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,o",
-                "rect|color:count(*,q)|column:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,o",
-                "point|color:count(*,q)|row:bin(Horsepower,q)|x:Origin,o|y:bin(Acceleration,q)",
-                "rect|color:count(*,q)|row:bin(Horsepower,q)|x:Origin,o|y:bin(Acceleration,q)",
-                "point|color:count(*,q)|column:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
-                "rect|color:count(*,q)|column:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:bin(Acceleration,q)"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
-          "name": "facet:Origin|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)",
-          "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)/facet:Origin|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)",
-          "items": [
-            {
-              "name": "facet:Origin|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)",
-              "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)/facet:Origin|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)/facet:Origin|style:autocount()|xy:bin(Acceleration)|xy:bin(Horsepower)",
-              "items": [
-                "point|row:Origin,o|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
-                "point|row:Origin,o|size:count(*,q)|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
-                "point|column:Origin,o|size:count(*,q)|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
-                "point|column:Origin,o|size:count(*,q)|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
-                "point|color:count(*,q)|row:Origin,o|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
-                "rect|color:count(*,q)|row:Origin,o|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
-                "point|color:count(*,q)|row:Origin,o|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
-                "rect|color:count(*,q)|row:Origin,o|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
-                "point|color:count(*,q)|column:Origin,o|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
-                "rect|color:count(*,q)|column:Origin,o|x:bin(Horsepower,q)|y:bin(Acceleration,q)",
-                "point|color:count(*,q)|column:Origin,o|x:bin(Acceleration,q)|y:bin(Horsepower,q)",
-                "rect|color:count(*,q)|column:Origin,o|x:bin(Acceleration,q)|y:bin(Horsepower,q)"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
-          "name": "facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Origin|xy:autocount()",
-          "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Origin|xy:autocount()",
-          "items": [
-            {
-              "name": "facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Origin|xy:autocount()",
-              "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Origin|xy:autocount()/facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Origin|xy:autocount()",
-              "items": [
-                "bar|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "bar|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "bar|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:count(*,q)",
-                "bar|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:count(*,q)",
-                "point|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "point|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "point|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:count(*,q)",
-                "point|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:count(*,q)",
-                "tick|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "tick|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "tick|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:count(*,q)",
-                "tick|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:count(*,q)",
-                "line|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "area|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "line|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "area|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "line|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:count(*,q)",
-                "area|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:count(*,q)",
-                "line|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:count(*,q)",
-                "area|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:count(*,q)"
+                "point|row:bin(Horsepower,q)|size:count(*,q)|x:bin(Acceleration,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Horsepower,q)|size:count(*,q)|x:bin(Acceleration,q)|y:Origin,n",
+                "point|row:bin(Horsepower,q)|size:count(*,q)|x:Origin,n|y:bin(Acceleration,q)",
+                "point|column:bin(Horsepower,q)|size:count(*,q)|x:Origin,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
+                "point|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "rect|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "point|color:count(*,q)|column:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,n",
+                "rect|color:count(*,q)|column:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,n",
+                "point|color:count(*,q)|row:bin(Horsepower,q)|x:Origin,n|y:bin(Acceleration,q)",
+                "rect|color:count(*,q)|row:bin(Horsepower,q)|x:Origin,n|y:bin(Acceleration,q)",
+                "point|color:count(*,q)|column:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
+                "rect|color:count(*,q)|column:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)"
               ]
             }
           ],
@@ -562,26 +514,26 @@
               "name": "facet:Origin|facet:bin(Acceleration)|xy:autocount()|xy:bin(Horsepower)",
               "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)/facet:Origin|facet:bin(Acceleration)|xy:autocount()|xy:bin(Horsepower)/facet:Origin|facet:bin(Acceleration)|xy:autocount()|xy:bin(Horsepower)",
               "items": [
-                "bar|column:Origin,o|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:count(*,q)",
-                "bar|column:bin(Acceleration,q)|row:Origin,o|x:bin(Horsepower,q)|y:count(*,q)",
-                "bar|column:Origin,o|row:bin(Acceleration,q)|x:count(*,q)|y:bin(Horsepower,q)",
-                "bar|column:bin(Acceleration,q)|row:Origin,o|x:count(*,q)|y:bin(Horsepower,q)",
-                "point|column:Origin,o|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:count(*,q)",
-                "point|column:bin(Acceleration,q)|row:Origin,o|x:bin(Horsepower,q)|y:count(*,q)",
-                "point|column:bin(Acceleration,q)|row:Origin,o|x:count(*,q)|y:bin(Horsepower,q)",
-                "point|column:Origin,o|row:bin(Acceleration,q)|x:count(*,q)|y:bin(Horsepower,q)",
-                "tick|column:bin(Acceleration,q)|row:Origin,o|x:bin(Horsepower,q)|y:count(*,q)",
-                "tick|column:Origin,o|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:count(*,q)",
-                "tick|column:Origin,o|row:bin(Acceleration,q)|x:count(*,q)|y:bin(Horsepower,q)",
-                "tick|column:bin(Acceleration,q)|row:Origin,o|x:count(*,q)|y:bin(Horsepower,q)",
-                "line|column:Origin,o|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:count(*,q)",
-                "area|column:bin(Acceleration,q)|row:Origin,o|x:bin(Horsepower,q)|y:count(*,q)",
-                "line|column:bin(Acceleration,q)|row:Origin,o|x:bin(Horsepower,q)|y:count(*,q)",
-                "area|column:Origin,o|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:count(*,q)",
-                "line|column:bin(Acceleration,q)|row:Origin,o|x:count(*,q)|y:bin(Horsepower,q)",
-                "area|column:bin(Acceleration,q)|row:Origin,o|x:count(*,q)|y:bin(Horsepower,q)",
-                "line|column:Origin,o|row:bin(Acceleration,q)|x:count(*,q)|y:bin(Horsepower,q)",
-                "area|column:Origin,o|row:bin(Acceleration,q)|x:count(*,q)|y:bin(Horsepower,q)"
+                "bar|column:Origin,n|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:count(*,q)",
+                "bar|column:bin(Acceleration,q)|row:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "bar|column:Origin,n|row:bin(Acceleration,q)|x:count(*,q)|y:bin(Horsepower,q)",
+                "bar|column:bin(Acceleration,q)|row:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "point|column:Origin,n|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:count(*,q)",
+                "point|column:bin(Acceleration,q)|row:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "point|column:bin(Acceleration,q)|row:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "point|column:Origin,n|row:bin(Acceleration,q)|x:count(*,q)|y:bin(Horsepower,q)",
+                "tick|column:bin(Acceleration,q)|row:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "tick|column:Origin,n|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:count(*,q)",
+                "tick|column:Origin,n|row:bin(Acceleration,q)|x:count(*,q)|y:bin(Horsepower,q)",
+                "tick|column:bin(Acceleration,q)|row:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "line|column:Origin,n|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:count(*,q)",
+                "area|column:bin(Acceleration,q)|row:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "line|column:bin(Acceleration,q)|row:Origin,n|x:bin(Horsepower,q)|y:count(*,q)",
+                "area|column:Origin,n|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:count(*,q)",
+                "line|column:bin(Acceleration,q)|row:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "area|column:bin(Acceleration,q)|row:Origin,n|x:count(*,q)|y:bin(Horsepower,q)",
+                "line|column:Origin,n|row:bin(Acceleration,q)|x:count(*,q)|y:bin(Horsepower,q)",
+                "area|column:Origin,n|row:bin(Acceleration,q)|x:count(*,q)|y:bin(Horsepower,q)"
               ]
             }
           ],
@@ -598,26 +550,54 @@
               "name": "facet:Origin|facet:bin(Horsepower)|xy:autocount()|xy:bin(Acceleration)",
               "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)/facet:Origin|facet:bin(Horsepower)|xy:autocount()|xy:bin(Acceleration)/facet:Origin|facet:bin(Horsepower)|xy:autocount()|xy:bin(Acceleration)",
               "items": [
-                "bar|column:Origin,o|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:count(*,q)",
-                "bar|column:bin(Horsepower,q)|row:Origin,o|x:bin(Acceleration,q)|y:count(*,q)",
-                "bar|column:Origin,o|row:bin(Horsepower,q)|x:count(*,q)|y:bin(Acceleration,q)",
-                "bar|column:bin(Horsepower,q)|row:Origin,o|x:count(*,q)|y:bin(Acceleration,q)",
-                "point|column:Origin,o|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:count(*,q)",
-                "point|column:bin(Horsepower,q)|row:Origin,o|x:bin(Acceleration,q)|y:count(*,q)",
-                "point|column:bin(Horsepower,q)|row:Origin,o|x:count(*,q)|y:bin(Acceleration,q)",
-                "point|column:Origin,o|row:bin(Horsepower,q)|x:count(*,q)|y:bin(Acceleration,q)",
-                "tick|column:bin(Horsepower,q)|row:Origin,o|x:bin(Acceleration,q)|y:count(*,q)",
-                "tick|column:Origin,o|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:count(*,q)",
-                "tick|column:Origin,o|row:bin(Horsepower,q)|x:count(*,q)|y:bin(Acceleration,q)",
-                "tick|column:bin(Horsepower,q)|row:Origin,o|x:count(*,q)|y:bin(Acceleration,q)",
-                "line|column:Origin,o|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:count(*,q)",
-                "area|column:bin(Horsepower,q)|row:Origin,o|x:bin(Acceleration,q)|y:count(*,q)",
-                "line|column:bin(Horsepower,q)|row:Origin,o|x:bin(Acceleration,q)|y:count(*,q)",
-                "area|column:Origin,o|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:count(*,q)",
-                "line|column:bin(Horsepower,q)|row:Origin,o|x:count(*,q)|y:bin(Acceleration,q)",
-                "area|column:bin(Horsepower,q)|row:Origin,o|x:count(*,q)|y:bin(Acceleration,q)",
-                "line|column:Origin,o|row:bin(Horsepower,q)|x:count(*,q)|y:bin(Acceleration,q)",
-                "area|column:Origin,o|row:bin(Horsepower,q)|x:count(*,q)|y:bin(Acceleration,q)"
+                "bar|column:Origin,n|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:count(*,q)",
+                "bar|column:bin(Horsepower,q)|row:Origin,n|x:bin(Acceleration,q)|y:count(*,q)",
+                "bar|column:Origin,n|row:bin(Horsepower,q)|x:count(*,q)|y:bin(Acceleration,q)",
+                "bar|column:bin(Horsepower,q)|row:Origin,n|x:count(*,q)|y:bin(Acceleration,q)",
+                "point|column:Origin,n|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:count(*,q)",
+                "point|column:bin(Horsepower,q)|row:Origin,n|x:bin(Acceleration,q)|y:count(*,q)",
+                "point|column:bin(Horsepower,q)|row:Origin,n|x:count(*,q)|y:bin(Acceleration,q)",
+                "point|column:Origin,n|row:bin(Horsepower,q)|x:count(*,q)|y:bin(Acceleration,q)",
+                "tick|column:bin(Horsepower,q)|row:Origin,n|x:bin(Acceleration,q)|y:count(*,q)",
+                "tick|column:Origin,n|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:count(*,q)",
+                "tick|column:Origin,n|row:bin(Horsepower,q)|x:count(*,q)|y:bin(Acceleration,q)",
+                "tick|column:bin(Horsepower,q)|row:Origin,n|x:count(*,q)|y:bin(Acceleration,q)",
+                "line|column:Origin,n|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:count(*,q)",
+                "area|column:bin(Horsepower,q)|row:Origin,n|x:bin(Acceleration,q)|y:count(*,q)",
+                "line|column:bin(Horsepower,q)|row:Origin,n|x:bin(Acceleration,q)|y:count(*,q)",
+                "area|column:Origin,n|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:count(*,q)",
+                "line|column:bin(Horsepower,q)|row:Origin,n|x:count(*,q)|y:bin(Acceleration,q)",
+                "area|column:bin(Horsepower,q)|row:Origin,n|x:count(*,q)|y:bin(Acceleration,q)",
+                "line|column:Origin,n|row:bin(Horsepower,q)|x:count(*,q)|y:bin(Acceleration,q)",
+                "area|column:Origin,n|row:bin(Horsepower,q)|x:count(*,q)|y:bin(Acceleration,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Origin|xy:autocount()",
+          "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Origin|xy:autocount()",
+          "items": [
+            {
+              "name": "facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Origin|xy:autocount()",
+              "path": "/Origin|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Origin|xy:autocount()/facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Origin|xy:autocount()",
+              "items": [
+                "bar|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "bar|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "bar|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Origin,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "bar|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "point|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "point|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Origin,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "tick|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "tick|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "tick|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Origin,n,scale={\"rangeStep\":12}|y:count(*,q)",
+                "tick|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:count(*,q)"
               ]
             }
           ],
@@ -656,48 +636,12 @@
               "name": "style:mean(Horsepower)|xy:Origin|xy:bin(Acceleration)",
               "path": "/Origin|bin(Acceleration)|mean(Horsepower)/style:mean(Horsepower)|xy:Origin|xy:bin(Acceleration)/style:mean(Horsepower)|xy:Origin|xy:bin(Acceleration)",
               "items": [
-                "point|size:mean(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,o",
-                "point|size:mean(Horsepower,q)|x:Origin,o|y:bin(Acceleration,q)",
-                "point|color:mean(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,o",
-                "rect|color:mean(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,o",
-                "point|color:mean(Horsepower,q)|x:Origin,o|y:bin(Acceleration,q)",
-                "rect|color:mean(Horsepower,q)|x:Origin,o|y:bin(Acceleration,q)"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
-          "name": "facet:bin(Acceleration)|xy:Origin|xy:mean(Horsepower)",
-          "path": "/Origin|bin(Acceleration)|mean(Horsepower)/facet:bin(Acceleration)|xy:Origin|xy:mean(Horsepower)",
-          "items": [
-            {
-              "name": "facet:bin(Acceleration)|xy:Origin|xy:mean(Horsepower)",
-              "path": "/Origin|bin(Acceleration)|mean(Horsepower)/facet:bin(Acceleration)|xy:Origin|xy:mean(Horsepower)/facet:bin(Acceleration)|xy:Origin|xy:mean(Horsepower)",
-              "items": [
-                "bar|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "bar|column:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "bar|row:bin(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "bar|column:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:mean(Horsepower,q)",
-                "point|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "point|column:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "point|row:bin(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "point|column:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:mean(Horsepower,q)",
-                "tick|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "tick|column:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "tick|row:bin(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "tick|column:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:mean(Horsepower,q)",
-                "line|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "area|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "area|row:bin(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "line|row:bin(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "line|column:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "area|column:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "area|column:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:mean(Horsepower,q)",
-                "line|column:bin(Acceleration,q)|x:Origin,o,scale={\"rangeStep\":12}|y:mean(Horsepower,q)"
+                "point|size:mean(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,n",
+                "point|size:mean(Horsepower,q)|x:Origin,n|y:bin(Acceleration,q)",
+                "point|color:mean(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,n",
+                "rect|color:mean(Horsepower,q)|x:bin(Acceleration,q)|y:Origin,n",
+                "point|color:mean(Horsepower,q)|x:Origin,n|y:bin(Acceleration,q)",
+                "rect|color:mean(Horsepower,q)|x:Origin,n|y:bin(Acceleration,q)"
               ]
             }
           ],
@@ -714,26 +658,54 @@
               "name": "facet:Origin|xy:bin(Acceleration)|xy:mean(Horsepower)",
               "path": "/Origin|bin(Acceleration)|mean(Horsepower)/facet:Origin|xy:bin(Acceleration)|xy:mean(Horsepower)/facet:Origin|xy:bin(Acceleration)|xy:mean(Horsepower)",
               "items": [
-                "bar|row:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
-                "bar|column:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
-                "bar|row:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
-                "bar|column:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
-                "point|row:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
-                "point|row:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
-                "point|column:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
-                "point|column:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
-                "tick|row:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
-                "tick|column:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
-                "tick|row:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
-                "tick|column:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
-                "line|row:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
-                "area|row:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
-                "area|row:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
-                "line|row:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
-                "line|column:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
-                "area|column:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
-                "line|column:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
-                "area|column:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)"
+                "bar|row:Origin,n|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "bar|column:Origin,n|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "bar|row:Origin,n|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
+                "bar|column:Origin,n|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
+                "point|row:Origin,n|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "point|row:Origin,n|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
+                "point|column:Origin,n|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "point|column:Origin,n|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
+                "tick|row:Origin,n|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "tick|column:Origin,n|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "tick|row:Origin,n|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
+                "tick|column:Origin,n|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
+                "line|row:Origin,n|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "area|row:Origin,n|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "area|row:Origin,n|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
+                "line|row:Origin,n|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
+                "line|column:Origin,n|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "area|column:Origin,n|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "line|column:Origin,n|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
+                "area|column:Origin,n|x:mean(Horsepower,q)|y:bin(Acceleration,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "facet:bin(Acceleration)|xy:Origin|xy:mean(Horsepower)",
+          "path": "/Origin|bin(Acceleration)|mean(Horsepower)/facet:bin(Acceleration)|xy:Origin|xy:mean(Horsepower)",
+          "items": [
+            {
+              "name": "facet:bin(Acceleration)|xy:Origin|xy:mean(Horsepower)",
+              "path": "/Origin|bin(Acceleration)|mean(Horsepower)/facet:bin(Acceleration)|xy:Origin|xy:mean(Horsepower)/facet:bin(Acceleration)|xy:Origin|xy:mean(Horsepower)",
+              "items": [
+                "bar|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "bar|column:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,n",
+                "bar|row:bin(Acceleration,q)|x:Origin,n|y:mean(Horsepower,q)",
+                "bar|column:bin(Acceleration,q)|x:Origin,n,scale={\"rangeStep\":12}|y:mean(Horsepower,q)",
+                "point|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,n",
+                "point|row:bin(Acceleration,q)|x:Origin,n|y:mean(Horsepower,q)",
+                "point|column:bin(Acceleration,q)|x:Origin,n,scale={\"rangeStep\":12}|y:mean(Horsepower,q)",
+                "tick|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "tick|row:bin(Acceleration,q)|x:Origin,n|y:mean(Horsepower,q)",
+                "tick|column:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,n",
+                "tick|column:bin(Acceleration,q)|x:Origin,n,scale={\"rangeStep\":12}|y:mean(Horsepower,q)"
               ]
             }
           ],
@@ -750,16 +722,12 @@
               "name": "style:bin(Acceleration)|xy:Origin|xy:mean(Horsepower)",
               "path": "/Origin|bin(Acceleration)|mean(Horsepower)/style:bin(Acceleration)|xy:Origin|xy:mean(Horsepower)/style:bin(Acceleration)|xy:Origin|xy:mean(Horsepower)",
               "items": [
-                "point|size:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "point|size:bin(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "point|color:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "point|color:bin(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "tick|color:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "tick|color:bin(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "line|size:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "line|size:bin(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)",
-                "line|color:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,o",
-                "line|color:bin(Acceleration,q)|x:Origin,o|y:mean(Horsepower,q)"
+                "point|size:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,n",
+                "point|size:bin(Acceleration,q)|x:Origin,n|y:mean(Horsepower,q)",
+                "point|color:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,n",
+                "point|color:bin(Acceleration,q)|x:Origin,n|y:mean(Horsepower,q)",
+                "tick|color:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Origin,n",
+                "tick|color:bin(Acceleration,q)|x:Origin,n|y:mean(Horsepower,q)"
               ]
             }
           ],
@@ -776,12 +744,12 @@
               "name": "style:Origin|xy:bin(Acceleration)|xy:mean(Horsepower)",
               "path": "/Origin|bin(Acceleration)|mean(Horsepower)/style:Origin|xy:bin(Acceleration)|xy:mean(Horsepower)/style:Origin|xy:bin(Acceleration)|xy:mean(Horsepower)",
               "items": [
-                "point|color:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
-                "point|color:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
-                "tick|color:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
-                "tick|color:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
-                "line|color:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
-                "line|color:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)"
+                "point|color:Origin,n|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "point|color:Origin,n|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
+                "tick|color:Origin,n|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "tick|color:Origin,n|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
+                "line|color:Origin,n|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "line|color:Origin,n|x:mean(Horsepower,q)|y:bin(Acceleration,q)"
               ]
             }
           ],
@@ -820,48 +788,12 @@
               "name": "style:mean(Acceleration)|xy:Origin|xy:bin(Horsepower)",
               "path": "/Origin|bin(Horsepower)|mean(Acceleration)/style:mean(Acceleration)|xy:Origin|xy:bin(Horsepower)/style:mean(Acceleration)|xy:Origin|xy:bin(Horsepower)",
               "items": [
-                "point|size:mean(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,o",
-                "point|size:mean(Acceleration,q)|x:Origin,o|y:bin(Horsepower,q)",
-                "point|color:mean(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,o",
-                "rect|color:mean(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,o",
-                "point|color:mean(Acceleration,q)|x:Origin,o|y:bin(Horsepower,q)",
-                "rect|color:mean(Acceleration,q)|x:Origin,o|y:bin(Horsepower,q)"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
-          "name": "facet:bin(Horsepower)|xy:Origin|xy:mean(Acceleration)",
-          "path": "/Origin|bin(Horsepower)|mean(Acceleration)/facet:bin(Horsepower)|xy:Origin|xy:mean(Acceleration)",
-          "items": [
-            {
-              "name": "facet:bin(Horsepower)|xy:Origin|xy:mean(Acceleration)",
-              "path": "/Origin|bin(Horsepower)|mean(Acceleration)/facet:bin(Horsepower)|xy:Origin|xy:mean(Acceleration)/facet:bin(Horsepower)|xy:Origin|xy:mean(Acceleration)",
-              "items": [
-                "bar|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "bar|column:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "bar|row:bin(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "bar|column:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:mean(Acceleration,q)",
-                "point|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "point|column:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "point|row:bin(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "point|column:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:mean(Acceleration,q)",
-                "tick|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "tick|column:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "tick|row:bin(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "tick|column:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:mean(Acceleration,q)",
-                "line|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "area|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o,scale={\"rangeStep\":12}",
-                "area|row:bin(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "line|row:bin(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "line|column:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "area|column:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "area|column:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:mean(Acceleration,q)",
-                "line|column:bin(Horsepower,q)|x:Origin,o,scale={\"rangeStep\":12}|y:mean(Acceleration,q)"
+                "point|size:mean(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,n",
+                "point|size:mean(Acceleration,q)|x:Origin,n|y:bin(Horsepower,q)",
+                "point|color:mean(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,n",
+                "rect|color:mean(Acceleration,q)|x:bin(Horsepower,q)|y:Origin,n",
+                "point|color:mean(Acceleration,q)|x:Origin,n|y:bin(Horsepower,q)",
+                "rect|color:mean(Acceleration,q)|x:Origin,n|y:bin(Horsepower,q)"
               ]
             }
           ],
@@ -878,26 +810,54 @@
               "name": "facet:Origin|xy:bin(Horsepower)|xy:mean(Acceleration)",
               "path": "/Origin|bin(Horsepower)|mean(Acceleration)/facet:Origin|xy:bin(Horsepower)|xy:mean(Acceleration)/facet:Origin|xy:bin(Horsepower)|xy:mean(Acceleration)",
               "items": [
-                "bar|row:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
-                "bar|column:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
-                "bar|row:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
-                "bar|column:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
-                "point|row:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
-                "point|row:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
-                "point|column:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
-                "point|column:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
-                "tick|row:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
-                "tick|row:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
-                "tick|column:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
-                "tick|column:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
-                "area|row:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
-                "line|row:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
-                "line|row:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
-                "line|column:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
-                "area|row:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
-                "area|column:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
-                "line|column:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
-                "area|column:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)"
+                "bar|row:Origin,n|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "bar|column:Origin,n|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "bar|row:Origin,n|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
+                "bar|column:Origin,n|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
+                "point|row:Origin,n|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "point|row:Origin,n|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
+                "point|column:Origin,n|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "point|column:Origin,n|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
+                "tick|row:Origin,n|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "tick|row:Origin,n|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
+                "tick|column:Origin,n|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "tick|column:Origin,n|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
+                "area|row:Origin,n|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "line|row:Origin,n|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "line|row:Origin,n|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
+                "line|column:Origin,n|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "area|row:Origin,n|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
+                "area|column:Origin,n|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "line|column:Origin,n|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
+                "area|column:Origin,n|x:mean(Acceleration,q)|y:bin(Horsepower,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
+          "name": "facet:bin(Horsepower)|xy:Origin|xy:mean(Acceleration)",
+          "path": "/Origin|bin(Horsepower)|mean(Acceleration)/facet:bin(Horsepower)|xy:Origin|xy:mean(Acceleration)",
+          "items": [
+            {
+              "name": "facet:bin(Horsepower)|xy:Origin|xy:mean(Acceleration)",
+              "path": "/Origin|bin(Horsepower)|mean(Acceleration)/facet:bin(Horsepower)|xy:Origin|xy:mean(Acceleration)/facet:bin(Horsepower)|xy:Origin|xy:mean(Acceleration)",
+              "items": [
+                "bar|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "bar|column:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,n",
+                "bar|row:bin(Horsepower,q)|x:Origin,n|y:mean(Acceleration,q)",
+                "bar|column:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:mean(Acceleration,q)",
+                "point|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,n",
+                "point|row:bin(Horsepower,q)|x:Origin,n|y:mean(Acceleration,q)",
+                "point|column:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:mean(Acceleration,q)",
+                "tick|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "tick|row:bin(Horsepower,q)|x:Origin,n|y:mean(Acceleration,q)",
+                "tick|column:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,n",
+                "tick|column:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:mean(Acceleration,q)"
               ]
             }
           ],
@@ -914,16 +874,12 @@
               "name": "style:bin(Horsepower)|xy:Origin|xy:mean(Acceleration)",
               "path": "/Origin|bin(Horsepower)|mean(Acceleration)/style:bin(Horsepower)|xy:Origin|xy:mean(Acceleration)/style:bin(Horsepower)|xy:Origin|xy:mean(Acceleration)",
               "items": [
-                "point|size:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "point|size:bin(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "point|color:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "point|color:bin(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "tick|color:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "tick|color:bin(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "line|size:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "line|size:bin(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
-                "line|color:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
-                "line|color:bin(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)"
+                "point|size:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,n",
+                "point|size:bin(Horsepower,q)|x:Origin,n|y:mean(Acceleration,q)",
+                "point|color:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,n",
+                "point|color:bin(Horsepower,q)|x:Origin,n|y:mean(Acceleration,q)",
+                "tick|color:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,n",
+                "tick|color:bin(Horsepower,q)|x:Origin,n|y:mean(Acceleration,q)"
               ]
             }
           ],
@@ -940,12 +896,12 @@
               "name": "style:Origin|xy:bin(Horsepower)|xy:mean(Acceleration)",
               "path": "/Origin|bin(Horsepower)|mean(Acceleration)/style:Origin|xy:bin(Horsepower)|xy:mean(Acceleration)/style:Origin|xy:bin(Horsepower)|xy:mean(Acceleration)",
               "items": [
-                "point|color:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
-                "point|color:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
-                "tick|color:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
-                "tick|color:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
-                "line|color:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
-                "line|color:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)"
+                "point|color:Origin,n|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "point|color:Origin,n|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
+                "tick|color:Origin,n|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "tick|color:Origin,n|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
+                "line|color:Origin,n|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "line|color:Origin,n|x:mean(Acceleration,q)|y:bin(Horsepower,q)"
               ]
             }
           ],

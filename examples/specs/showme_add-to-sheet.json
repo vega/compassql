@@ -11,7 +11,7 @@
       },{
         "channel": "y",
         "field": "Cylinders",
-        "type": "nominal"
+        "type": "ordinal"
       },{
         "channel": "?",
         "field": "Origin",
