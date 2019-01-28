@@ -1,19 +1,18 @@
-import { QueryConfig } from './config';
-import {Property, isEncodingNestedProp} from './property';
-import { Schema } from './schema';
-import { extend, isArray } from './util';
-
 import {Axis, AXIS_PROPERTIES} from 'vega-lite/build/src/axis';
 import {BinParams} from 'vega-lite/build/src/bin';
-import {Channel, X, Y, ROW, COLUMN, SIZE, COLOR} from 'vega-lite/build/src/channel';
+import {Channel, COLOR, COLUMN, ROW, SIZE, X, Y} from 'vega-lite/build/src/channel';
 import {FieldDef} from 'vega-lite/build/src/fielddef';
+import {Legend, LEGEND_PROPERTIES} from 'vega-lite/build/src/legend';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Scale, ScaleType, SCALE_PROPERTIES} from 'vega-lite/build/src/scale';
-import {Legend, LEGEND_PROPERTIES} from 'vega-lite/build/src/legend';
-import {SortField, SortOrder} from 'vega-lite/build/src/sort';
+import {EncodingSortField, SortOrder} from 'vega-lite/build/src/sort';
 import {StackOffset} from 'vega-lite/build/src/stack';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
 import {Type} from 'vega-lite/build/src/type';
+import {QueryConfig} from './config';
+import {isEncodingNestedProp, Property} from './property';
+import {Schema} from './schema';
+import {extend, isArray} from './util';
 
 export const SHORT_WILDCARD: SHORT_WILDCARD = '?';
 export type SHORT_WILDCARD = '?';
@@ -33,7 +32,7 @@ export interface ExtendedWildcard<T> extends Wildcard<T> {
   [prop: string]: any;
 }
 
-export function isWildcard(prop: any): prop is Wildcard<any> | SHORT_WILDCARD  {
+export function isWildcard(prop: any): prop is Wildcard<any> | SHORT_WILDCARD {
   return isShortWildcard(prop) || isWildcardDef(prop);
 }
 
@@ -50,10 +49,14 @@ export function initWildcard(
   defaultName: string,
   defaultEnumValues: any[]
 ): ExtendedWildcard<any> {
-  return extend({}, {
+  return extend(
+    {},
+    {
       name: defaultName,
       enum: defaultEnumValues
-    }, prop === SHORT_WILDCARD ? {} : prop);
+    },
+    prop === SHORT_WILDCARD ? {} : prop
+  );
 }
 
 /**
@@ -65,12 +68,15 @@ function initNestedPropName(fullNames: string[]) {
   let has = {};
   for (const fullName of fullNames) {
     const initialIndices = [0];
-    for (let i = 0; i < fullName.length ; i++) {
+    for (let i = 0; i < fullName.length; i++) {
       if (fullName.charAt(i).toUpperCase() === fullName.charAt(i)) {
         initialIndices.push(i);
       }
     }
-    let shortName = initialIndices.map(i => fullName.charAt(i)).join('').toLowerCase();
+    let shortName = initialIndices
+      .map(i => fullName.charAt(i))
+      .join('')
+      .toLowerCase();
     if (!has[shortName]) {
       index[fullName] = shortName;
       has[shortName] = true;
@@ -78,7 +84,11 @@ function initNestedPropName(fullNames: string[]) {
     }
     // If duplicate, add last character and try again!
     if (initialIndices[initialIndices.length - 1] !== fullName.length - 1) {
-      shortName = initialIndices.concat([fullName.length - 1]).map(i => fullName.charAt(i)).join('').toLowerCase();
+      shortName = initialIndices
+        .concat([fullName.length - 1])
+        .map(i => fullName.charAt(i))
+        .join('')
+        .toLowerCase();
       if (!has[shortName]) {
         index[fullName] = shortName;
         has[shortName] = true;
@@ -150,34 +160,30 @@ export function getDefaultName(prop: Property) {
 /**
  * Generic index for default enum (values to enumerate) of a particular definition type.
  */
-export type DefEnumIndex<T> = { [P in keyof T]: T[P][]};
+export type DefEnumIndex<T> = {[P in keyof T]: T[P][]};
 
 const DEFAULT_BOOLEAN_ENUM = [false, true];
 
-export type EnumIndex =
-  {
-    mark: Mark[];
-    channel: Channel[],
-    autoCount: boolean[],
-    hasFn: boolean[],
-  } &
-  DefEnumIndex<FieldDef<string>> &
-  {
-    sort: (SortField<string> | SortOrder)[],
-    stack: StackOffset[],
-    format: string[],
-    scale: boolean[],
-    axis: boolean[],
-    legend: boolean[],
-    value: any[],
+export type EnumIndex = {
+  mark: Mark[];
+  channel: Channel[];
+  autoCount: boolean[];
+  hasFn: boolean[];
+} & DefEnumIndex<FieldDef<string>> & {
+    sort: (EncodingSortField<string> | SortOrder)[];
+    stack: StackOffset[];
+    format: string[];
+    scale: boolean[];
+    axis: boolean[];
+    legend: boolean[];
+    value: any[];
 
-    binProps: Partial<DefEnumIndex<BinParams>>,
-    sortProps: Partial<DefEnumIndex<SortField<string>>>,
-    scaleProps: Partial<DefEnumIndex<Scale>>,
-    axisProps: Partial<DefEnumIndex<Axis>>,
-    legendProps: Partial<DefEnumIndex<Legend>>
+    binProps: Partial<DefEnumIndex<BinParams>>;
+    sortProps: Partial<DefEnumIndex<EncodingSortField<string>>>;
+    scaleProps: Partial<DefEnumIndex<Scale>>;
+    axisProps: Partial<DefEnumIndex<Axis>>;
+    legendProps: Partial<DefEnumIndex<Legend>>;
   };
-
 
 const DEFAULT_BIN_PROPS_ENUM: DefEnumIndex<BinParams> = {
   maxbins: [5, 10, 20],
@@ -189,7 +195,7 @@ const DEFAULT_BIN_PROPS_ENUM: DefEnumIndex<BinParams> = {
   divide: [[5, 2]]
 };
 
-const DEFAULT_SORT_PROPS: DefEnumIndex<SortField<string>> = {
+const DEFAULT_SORT_PROPS: DefEnumIndex<EncodingSortField<string>> = {
   field: [undefined], // This should be never call and instead read from the schema
   op: ['min', 'mean'],
   order: ['ascending', 'descending']
@@ -215,9 +221,8 @@ const DEFAULT_SCALE_PROPS_ENUM: DefEnumIndex<Scale> = {
 
   range: [undefined],
   rangeStep: [17, 21],
-  scheme: [undefined],
+  scheme: [undefined]
 };
-
 
 const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   zindex: [1, 0],
@@ -248,12 +253,10 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   tickSize: [undefined],
 
   title: [undefined],
-  titleMaxLength: [undefined],
   titlePadding: [undefined]
 };
 
 const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
-  entryPadding: [undefined],
   orient: ['left', 'right'],
   offset: [undefined],
   padding: [undefined],
@@ -295,7 +298,6 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
   axisProps: DEFAULT_AXIS_PROPS_ENUM,
   legendProps: DEFAULT_LEGEND_PROPS_ENUM
 };
-
 
 // TODO: rename this to getDefaultEnum
 export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryConfig): any[] {

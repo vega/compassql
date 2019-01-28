@@ -1,19 +1,16 @@
 {
-    "compilerOptions": {
-        "outDir": "build",
-        "target": "es5",
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "declaration": true,
-        "noImplicitAny": true,
-        "suppressImplicitAnyIndexErrors": true,
-        "sourceMap": true
-    },
-    "files": [
-        "src/index.ts"
-    ],
-    "include": [
-        "test/**/*.ts",
-        "typings/*.d.ts",
-    ]
+  "compilerOptions": {
+    "outDir": "build",
+    "target": "es6",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "declaration": true,
+    "noImplicitAny": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "sourceMap": true
+  },
+  "files": ["src/index.ts"],
+  "include": ["test/**/*.ts", "typings/*.d.ts", "typings/**/*.d.ts"]
 }

@@ -1,13 +1,13 @@
-import {Type as VLType} from 'vega-lite/build/src/type';
-import {Channel} from 'vega-lite/build/src/channel';
-import {autoMaxBins} from 'vega-lite/build/src/bin';
-import {TimeUnit, containsTimeUnit, convert, TIMEUNIT_PARTS} from 'vega-lite/build/src/timeunit';
-import {summary} from 'datalib/src/stats';
+import dlBin_ from 'datalib/src/bins/bins';
 import {inferAll} from 'datalib/src/import/type';
-import * as dlBin_ from 'datalib/src/bins/bins';
+import {summary} from 'datalib/src/stats';
+import {autoMaxBins} from 'vega-lite/build/src/bin';
+import {Channel} from 'vega-lite/build/src/channel';
+import {containsTimeUnit, convert, TimeUnit, TIMEUNIT_PARTS} from 'vega-lite/build/src/timeunit';
+import {Type as VLType} from 'vega-lite/build/src/type';
+import {DEFAULT_QUERY_CONFIG, QueryConfig} from './config';
 import {BinQuery, EncodingQuery, FieldQuery, isAutoCountQuery} from './query/encoding';
-import { ExpandedType } from './query/expandedtype';
-import {QueryConfig, DEFAULT_QUERY_CONFIG} from './config';
+import {ExpandedType} from './query/expandedtype';
 import {cmp, duplicate, extend, keys} from './util';
 
 const dlBin = dlBin_;
@@ -31,7 +31,6 @@ export interface TableSchemaFieldDescriptor {
 
   /* A description for the field */
   description?: string;
-
 }
 
 /**
@@ -77,7 +76,11 @@ export interface TableSchema<F extends TableSchemaFieldDescriptor> {
  *
  * @return a Schema object
  */
-export function build(data: any, opt: QueryConfig = {}, tableSchema: TableSchema<TableSchemaFieldDescriptor> = {fields:[]}): Schema {
+export function build(
+  data: any,
+  opt: QueryConfig = {},
+  tableSchema: TableSchema<TableSchemaFieldDescriptor> = {fields: []}
+): Schema {
   opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
 
   // create profiles for each variable
@@ -90,10 +93,9 @@ export function build(data: any, opt: QueryConfig = {}, tableSchema: TableSchema
   }, {});
 
   let fieldSchemas: FieldSchema[] = summaries.map(function(fieldProfile, index) {
-
     const name: string = fieldProfile.field;
     // In Table schema, 'date' doesn't include time so use 'datetime'
-    const type: PrimitiveType = types[name] === 'date' ? PrimitiveType.DATETIME :  (types[name] as any);
+    const type: PrimitiveType = types[name] === 'date' ? PrimitiveType.DATETIME : (types[name] as any);
     let distinct: number = fieldProfile.distinct;
     let vlType: ExpandedType;
 
@@ -101,7 +103,7 @@ export function build(data: any, opt: QueryConfig = {}, tableSchema: TableSchema
       vlType = VLType.QUANTITATIVE;
     } else if (type === PrimitiveType.INTEGER) {
       // use ordinal or nominal when cardinality of integer type is relatively low and the distinct values are less than an amount specified in options
-      if ((distinct < opt.numberNominalLimit) && (distinct / fieldProfile.count < opt.numberNominalProportion)) {
+      if (distinct < opt.numberNominalLimit && distinct / fieldProfile.count < opt.numberNominalProportion) {
         vlType = VLType.NOMINAL;
       } else {
         vlType = VLType.QUANTITATIVE;
@@ -125,9 +127,11 @@ export function build(data: any, opt: QueryConfig = {}, tableSchema: TableSchema
       vlType = VLType.NOMINAL;
     }
 
-    if (vlType === VLType.NOMINAL
-      && distinct / fieldProfile.count > opt.minPercentUniqueForKey
-      && fieldProfile.count > opt.minCardinalityForKey) {
+    if (
+      vlType === VLType.NOMINAL &&
+      distinct / fieldProfile.count > opt.minPercentUniqueForKey &&
+      fieldProfile.count > opt.minCardinalityForKey
+    ) {
       vlType = ExpandedType.KEY;
     }
 
@@ -166,21 +170,21 @@ export function build(data: any, opt: QueryConfig = {}, tableSchema: TableSchema
 
   const derivedTableSchema: TableSchema<FieldSchema> = {
     ...tableSchema,
-    fields: fieldSchemas,
+    fields: fieldSchemas
   };
 
   return new Schema(derivedTableSchema);
 }
 
-  // order the field schema when we construct a new Schema
-  // this orders the fields in the UI
-  const order = {
-    'nominal': 0,
-    'key': 1,
-    'ordinal': 2,
-    'temporal': 3,
-    'quantitative': 4
-  };
+// order the field schema when we construct a new Schema
+// this orders the fields in the UI
+const order = {
+  nominal: 0,
+  key: 1,
+  ordinal: 2,
+  temporal: 3,
+  quantitative: 4
+};
 
 export class Schema {
   private _tableSchema: TableSchema<FieldSchema>;
@@ -188,7 +192,6 @@ export class Schema {
 
   constructor(tableSchema: TableSchema<FieldSchema>) {
     this._tableSchema = tableSchema;
-
 
     tableSchema.fields.sort(function(a: FieldSchema, b: FieldSchema) {
       // first order by vlType: nominal < temporal < quantitative < ordinal
@@ -203,7 +206,7 @@ export class Schema {
     });
 
     // Add index for sorting
-    tableSchema.fields.forEach((fieldSchema, index) => fieldSchema.index = index);
+    tableSchema.fields.forEach((fieldSchema, index) => (fieldSchema.index = index));
 
     this._fieldSchemaIndex = tableSchema.fields.reduce((m, fieldSchema: FieldSchema) => {
       m[fieldSchema.name] = fieldSchema;
@@ -213,7 +216,7 @@ export class Schema {
 
   /** @return a list of the field names (for enumerating). */
   public fieldNames() {
-    return this._tableSchema.fields.map((fieldSchema) => fieldSchema.name);
+    return this._tableSchema.fields.map(fieldSchema => fieldSchema.name);
   }
 
   /** @return a list of FieldSchemas */
@@ -281,14 +284,22 @@ export class Schema {
       if (augmentTimeUnitDomain) {
         switch (fieldQ.timeUnit) {
           // TODO: this should not always be the case once Vega-Lite supports turning off domain augmenting (VL issue #1385)
-          case TimeUnit.SECONDS: return 60;
-          case TimeUnit.MINUTES: return 60;
-          case TimeUnit.HOURS: return 24;
-          case TimeUnit.DAY: return 7;
-          case TimeUnit.DATE: return 31;
-          case TimeUnit.MONTH: return 12;
-          case TimeUnit.QUARTER: return 4;
-          case TimeUnit.MILLISECONDS: return 1000;
+          case TimeUnit.SECONDS:
+            return 60;
+          case TimeUnit.MINUTES:
+            return 60;
+          case TimeUnit.HOURS:
+            return 24;
+          case TimeUnit.DAY:
+            return 7;
+          case TimeUnit.DATE:
+            return 31;
+          case TimeUnit.MONTH:
+            return 12;
+          case TimeUnit.QUARTER:
+            return 4;
+          case TimeUnit.MILLISECONDS:
+            return 1000;
         }
       }
       let unit = fieldQ.timeUnit as string;
@@ -363,20 +374,21 @@ export class Schema {
     } else if (fieldSchema.type === PrimitiveType.DATETIME) {
       // return [min, max] dates
       return [fieldSchema.stats.min, fieldSchema.stats.max];
-    } else if (fieldSchema.type === PrimitiveType.INTEGER ||
-        fieldSchema.type === PrimitiveType.NUMBER) {
+    } else if (fieldSchema.type === PrimitiveType.INTEGER || fieldSchema.type === PrimitiveType.NUMBER) {
       // coerce non-quantitative numerical data into number type
       domain = domain.map(x => +x);
       return domain.sort(cmp);
-    } else if ((fieldSchema.vlType === VLType.ORDINAL) && fieldSchema.ordinalDomain) {
+    } else if (fieldSchema.vlType === VLType.ORDINAL && fieldSchema.ordinalDomain) {
       return fieldSchema.ordinalDomain;
     }
 
-    return domain.map((x) => {
-      // Convert 'null' to null as it is encoded similarly in datalib.
-      // This is wrong when it is a string 'null' but that rarely happens.
-      return x==='null' ? null : x;
-    }).sort(cmp);
+    return domain
+      .map(x => {
+        // Convert 'null' to null as it is encoded similarly in datalib.
+        // This is wrong when it is a string 'null' but that rarely happens.
+        return x === 'null' ? null : x;
+      })
+      .sort(cmp);
   }
 
   /**
@@ -418,7 +430,7 @@ function timeSummary(timeunit: TimeUnit, summary: DLFieldProfile): DLFieldProfil
   let unique: {[value: string]: number} = {};
   keys(summary.unique).forEach(function(dateString) {
     // don't convert null value because the Date constructor will actually convert it to a date
-    let date: Date = (dateString === 'null') ? null : new Date(dateString);
+    let date: Date = dateString === 'null' ? null : new Date(dateString);
     // at this point, `date` is either the null value, a valid Date object, or "Invalid Date" which is a Date
     let key: string;
     if (date === null) {
@@ -426,7 +438,7 @@ function timeSummary(timeunit: TimeUnit, summary: DLFieldProfile): DLFieldProfil
     } else if (isNaN(date.getTime())) {
       key = 'Invalid Date';
     } else {
-      key = ((timeunit === TimeUnit.DAY) ? date.getDay() : convert(timeunit, date)).toString();
+      key = (timeunit === TimeUnit.DAY ? date.getDay() : convert(timeunit, date)).toString();
     }
     unique[key] = (unique[key] || 0) + summary.unique[dateString];
   });

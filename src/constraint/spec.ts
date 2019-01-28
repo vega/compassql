@@ -3,16 +3,28 @@ import {Channel, NONPOSITION_CHANNELS, supportMark} from 'vega-lite/build/src/ch
 import {Mark} from 'vega-lite/build/src/mark';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {Type} from 'vega-lite/build/src/type';
-import {ExpandedType} from '../query/expandedtype';
-import {AbstractConstraint, AbstractConstraintModel} from './base';
 import {QueryConfig} from '../config';
-import {isWildcard, Wildcard} from '../wildcard';
 import {SpecQueryModel} from '../model';
-import {isEncodingNestedProp, getEncodingNestedProp, Property, isEncodingProperty} from '../property';
+import {getEncodingNestedProp, isEncodingNestedProp, isEncodingProperty, Property} from '../property';
 import {PropIndex} from '../propindex';
+import {
+  EncodingQuery,
+  FieldQuery,
+  isAutoCountQuery,
+  isDimension,
+  isDisabledAutoCountQuery,
+  isEnabledAutoCountQuery,
+  isFieldQuery,
+  isMeasure,
+  isValueQuery,
+  ScaleQuery,
+  scaleType
+} from '../query/encoding';
+import {ExpandedType} from '../query/expandedtype';
 import {Schema} from '../schema';
 import {contains, every, some} from '../util';
-import {scaleType, EncodingQuery, isDimension, isMeasure, ScaleQuery, isFieldQuery, FieldQuery, isValueQuery, isAutoCountQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery} from '../query/encoding';
+import {isWildcard, Wildcard} from '../wildcard';
+import {AbstractConstraint, AbstractConstraintModel} from './base';
 
 const NONPOSITION_CHANNELS_INDEX = NONPOSITION_CHANNELS.reduce((m, channel) => {
   m[channel] = true;
@@ -28,39 +40,39 @@ export class SpecConstraintModel extends AbstractConstraintModel {
     super(specConstraint);
   }
 
-    public hasAllRequiredPropertiesSpecific(specM: SpecQueryModel): boolean {
-      return every(this.constraint.properties, (prop) => {
-        if (prop === Property.MARK) {
-          return !isWildcard(specM.getMark());
-        }
+  public hasAllRequiredPropertiesSpecific(specM: SpecQueryModel): boolean {
+    return every(this.constraint.properties, prop => {
+      if (prop === Property.MARK) {
+        return !isWildcard(specM.getMark());
+      }
 
-        // TODO: transform
+      // TODO: transform
 
-        if (isEncodingNestedProp(prop)) {
-          let parent = prop.parent;
-          let child = prop.child;
+      if (isEncodingNestedProp(prop)) {
+        let parent = prop.parent;
+        let child = prop.child;
 
-          return every(specM.getEncodings(), (encQ) => {
-            if (!encQ[parent]) {
-              return true;
-            }
-
-            return !isWildcard(encQ[parent][child]);
-          });
-        }
-
-        if (!isEncodingProperty(prop)) {
-          throw new Error('UNIMPLEMENTED');
-        }
-
-        return every(specM.getEncodings(), (encQ) => {
-          if (!encQ[prop]) {
+        return every(specM.getEncodings(), encQ => {
+          if (!encQ[parent]) {
             return true;
           }
-          return !isWildcard(encQ[prop]);
+
+          return !isWildcard(encQ[parent][child]);
         });
+      }
+
+      if (!isEncodingProperty(prop)) {
+        throw new Error('UNIMPLEMENTED');
+      }
+
+      return every(specM.getEncodings(), encQ => {
+        if (!encQ[prop]) {
+          return true;
+        }
+        return !isWildcard(encQ[prop]);
       });
-    }
+    });
+  }
 
   public satisfy(specM: SpecQueryModel, schema: Schema, opt: QueryConfig) {
     // TODO: Re-order logic to optimize the "allowWildcardForProperties" check
@@ -90,7 +102,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       let usedChannel = {};
 
       // channel for all encodings should be valid
-      return every(specM.getEncodings(), (encQ) => {
+      return every(specM.getEncodings(), encQ => {
         if (!isWildcard(encQ.channel)) {
           // If channel is specified, it should no be used already
           if (usedChannel[encQ.channel]) {
@@ -106,7 +118,13 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'alwaysIncludeZeroInScaleWithBarMark',
     description: 'Do not recommend bar mark if scale does not start at zero',
-    properties: [Property.MARK, Property.SCALE, getEncodingNestedProp('scale', 'zero'), Property.CHANNEL, Property.TYPE],
+    properties: [
+      Property.MARK,
+      Property.SCALE,
+      getEncodingNestedProp('scale', 'zero'),
+      Property.CHANNEL,
+      Property.TYPE
+    ],
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
@@ -115,10 +133,12 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
       if (mark === Mark.BAR) {
         for (let encQ of encodings) {
-          if (isFieldQuery(encQ) &&
+          if (
+            isFieldQuery(encQ) &&
             (encQ.channel === Channel.X || encQ.channel === Channel.Y) &&
-               (encQ.type === Type.QUANTITATIVE) &&
-               (encQ.scale && (encQ.scale as ScaleQuery).zero === false)) {
+            encQ.type === Type.QUANTITATIVE &&
+            (encQ.scale && (encQ.scale as ScaleQuery).zero === false)
+          ) {
             // TODO: zero shouldn't be manually specified
             return false;
           }
@@ -130,12 +150,13 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   },
   {
     name: 'autoAddCount',
-    description: 'Automatically adding count only for plots with only ordinal, binned quantitative, or temporal with timeunit fields.',
+    description:
+      'Automatically adding count only for plots with only ordinal, binned quantitative, or temporal with timeunit fields.',
     properties: [Property.BIN, Property.TIMEUNIT, Property.TYPE, Property.AUTOCOUNT],
     allowWildcardForProperties: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
-      const hasAutoCount =  some(specM.getEncodings(), (encQ: EncodingQuery) => isEnabledAutoCountQuery(encQ));
+      const hasAutoCount = some(specM.getEncodings(), (encQ: EncodingQuery) => isEnabledAutoCountQuery(encQ));
 
       if (hasAutoCount) {
         // Auto count should only be applied if all fields are nominal, ordinal, temporal with timeUnit, binned quantitative, or autoCount
@@ -176,7 +197,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           // or at least have potential to be (still ambiguous).
           return some(specM.getEncodings(), (encQ: EncodingQuery) => {
             if ((isFieldQuery(encQ) || isAutoCountQuery(encQ)) && encQ.type === Type.QUANTITATIVE) {
-
               if (isDisabledAutoCountQuery(encQ)) {
                 return false;
               } else {
@@ -206,11 +226,11 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       if (isWildcard(mark)) return true;
 
       // TODO: can optimize this to detect only what's the changed property if needed.
-      return every(specM.getEncodings(), (encQ) => {
+      return every(specM.getEncodings(), encQ => {
         // channel unspecified, no need to check
         if (isWildcard(encQ.channel)) return true;
 
-        return supportMark(encQ.channel, mark as Mark);
+        return !!supportMark(encQ.channel, mark as Mark);
       });
     }
   },
@@ -238,8 +258,11 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           return specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
         case Mark.POINT:
           // This allows generating a point plot if channel was not a wildcard.
-          return !specM.wildcardIndex.hasProperty(Property.CHANNEL) ||
-                 specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
+          return (
+            !specM.wildcardIndex.hasProperty(Property.CHANNEL) ||
+            specM.channelUsed(Channel.X) ||
+            specM.channelUsed(Channel.Y)
+          );
       }
       /* istanbul ignore next */
       throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + JSON.stringify(mark));
@@ -266,12 +289,15 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     strict: false,
     satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
       if (specM.isAggregate()) {
-        let hasNonFacetDim = false, hasDim = false, hasEnumeratedFacetDim = false;
+        let hasNonFacetDim = false,
+          hasDim = false,
+          hasEnumeratedFacetDim = false;
         specM.specQuery.encodings.forEach((encQ, index) => {
-          if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ))) return; // skip unused field
+          if (isValueQuery(encQ) || isDisabledAutoCountQuery(encQ)) return; // skip unused field
 
           // FieldQuery & !encQ.aggregate
-          if (isFieldQuery(encQ) && !encQ.aggregate) { // isDimension
+          if (isFieldQuery(encQ) && !encQ.aggregate) {
+            // isDimension
             hasDim = true;
             if (contains([Channel.ROW, Channel.COLUMN], encQ.channel)) {
               if (specM.wildcardIndex.hasEncodingProperty(index, Property.CHANNEL)) {
@@ -301,7 +327,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       if (specM.isAggregate()) {
         // TODO relax
         return some(specM.getEncodings(), (encQ: EncodingQuery) => {
-          if (isDimension(encQ) || (isFieldQuery(encQ) && (encQ.type === 'temporal'))) {
+          if (isDimension(encQ) || (isFieldQuery(encQ) && encQ.type === 'temporal')) {
             return true;
           }
           return false;
@@ -341,7 +367,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           } else {
             // Otherwise have to search for the size channel and check if it is enumerated
             const encodings = specM.specQuery.encodings;
-            for (let i = 0; i < encodings.length ; i++) {
+            for (let i = 0; i < encodings.length; i++) {
               const encQ = encodings[i];
               if (encQ.channel === Channel.SIZE) {
                 if (specM.wildcardIndex.hasEncodingProperty(i, Property.CHANNEL)) {
@@ -362,7 +388,13 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'omitBarAreaForLogScale',
     description: 'Do not use bar and area mark for x and y\'s log scale',
-    properties: [Property.MARK, Property.CHANNEL, Property.SCALE, getEncodingNestedProp('scale', 'type'), Property.TYPE],
+    properties: [
+      Property.MARK,
+      Property.CHANNEL,
+      Property.SCALE,
+      getEncodingNestedProp('scale', 'type'),
+      Property.TYPE
+    ],
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
@@ -372,8 +404,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       // TODO: mark or scale type should be enumerated
       if (mark === Mark.AREA || mark === Mark.BAR) {
         for (let encQ of encodings) {
-          if(isFieldQuery(encQ) && ((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale)) {
-
+          if (isFieldQuery(encQ) && ((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale)) {
             let sType = scaleType(encQ);
 
             if (sType === ScaleType.LOG) {
@@ -387,7 +418,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   },
   {
     name: 'omitMultipleNonPositionalChannels',
-    description: 'Unless manually specified, do not use multiple non-positional encoding channel to avoid over-encoding.',
+    description:
+      'Unless manually specified, do not use multiple non-positional encoding channel to avoid over-encoding.',
     properties: [Property.CHANNEL],
     allowWildcardForProperties: true,
     strict: false,
@@ -401,7 +433,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
       for (let i = 0; i < encodings.length; i++) {
         const encQ = encodings[i];
-        if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ)))  {
+        if (isValueQuery(encQ) || isDisabledAutoCountQuery(encQ)) {
           continue; // ignore skipped encoding
         }
 
@@ -412,9 +444,10 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
             if (specM.wildcardIndex.hasEncodingProperty(i, Property.CHANNEL)) {
               hasEnumeratedNonPositionChannel = true;
             }
-            if ( nonPositionChannelCount > 1 &&
-                (hasEnumeratedNonPositionChannel || opt.constraintManuallySpecifiedValue)
-              ) {
+            if (
+              nonPositionChannelCount > 1 &&
+              (hasEnumeratedNonPositionChannel || opt.constraintManuallySpecifiedValue)
+            ) {
               return false;
             }
           }
@@ -433,10 +466,11 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       const encodings = specM.specQuery.encodings;
       let hasNonPositionalChannelOrFacet = false;
       let hasEnumeratedNonPositionOrFacetChannel = false;
-      let hasX = false, hasY = false;
+      let hasX = false,
+        hasY = false;
       for (let i = 0; i < encodings.length; i++) {
         const encQ = encodings[i];
-        if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ))) {
+        if (isValueQuery(encQ) || isDisabledAutoCountQuery(encQ)) {
           continue; // ignore skipped encoding
         }
 
@@ -454,9 +488,10 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         }
       }
 
-      if ( hasEnumeratedNonPositionOrFacetChannel ||
-          (opt.constraintManuallySpecifiedValue && hasNonPositionalChannelOrFacet)
-        ) {
+      if (
+        hasEnumeratedNonPositionOrFacetChannel ||
+        (opt.constraintManuallySpecifiedValue && hasNonPositionalChannelOrFacet)
+      ) {
         return hasX && hasY;
       }
       return true;
@@ -477,48 +512,50 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   },
   {
     name: 'omitRawContinuousFieldForAggregatePlot',
-    description: 'Aggregate plot should not use raw continuous field as group by values. ' +
+    description:
+      'Aggregate plot should not use raw continuous field as group by values. ' +
       '(Quantitative should be binned. Temporal should have time unit.)',
     properties: [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN, Property.TYPE],
     allowWildcardForProperties: true,
     strict: false,
     satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
-       if (specM.isAggregate()) {
-         const encodings = specM.specQuery.encodings;
-         for (let i = 0; i < encodings.length; i++) {
-           const encQ = encodings[i];
-           if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ))) continue; // skip unused encoding
+      if (specM.isAggregate()) {
+        const encodings = specM.specQuery.encodings;
+        for (let i = 0; i < encodings.length; i++) {
+          const encQ = encodings[i];
+          if (isValueQuery(encQ) || isDisabledAutoCountQuery(encQ)) continue; // skip unused encoding
 
-           // TODO: aggregate for ordinal and temporal
+          // TODO: aggregate for ordinal and temporal
 
-           if (isFieldQuery(encQ) && encQ.type === Type.TEMPORAL) {
-             // Temporal fields should have timeUnit or is still a wildcard
-             if (!encQ.timeUnit && (
-                  specM.wildcardIndex.hasEncodingProperty(i, Property.TIMEUNIT) ||
-                  opt.constraintManuallySpecifiedValue
-                )) {
-               return false;
-             }
-           }
-           if (encQ.type === Type.QUANTITATIVE) {
-             if (isFieldQuery(encQ) && !encQ.bin && !encQ.aggregate) {
-               // If Raw Q
-               if (specM.wildcardIndex.hasEncodingProperty(i, Property.BIN) ||
-                  specM.wildcardIndex.hasEncodingProperty(i, Property.AGGREGATE) ||
-                  specM.wildcardIndex.hasEncodingProperty(i, Property.AUTOCOUNT)
-                  ) {
-                 // and it's raw from enumeration
-                 return false;
-               }
-               if (opt.constraintManuallySpecifiedValue) {
-                 // or if we constraintManuallySpecifiedValue
-                 return false;
-               }
-             }
-           }
-         }
-       }
-       return true;
+          if (isFieldQuery(encQ) && encQ.type === Type.TEMPORAL) {
+            // Temporal fields should have timeUnit or is still a wildcard
+            if (
+              !encQ.timeUnit &&
+              (specM.wildcardIndex.hasEncodingProperty(i, Property.TIMEUNIT) || opt.constraintManuallySpecifiedValue)
+            ) {
+              return false;
+            }
+          }
+          if (encQ.type === Type.QUANTITATIVE) {
+            if (isFieldQuery(encQ) && !encQ.bin && !encQ.aggregate) {
+              // If Raw Q
+              if (
+                specM.wildcardIndex.hasEncodingProperty(i, Property.BIN) ||
+                specM.wildcardIndex.hasEncodingProperty(i, Property.AGGREGATE) ||
+                specM.wildcardIndex.hasEncodingProperty(i, Property.AUTOCOUNT)
+              ) {
+                // and it's raw from enumeration
+                return false;
+              }
+              if (opt.constraintManuallySpecifiedValue) {
+                // or if we constraintManuallySpecifiedValue
+                return false;
+              }
+            }
+          }
+        }
+      }
+      return true;
     }
   },
   {
@@ -532,13 +569,15 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         return true;
       }
       return every(specM.specQuery.encodings, (encQ, index) => {
-        if (isValueQuery(encQ) || (isDisabledAutoCountQuery(encQ))) return true; // ignore autoCount field
+        if (isValueQuery(encQ) || isDisabledAutoCountQuery(encQ)) return true; // ignore autoCount field
 
         if (encQ.channel === Channel.DETAIL) {
           // Detail channel for raw plot is not good, except when its enumerated
           // or when it's manually specified but we constraintManuallySpecifiedValue.
-          if (specM.wildcardIndex.hasEncodingProperty(index, Property.CHANNEL) ||
-              opt.constraintManuallySpecifiedValue) {
+          if (
+            specM.wildcardIndex.hasEncodingProperty(index, Property.CHANNEL) ||
+            opt.constraintManuallySpecifiedValue
+          ) {
             return false;
           }
         }
@@ -557,7 +596,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       let fieldEnumerated = {};
 
       const encodings = specM.specQuery.encodings;
-      for (let i = 0; i < encodings.length ; i++) {
+      for (let i = 0; i < encodings.length; i++) {
         const encQ = encodings[i];
 
         if (isValueQuery(encQ) || isAutoCountQuery(encQ)) continue;
@@ -610,7 +649,15 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'hasAppropriateGraphicTypeForMark',
     description: 'Has appropriate graphic type for mark',
-    properties: [Property.CHANNEL, Property.MARK, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
+    properties: [
+      Property.CHANNEL,
+      Property.MARK,
+      Property.TYPE,
+      Property.TIMEUNIT,
+      Property.BIN,
+      Property.AGGREGATE,
+      Property.AUTOCOUNT
+    ],
     allowWildcardForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
@@ -619,19 +666,24 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       switch (mark) {
         case Mark.AREA:
         case Mark.LINE:
-          if (specM.isAggregate()) { // TODO: refactor based on profiling statistics
+          if (specM.isAggregate()) {
+            // TODO: refactor based on profiling statistics
             const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
             const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
             const xIsMeasure = isMeasure(xEncQ);
             const yIsMeasure = isMeasure(yEncQ);
 
             // for aggregate line / area, we need at least one group-by axis and one measure axis.
-            return xEncQ && yEncQ && (xIsMeasure !== yIsMeasure) &&
+            return (
+              xEncQ &&
+              yEncQ &&
+              xIsMeasure !== yIsMeasure &&
               // and the dimension axis should not be nominal
               // TODO: make this clause optional
 
               !(isFieldQuery(xEncQ) && !xIsMeasure && contains(['nominal', 'key'], xEncQ.type)) &&
-              !(isFieldQuery(yEncQ) && !yIsMeasure && contains(['nominal', 'key'], yEncQ.type));
+              !(isFieldQuery(yEncQ) && !yIsMeasure && contains(['nominal', 'key'], yEncQ.type))
+            );
             // TODO: allow connected scatterplot
           }
           return true;
@@ -666,15 +718,14 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
           const colorEncQ = specM.getEncodingQueryByChannel(Channel.COLOR);
           const colorIsQuantitative = isMeasure(colorEncQ);
-          const colorIsOrdinal = isFieldQuery(colorEncQ) ?
-              colorEncQ.type === Type.ORDINAL : false;
+          const colorIsOrdinal = isFieldQuery(colorEncQ) ? colorEncQ.type === Type.ORDINAL : false;
 
-          const correctChannels = (xIsDimension && yIsDimension) ||
-              (xIsDimension && !specM.channelUsed(Channel.Y)) ||
-              (yIsDimension && !specM.channelUsed(Channel.X));
+          const correctChannels =
+            (xIsDimension && yIsDimension) ||
+            (xIsDimension && !specM.channelUsed(Channel.Y)) ||
+            (yIsDimension && !specM.channelUsed(Channel.X));
 
-          const correctColor = !colorEncQ ||
-              (colorEncQ && (colorIsQuantitative || colorIsOrdinal));
+          const correctColor = !colorEncQ || (colorEncQ && (colorIsQuantitative || colorIsOrdinal));
 
           return correctChannels && correctColor;
         case Mark.CIRCLE:
@@ -690,7 +741,17 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'omitInvalidStackSpec',
     description: 'If stack is specified, must follow Vega-Lite stack rules',
-    properties: [Property.STACK, Property.FIELD, Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, getEncodingNestedProp('scale', 'type'), Property.TYPE],
+    properties: [
+      Property.STACK,
+      Property.FIELD,
+      Property.CHANNEL,
+      Property.MARK,
+      Property.AGGREGATE,
+      Property.AUTOCOUNT,
+      Property.SCALE,
+      getEncodingNestedProp('scale', 'type'),
+      Property.TYPE
+    ],
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
@@ -712,7 +773,15 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     name: 'omitNonSumStack',
     description: 'Stack specifications that use non-summative aggregates should be omitted (even implicit ones)',
-    properties: [Property.CHANNEL, Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE, getEncodingNestedProp('scale', 'type'), Property.TYPE],
+    properties: [
+      Property.CHANNEL,
+      Property.MARK,
+      Property.AGGREGATE,
+      Property.AUTOCOUNT,
+      Property.SCALE,
+      getEncodingNestedProp('scale', 'type'),
+      Property.TYPE
+    ],
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
@@ -728,25 +797,36 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   },
   {
     name: 'omitTableWithOcclusionIfAutoAddCount',
-    description: 'Plots without aggregation or autocount where x and y are both discrete should be omitted if autoAddCount is enabled as they often lead to occlusion',
-    properties: [Property.CHANNEL, Property.TYPE, Property.TIMEUNIT, Property.BIN, Property.AGGREGATE, Property.AUTOCOUNT],
+    description:
+      'Plots without aggregation or autocount where x and y are both discrete should be omitted if autoAddCount is enabled as they often lead to occlusion',
+    properties: [
+      Property.CHANNEL,
+      Property.TYPE,
+      Property.TIMEUNIT,
+      Property.BIN,
+      Property.AGGREGATE,
+      Property.AUTOCOUNT
+    ],
     allowWildcardForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
-      if(opt.autoAddCount) {
+      if (opt.autoAddCount) {
         const xEncQ = specM.getEncodingQueryByChannel('x');
         const yEncQ = specM.getEncodingQueryByChannel('y');
 
-        if ((!isFieldQuery(xEncQ) || isDimension(xEncQ)) &&
-            (!isFieldQuery(yEncQ) || isDimension(yEncQ))) {
+        if ((!isFieldQuery(xEncQ) || isDimension(xEncQ)) && (!isFieldQuery(yEncQ) || isDimension(yEncQ))) {
           if (!specM.isAggregate()) {
             return false;
           } else {
-            return every(specM.getEncodings(), (encQ) => {
+            return every(specM.getEncodings(), encQ => {
               let channel = encQ.channel;
 
-              if (channel !== Channel.X && channel !== Channel.Y &&
-                  channel !== Channel.ROW && channel !== Channel.COLUMN) {
+              if (
+                channel !== Channel.X &&
+                channel !== Channel.Y &&
+                channel !== Channel.ROW &&
+                channel !== Channel.COLUMN
+              ) {
                 // Non-position fields should not be unaggreated fields
                 if (isFieldQuery(encQ) && !encQ.aggregate) {
                   return false;
@@ -760,31 +840,36 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       return true;
     }
   }
-].map((sc) => new SpecConstraintModel(sc));
+].map(sc => new SpecConstraintModel(sc));
 
 // For testing
-export const SPEC_CONSTRAINT_INDEX: {[name: string]: SpecConstraintModel} =
-  SPEC_CONSTRAINTS.reduce((m: any, c: SpecConstraintModel) => {
+export const SPEC_CONSTRAINT_INDEX: {[name: string]: SpecConstraintModel} = SPEC_CONSTRAINTS.reduce(
+  (m: any, c: SpecConstraintModel) => {
     m[c.name()] = c;
     return m;
-  }, {});
+  },
+  {}
+);
 
-const SPEC_CONSTRAINTS_BY_PROPERTY =
-  SPEC_CONSTRAINTS.reduce((index, c) => {
-    for (const prop of c.properties()) {
-      // Initialize array and use it
-      index.set(prop, index.get(prop) || []);
-      index.get(prop).push(c);
-    }
-    return index;
-  }, new PropIndex<SpecConstraintModel[]>());
+const SPEC_CONSTRAINTS_BY_PROPERTY = SPEC_CONSTRAINTS.reduce((index, c) => {
+  for (const prop of c.properties()) {
+    // Initialize array and use it
+    index.set(prop, index.get(prop) || []);
+    index.get(prop).push(c);
+  }
+  return index;
+}, new PropIndex<SpecConstraintModel[]>());
 
 /**
  * Check all encoding constraints for a particular property and index tuple
  */
-export function checkSpec(prop: Property, wildcard: Wildcard<any>,
-  specM: SpecQueryModel, schema: Schema, opt: QueryConfig): string {
-
+export function checkSpec(
+  prop: Property,
+  wildcard: Wildcard<any>,
+  specM: SpecQueryModel,
+  schema: Schema,
+  opt: QueryConfig
+): string {
   // Check encoding constraint
   const specConstraints = SPEC_CONSTRAINTS_BY_PROPERTY.get(prop) || [];
 

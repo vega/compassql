@@ -1,19 +1,19 @@
-import {ScaleType} from 'vega-lite/build/src/scale';
-import {Type} from 'vega-lite/build/src/type';
-import {TIMEUNITS} from 'vega-lite/build/src/timeunit';
 import {assert} from 'chai';
-
+import {TextFieldDef} from 'vega-lite/build/src/fielddef';
+import {ScaleType} from 'vega-lite/build/src/scale';
+import {TIMEUNITS} from 'vega-lite/build/src/timeunit';
+import {Type} from 'vega-lite/build/src/type';
 import {scaleType, toFieldDef, toValueDef} from '../../src/query/encoding';
 import {SHORT_WILDCARD} from '../../src/wildcard';
-import {TextFieldDef} from 'vega-lite/build/src/fielddef';
 
 describe('query/encoding', () => {
   describe('toFieldDef', () => {
     it('return correct fieldDef for autoCount', () => {
-      assert.deepEqual(
-        toFieldDef({channel: 'x', autoCount: true, type: 'quantitative'}),
-        {aggregate: 'count', field: '*', type: 'quantitative'}
-      );
+      assert.deepEqual(toFieldDef({channel: 'x', autoCount: true, type: 'quantitative'}), {
+        aggregate: 'count',
+        field: '*',
+        type: 'quantitative'
+      });
     });
 
     it('return correct fieldDef for FieldQuery', () => {
@@ -31,7 +31,7 @@ describe('query/encoding', () => {
         toFieldDef(
           {format: '.3f', channel: 'text', field: 'Q', type: 'quantitative'},
           {props: ['field', 'format', 'type'], wildcardMode: 'skip'}
-        ),
+        ) as TextFieldDef<string>,
         {format: '.3f', field: 'Q', type: 'quantitative'}
       );
     });
@@ -39,17 +39,11 @@ describe('query/encoding', () => {
 
   describe('toValueDef', () => {
     it('return correct ValueDef for ValueQuery with constant', () => {
-      assert.deepEqual(
-        toValueDef({channel: 'x', value: 5}),
-        {value: 5}
-      );
+      assert.deepEqual(toValueDef({channel: 'x', value: 5}), {value: 5});
     });
 
     it('return correct null for ValueQuery with wildcard', () => {
-      assert.deepEqual(
-        toValueDef({channel: 'x', value: '?'}),
-        null
-      );
+      assert.deepEqual(toValueDef({channel: 'x', value: '?'}), null);
     });
   });
 
@@ -120,11 +114,10 @@ describe('query/encoding', () => {
       const sType = scaleType({
         channel: 'x',
         timeUnit: '?',
-        type: 'temporal',
+        type: 'temporal'
       });
       assert.equal(sType, undefined);
     });
-
 
     it('should return ScaleType.LINEAR if type is quantitative for x and scale type is not specified', () => {
       const sType = scaleType({
@@ -151,23 +144,23 @@ describe('query/encoding', () => {
       assert.equal(sType, ScaleType.TIME);
     });
 
-    TIMEUNITS.forEach((timeUnit) => {
-       it('should return ScaleType.TIME if type is temporal and has timeUnit', () => {
-         const sType = scaleType({
+    TIMEUNITS.forEach(timeUnit => {
+      it('should return ScaleType.TIME if type is temporal and has timeUnit', () => {
+        const sType = scaleType({
           channel: 'x',
           timeUnit: timeUnit,
           type: Type.TEMPORAL
-         });
-         assert.equal(sType, ScaleType.TIME);
-       });
-     });
+        });
+        assert.equal(sType, ScaleType.TIME);
+      });
+    });
 
-     it('should return ScaleType.TIME if type is temporal, TimeUnit is undefined, and scale type is not defined', () => {
-       const sType = scaleType({
-         channel: 'x',
-         type: Type.TEMPORAL
-       });
-       assert.equal(sType, ScaleType.TIME);
-     });
+    it('should return ScaleType.TIME if type is temporal, TimeUnit is undefined, and scale type is not defined', () => {
+      const sType = scaleType({
+        channel: 'x',
+        type: Type.TEMPORAL
+      });
+      assert.equal(sType, ScaleType.TIME);
+    });
   });
 });

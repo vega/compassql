@@ -1,19 +1,16 @@
+import {toMap} from 'datalib/src/util';
 import {Channel} from 'vega-lite/build/src/channel';
 import {Config} from 'vega-lite/build/src/config';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
-import {TitleParams} from 'vega-lite/build/src/title';
+import {FacetedExtendedUnitSpec, TopLevel} from 'vega-lite/build/src/spec';
 import {stack, StackOffset, StackProperties} from 'vega-lite/build/src/stack';
-
+import {TitleParams} from 'vega-lite/build/src/title';
+import {ALL_ENCODING_PROPS, getEncodingNestedProp, isEncodingTopLevelProperty, Property, toKey} from '../property';
+import {contains, extend, isObject, keys, some, without} from '../util';
 import {isWildcard, WildcardProperty} from '../wildcard';
-import {ALL_ENCODING_PROPS, isEncodingTopLevelProperty, getEncodingNestedProp, Property, toKey} from '../property';
-import {contains, extend, keys, some, isObject, without} from '../util';
-
+import {EncodingQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, isFieldQuery, toEncoding} from './encoding';
 import {TransformQuery} from './transform';
-import {EncodingQuery, isFieldQuery, isEnabledAutoCountQuery, isDisabledAutoCountQuery, toEncoding} from './encoding';
-import {TopLevel, FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
-import {toMap} from 'datalib/src/util';
-
 
 /**
  * A "query" version of a [Vega-Lite](https://github.com/vega/vega-lite)'s `UnitSpec` (single view specification).
@@ -82,42 +79,41 @@ export interface SpecQuery {
  * @param {ExtendedUnitSpec} spec
  * @returns
  */
-export function fromSpec(spec: TopLevel<FacetedCompositeUnitSpec>): SpecQuery {
+export function fromSpec(spec: TopLevel<FacetedExtendedUnitSpec>): SpecQuery {
   return extend(
-    spec.data ? { data: spec.data} : {},
-    spec.transform ? { transform: spec.transform } : {},
-    spec.width ? { width: spec.width } : {},
-    spec.height ? { height: spec.height } : {},
-    spec.background ? { background: spec.background } : {},
-    spec.padding ? { padding: spec.padding } : {},
-    spec.title ? { title: spec.title } : {},
+    spec.data ? {data: spec.data} : {},
+    spec.transform ? {transform: spec.transform} : {},
+    spec.width ? {width: spec.width} : {},
+    spec.height ? {height: spec.height} : {},
+    spec.background ? {background: spec.background} : {},
+    spec.padding ? {padding: spec.padding} : {},
+    spec.title ? {title: spec.title} : {},
     {
       mark: spec.mark,
       encodings: keys(spec.encoding).map((channel: Channel) => {
-          let encQ: EncodingQuery = { channel: channel };
-          let channelDef = spec.encoding[channel];
+        let encQ: EncodingQuery = {channel: channel};
+        let channelDef = spec.encoding[channel];
 
-          for (const prop in channelDef) {
-            if (isEncodingTopLevelProperty(prop as Property) && channelDef[prop] !== undefined) {
-              // Currently bin, scale, axis, legend only support boolean, but not null.
-              // Therefore convert null to false.
-              if (contains(['bin', 'scale', 'axis', 'legend'], prop) && channelDef[prop] === null) {
-                encQ[prop] = false;
-              } else {
-                encQ[prop] = channelDef[prop];
-              }
+        for (const prop in channelDef) {
+          if (isEncodingTopLevelProperty(prop as Property) && channelDef[prop] !== undefined) {
+            // Currently bin, scale, axis, legend only support boolean, but not null.
+            // Therefore convert null to false.
+            if (contains(['bin', 'scale', 'axis', 'legend'], prop) && channelDef[prop] === null) {
+              encQ[prop] = false;
+            } else {
+              encQ[prop] = channelDef[prop];
             }
           }
-
-          if (isFieldQuery(encQ) && encQ.aggregate === 'count' && !encQ.field) {
-            encQ.field = '*';
-          }
-
-          return encQ;
         }
-      )
+
+        if (isFieldQuery(encQ) && encQ.aggregate === 'count' && !encQ.field) {
+          encQ.field = '*';
+        }
+
+        return encQ;
+      })
     },
-    spec.config ? { config: spec.config } : {}
+    spec.config ? {config: spec.config} : {}
   );
 }
 
@@ -180,9 +176,17 @@ export function hasRequiredStackProperties(specQ: SpecQuery) {
     return false;
   }
 
-  const requiredEncodingProps = [Property.STACK, Property.CHANNEL,
-      Property.MARK, Property.FIELD, Property.AGGREGATE, Property.AUTOCOUNT, Property.SCALE,
-      getEncodingNestedProp('scale', 'type'), Property.TYPE];
+  const requiredEncodingProps = [
+    Property.STACK,
+    Property.CHANNEL,
+    Property.MARK,
+    Property.FIELD,
+    Property.AGGREGATE,
+    Property.AUTOCOUNT,
+    Property.SCALE,
+    getEncodingNestedProp('scale', 'type'),
+    Property.TYPE
+  ];
   const exclude = toMap(without(ALL_ENCODING_PROPS, requiredEncodingProps));
 
   const encodings = specQ.encodings.filter(encQ => !isDisabledAutoCountQuery(encQ));
@@ -209,8 +213,7 @@ function objectContainsWildcard(obj: any, opt: {exclude?: {[key: string]: 1}} = 
   for (const childProp in obj) {
     if (obj.hasOwnProperty(childProp)) {
       const wildcard = isWildcard(obj[childProp]);
-      if ((wildcard && (!opt.exclude || !opt.exclude[childProp])) ||
-          objectContainsWildcard(obj[childProp], opt)) {
+      if ((wildcard && (!opt.exclude || !opt.exclude[childProp])) || objectContainsWildcard(obj[childProp], opt)) {
         return true;
       }
     }

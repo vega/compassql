@@ -1,17 +1,34 @@
+import {isString} from 'datalib/src/util';
 import {isAggregateOp} from 'vega-lite/build/src/aggregate';
 import {Channel, isChannel} from 'vega-lite/build/src/channel';
 import {Mark} from 'vega-lite/build/src/mark';
-import {FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
-import {isTimeUnit} from 'vega-lite/build/src/timeunit';
-import {Type, getFullName} from 'vega-lite/build/src/type';
+import {FacetedExtendedUnitSpec} from 'vega-lite/build/src/spec';
 import {StackProperties} from 'vega-lite/build/src/stack';
-import {isString} from 'datalib/src/util';
-import {EncodingQuery, isFieldQuery, FieldQuery, isValueQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, isAutoCountQuery, FieldQueryBase} from './encoding';
-import {SpecQuery, fromSpec, getVlStack} from './spec';
-import {isWildcard, isShortWildcard, SHORT_WILDCARD} from '../wildcard';
-import {getEncodingNestedProp, Property, isEncodingNestedParent, DEFAULT_PROP_PRECEDENCE, VIEW_PROPS, SORT_PROPS, EncodingNestedChildProp} from '../property';
+import {isTimeUnit} from 'vega-lite/build/src/timeunit';
+import {getFullName, Type} from 'vega-lite/build/src/type';
+import {
+  DEFAULT_PROP_PRECEDENCE,
+  EncodingNestedChildProp,
+  getEncodingNestedProp,
+  isEncodingNestedParent,
+  Property,
+  SORT_PROPS,
+  VIEW_PROPS
+} from '../property';
 import {PropIndex} from '../propindex';
-import {Dict, keys, isArray, isBoolean} from '../util';
+import {Dict, isArray, isBoolean, keys} from '../util';
+import {isShortWildcard, isWildcard, SHORT_WILDCARD} from '../wildcard';
+import {
+  EncodingQuery,
+  FieldQuery,
+  FieldQueryBase,
+  isAutoCountQuery,
+  isDisabledAutoCountQuery,
+  isEnabledAutoCountQuery,
+  isFieldQuery,
+  isValueQuery
+} from './encoding';
+import {fromSpec, getVlStack, SpecQuery} from './spec';
 
 export type Replacer = (s: string) => string;
 
@@ -54,18 +71,15 @@ export const REPLACE_NONE = new PropIndex<Replacer>();
 
 export const INCLUDE_ALL: PropIndex<boolean> =
   // FIXME: remove manual TRANSFORM concat once we really support enumerating transform.
-  [].concat(
-    DEFAULT_PROP_PRECEDENCE,
-    SORT_PROPS,
-    [Property.TRANSFORM, Property.STACK],
-    VIEW_PROPS
-  )
-  .reduce((pi, prop: Property) => pi.set(prop, true), new PropIndex<boolean>());
+  []
+    .concat(DEFAULT_PROP_PRECEDENCE, SORT_PROPS, [Property.TRANSFORM, Property.STACK], VIEW_PROPS)
+    .reduce((pi, prop: Property) => pi.set(prop, true), new PropIndex<boolean>());
 
-
-export function vlSpec(vlspec: FacetedCompositeUnitSpec,
-    include: PropIndex<boolean> = INCLUDE_ALL,
-    replace: PropIndex<Replacer> = REPLACE_NONE) {
+export function vlSpec(
+  vlspec: FacetedExtendedUnitSpec,
+  include: PropIndex<boolean> = INCLUDE_ALL,
+  replace: PropIndex<Replacer> = REPLACE_NONE
+) {
   const specQ = fromSpec(vlspec);
   return spec(specQ, include, replace);
 }
@@ -75,7 +89,7 @@ export const PROPERTY_SUPPORTED_CHANNELS = {
   legend: {color: true, opacity: true, size: true, shape: true},
   scale: {x: true, y: true, color: true, opacity: true, row: true, column: true, size: true, shape: true},
   sort: {x: true, y: true, path: true, order: true},
-  stack: {x: true, y: true},
+  stack: {x: true, y: true}
 };
 
 /**
@@ -84,10 +98,11 @@ export const PROPERTY_SUPPORTED_CHANNELS = {
  * @param include Dict Set listing property types (key) to be included in the shorthand
  * @param replace Dictionary of replace function for values of a particular property type (key)
  */
-export function spec(specQ: SpecQuery,
-    include: PropIndex<boolean> = INCLUDE_ALL,
-    replace: PropIndex<Replacer> = REPLACE_NONE
-    ): string {
+export function spec(
+  specQ: SpecQuery,
+  include: PropIndex<boolean> = INCLUDE_ALL,
+  replace: PropIndex<Replacer> = REPLACE_NONE
+): string {
   const parts: string[] = [];
 
   if (include.get(Property.MARK)) {
@@ -104,7 +119,8 @@ export function spec(specQ: SpecQuery,
   }
 
   if (specQ.encodings) {
-    const encodings = specQ.encodings.reduce((encQs, encQ) => {
+    const encodings = specQ.encodings
+      .reduce((encQs, encQ) => {
         // Exclude encoding mapping with autoCount=false as they are basically disabled.
         if (!isDisabledAutoCountQuery(encQ)) {
           let str;
@@ -113,7 +129,8 @@ export function spec(specQ: SpecQuery,
           } else {
             str = encoding(encQ, include, replace);
           }
-          if (str) { // only add if the shorthand isn't an empty string.
+          if (str) {
+            // only add if the shorthand isn't an empty string.
             encQs.push(str);
           }
         }
@@ -138,18 +155,17 @@ export function spec(specQ: SpecQuery,
   return parts.join('|');
 }
 
-
 /**
  * Returns a shorthand for an encoding query
  * @param encQ an encoding query
  * @param include Dict Set listing property types (key) to be included in the shorthand
  * @param replace Dictionary of replace function for values of a particular property type (key)
  */
-export function encoding(encQ: EncodingQuery,
-    include: PropIndex<boolean> = INCLUDE_ALL,
-    replace: PropIndex<Replacer> = REPLACE_NONE
-    ): string {
-
+export function encoding(
+  encQ: EncodingQuery,
+  include: PropIndex<boolean> = INCLUDE_ALL,
+  replace: PropIndex<Replacer> = REPLACE_NONE
+): string {
   const parts = [];
   if (include.get(Property.CHANNEL)) {
     parts.push(value(encQ.channel, replace.get(Property.CHANNEL)));
@@ -176,10 +192,11 @@ export function encoding(encQ: EncodingQuery,
  * @param include Dict Set listing property types (key) to be included in the shorthand
  * @param replace Dictionary of replace function for values of a particular property type (key)
  */
-export function fieldDef(encQ: EncodingQuery,
-    include: PropIndex<boolean> = INCLUDE_ALL,
-    replacer: PropIndex<Replacer> = REPLACE_NONE): string {
-
+export function fieldDef(
+  encQ: EncodingQuery,
+  include: PropIndex<boolean> = INCLUDE_ALL,
+  replacer: PropIndex<Replacer> = REPLACE_NONE
+): string {
   if (include.get(Property.AGGREGATE) && isDisabledAutoCountQuery(encQ)) {
     return '-';
   }
@@ -196,15 +213,17 @@ export function fieldDef(encQ: EncodingQuery,
       if (isWildcard(encQ.type)) {
         fieldAndParams += ',' + value(encQ.type, replacer.get(Property.TYPE));
       } else {
-        const typeShort = ((encQ.type || Type.QUANTITATIVE)+'').substr(0,1);
+        const typeShort = ((encQ.type || Type.QUANTITATIVE) + '').substr(0, 1);
         fieldAndParams += ',' + value(typeShort, replacer.get(Property.TYPE));
       }
     }
     // encoding properties
-    fieldAndParams += props.map((p) => {
-      let val = p.value instanceof Array ? '[' + p.value + ']' : p.value;
-      return ',' + p.key + '=' + val;
-    }).join('');
+    fieldAndParams += props
+      .map(p => {
+        let val = p.value instanceof Array ? '[' + p.value + ']' : p.value;
+        return ',' + p.key + '=' + val;
+      })
+      .join('');
   } else if (isAutoCountQuery(encQ)) {
     fieldAndParams = '*,q';
   }
@@ -213,14 +232,12 @@ export function fieldDef(encQ: EncodingQuery,
     return null;
   }
   if (fn) {
-    let fnPrefix = isString(fn) ? fn : SHORT_WILDCARD +
-      (keys(fn).length > 0 ? JSON.stringify(fn) : '');
+    let fnPrefix = isString(fn) ? fn : SHORT_WILDCARD + (keys(fn).length > 0 ? JSON.stringify(fn) : '');
 
     return fnPrefix + '(' + fieldAndParams + ')';
   }
   return fieldAndParams;
 }
-
 
 /**
  * Return function part of
@@ -230,7 +247,7 @@ function func(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer: PropInd
     return replace(fieldQ.aggregate, replacer.get(Property.AGGREGATE));
   } else if (include.get(Property.AGGREGATE) && isEnabledAutoCountQuery(fieldQ)) {
     // autoCount is considered a part of aggregate
-    return replace('count', replacer.get(Property.AGGREGATE));;
+    return replace('count', replacer.get(Property.AGGREGATE));
   } else if (include.get(Property.TIMEUNIT) && fieldQ.timeUnit && !isWildcard(fieldQ.timeUnit)) {
     return replace(fieldQ.timeUnit, replacer.get(Property.TIMEUNIT));
   } else if (include.get(Property.BIN) && fieldQ.bin && !isWildcard(fieldQ.bin)) {
@@ -240,7 +257,6 @@ function func(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer: PropInd
     for (const prop of [Property.AGGREGATE, Property.AUTOCOUNT, Property.TIMEUNIT, Property.BIN]) {
       const val = fieldQ[prop];
       if (include.get(prop) && fieldQ[prop] && isWildcard(val)) {
-
         // assign fnEnumIndex[prop] = array of enum values or just "?" if it is SHORT_WILDCARD
         fn = fn || {};
         fn[prop] = isShortWildcard(val) ? val : val.enum;
@@ -257,9 +273,8 @@ function func(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer: PropInd
  * Return key-value of parameters of field defs
  */
 function fieldDefProps(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer: PropIndex<Replacer>) {
-
   /** Encoding properties e.g., Scale, Axis, Legend */
-  const props: {key: string, value: boolean | Object}[] = [];
+  const props: {key: string; value: boolean | Object}[] = [];
 
   // Parameters of function such as bin will be just top-level properties
   if (!isBoolean(fieldQ.bin) && !isShortWildcard(fieldQ.bin)) {
@@ -291,7 +306,6 @@ function fieldDefProps(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer
           value: parentValue || false // return true or false (false if null)
         });
       } else if (isString(parentValue)) {
-
         // `sort` can be a string (ascending/descending).
         props.push({
           key: parent + '',
@@ -309,8 +323,9 @@ function fieldDefProps(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer
           }
         }
 
-        if(nestedPropChildren.length > 0) {
-          const nestedPropObject = nestedPropChildren.sort((a, b) => a.key.localeCompare(b.key))
+        if (nestedPropChildren.length > 0) {
+          const nestedPropObject = nestedPropChildren
+            .sort((a, b) => a.key.localeCompare(b.key))
             .reduce((o, item) => {
               o[item.key] = item.value;
               return o;
@@ -395,9 +410,10 @@ export function splitWithTail(str: string, delim: string, count: number): string
 
 export namespace shorthandParser {
   export function encoding(channel: Channel | SHORT_WILDCARD, fieldDefShorthand: string): EncodingQuery {
-    let encQMixins = fieldDefShorthand.indexOf('(') !== -1 ?
-      fn(fieldDefShorthand) :
-      rawFieldDef(splitWithTail(fieldDefShorthand, ',', 2));
+    let encQMixins =
+      fieldDefShorthand.indexOf('(') !== -1
+        ? fn(fieldDefShorthand)
+        : rawFieldDef(splitWithTail(fieldDefShorthand, ',', 2));
     return {
       channel,
       ...encQMixins
@@ -445,12 +461,7 @@ export namespace shorthandParser {
           // index after next comma
           i = nextCommaIndex + 1;
 
-          parsedValue = JSON.parse(
-            partParams.substring(
-              propIndex + prop.length + 1,
-              nextCommaIndex
-            )
-          );
+          parsedValue = JSON.parse(partParams.substring(propIndex + prop.length + 1, nextCommaIndex));
         }
 
         if (isEncodingNestedParent(prop)) {
@@ -468,7 +479,6 @@ export namespace shorthandParser {
     }
     return fieldQ;
   }
-
 
   export function getClosingIndex(openingBraceIndex: number, str: string, closingChar: string): number {
     for (let i = openingBraceIndex; i < str.length; i++) {
@@ -489,7 +499,8 @@ export namespace shorthandParser {
       for (let encodingProperty in fnEnumIndex) {
         if (isArray(fnEnumIndex[encodingProperty])) {
           fieldQ[encodingProperty] = {enum: fnEnumIndex[encodingProperty]};
-        } else { // Definitely a `SHORT_WILDCARD`
+        } else {
+          // Definitely a `SHORT_WILDCARD`
           fieldQ[encodingProperty] = fnEnumIndex[encodingProperty];
         }
       }

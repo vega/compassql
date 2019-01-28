@@ -1,23 +1,36 @@
+import {isString} from 'datalib/src/util';
 import {Channel} from 'vega-lite/build/src/channel';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
-import {Type} from 'vega-lite/build/src/type';
-import {TopLevel, FacetedCompositeUnitSpec} from 'vega-lite/build/src/spec';
+import {FacetedExtendedUnitSpec, TopLevel} from 'vega-lite/build/src/spec';
 import {StackOffset, StackProperties} from 'vega-lite/build/src/stack';
+import {Type} from 'vega-lite/build/src/type';
 import {QueryConfig} from './config';
-import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, isEncodingNestedProp, isEncodingNestedParent} from './property';
-import {Wildcard, SHORT_WILDCARD, initWildcard, isWildcard, getDefaultName, getDefaultEnumValues} from './wildcard';
-import {WildcardIndex} from './wildcardindex';
-import {SpecQuery, isAggregate, getVlStack, getStackOffset, getStackChannel} from './query/spec';
-import {AutoCountQuery, isFieldQuery, isAutoCountQuery, isDisabledAutoCountQuery, EncodingQuery, toEncoding} from './query/encoding';
+import {getGroupByKey} from './nest';
+import {
+  ENCODING_NESTED_PROPS,
+  ENCODING_TOPLEVEL_PROPS,
+  isEncodingNestedParent,
+  isEncodingNestedProp,
+  Property
+} from './property';
+import {
+  AutoCountQuery,
+  EncodingQuery,
+  isAutoCountQuery,
+  isDisabledAutoCountQuery,
+  isFieldQuery,
+  toEncoding
+} from './query/encoding';
 import {ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand} from './query/shorthand';
+import {getStackChannel, getStackOffset, getVlStack, isAggregate, SpecQuery} from './query/spec';
 import {RankingScore} from './ranking/ranking';
+import {ResultTree} from './result';
 import {Schema} from './schema';
 import {Dict, duplicate, extend} from './util';
-import {isString} from 'datalib/src/util';
-import {getGroupByKey} from './nest';
-import {ResultTree} from './result';
+import {getDefaultEnumValues, getDefaultName, initWildcard, isWildcard, SHORT_WILDCARD, Wildcard} from './wildcard';
+import {WildcardIndex} from './wildcardindex';
 
 /**
  * Internal class for specQuery that provides helper for the enumeration process.
@@ -33,7 +46,6 @@ export class SpecQueryModel {
   private _opt: QueryConfig;
 
   private _rankingScore: Dict<RankingScore> = {};
-
 
   /**
    * Build a WildcardIndex by detecting wildcards
@@ -68,12 +80,12 @@ export class SpecQueryModel {
       }
 
       // For each property of the encodingQuery, enumerate
-      ENCODING_TOPLEVEL_PROPS.forEach((prop) => {
+      ENCODING_TOPLEVEL_PROPS.forEach(prop => {
         if (isWildcard(encQ[prop])) {
           // Assign default wildcard name and enum values.
           const defaultWildcardName = getDefaultName(prop) + index;
           const defaultEnumValues = getDefaultEnumValues(prop, schema, opt);
-          const wildcard = encQ[prop] = initWildcard(encQ[prop], defaultWildcardName, defaultEnumValues);
+          const wildcard = (encQ[prop] = initWildcard(encQ[prop], defaultWildcardName, defaultEnumValues));
 
           // Add index of the encoding mapping to the property's wildcard index.
           wildcardIndex.setEncodingProperty(index, prop, wildcard);
@@ -81,16 +93,15 @@ export class SpecQueryModel {
       });
 
       // For each nested property of the encoding query  (e.g., encQ.bin.maxbins)
-      ENCODING_NESTED_PROPS.forEach((prop) => {
+      ENCODING_NESTED_PROPS.forEach(prop => {
         const propObj = encQ[prop.parent]; // the property object e.g., encQ.bin
         if (propObj) {
           const child = prop.child;
           if (isWildcard(propObj[child])) {
-
             // Assign default wildcard name and enum values.
             const defaultWildcardName = getDefaultName(prop) + index;
             const defaultEnumValues = getDefaultEnumValues(prop, schema, opt);
-            const wildcard = propObj[child] = initWildcard(propObj[child], defaultWildcardName, defaultEnumValues);
+            const wildcard = (propObj[child] = initWildcard(propObj[child], defaultWildcardName, defaultEnumValues));
 
             // Add index of the encoding mapping to the property's wildcard index.
             wildcardIndex.setEncodingProperty(index, prop, wildcard);
@@ -127,14 +138,23 @@ export class SpecQueryModel {
     return new SpecQueryModel(specQ, wildcardIndex, schema, opt, {});
   }
 
-  constructor(spec: SpecQuery, wildcardIndex: WildcardIndex, schema: Schema, opt: QueryConfig, wildcardAssignment: Dict<any>) {
+  constructor(
+    spec: SpecQuery,
+    wildcardIndex: WildcardIndex,
+    schema: Schema,
+    opt: QueryConfig,
+    wildcardAssignment: Dict<any>
+  ) {
     this._spec = spec;
-    this._channelFieldCount = spec.encodings.reduce((m, encQ) => {
-      if (!isWildcard(encQ.channel) && (!isAutoCountQuery(encQ) || encQ.autoCount !== false)) {
-        m[encQ.channel + ''] = 1;
-      }
-      return m;
-    }, {} as Dict<number>);
+    this._channelFieldCount = spec.encodings.reduce(
+      (m, encQ) => {
+        if (!isWildcard(encQ.channel) && (!isAutoCountQuery(encQ) || encQ.autoCount !== false)) {
+          m[encQ.channel + ''] = 1;
+        }
+        return m;
+      },
+      {} as Dict<number>
+    );
 
     this._wildcardIndex = wildcardIndex;
     this._assignedWildcardIndex = wildcardAssignment;
@@ -155,7 +175,13 @@ export class SpecQueryModel {
   }
 
   public duplicate(): SpecQueryModel {
-    return new SpecQueryModel(duplicate(this._spec), this._wildcardIndex, this._schema, this._opt, duplicate(this._assignedWildcardIndex));
+    return new SpecQueryModel(
+      duplicate(this._spec),
+      this._wildcardIndex,
+      this._schema,
+      this._opt,
+      duplicate(this._assignedWildcardIndex)
+    );
   }
 
   public setMark(mark: Mark) {
@@ -164,7 +190,7 @@ export class SpecQueryModel {
   }
 
   public resetMark() {
-    const wildcard = this._spec.mark = this._wildcardIndex.mark;
+    const wildcard = (this._spec.mark = this._wildcardIndex.mark);
     delete this._assignedWildcardIndex[wildcard.name];
   }
 
@@ -174,7 +200,8 @@ export class SpecQueryModel {
 
   public getEncodingProperty(index: number, prop: Property) {
     const encQ = this._spec.encodings[index];
-    if (isEncodingNestedProp(prop)) { // nested encoding property
+    if (isEncodingNestedProp(prop)) {
+      // nested encoding property
       return encQ[prop.parent][prop.child];
     }
     return encQ[prop]; // encoding property (non-nested)
@@ -188,15 +215,17 @@ export class SpecQueryModel {
       this._channelFieldCount[encQ.channel as Channel]--;
     }
 
-
-    if (isEncodingNestedProp(prop)) { // nested encoding property
+    if (isEncodingNestedProp(prop)) {
+      // nested encoding property
       encQ[prop.parent][prop.child] = value;
     } else if (isEncodingNestedParent(prop) && value === true) {
-      encQ[prop] = extend({},
+      encQ[prop] = extend(
+        {},
         encQ[prop], // copy all existing properties
         {enum: undefined, name: undefined} // except name and values to it no longer an wildcard
       );
-    } else { // encoding property (non-nested)
+    } else {
+      // encoding property (non-nested)
       encQ[prop] = value;
     }
 
@@ -215,9 +244,11 @@ export class SpecQueryModel {
     }
 
     // reset it to wildcard
-    if (isEncodingNestedProp(prop)) { // nested encoding property
+    if (isEncodingNestedProp(prop)) {
+      // nested encoding property
       encQ[prop.parent][prop.child] = wildcard;
-    } else { // encoding property (non-nested)
+    } else {
+      // encoding property (non-nested)
       encQ[prop] = wildcard;
     }
 
@@ -296,7 +327,7 @@ export class SpecQueryModel {
    * Convert a query to a Vega-Lite spec if it is completed.
    * @return a Vega-Lite spec if completed, null otherwise.
    */
-  public toSpec(data?: Data): TopLevel<FacetedCompositeUnitSpec> {
+  public toSpec(data?: Data): TopLevel<FacetedExtendedUnitSpec> {
     if (isWildcard(this._spec.mark)) return null;
 
     let spec: any = {};

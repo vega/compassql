@@ -1,24 +1,24 @@
+import {isObject} from 'datalib/src/util';
+import {AggregateOp} from 'vega';
 import {Axis} from 'vega-lite/build/src/axis';
 import {BinParams} from 'vega-lite/build/src/bin';
 import {Channel} from 'vega-lite/build/src/channel';
+import {scaleType as compileScaleType} from 'vega-lite/build/src/compile/scale/type';
+import {Encoding} from 'vega-lite/build/src/encoding';
 import * as vlFieldDef from 'vega-lite/build/src/fielddef';
-import {FieldDef, ValueDef} from 'vega-lite/build/src/fielddef';
+import {ValueDef} from 'vega-lite/build/src/fielddef';
+import {Legend} from 'vega-lite/build/src/legend';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Scale} from 'vega-lite/build/src/scale';
+import {EncodingSortField, SortOrder} from 'vega-lite/build/src/sort';
 import {StackOffset} from 'vega-lite/build/src/stack';
-import {Legend} from 'vega-lite/build/src/legend';
-import {SortOrder, SortField} from 'vega-lite/build/src/sort';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
-import {Type as VLType, Type} from 'vega-lite/build/src/type';
-import {ExpandedType} from './expandedtype';
-import {scaleType as compileScaleType} from 'vega-lite/build/src/compile/scale/type';
-import {Wildcard, isWildcard, SHORT_WILDCARD, WildcardProperty} from '../wildcard';
+import {Type, Type as VLType} from 'vega-lite/build/src/type';
+import {FlatProp, isEncodingNestedParent, Property} from '../property';
 import {Schema} from '../schema';
-import {Encoding} from 'vega-lite/build/src/encoding';
-import {Property, isEncodingNestedParent, FlatProp} from '../property';
+import {isWildcard, SHORT_WILDCARD, Wildcard, WildcardProperty} from '../wildcard';
+import {ExpandedType} from './expandedtype';
 import {PROPERTY_SUPPORTED_CHANNELS} from './shorthand';
-import {isObject} from 'datalib/src/util';
-import {AggregateOp} from 'vega';
 
 export type EncodingQuery = FieldQuery | ValueQuery | AutoCountQuery;
 
@@ -94,7 +94,7 @@ export interface FieldQueryBase {
   bin?: boolean | BinQuery | SHORT_WILDCARD;
   scale?: boolean | ScaleQuery | SHORT_WILDCARD;
 
-  sort?: SortOrder | SortField<string>;
+  sort?: SortOrder | EncodingSortField<string>;
   stack?: StackOffset | SHORT_WILDCARD;
 
   field?: WildcardProperty<string>;
@@ -110,18 +110,28 @@ export type FieldQuery = EncodingQueryBase & FieldQueryBase;
 
 // Using Mapped Type from TS2.1 to declare query for an object without nested property
 // https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-1.html#mapped-types
-export type FlatQuery<T> = {
-  [P in keyof T]: WildcardProperty<T[P]>
-};
+export type FlatQuery<T> = {[P in keyof T]: WildcardProperty<T[P]>};
 
 export type FlatQueryWithEnableFlag<T> = (Wildcard<boolean> | {}) & FlatQuery<T>;
 
 export type BinQuery = FlatQueryWithEnableFlag<BinParams>;
-export type ScaleQuery =  FlatQueryWithEnableFlag<Scale>;
-export type AxisQuery =  FlatQueryWithEnableFlag<Axis>;
+export type ScaleQuery = FlatQueryWithEnableFlag<Scale>;
+export type AxisQuery = FlatQueryWithEnableFlag<Axis>;
 export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
 
-const DEFAULT_PROPS = [Property.AGGREGATE, Property.BIN, Property.TIMEUNIT, Property.FIELD, Property.TYPE, Property.SCALE, Property.SORT, Property.AXIS, Property.LEGEND, Property.STACK, Property.FORMAT];
+const DEFAULT_PROPS = [
+  Property.AGGREGATE,
+  Property.BIN,
+  Property.TIMEUNIT,
+  Property.FIELD,
+  Property.TYPE,
+  Property.SCALE,
+  Property.SORT,
+  Property.AXIS,
+  Property.LEGEND,
+  Property.STACK,
+  Property.FORMAT
+];
 
 export interface ConversionParams {
   schema?: Schema;
@@ -170,12 +180,11 @@ export function toValueDef(valueQ: ValueQuery): ValueDef {
 export function toFieldDef(
   encQ: FieldQuery | AutoCountQuery,
   params: ConversionParams = {}
-): FieldDef<string> {
-
+): vlFieldDef.TypedFieldDef<string> {
   const {props = DEFAULT_PROPS, schema, wildcardMode = 'skip'} = params;
 
   if (isFieldQuery(encQ)) {
-    const fieldDef = {} as FieldDef<string>;
+    const fieldDef = {} as vlFieldDef.TypedFieldDef<string>;
     for (const prop of props) {
       let encodingProperty = encQ[prop];
       if (isWildcard(encodingProperty)) {
@@ -185,7 +194,8 @@ export function toFieldDef(
 
       if (encodingProperty !== undefined) {
         // if the channel supports this prop
-        const isSupportedByChannel = (!PROPERTY_SUPPORTED_CHANNELS[prop] || PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel]);
+        const isSupportedByChannel =
+          !PROPERTY_SUPPORTED_CHANNELS[prop] || PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel];
         if (!isSupportedByChannel) {
           continue;
         }
@@ -308,8 +318,12 @@ export function scaleType(fieldQ: FieldQuery) {
     return undefined;
   }
 
-  let vegaLiteType: VLType = type === ExpandedType.KEY ? 'nominal': type;
+  let vegaLiteType: VLType = type === ExpandedType.KEY ? 'nominal' : type;
 
-  const fieldDef = {type: vegaLiteType, timeUnit: timeUnit as TimeUnit, bin: bin as BinParams};
-  return compileScaleType(scale.type, channel, fieldDef, markType, scaleConfig);
+  const fieldDef = {
+    type: vegaLiteType,
+    timeUnit: timeUnit as TimeUnit,
+    bin: bin as BinParams
+  };
+  return compileScaleType({type: scale.type}, channel, fieldDef, markType, scaleConfig);
 }
