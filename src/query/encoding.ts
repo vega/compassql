@@ -3,17 +3,18 @@ import {AggregateOp} from 'vega';
 import {Axis} from 'vega-lite/build/src/axis';
 import {BinParams} from 'vega-lite/build/src/bin';
 import {Channel} from 'vega-lite/build/src/channel';
+import * as vlChannelDef from 'vega-lite/build/src/channeldef';
+import {ValueDef} from 'vega-lite/build/src/channeldef';
 import {scaleType as compileScaleType} from 'vega-lite/build/src/compile/scale/type';
 import {Encoding} from 'vega-lite/build/src/encoding';
-import * as vlFieldDef from 'vega-lite/build/src/fielddef';
-import {ValueDef} from 'vega-lite/build/src/fielddef';
 import {Legend} from 'vega-lite/build/src/legend';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Scale} from 'vega-lite/build/src/scale';
 import {EncodingSortField, SortOrder} from 'vega-lite/build/src/sort';
 import {StackOffset} from 'vega-lite/build/src/stack';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
-import {Type, Type as VLType} from 'vega-lite/build/src/type';
+import * as TYPE from 'vega-lite/build/src/type';
+import {Type as VLType} from 'vega-lite/build/src/type';
 import {FlatProp, isEncodingNestedParent, Property} from '../property';
 import {Schema} from '../schema';
 import {isWildcard, SHORT_WILDCARD, Wildcard, WildcardProperty} from '../wildcard';
@@ -180,11 +181,11 @@ export function toValueDef(valueQ: ValueQuery): ValueDef {
 export function toFieldDef(
   encQ: FieldQuery | AutoCountQuery,
   params: ConversionParams = {}
-): vlFieldDef.TypedFieldDef<string> {
+): vlChannelDef.TypedFieldDef<string> {
   const {props = DEFAULT_PROPS, schema, wildcardMode = 'skip'} = params;
 
   if (isFieldQuery(encQ)) {
-    const fieldDef = {} as vlFieldDef.TypedFieldDef<string>;
+    const fieldDef = {} as vlChannelDef.TypedFieldDef<string>;
     for (const prop of props) {
       let encodingProperty = encQ[prop];
       if (isWildcard(encodingProperty)) {
@@ -222,7 +223,7 @@ export function toFieldDef(
         }
       }
 
-      if (prop === Property.SCALE && schema && encQ.type === Type.ORDINAL) {
+      if (prop === Property.SCALE && schema && encQ.type === TYPE.ORDINAL) {
         const scale = encQ.scale;
         const {ordinalDomain} = schema.fieldSchema(encQ.field as string);
 
@@ -255,7 +256,7 @@ export function toFieldDef(
  */
 export function isContinuous(encQ: EncodingQuery) {
   if (isFieldQuery(encQ)) {
-    return vlFieldDef.isContinuous(toFieldDef(encQ, {props: ['bin', 'timeUnit', 'field', 'type']}));
+    return vlChannelDef.isContinuous(toFieldDef(encQ, {props: ['bin', 'timeUnit', 'field', 'type']}));
   }
   return isAutoCountQuery(encQ);
 }
@@ -274,14 +275,14 @@ export function isMeasure(encQ: EncodingQuery) {
 export function isDimension(encQ: EncodingQuery) {
   if (isFieldQuery(encQ)) {
     const fieldDef = toFieldDef(encQ, {props: ['bin', 'timeUnit', 'type']});
-    return vlFieldDef.isDiscrete(fieldDef) || !!fieldDef.timeUnit;
+    return vlChannelDef.isDiscrete(fieldDef) || !!fieldDef.timeUnit;
   }
   return false;
 }
 
 /**
  *  Returns the true scale type of an encoding.
- *  @returns {ScaleType} If the scale type was not specified, it is inferred from the encoding's Type.
+ *  @returns {ScaleType} If the scale type was not specified, it is inferred from the encoding's TYPE.
  *  @returns {undefined} If the scale type was not specified and Type (or TimeUnit if applicable) is a Wildcard, there is no clear scale type
  */
 

@@ -2,10 +2,11 @@ import {isString} from 'datalib/src/util';
 import {isAggregateOp} from 'vega-lite/build/src/aggregate';
 import {Channel, isChannel} from 'vega-lite/build/src/channel';
 import {Mark} from 'vega-lite/build/src/mark';
-import {FacetedExtendedUnitSpec} from 'vega-lite/build/src/spec';
+import {FacetedUnitSpec} from 'vega-lite/build/src/spec';
 import {StackProperties} from 'vega-lite/build/src/stack';
 import {isTimeUnit} from 'vega-lite/build/src/timeunit';
-import {getFullName, Type} from 'vega-lite/build/src/type';
+import * as TYPE from 'vega-lite/build/src/type';
+import {getFullName} from 'vega-lite/build/src/type';
 import {
   DEFAULT_PROP_PRECEDENCE,
   EncodingNestedChildProp,
@@ -76,7 +77,7 @@ export const INCLUDE_ALL: PropIndex<boolean> =
     .reduce((pi, prop: Property) => pi.set(prop, true), new PropIndex<boolean>());
 
 export function vlSpec(
-  vlspec: FacetedExtendedUnitSpec,
+  vlspec: FacetedUnitSpec,
   include: PropIndex<boolean> = INCLUDE_ALL,
   replace: PropIndex<Replacer> = REPLACE_NONE
 ) {
@@ -213,7 +214,7 @@ export function fieldDef(
       if (isWildcard(encQ.type)) {
         fieldAndParams += ',' + value(encQ.type, replacer.get(Property.TYPE));
       } else {
-        const typeShort = ((encQ.type || Type.QUANTITATIVE) + '').substr(0, 1);
+        const typeShort = ((encQ.type || TYPE.QUANTITATIVE) + '').substr(0, 1);
         fieldAndParams += ',' + value(typeShort, replacer.get(Property.TYPE));
       }
     }

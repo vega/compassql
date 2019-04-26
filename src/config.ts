@@ -1,7 +1,7 @@
+import * as CHANNEL from 'vega-lite/build/src/channel';
 import {Channel} from 'vega-lite/build/src/channel';
 import {Config} from 'vega-lite/build/src/config';
-
-import {toKey, DEFAULT_PROP_PRECEDENCE} from './property';
+import {DEFAULT_PROP_PRECEDENCE, toKey} from './property';
 import {DEFAULT_ENUM_INDEX, EnumIndex} from './wildcard';
 
 // We name this QueryConfig to avoid confusion with Vega-Lite's Config
@@ -65,8 +65,8 @@ export interface QueryConfig {
 
   // STYLIZE
   stylize?: boolean;
-  smallRangeStepForHighCardinalityOrFacet?: {maxCardinality: number, rangeStep: number};
-  nominalColorScaleForHighCardinality?: {maxCardinality: number, palette: string};
+  smallRangeStepForHighCardinalityOrFacet?: {maxCardinality: number; rangeStep: number};
+  nominalColorScaleForHighCardinality?: {maxCardinality: number; palette: string};
   xAxisOnTopForHighYCardinalityWithoutColumn?: {maxCardinality: number};
 
   // EFFECTIVENESS PREFERENCE
@@ -110,11 +110,11 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   omitInvalidStackSpec: true,
   omitNonSumStack: true,
 
-  preferredBinAxis: Channel.X,
-  preferredTemporalAxis: Channel.X,
-  preferredOrdinalAxis: Channel.Y, // ordinal on y makes it easier to read.
-  preferredNominalAxis: Channel.Y, // nominal on y makes it easier to read.
-  preferredFacet: Channel.ROW, // row make it easier to scroll than column
+  preferredBinAxis: CHANNEL.X,
+  preferredTemporalAxis: CHANNEL.X,
+  preferredOrdinalAxis: CHANNEL.Y, // ordinal on y makes it easier to read.
+  preferredNominalAxis: CHANNEL.Y, // nominal on y makes it easier to read.
+  preferredFacet: CHANNEL.ROW, // row make it easier to scroll than column
 
   // Field Encoding Constraints -- See description inside src/constraint/field.ts
   minCardinalityForBin: 15,
@@ -135,8 +135,8 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   maxGoodCardinalityForColor: 7, // FIXME: revise
 
   // HIGH CARDINALITY STRINGS
-  minPercentUniqueForKey: .8,
-  minCardinalityForKey: 50,
+  minPercentUniqueForKey: 0.8,
+  minCardinalityForKey: 50
 };
 
 export function extendConfig(opt: QueryConfig) {

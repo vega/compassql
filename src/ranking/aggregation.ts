@@ -1,13 +1,10 @@
-
-import {Type} from 'vega-lite/build/src/type';
+import * as TYPE from 'vega-lite/build/src/type';
 import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
+import {EncodingQuery, isDimension, isEnabledAutoCountQuery, isFieldQuery} from '../query/encoding';
 import {Schema} from '../schema';
 import {some} from '../util';
-
-import {RankingScore, FeatureScore} from './ranking';
-
-import {EncodingQuery, isFieldQuery, isDimension, isEnabledAutoCountQuery} from '../query/encoding';
+import {FeatureScore, RankingScore} from './ranking';
 
 export const name = 'aggregationQuality';
 
@@ -23,9 +20,10 @@ function aggregationQualityFeature(specM: SpecQueryModel, _: Schema, __: QueryCo
   const encodings = specM.getEncodings();
   if (specM.isAggregate()) {
     const isRawContinuous = (encQ: EncodingQuery) => {
-      return isFieldQuery(encQ) && (
-        (encQ.type === Type.QUANTITATIVE && !encQ.bin && !encQ.aggregate) ||
-        (encQ.type === Type.TEMPORAL && !encQ.timeUnit)
+      return (
+        isFieldQuery(encQ) &&
+        ((encQ.type === TYPE.QUANTITATIVE && !encQ.bin && !encQ.aggregate) ||
+          (encQ.type === TYPE.TEMPORAL && !encQ.timeUnit))
       );
     };
 
@@ -39,7 +37,7 @@ function aggregationQualityFeature(specM: SpecQueryModel, _: Schema, __: QueryCo
       };
     }
 
-    if (some(encodings, (encQ) => isFieldQuery(encQ) && isDimension(encQ))) {
+    if (some(encodings, encQ => isFieldQuery(encQ) && isDimension(encQ))) {
       let hasCount = some(encodings, (encQ: EncodingQuery) => {
         return (isFieldQuery(encQ) && encQ.aggregate === 'count') || isEnabledAutoCountQuery(encQ);
       });
@@ -77,8 +75,8 @@ function aggregationQualityFeature(specM: SpecQueryModel, _: Schema, __: QueryCo
       feature: 'Aggregate without dimension'
     };
   } else {
-    if (some(encodings, (encQ) => isFieldQuery(encQ) && !isDimension(encQ))) {
-       // raw plots with measure -- simplest of all!
+    if (some(encodings, encQ => isFieldQuery(encQ) && !isDimension(encQ))) {
+      // raw plots with measure -- simplest of all!
       return {
         type: name,
         score: 1,

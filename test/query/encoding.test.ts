@@ -1,8 +1,8 @@
 import {assert} from 'chai';
-import {TextFieldDef} from 'vega-lite/build/src/fielddef';
+import {TextFieldDef} from 'vega-lite/build/src/channeldef';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {TIMEUNITS} from 'vega-lite/build/src/timeunit';
-import {Type} from 'vega-lite/build/src/type';
+import * as TYPE from 'vega-lite/build/src/type';
 import {scaleType, toFieldDef, toValueDef} from '../../src/query/encoding';
 import {SHORT_WILDCARD} from '../../src/wildcard';
 
@@ -122,7 +122,7 @@ describe('query/encoding', () => {
     it('should return ScaleType.LINEAR if type is quantitative for x and scale type is not specified', () => {
       const sType = scaleType({
         channel: 'x',
-        type: Type.QUANTITATIVE
+        type: TYPE.QUANTITATIVE
       });
       assert.equal(sType, ScaleType.LINEAR);
     });
@@ -131,7 +131,7 @@ describe('query/encoding', () => {
       const sType = scaleType({
         channel: SHORT_WILDCARD,
         timeUnit: SHORT_WILDCARD,
-        type: Type.TEMPORAL
+        type: TYPE.TEMPORAL
       });
       assert.equal(sType, undefined);
     });
@@ -139,7 +139,7 @@ describe('query/encoding', () => {
     it('should return ScaleType.TIME if type is temporal and scale type and TimeUnit are not specified', () => {
       const sType = scaleType({
         channel: 'x',
-        type: Type.TEMPORAL
+        type: TYPE.TEMPORAL
       });
       assert.equal(sType, ScaleType.TIME);
     });
@@ -149,7 +149,7 @@ describe('query/encoding', () => {
         const sType = scaleType({
           channel: 'x',
           timeUnit: timeUnit,
-          type: Type.TEMPORAL
+          type: TYPE.TEMPORAL
         });
         assert.equal(sType, ScaleType.TIME);
       });
@@ -158,7 +158,7 @@ describe('query/encoding', () => {
     it('should return ScaleType.TIME if type is temporal, TimeUnit is undefined, and scale type is not defined', () => {
       const sType = scaleType({
         channel: 'x',
-        type: Type.TEMPORAL
+        type: TYPE.TEMPORAL
       });
       assert.equal(sType, ScaleType.TIME);
     });

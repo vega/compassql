@@ -1,15 +1,13 @@
-import {Channel} from 'vega-lite/build/src/channel';
+import * as CHANNEL from 'vega-lite/build/src/channel';
+import * as MARK from 'vega-lite/build/src/mark';
 import {Mark} from 'vega-lite/build/src/mark';
-
 import {QueryConfig} from '../../config';
 import {SpecQueryModel} from '../../model';
-import {Dict, forEach} from '../../util';
 import {Schema} from '../../schema';
-
+import {Dict, forEach} from '../../util';
 import {FeatureScore} from '../ranking';
-import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, NONE, ExtendedType, getExtendedType, K} from './type';
 import {Scorer} from './base';
-
+import {BIN_Q, ExtendedType, getExtendedType, K, N, NONE, O, Q, T, TIMEUNIT_O, TIMEUNIT_T} from './type';
 
 export class MarkScorer extends Scorer {
   constructor() {
@@ -22,13 +20,13 @@ export class MarkScorer extends Scorer {
 
   public getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {
     let mark = specM.getMark() as Mark;
-    if (mark === Mark.CIRCLE || mark === Mark.SQUARE) {
-      mark = Mark.POINT;
+    if (mark === MARK.CIRCLE || mark === MARK.SQUARE) {
+      mark = MARK.POINT;
     }
-    const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
+    const xEncQ = specM.getEncodingQueryByChannel(CHANNEL.X);
     const xType = xEncQ ? getExtendedType(xEncQ) : NONE;
 
-    const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
+    const yEncQ = specM.getEncodingQueryByChannel(CHANNEL.Y);
     const yType = yEncQ ? getExtendedType(yEncQ) : NONE;
 
     const isOccluded = !specM.isAggregate(); // FIXME
@@ -43,7 +41,6 @@ export function featurize(xType: ExtendedType, yType: ExtendedType, hasOcclusion
   return xType + '_' + yType + '_' + hasOcclusion + '_' + mark;
 }
 
-
 function init() {
   const MEASURES = [Q, T];
   const DISCRETE = [BIN_Q, TIMEUNIT_O, O, N, K];
@@ -51,8 +48,8 @@ function init() {
 
   let SCORE = {} as Dict<number>;
   // QxQ
-  MEASURES.forEach((xType) => {
-    MEASURES.forEach((yType) => {
+  MEASURES.forEach(xType => {
+    MEASURES.forEach(yType => {
       // has occlusion
       const occludedQQMark = {
         point: 0,
@@ -88,10 +85,9 @@ function init() {
   });
 
   // DxQ, QxD
-  MEASURES.forEach((xType) => {
-
+  MEASURES.forEach(xType => {
     // HAS OCCLUSION
-    DISCRETE_OR_NONE.forEach((yType) => {
+    DISCRETE_OR_NONE.forEach(yType => {
       const occludedDimensionMeasureMark = {
         tick: 0,
         point: -0.2,
@@ -110,7 +106,7 @@ function init() {
       });
     });
 
-    [TIMEUNIT_T].forEach((yType) => {
+    [TIMEUNIT_T].forEach(yType => {
       const occludedDimensionMeasureMark = {
         // For Time Dimension with time scale, tick is not good
         point: 0,
@@ -131,7 +127,7 @@ function init() {
     });
 
     // NO OCCLUSION
-    [NONE, N, O, K].forEach((yType) => {
+    [NONE, N, O, K].forEach(yType => {
       const noOccludedQxN = {
         bar: 0,
         point: -0.2,
@@ -153,14 +149,14 @@ function init() {
       });
     });
 
-    [BIN_Q].forEach((yType) => {
+    [BIN_Q].forEach(yType => {
       const noOccludedQxBinQ = {
         bar: 0,
         point: -0.2,
         tick: -0.25,
         text: -0.3,
         // Line / Area isn't the best fit for bin
-        line: -0.5,// FIXME line vs area?
+        line: -0.5, // FIXME line vs area?
         area: -0.5,
         // Non-sense to use rule here
         rule: -2.5
@@ -175,7 +171,7 @@ function init() {
       });
     });
 
-    [TIMEUNIT_T, TIMEUNIT_O].forEach((yType) => {
+    [TIMEUNIT_T, TIMEUNIT_O].forEach(yType => {
       // For aggregate / surely no occlusion plot, Temporal with time or ordinal
       // are not that different.
       const noOccludedQxBinQ = {
@@ -199,8 +195,8 @@ function init() {
     });
   });
 
-  [TIMEUNIT_T].forEach((xType) => {
-    [TIMEUNIT_T].forEach((yType) => {
+  [TIMEUNIT_T].forEach(xType => {
+    [TIMEUNIT_T].forEach(yType => {
       // has occlusion
       const ttMark = {
         point: 0,
@@ -224,7 +220,7 @@ function init() {
       });
     });
 
-    DISCRETE_OR_NONE.forEach((yType) => {
+    DISCRETE_OR_NONE.forEach(yType => {
       // has occlusion
       const tdMark = {
         tick: 0,
@@ -258,8 +254,8 @@ function init() {
   });
 
   // DxD
-  DISCRETE_OR_NONE.forEach((xType) => {
-    DISCRETE_OR_NONE.forEach((yType) => {
+  DISCRETE_OR_NONE.forEach(xType => {
+    DISCRETE_OR_NONE.forEach(yType => {
       // has occlusion
       const ddMark = {
         point: 0,
@@ -286,4 +282,3 @@ function init() {
   });
   return SCORE;
 }
-

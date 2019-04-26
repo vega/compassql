@@ -1,5 +1,6 @@
+import * as CHANNEL from 'vega-lite/build/src/channel';
 import {Channel} from 'vega-lite/build/src/channel';
-import {channelCompatibility, TypedFieldDef} from 'vega-lite/build/src/fielddef';
+import {channelCompatibility, TypedFieldDef} from 'vega-lite/build/src/channeldef';
 import {
   channelScalePropertyIncompatability,
   hasDiscreteDomain,
@@ -7,7 +8,7 @@ import {
   ScaleType,
   scaleTypeSupportProperty
 } from 'vega-lite/build/src/scale';
-import {Type} from 'vega-lite/build/src/type';
+import * as TYPE from 'vega-lite/build/src/type';
 import {QueryConfig} from '../config';
 import {getEncodingNestedProp, Property, SCALE_PROPS} from '../property';
 import {PropIndex} from '../propindex';
@@ -50,7 +51,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (fieldQ: FieldQuery, schema: Schema, _: PropIndex<Wildcard<any>>, opt: QueryConfig) => {
-      if (fieldQ.bin && fieldQ.type === Type.QUANTITATIVE) {
+      if (fieldQ.bin && fieldQ.type === TYPE.QUANTITATIVE) {
         // We remove bin so schema can infer the raw unbinned cardinality.
         let fieldQwithoutBin: FieldQuery = {
           channel: fieldQ.channel,
@@ -71,7 +72,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
       if (fieldQ.bin) {
         // If binned, the type must be quantitative
-        return fieldQ.type === Type.QUANTITATIVE;
+        return fieldQ.type === TYPE.QUANTITATIVE;
       }
       return true;
     }
@@ -143,7 +144,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
-      if (fieldQ.timeUnit && fieldQ.type !== Type.TEMPORAL) {
+      if (fieldQ.timeUnit && fieldQ.type !== TYPE.TEMPORAL) {
         return false;
       }
       return true;
@@ -156,7 +157,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     allowWildcardForProperties: false,
     strict: false,
     satisfy: (fieldQ: FieldQuery, schema: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig) => {
-      if (fieldQ.timeUnit && fieldQ.type === Type.TEMPORAL) {
+      if (fieldQ.timeUnit && fieldQ.type === TYPE.TEMPORAL) {
         if (!encWildcardIndex.has('timeUnit') && !opt.constraintManuallySpecifiedValue) {
           // Do not have to check this as this is manually specified by users.
           return true;
@@ -240,7 +241,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
   },
   {
     name: 'typeMatchesPrimitiveType',
-    description: 'Data type should be supported by field\'s primitive type.',
+    description: "Data type should be supported by field's primitive type.",
     properties: [Property.FIELD, Property.TYPE],
     allowWildcardForProperties: false,
     strict: true,
@@ -260,13 +261,13 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
       switch (primitiveType) {
         case PrimitiveType.BOOLEAN:
         case PrimitiveType.STRING:
-          return type !== Type.QUANTITATIVE && type !== Type.TEMPORAL;
+          return type !== TYPE.QUANTITATIVE && type !== TYPE.TEMPORAL;
         case PrimitiveType.NUMBER:
         case PrimitiveType.INTEGER:
-          return type !== Type.TEMPORAL;
+          return type !== TYPE.TEMPORAL;
         case PrimitiveType.DATETIME:
           // TODO: add NOMINAL, ORDINAL support after we support this in Vega-Lite
-          return type === Type.TEMPORAL;
+          return type === TYPE.TEMPORAL;
         case null:
           // field does not exist in the schema
           return false;
@@ -276,7 +277,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
   },
   {
     name: 'typeMatchesSchemaType',
-    description: 'Enumerated data type of a field should match the field\'s type in the schema.',
+    description: "Enumerated data type of a field should match the field's type in the schema.",
     properties: [Property.FIELD, Property.TYPE],
     allowWildcardForProperties: false,
     strict: false,
@@ -287,7 +288,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
       }
 
       if (fieldQ.field === '*') {
-        return fieldQ.type === Type.QUANTITATIVE;
+        return fieldQ.type === TYPE.QUANTITATIVE;
       }
 
       return schema.vlType(fieldQ.field as string) === fieldQ.type;
@@ -302,7 +303,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     satisfy: (fieldQ: FieldQuery, schema: Schema, _: PropIndex<Wildcard<any>>, opt: QueryConfig) => {
       // TODO: missing case where ordinal / temporal use categorical color
       // (once we do so, need to add Property.BIN, Property.TIMEUNIT)
-      if (fieldQ.channel === Channel.COLOR && (fieldQ.type === Type.NOMINAL || fieldQ.type === ExpandedType.KEY)) {
+      if (fieldQ.channel === CHANNEL.COLOR && (fieldQ.type === TYPE.NOMINAL || fieldQ.type === ExpandedType.KEY)) {
         return schema.cardinality(fieldQ) <= opt.maxCardinalityForCategoricalColor;
       }
       return true; // other channel is irrelevant to this constraint
@@ -315,7 +316,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     allowWildcardForProperties: false,
     strict: false,
     satisfy: (fieldQ: FieldQuery, schema: Schema, _: PropIndex<Wildcard<any>>, opt: QueryConfig) => {
-      if (fieldQ.channel === Channel.ROW || fieldQ.channel === Channel.COLUMN) {
+      if (fieldQ.channel === CHANNEL.ROW || fieldQ.channel === CHANNEL.COLUMN) {
         return schema.cardinality(fieldQ) <= opt.maxCardinalityForFacet;
       }
       return true; // other channel is irrelevant to this constraint
@@ -328,7 +329,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     allowWildcardForProperties: false,
     strict: false,
     satisfy: (fieldQ: FieldQuery, schema: Schema, _: PropIndex<Wildcard<any>>, opt: QueryConfig) => {
-      if (fieldQ.channel === Channel.SHAPE) {
+      if (fieldQ.channel === CHANNEL.SHAPE) {
         return schema.cardinality(fieldQ) <= opt.maxCardinalityForShape;
       }
       return true; // other channel is irrelevant to this constraint
@@ -353,13 +354,13 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
 
         if (isDiscrete(type)) {
           return sType === undefined || hasDiscreteDomain(sType);
-        } else if (type === Type.TEMPORAL) {
+        } else if (type === TYPE.TEMPORAL) {
           if (!fieldQ.timeUnit) {
             return contains([ScaleType.TIME, ScaleType.UTC, undefined], sType);
           } else {
             return contains([ScaleType.TIME, ScaleType.UTC, undefined], sType) || hasDiscreteDomain(sType);
           }
-        } else if (type === Type.QUANTITATIVE) {
+        } else if (type === TYPE.QUANTITATIVE) {
           if (fieldQ.bin) {
             return contains([ScaleType.LINEAR, undefined], sType);
           } else {
@@ -389,7 +390,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     strict: true,
     satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
       if (!!fieldQ.stack) {
-        return fieldQ.channel === Channel.X || fieldQ.channel === Channel.Y;
+        return fieldQ.channel === CHANNEL.X || fieldQ.channel === CHANNEL.Y;
       }
       return true;
     }

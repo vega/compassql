@@ -2,9 +2,9 @@ import {isString} from 'datalib/src/util';
 import {Channel} from 'vega-lite/build/src/channel';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
-import {FacetedExtendedUnitSpec, TopLevel} from 'vega-lite/build/src/spec';
+import {FacetedUnitSpec, TopLevel} from 'vega-lite/build/src/spec';
 import {StackOffset, StackProperties} from 'vega-lite/build/src/stack';
-import {Type} from 'vega-lite/build/src/type';
+import * as TYPE from 'vega-lite/build/src/type';
 import {QueryConfig} from './config';
 import {getGroupByKey} from './nest';
 import {
@@ -71,7 +71,7 @@ export class SpecQueryModel {
         // This is only for testing purpose
         console.warn('A field with autoCount should not be included as autoCount meant to be an internal object.');
 
-        encQ.type = Type.QUANTITATIVE; // autoCount is always quantitative
+        encQ.type = TYPE.QUANTITATIVE; // autoCount is always quantitative
       }
 
       if (isFieldQuery(encQ) && encQ.type === undefined) {
@@ -124,7 +124,7 @@ export class SpecQueryModel {
       const countEncQ: AutoCountQuery = {
         channel,
         autoCount,
-        type: Type.QUANTITATIVE
+        type: TYPE.QUANTITATIVE
       };
       specQ.encodings.push(countEncQ);
 
@@ -327,7 +327,7 @@ export class SpecQueryModel {
    * Convert a query to a Vega-Lite spec if it is completed.
    * @return a Vega-Lite spec if completed, null otherwise.
    */
-  public toSpec(data?: Data): TopLevel<FacetedExtendedUnitSpec> {
+  public toSpec(data?: Data): TopLevel<FacetedUnitSpec> {
     if (isWildcard(this._spec.mark)) return null;
 
     let spec: any = {};

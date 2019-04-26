@@ -1,14 +1,15 @@
 import {Axis, AXIS_PROPERTIES} from 'vega-lite/build/src/axis';
 import {BinParams} from 'vega-lite/build/src/bin';
 import {Channel, COLOR, COLUMN, ROW, SIZE, X, Y} from 'vega-lite/build/src/channel';
-import {FieldDef} from 'vega-lite/build/src/fielddef';
+import {FieldDef} from 'vega-lite/build/src/channeldef';
 import {Legend, LEGEND_PROPERTIES} from 'vega-lite/build/src/legend';
+import * as MARK from 'vega-lite/build/src/mark';
 import {Mark} from 'vega-lite/build/src/mark';
 import {Scale, ScaleType, SCALE_PROPERTIES} from 'vega-lite/build/src/scale';
 import {EncodingSortField, SortOrder} from 'vega-lite/build/src/sort';
 import {StackOffset} from 'vega-lite/build/src/stack';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
-import {Type} from 'vega-lite/build/src/type';
+import * as TYPE from 'vega-lite/build/src/type';
 import {QueryConfig} from './config';
 import {isEncodingNestedProp, Property} from './property';
 import {Schema} from './schema';
@@ -258,8 +259,6 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
 
 const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
   orient: ['left', 'right'],
-  offset: [undefined],
-  padding: [undefined],
   format: [undefined],
   values: [undefined],
 
@@ -271,7 +270,7 @@ const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
 
 // Use FullEnumIndex to make sure we have all properties specified here!
 export const DEFAULT_ENUM_INDEX: EnumIndex = {
-  mark: [Mark.POINT, Mark.BAR, Mark.LINE, Mark.AREA, Mark.RECT, Mark.TICK, Mark.TEXT],
+  mark: [MARK.POINT, MARK.BAR, MARK.LINE, MARK.AREA, MARK.RECT, MARK.TICK, MARK.TEXT],
   channel: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT
 
   aggregate: [undefined, 'mean'],
@@ -281,7 +280,7 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
   timeUnit: [undefined, TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.MINUTES, TimeUnit.SECONDS],
 
   field: [undefined], // This is not used as field should be read from schema
-  type: [Type.NOMINAL, Type.ORDINAL, Type.QUANTITATIVE, Type.TEMPORAL],
+  type: [TYPE.NOMINAL, TYPE.ORDINAL, TYPE.QUANTITATIVE, TYPE.TEMPORAL],
 
   sort: ['ascending', 'descending'],
   stack: ['zero', 'normalize', 'center', null],

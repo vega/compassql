@@ -1,21 +1,21 @@
 import {assert} from 'chai';
-
-
-import {Channel} from 'vega-lite/build/src/channel';
-import {Mark} from 'vega-lite/build/src/mark';
-import {Type} from 'vega-lite/build/src/type';
-
+import * as CHANNEL from 'vega-lite/build/src/channel';
+import * as MARK from 'vega-lite/build/src/mark';
+import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
 import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
-import {nest, FIELD, FIELD_TRANSFORM, ENCODING} from '../src/nest';
+import {ENCODING, FIELD, FIELD_TRANSFORM, nest} from '../src/nest';
 import {Property} from '../src/property';
+import {
+  REPLACE_BLANK_FIELDS,
+  REPLACE_FACET_CHANNELS,
+  REPLACE_MARK_STYLE_CHANNELS,
+  REPLACE_XY_CHANNELS
+} from '../src/query/groupby';
 import {Query} from '../src/query/query';
-import {REPLACE_BLANK_FIELDS, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS} from '../src/query/groupby';
-
-import {SHORT_WILDCARD} from '../src/wildcard';
 import {contains, extend} from '../src/util';
-
+import {SHORT_WILDCARD} from '../src/wildcard';
 import {schema} from './fixture';
 
 describe('nest', () => {
@@ -25,28 +25,33 @@ describe('nest', () => {
         const query: Query = {
           spec: {
             mark: SHORT_WILDCARD,
-            encodings: [{
-              channel: SHORT_WILDCARD,
-              field: 'Q',
-              type: Type.QUANTITATIVE,
-              aggregate: {
-                name: 'a0',
-                enum: ['mean', 'median']
+            encodings: [
+              {
+                channel: SHORT_WILDCARD,
+                field: 'Q',
+                type: TYPE.QUANTITATIVE,
+                aggregate: {
+                  name: 'a0',
+                  enum: ['mean', 'median']
+                }
+              },
+              {
+                channel: SHORT_WILDCARD,
+                field: 'O',
+                type: TYPE.ORDINAL
               }
-            }, {
-              channel: SHORT_WILDCARD,
-              field: 'O',
-              type: Type.ORDINAL
-            }]
+            ]
           },
-          nest: [{
-            groupBy: [{property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}]
-          }],
+          nest: [
+            {
+              groupBy: [{property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}]
+            }
+          ],
           config: DEFAULT_QUERY_CONFIG
         };
 
         const answerSet = generate(query.spec, schema);
-        const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
+        const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[];
 
         assert.equal(groups.length, 1);
         assert.equal(groups[0].name, 'O|Q');
@@ -56,31 +61,29 @@ describe('nest', () => {
         const query: Query = {
           spec: {
             mark: SHORT_WILDCARD,
-            encodings: [{
-              channel: SHORT_WILDCARD,
-              field: 'Q',
-              type: Type.QUANTITATIVE,
-              bin: SHORT_WILDCARD,
-              aggregate: SHORT_WILDCARD
-            }]
+            encodings: [
+              {
+                channel: SHORT_WILDCARD,
+                field: 'Q',
+                type: TYPE.QUANTITATIVE,
+                bin: SHORT_WILDCARD,
+                aggregate: SHORT_WILDCARD
+              }
+            ]
           },
-          nest: [{
-            groupBy: [
-              {property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}
-            ]
-          }, {
-            groupBy: [
-              Property.AGGREGATE,
-              Property.TIMEUNIT,
-              Property.BIN,
-              Property.STACK
-            ]
-          }],
+          nest: [
+            {
+              groupBy: [{property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}]
+            },
+            {
+              groupBy: [Property.AGGREGATE, Property.TIMEUNIT, Property.BIN, Property.STACK]
+            }
+          ],
           config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG)
         };
 
         const answerSet = generate(query.spec, schema);
-        const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
+        const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[];
 
         assert.equal(groups.length, 1);
         assert.equal(groups[0].name, 'Q');
@@ -91,26 +94,29 @@ describe('nest', () => {
         const query: Query = {
           spec: {
             mark: SHORT_WILDCARD,
-            encodings: [{
-              channel: SHORT_WILDCARD,
-              field: 'N',
-              type: Type.NOMINAL
-            },{
-              channel: SHORT_WILDCARD,
-              field: 'N1',
-              type: Type.NOMINAL
-            }]
-          },
-          nest: [{
-            groupBy: [
-              {property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}
+            encodings: [
+              {
+                channel: SHORT_WILDCARD,
+                field: 'N',
+                type: TYPE.NOMINAL
+              },
+              {
+                channel: SHORT_WILDCARD,
+                field: 'N1',
+                type: TYPE.NOMINAL
+              }
             ]
-          }],
+          },
+          nest: [
+            {
+              groupBy: [{property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}]
+            }
+          ],
           config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG)
         };
 
         const answerSet = generate(query.spec, schema);
-        const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
+        const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[];
 
         assert.equal(groups.length, 1);
         assert.equal(groups[0].name, 'N|N1');
@@ -122,36 +128,41 @@ describe('nest', () => {
     it('should group visualization with same fields and transformations', () => {
       const query: Query = {
         spec: {
-        mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: SHORT_WILDCARD,
-            field: 'Q',
-            type: Type.QUANTITATIVE,
-            aggregate: {
-              name: 'a0',
-              enum: ['mean', 'median']
+          mark: SHORT_WILDCARD,
+          encodings: [
+            {
+              channel: SHORT_WILDCARD,
+              field: 'Q',
+              type: TYPE.QUANTITATIVE,
+              aggregate: {
+                name: 'a0',
+                enum: ['mean', 'median']
+              }
+            },
+            {
+              channel: SHORT_WILDCARD,
+              field: 'O',
+              type: TYPE.ORDINAL
             }
-          }, {
-            channel: SHORT_WILDCARD,
-            field: 'O',
-            type: Type.ORDINAL
-          }]
-        },
-        nest: [{
-          groupBy: [
-            Property.FIELD,
-            Property.TYPE,
-            Property.AGGREGATE,
-            Property.BIN,
-            Property.TIMEUNIT,
-            Property.STACK
           ]
-        }],
+        },
+        nest: [
+          {
+            groupBy: [
+              Property.FIELD,
+              Property.TYPE,
+              Property.AGGREGATE,
+              Property.BIN,
+              Property.TIMEUNIT,
+              Property.STACK
+            ]
+          }
+        ],
         config: DEFAULT_QUERY_CONFIG
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
+      const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[];
 
       // two because have two different aggregation
       assert.equal(groups.length, 2);
@@ -165,31 +176,37 @@ describe('nest', () => {
       const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: Channel.X,
-            field: 'Q',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: Channel.Y,
-            field: 'Q1',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: {enum: [Channel.COLOR, Channel.SIZE]},
-            field: 'Q2',
-            type: Type.QUANTITATIVE
-          }]
-        },
-        nest: [{
-          groupBy: [
-            Property.FIELD,
-            Property.TYPE,
-            Property.AGGREGATE,
-            Property.BIN,
-            Property.TIMEUNIT,
-            Property.STACK,
-            {property: Property.CHANNEL, replace: REPLACE_MARK_STYLE_CHANNELS}
+          encodings: [
+            {
+              channel: CHANNEL.X,
+              field: 'Q',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: CHANNEL.Y,
+              field: 'Q1',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: {enum: [CHANNEL.COLOR, CHANNEL.SIZE]},
+              field: 'Q2',
+              type: TYPE.QUANTITATIVE
+            }
           ]
-        }],
+        },
+        nest: [
+          {
+            groupBy: [
+              Property.FIELD,
+              Property.TYPE,
+              Property.AGGREGATE,
+              Property.BIN,
+              Property.TIMEUNIT,
+              Property.STACK,
+              {property: Property.CHANNEL, replace: REPLACE_MARK_STYLE_CHANNELS}
+            ]
+          }
+        ],
         config: DEFAULT_QUERY_CONFIG
       };
 
@@ -202,31 +219,37 @@ describe('nest', () => {
       const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: Channel.X,
-            field: 'Q',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: Channel.Y,
-            field: 'Q1',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: {enum: [Channel.COLOR, Channel.SHAPE]},
-            field: 'O',
-            type: Type.ORDINAL
-          }]
-        },
-        nest: [{
-          groupBy: [
-            Property.FIELD,
-            Property.TYPE,
-            Property.AGGREGATE,
-            Property.BIN,
-            Property.TIMEUNIT,
-            Property.STACK,
-            {property: Property.CHANNEL, replace: REPLACE_MARK_STYLE_CHANNELS}
+          encodings: [
+            {
+              channel: CHANNEL.X,
+              field: 'Q',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: CHANNEL.Y,
+              field: 'Q1',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: {enum: [CHANNEL.COLOR, CHANNEL.SHAPE]},
+              field: 'O',
+              type: TYPE.ORDINAL
+            }
           ]
-        }],
+        },
+        nest: [
+          {
+            groupBy: [
+              Property.FIELD,
+              Property.TYPE,
+              Property.AGGREGATE,
+              Property.BIN,
+              Property.TIMEUNIT,
+              Property.STACK,
+              {property: Property.CHANNEL, replace: REPLACE_MARK_STYLE_CHANNELS}
+            ]
+          }
+        ],
         config: DEFAULT_QUERY_CONFIG
       };
 
@@ -239,31 +262,37 @@ describe('nest', () => {
       const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: {enum: [Channel.X, Channel.Y]},
-            field: 'Q',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: {enum: [Channel.X, Channel.Y]},
-            field: 'Q1',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: {enum: [Channel.COLOR, Channel.SIZE]},
-            field: 'Q2',
-            type: Type.QUANTITATIVE
-          }]
-        },
-        nest: [{
-          groupBy: [
-            Property.FIELD,
-            Property.TYPE,
-            Property.AGGREGATE,
-            Property.BIN,
-            Property.TIMEUNIT,
-            Property.STACK,
-            {property: Property.CHANNEL, replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)}
+          encodings: [
+            {
+              channel: {enum: [CHANNEL.X, CHANNEL.Y]},
+              field: 'Q',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: {enum: [CHANNEL.X, CHANNEL.Y]},
+              field: 'Q1',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: {enum: [CHANNEL.COLOR, CHANNEL.SIZE]},
+              field: 'Q2',
+              type: TYPE.QUANTITATIVE
+            }
           ]
-        }],
+        },
+        nest: [
+          {
+            groupBy: [
+              Property.FIELD,
+              Property.TYPE,
+              Property.AGGREGATE,
+              Property.BIN,
+              Property.TIMEUNIT,
+              Property.STACK,
+              {property: Property.CHANNEL, replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)}
+            ]
+          }
+        ],
         config: DEFAULT_QUERY_CONFIG
       };
 
@@ -276,32 +305,41 @@ describe('nest', () => {
       const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: Channel.X,
-            aggregate: 'sum',
-            field: 'Q',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: Channel.Y,
-            field: 'N',
-            type: Type.NOMINAL
-          }, {
-            channel: Channel.COLOR,
-            field: 'N1',
-            type: Type.NOMINAL
-          }]
-        },
-        nest: [{
-          groupBy: [
-            Property.FIELD,
-            Property.TYPE,
-            Property.AGGREGATE,
-            Property.BIN,
-            Property.TIMEUNIT,
-            Property.STACK,
-            {property: Property.CHANNEL, replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)}
+          encodings: [
+            {
+              channel: CHANNEL.X,
+              aggregate: 'sum',
+              field: 'Q',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: CHANNEL.Y,
+              field: 'N',
+              type: TYPE.NOMINAL
+            },
+            {
+              channel: CHANNEL.COLOR,
+              field: 'N1',
+              type: TYPE.NOMINAL
+            }
           ]
-        }],
+        },
+        nest: [
+          {
+            groupBy: [
+              Property.FIELD,
+              Property.TYPE,
+              Property.AGGREGATE,
+              Property.BIN,
+              Property.TIMEUNIT,
+              Property.STACK,
+              {
+                property: Property.CHANNEL,
+                replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)
+              }
+            ]
+          }
+        ],
         config: DEFAULT_QUERY_CONFIG
       };
 
@@ -310,12 +348,12 @@ describe('nest', () => {
       assert.equal(groups.length, 2);
       assert.equal((groups[0] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q)');
       (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModel) => {
-        return !contains([Mark.BAR, Mark.AREA], item.getMark());
+        return !contains([MARK.BAR, MARK.AREA], item.getMark());
       });
 
       assert.equal((groups[1] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q,stack="zero")');
       (groups[1] as SpecQueryModelGroup).items.forEach((item: SpecQueryModel) => {
-        return contains([Mark.BAR, Mark.AREA], item.getMark());
+        return contains([MARK.BAR, MARK.AREA], item.getMark());
       });
     });
 
@@ -323,36 +361,44 @@ describe('nest', () => {
       const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: Channel.X,
-            aggregate: 'sum',
-            field: 'Q',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: Channel.Y,
-            field: 'N',
-            type: Type.NOMINAL
-          }, {
-            channel: Channel.COLOR,
-            field: 'N1',
-            type: Type.NOMINAL
-          }]
+          encodings: [
+            {
+              channel: CHANNEL.X,
+              aggregate: 'sum',
+              field: 'Q',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: CHANNEL.Y,
+              field: 'N',
+              type: TYPE.NOMINAL
+            },
+            {
+              channel: CHANNEL.COLOR,
+              field: 'N1',
+              type: TYPE.NOMINAL
+            }
+          ]
         },
-        nest: [{
-          groupBy: [
-            Property.FIELD,
-            Property.TYPE,
-            Property.AGGREGATE,
-            Property.BIN,
-            Property.TIMEUNIT,
-            Property.STACK,
-            {property: Property.CHANNEL, replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)}
-          ]
-        }, {
-          groupBy: [
-            {property: Property.CHANNEL, replace: extend({}, REPLACE_MARK_STYLE_CHANNELS)}
-          ]
-        }],
+        nest: [
+          {
+            groupBy: [
+              Property.FIELD,
+              Property.TYPE,
+              Property.AGGREGATE,
+              Property.BIN,
+              Property.TIMEUNIT,
+              Property.STACK,
+              {
+                property: Property.CHANNEL,
+                replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)
+              }
+            ]
+          },
+          {
+            groupBy: [{property: Property.CHANNEL, replace: extend({}, REPLACE_MARK_STYLE_CHANNELS)}]
+          }
+        ],
         config: DEFAULT_QUERY_CONFIG
       };
 
@@ -361,12 +407,12 @@ describe('nest', () => {
       assert.equal(groups.length, 2);
       assert.equal((groups[0] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q)');
       (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModelGroup) => {
-        return !contains([Mark.BAR, Mark.AREA], (item.items[0] as SpecQueryModel).getMark());
+        return !contains([MARK.BAR, MARK.AREA], (item.items[0] as SpecQueryModel).getMark());
       });
 
       assert.equal((groups[1] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q,stack="zero")');
       (groups[1] as SpecQueryModelGroup).items.forEach((item: SpecQueryModelGroup) => {
-        return contains([Mark.BAR, Mark.AREA], (item.items[0] as SpecQueryModel).getMark());
+        return contains([MARK.BAR, MARK.AREA], (item.items[0] as SpecQueryModel).getMark());
       });
     });
   });
@@ -375,27 +421,30 @@ describe('nest', () => {
     it('should group visualization with same fields', () => {
       const query: Query = {
         spec: {
-        mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: SHORT_WILDCARD,
-            field: 'Q',
-            type: Type.QUANTITATIVE,
-            aggregate: {
-              name: 'a0',
-              enum: ['mean', 'median']
+          mark: SHORT_WILDCARD,
+          encodings: [
+            {
+              channel: SHORT_WILDCARD,
+              field: 'Q',
+              type: TYPE.QUANTITATIVE,
+              aggregate: {
+                name: 'a0',
+                enum: ['mean', 'median']
+              }
+            },
+            {
+              channel: SHORT_WILDCARD,
+              field: 'O',
+              type: TYPE.ORDINAL
             }
-          }, {
-            channel: SHORT_WILDCARD,
-            field: 'O',
-            type: Type.ORDINAL
-          }]
+          ]
         },
         nest: [{groupBy: FIELD}],
         config: DEFAULT_QUERY_CONFIG
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
+      const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[];
 
       // two because have two different aggregation
       assert.equal(groups.length, 1);
@@ -405,21 +454,23 @@ describe('nest', () => {
     it('should group histogram and raw plots in the same group', () => {
       const query: Query = {
         spec: {
-        mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: SHORT_WILDCARD,
-            field: 'Q',
-            type: Type.QUANTITATIVE,
-            bin: SHORT_WILDCARD,
-            aggregate: SHORT_WILDCARD
-          }]
+          mark: SHORT_WILDCARD,
+          encodings: [
+            {
+              channel: SHORT_WILDCARD,
+              field: 'Q',
+              type: TYPE.QUANTITATIVE,
+              bin: SHORT_WILDCARD,
+              aggregate: SHORT_WILDCARD
+            }
+          ]
         },
         nest: [{groupBy: FIELD}, {groupBy: FIELD_TRANSFORM}],
         config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG)
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
+      const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[];
 
       // two because have two different aggregation
       assert.equal(groups.length, 1);
@@ -432,27 +483,30 @@ describe('nest', () => {
     it('should group visualization with same fields and transformations', () => {
       const query: Query = {
         spec: {
-        mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: SHORT_WILDCARD,
-            field: 'Q',
-            type: Type.QUANTITATIVE,
-            aggregate: {
-              name: 'a0',
-              enum: ['mean', 'median']
+          mark: SHORT_WILDCARD,
+          encodings: [
+            {
+              channel: SHORT_WILDCARD,
+              field: 'Q',
+              type: TYPE.QUANTITATIVE,
+              aggregate: {
+                name: 'a0',
+                enum: ['mean', 'median']
+              }
+            },
+            {
+              channel: SHORT_WILDCARD,
+              field: 'O',
+              type: TYPE.ORDINAL
             }
-          }, {
-            channel: SHORT_WILDCARD,
-            field: 'O',
-            type: Type.ORDINAL
-          }]
+          ]
         },
         nest: [{groupBy: FIELD_TRANSFORM}],
         config: DEFAULT_QUERY_CONFIG
       };
 
       const answerSet = generate(query.spec, schema);
-      const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[] ;
+      const groups = nest(answerSet, query.nest).items as SpecQueryModelGroup[];
 
       // two because have two different aggregation
       assert.equal(groups.length, 2);
@@ -466,19 +520,23 @@ describe('nest', () => {
       const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: Channel.X,
-            field: 'Q',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: Channel.Y,
-            field: 'Q1',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: {enum: [Channel.COLOR, Channel.SIZE]},
-            field: 'Q2',
-            type: Type.QUANTITATIVE
-          }]
+          encodings: [
+            {
+              channel: CHANNEL.X,
+              field: 'Q',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: CHANNEL.Y,
+              field: 'Q1',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: {enum: [CHANNEL.COLOR, CHANNEL.SIZE]},
+              field: 'Q2',
+              type: TYPE.QUANTITATIVE
+            }
+          ]
         },
         nest: [{groupBy: ENCODING}],
         config: DEFAULT_QUERY_CONFIG
@@ -493,19 +551,23 @@ describe('nest', () => {
       const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: Channel.X,
-            field: 'Q',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: Channel.Y,
-            field: 'Q1',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: {enum: [Channel.COLOR, Channel.SHAPE]},
-            field: 'O',
-            type: Type.ORDINAL
-          }]
+          encodings: [
+            {
+              channel: CHANNEL.X,
+              field: 'Q',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: CHANNEL.Y,
+              field: 'Q1',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: {enum: [CHANNEL.COLOR, CHANNEL.SHAPE]},
+              field: 'O',
+              type: TYPE.ORDINAL
+            }
+          ]
         },
         nest: [{groupBy: ENCODING}],
         config: DEFAULT_QUERY_CONFIG
@@ -520,19 +582,23 @@ describe('nest', () => {
       const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: {enum: [Channel.X, Channel.Y]},
-            field: 'Q',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: {enum: [Channel.X, Channel.Y]},
-            field: 'Q1',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: {enum: [Channel.COLOR, Channel.SIZE]},
-            field: 'Q2',
-            type: Type.QUANTITATIVE
-          }]
+          encodings: [
+            {
+              channel: {enum: [CHANNEL.X, CHANNEL.Y]},
+              field: 'Q',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: {enum: [CHANNEL.X, CHANNEL.Y]},
+              field: 'Q1',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: {enum: [CHANNEL.COLOR, CHANNEL.SIZE]},
+              field: 'Q2',
+              type: TYPE.QUANTITATIVE
+            }
+          ]
         },
         nest: [{groupBy: ENCODING}],
         config: DEFAULT_QUERY_CONFIG
@@ -547,20 +613,24 @@ describe('nest', () => {
       const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: Channel.X,
-            aggregate: 'sum',
-            field: 'Q',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: Channel.Y,
-            field: 'N',
-            type: Type.NOMINAL
-          }, {
-            channel: Channel.COLOR,
-            field: 'N1',
-            type: Type.NOMINAL
-          }]
+          encodings: [
+            {
+              channel: CHANNEL.X,
+              aggregate: 'sum',
+              field: 'Q',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: CHANNEL.Y,
+              field: 'N',
+              type: TYPE.NOMINAL
+            },
+            {
+              channel: CHANNEL.COLOR,
+              field: 'N1',
+              type: TYPE.NOMINAL
+            }
+          ]
         },
         nest: [{groupBy: ENCODING}],
         config: DEFAULT_QUERY_CONFIG
@@ -571,12 +641,12 @@ describe('nest', () => {
       assert.equal(groups.length, 2);
       assert.equal((groups[0] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q)');
       (groups[0] as SpecQueryModelGroup).items.forEach((item: SpecQueryModel) => {
-        return !contains([Mark.BAR, Mark.AREA], item.getMark());
+        return !contains([MARK.BAR, MARK.AREA], item.getMark());
       });
 
       assert.equal((groups[1] as SpecQueryModelGroup).name, 'style:N1,n|xy:N,n|xy:sum(Q,q,stack="zero")');
       (groups[1] as SpecQueryModelGroup).items.forEach((item: SpecQueryModel) => {
-        return contains([Mark.BAR, Mark.AREA], item.getMark());
+        return contains([MARK.BAR, MARK.AREA], item.getMark());
       });
     });
 
@@ -584,20 +654,24 @@ describe('nest', () => {
       const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
-          encodings: [{
-            channel: Channel.X,
-            aggregate: 'sum',
-            field: 'Q',
-            type: Type.QUANTITATIVE
-          }, {
-            channel: Channel.Y,
-            field: 'N',
-            type: Type.NOMINAL
-          }, {
-            channel: Channel.COLOR,
-            field: 'N1',
-            type: Type.NOMINAL
-          }]
+          encodings: [
+            {
+              channel: CHANNEL.X,
+              aggregate: 'sum',
+              field: 'Q',
+              type: TYPE.QUANTITATIVE
+            },
+            {
+              channel: CHANNEL.Y,
+              field: 'N',
+              type: TYPE.NOMINAL
+            },
+            {
+              channel: CHANNEL.COLOR,
+              field: 'N1',
+              type: TYPE.NOMINAL
+            }
+          ]
         },
         nest: [{groupBy: ENCODING}],
         config: DEFAULT_QUERY_CONFIG
@@ -612,20 +686,23 @@ describe('nest', () => {
   });
 
   describe('encoding', () => {
-    [ENCODING].forEach((groupBy) => {
-        it(groupBy + ' should group transposed visualizations', () => {
+    [ENCODING].forEach(groupBy => {
+      it(groupBy + ' should group transposed visualizations', () => {
         const query: Query = {
           spec: {
             mark: SHORT_WILDCARD,
-            encodings: [{
-              channel: {enum: [Channel.X, Channel.Y]},
-              field: 'Q',
-              type: Type.QUANTITATIVE
-            }, {
-              channel: {enum: [Channel.X, Channel.Y]},
-              field: 'Q2',
-              type: Type.QUANTITATIVE
-            }]
+            encodings: [
+              {
+                channel: {enum: [CHANNEL.X, CHANNEL.Y]},
+                field: 'Q',
+                type: TYPE.QUANTITATIVE
+              },
+              {
+                channel: {enum: [CHANNEL.X, CHANNEL.Y]},
+                field: 'Q2',
+                type: TYPE.QUANTITATIVE
+              }
+            ]
           },
           nest: [{groupBy: ENCODING}],
           config: DEFAULT_QUERY_CONFIG
@@ -640,23 +717,28 @@ describe('nest', () => {
         const query: Query = {
           spec: {
             mark: SHORT_WILDCARD,
-            encodings: [{
-              channel: Channel.X,
-              field: 'Q',
-              type: Type.QUANTITATIVE
-            }, {
-              channel: Channel.Y,
-              field: 'Q1',
-              type: Type.QUANTITATIVE
-            }, {
-              channel: {enum: [Channel.ROW, Channel.COLUMN]},
-              field: 'O',
-              type: Type.ORDINAL
-            }, {
-              channel: {enum: [Channel.ROW, Channel.COLUMN]},
-              field: 'N',
-              type: Type.NOMINAL
-            }]
+            encodings: [
+              {
+                channel: CHANNEL.X,
+                field: 'Q',
+                type: TYPE.QUANTITATIVE
+              },
+              {
+                channel: CHANNEL.Y,
+                field: 'Q1',
+                type: TYPE.QUANTITATIVE
+              },
+              {
+                channel: {enum: [CHANNEL.ROW, CHANNEL.COLUMN]},
+                field: 'O',
+                type: TYPE.ORDINAL
+              },
+              {
+                channel: {enum: [CHANNEL.ROW, CHANNEL.COLUMN]},
+                field: 'N',
+                type: TYPE.NOMINAL
+              }
+            ]
           },
           nest: [{groupBy: groupBy}],
           config: DEFAULT_QUERY_CONFIG
@@ -667,20 +749,22 @@ describe('nest', () => {
         assert.equal(groups.length, 1);
       });
 
-
       it(groupBy + ' should not group visualizations that map same variable to y and color', () => {
         const query: Query = {
           spec: {
-            mark: Mark.POINT,
-            encodings: [{
-              channel: Channel.X,
-              field: 'Q',
-              type: Type.QUANTITATIVE
-            }, {
-              channel: {enum: [Channel.Y, Channel.COLOR]},
-              field: 'Q1',
-              type: Type.QUANTITATIVE
-            }]
+            mark: MARK.POINT,
+            encodings: [
+              {
+                channel: CHANNEL.X,
+                field: 'Q',
+                type: TYPE.QUANTITATIVE
+              },
+              {
+                channel: {enum: [CHANNEL.Y, CHANNEL.COLOR]},
+                field: 'Q1',
+                type: TYPE.QUANTITATIVE
+              }
+            ]
           },
           nest: [{groupBy: groupBy}],
           config: extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOrFacetOverPositionalChannels: false})
@@ -697,20 +781,23 @@ describe('nest', () => {
     it('should group visualization with same fields and transformations, then by encoding', () => {
       const query: Query = {
         spec: {
-          mark: Mark.POINT,
-          encodings: [{
-            channel: {enum: [Channel.X, Channel.Y]},
-            field: 'Q',
-            type: Type.QUANTITATIVE,
-            aggregate: {
-              name: 'a0',
-              enum: ['mean', 'median']
+          mark: MARK.POINT,
+          encodings: [
+            {
+              channel: {enum: [CHANNEL.X, CHANNEL.Y]},
+              field: 'Q',
+              type: TYPE.QUANTITATIVE,
+              aggregate: {
+                name: 'a0',
+                enum: ['mean', 'median']
+              }
+            },
+            {
+              channel: {enum: [CHANNEL.X, CHANNEL.Y]},
+              field: 'O',
+              type: TYPE.ORDINAL
             }
-          }, {
-            channel: {enum: [Channel.X, Channel.Y]},
-            field: 'O',
-            type: Type.ORDINAL
-          }]
+          ]
         },
         nest: [{groupBy: FIELD_TRANSFORM}, {groupBy: ENCODING}],
         config: DEFAULT_QUERY_CONFIG

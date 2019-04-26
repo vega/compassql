@@ -2,20 +2,16 @@
  * Field Type (with Bin and TimeUnit) and Channel Score (Cleveland / Mackinlay based)
  */
 
+import * as CHANNEL from 'vega-lite/build/src/channel';
 import {Channel} from 'vega-lite/build/src/channel';
-
-import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../../config';
+import {DEFAULT_QUERY_CONFIG, QueryConfig} from '../../config';
 import {SpecQueryModel} from '../../model';
-import {EncodingQuery, isFieldQuery, isAutoCountQuery} from '../../query/encoding';
-import {Dict} from '../../util';
-
+import {EncodingQuery, isAutoCountQuery, isFieldQuery} from '../../query/encoding';
 import {Schema} from '../../schema';
+import {Dict} from '../../util';
 import {FeatureScore} from '../ranking';
-import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, N, O, T, ExtendedType, getExtendedType} from './type';
-
-
 import {Scorer} from './base';
-
+import {BIN_Q, ExtendedType, getExtendedType, N, O, T, TIMEUNIT_O, TIMEUNIT_T} from './type';
 
 /**
  * Effectiveness Score for preferred axis.
@@ -28,33 +24,40 @@ export class AxisScorer extends Scorer {
     opt = {...DEFAULT_QUERY_CONFIG, ...opt};
     let score: Dict<number> = {};
 
-    const preferredAxes = [{
-      feature: BIN_Q,
-      opt: 'preferredBinAxis'
-    }, {
-      feature: T,
-      opt: 'preferredTemporalAxis'
-    }, {
-      feature: TIMEUNIT_T,
-      opt: 'preferredTemporalAxis'
-    }, {
-      feature: TIMEUNIT_O,
-      opt: 'preferredTemporalAxis'
-    }, {
-      feature: O,
-      opt: 'preferredOrdinalAxis'
-    }, {
-      feature: N,
-      opt: 'preferredNominalAxis'
-    }];
+    const preferredAxes = [
+      {
+        feature: BIN_Q,
+        opt: 'preferredBinAxis'
+      },
+      {
+        feature: T,
+        opt: 'preferredTemporalAxis'
+      },
+      {
+        feature: TIMEUNIT_T,
+        opt: 'preferredTemporalAxis'
+      },
+      {
+        feature: TIMEUNIT_O,
+        opt: 'preferredTemporalAxis'
+      },
+      {
+        feature: O,
+        opt: 'preferredOrdinalAxis'
+      },
+      {
+        feature: N,
+        opt: 'preferredNominalAxis'
+      }
+    ];
 
-    preferredAxes.forEach((pAxis) => {
-      if (opt[pAxis.opt] === Channel.X) {
+    preferredAxes.forEach(pAxis => {
+      if (opt[pAxis.opt] === CHANNEL.X) {
         // penalize the other axis
-        score[pAxis.feature + '_' + Channel.Y] = -0.01;
-      } else if (opt[pAxis.opt] === Channel.Y) {
+        score[pAxis.feature + '_' + CHANNEL.Y] = -0.01;
+      } else if (opt[pAxis.opt] === CHANNEL.Y) {
         // penalize the other axis
-        score[pAxis.feature + '_' + Channel.X] = -0.01;
+        score[pAxis.feature + '_' + CHANNEL.X] = -0.01;
       }
     });
 
@@ -80,5 +83,3 @@ export class AxisScorer extends Scorer {
     }, []);
   }
 }
-
-

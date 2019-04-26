@@ -4,7 +4,7 @@ import {summary} from 'datalib/src/stats';
 import {autoMaxBins} from 'vega-lite/build/src/bin';
 import {Channel} from 'vega-lite/build/src/channel';
 import {containsTimeUnit, convert, TimeUnit, TIMEUNIT_PARTS} from 'vega-lite/build/src/timeunit';
-import {Type as VLType} from 'vega-lite/build/src/type';
+import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG, QueryConfig} from './config';
 import {BinQuery, EncodingQuery, FieldQuery, isAutoCountQuery} from './query/encoding';
 import {ExpandedType} from './query/expandedtype';
@@ -100,16 +100,16 @@ export function build(
     let vlType: ExpandedType;
 
     if (type === PrimitiveType.NUMBER) {
-      vlType = VLType.QUANTITATIVE;
+      vlType = TYPE.QUANTITATIVE;
     } else if (type === PrimitiveType.INTEGER) {
       // use ordinal or nominal when cardinality of integer type is relatively low and the distinct values are less than an amount specified in options
       if (distinct < opt.numberNominalLimit && distinct / fieldProfile.count < opt.numberNominalProportion) {
-        vlType = VLType.NOMINAL;
+        vlType = TYPE.NOMINAL;
       } else {
-        vlType = VLType.QUANTITATIVE;
+        vlType = TYPE.QUANTITATIVE;
       }
     } else if (type === PrimitiveType.DATETIME) {
-      vlType = VLType.TEMPORAL;
+      vlType = TYPE.TEMPORAL;
       // need to get correct min/max of date data because datalib's summary method does not
       // calculate this correctly for date types.
       fieldProfile.min = new Date(data[0][name]);
@@ -124,11 +124,11 @@ export function build(
         }
       }
     } else {
-      vlType = VLType.NOMINAL;
+      vlType = TYPE.NOMINAL;
     }
 
     if (
-      vlType === VLType.NOMINAL &&
+      vlType === TYPE.NOMINAL &&
       distinct / fieldProfile.count > opt.minPercentUniqueForKey &&
       fieldProfile.count > opt.minCardinalityForKey
     ) {
@@ -155,11 +155,11 @@ export function build(
 
   // calculate preset bins for quantitative and temporal data
   for (let fieldSchema of fieldSchemas) {
-    if (fieldSchema.vlType === VLType.QUANTITATIVE) {
+    if (fieldSchema.vlType === TYPE.QUANTITATIVE) {
       for (let maxbins of opt.enum.binProps.maxbins) {
         fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
       }
-    } else if (fieldSchema.vlType === VLType.TEMPORAL) {
+    } else if (fieldSchema.vlType === TYPE.TEMPORAL) {
       for (let unit of opt.enum.timeUnit) {
         if (unit !== undefined) {
           fieldSchema.timeStats[unit] = timeSummary(unit, fieldSchema.stats);
@@ -368,7 +368,7 @@ export class Schema {
     // TODO: differentiate for field with bin / timeUnit
     const fieldSchema = this._fieldSchemaIndex[fieldQueryParts.field as string];
     let domain: any[] = keys(fieldSchema.stats.unique);
-    if (fieldSchema.vlType === VLType.QUANTITATIVE) {
+    if (fieldSchema.vlType === TYPE.QUANTITATIVE) {
       // return [min, max], coerced into number types
       return [+fieldSchema.stats.min, +fieldSchema.stats.max];
     } else if (fieldSchema.type === PrimitiveType.DATETIME) {
@@ -378,7 +378,7 @@ export class Schema {
       // coerce non-quantitative numerical data into number type
       domain = domain.map(x => +x);
       return domain.sort(cmp);
-    } else if (fieldSchema.vlType === VLType.ORDINAL && fieldSchema.ordinalDomain) {
+    } else if (fieldSchema.vlType === TYPE.ORDINAL && fieldSchema.ordinalDomain) {
       return fieldSchema.ordinalDomain;
     }
 

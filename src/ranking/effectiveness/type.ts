@@ -1,15 +1,15 @@
 import {hasDiscreteDomain} from 'vega-lite/build/src/scale';
-import {Type} from 'vega-lite/build/src/type';
-
+import * as TYPE from 'vega-lite/build/src/type';
 import {FieldQuery, scaleType} from '../../query/encoding';
 import {ExpandedType} from '../../query/expandedtype';
+
 /**
  * Finer grained data types that takes binning and timeUnit into account.
  */
 export enum ExtendedType {
-  Q = Type.QUANTITATIVE as any,
-  BIN_Q = 'bin_' + Type.QUANTITATIVE as any,
-  T = Type.TEMPORAL as any,
+  Q = TYPE.QUANTITATIVE as any,
+  BIN_Q = ('bin_' + TYPE.QUANTITATIVE) as any,
+  T = TYPE.TEMPORAL as any,
 
   /**
    * Time Unit Temporal Field with time scale.
@@ -18,9 +18,9 @@ export enum ExtendedType {
   /**
    * Time Unit Temporal Field with ordinal scale.
    */
-  TIMEUNIT_O = 'timeUnit_' + Type.ORDINAL as any,
-  O = Type.ORDINAL as any,
-  N = Type.NOMINAL as any,
+  TIMEUNIT_O = ('timeUnit_' + TYPE.ORDINAL) as any,
+  O = TYPE.ORDINAL as any,
+  N = TYPE.NOMINAL as any,
   K = ExpandedType.KEY as any,
   NONE = '-' as any
 }

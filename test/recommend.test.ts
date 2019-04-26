@@ -1,143 +1,150 @@
 /* tslint:disable:quotemark */
 
 import {assert} from 'chai';
+import * as CHANNEL from 'vega-lite/build/src/channel';
+import * as MARK from 'vega-lite/build/src/mark';
 import {Mark} from 'vega-lite/build/src/mark';
-import {Channel} from 'vega-lite/build/src/channel';
-import {Type} from 'vega-lite/build/src/type';
+import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
-import {isResultTree, getTopResultTreeItem} from '../src/result';
 import {Property} from '../src/property';
 import {Query} from '../src/query/query';
-import {recommend} from '../src/recommend';
 import {getScore} from '../src/ranking/ranking';
-import {SHORT_WILDCARD, Wildcard} from '../src/wildcard';
+import {recommend} from '../src/recommend';
+import {getTopResultTreeItem, isResultTree} from '../src/result';
 import {duplicate} from '../src/util';
+import {SHORT_WILDCARD, Wildcard} from '../src/wildcard';
 import {schema} from './fixture';
-
-
 
 describe('recommend()', () => {
   it('recommends line for a histogram of a temporal field', () => {
-    const group = recommend({
-      "spec": {
-        "data": {"url": "data/cars.json"},
-        "transform": [],
-        "mark": "?",
-        "encodings": [
-          {
-            "channel": "x",
-            "timeUnit": "year",
-            "field": "T1",
-            "type": "temporal"
-          },
-          {
-            "channel": "y",
-            "field": "*",
-            "type": "quantitative",
-            "aggregate": "count"
+    const group = recommend(
+      {
+        spec: {
+          data: {url: 'data/cars.json'},
+          transform: [],
+          mark: '?',
+          encodings: [
+            {
+              channel: 'x',
+              timeUnit: 'year',
+              field: 'T1',
+              type: 'temporal'
+            },
+            {
+              channel: 'y',
+              field: '*',
+              type: 'quantitative',
+              aggregate: 'count'
+            }
+          ],
+          config: {
+            // "overlay": {"line": true},
+            scale: {useUnaggregatedDomain: true}
           }
-        ],
-        "config": {
-          // "overlay": {"line": true},
-          "scale": {"useUnaggregatedDomain": true}
-        }
+        },
+        groupBy: 'encoding',
+        orderBy: ['fieldOrder', 'aggregationQuality', 'effectiveness'],
+        chooseBy: ['aggregationQuality', 'effectiveness'],
+        config: {autoAddCount: false}
       },
-      "groupBy": "encoding",
-      "orderBy": ["fieldOrder","aggregationQuality","effectiveness"],
-      "chooseBy": ["aggregationQuality","effectiveness"],
-      "config": {"autoAddCount": false}
-    }, schema);
+      schema
+    );
 
     assert.equal(getTopResultTreeItem(group.result).getMark(), 'line');
   });
 
   it('recommends bar chart given 1 nominal field and specifying value for size channel', () => {
-    const group = recommend({
-      "spec": {
-        "data": {"url": "data/cars.json"},
-        "mark": "?",
-        "encodings": [
-          {"channel": "?","field": "Origin","type": "nominal"},
-          {"channel": "size", value: 52}
-        ]
-      },
-      "nest": [
-        {
-          "groupBy": ["field","aggregate","bin","timeUnit","stack"],
-          "orderGroupBy": "aggregationQuality"
+    const group = recommend(
+      {
+        spec: {
+          data: {url: 'data/cars.json'},
+          mark: '?',
+          encodings: [{channel: '?', field: 'Origin', type: 'nominal'}, {channel: 'size', value: 52}]
         },
-        {
-          "groupBy": [
-            {
-              "property": "channel",
-              "replace": {
-                "x": "xy",
-                "y": "xy",
-                "color": "style",
-                "size": "style",
-                "shape": "style",
-                "opacity": "style",
-                "row": "facet",
-                "column": "facet"
+        nest: [
+          {
+            groupBy: ['field', 'aggregate', 'bin', 'timeUnit', 'stack'],
+            orderGroupBy: 'aggregationQuality'
+          },
+          {
+            groupBy: [
+              {
+                property: 'channel',
+                replace: {
+                  x: 'xy',
+                  y: 'xy',
+                  color: 'style',
+                  size: 'style',
+                  shape: 'style',
+                  opacity: 'style',
+                  row: 'facet',
+                  column: 'facet'
+                }
               }
+            ],
+            orderGroupBy: 'effectiveness'
+          },
+          {groupBy: ['channel'], orderGroupBy: 'effectiveness'}
+        ],
+        orderBy: 'effectiveness',
+        config: {autoAddCount: true}
+      },
+      schema
+    );
+
+    assert.equal(getTopResultTreeItem(group.result).getMark(), 'bar');
+  });
+
+  it('recommends bar for a histogram of a temporal field', () => {
+    const group = recommend(
+      {
+        spec: {
+          data: {url: 'data/cars.json'},
+          transform: [],
+          mark: '?',
+          encodings: [
+            {
+              channel: 'x',
+              bin: true,
+              field: 'Q1',
+              type: 'quantitative'
             }
-          ],
-          "orderGroupBy": "effectiveness"
+          ]
         },
-        {"groupBy": ["channel"],"orderGroupBy": "effectiveness"}
-      ],
-      "orderBy": "effectiveness",
-      "config": {"autoAddCount": true}
-    }, schema);
+        groupBy: 'encoding',
+        orderBy: ['fieldOrder', 'aggregationQuality', 'effectiveness'],
+        chooseBy: ['aggregationQuality', 'effectiveness'],
+        config: {autoAddCount: true}
+      },
+      schema
+    );
 
     assert.equal(getTopResultTreeItem(group.result).getMark(), 'bar');
   });
 
   it('recommends bar for a histogram of a temporal field', () => {
-    const group = recommend({
-      "spec": {
-        "data": {"url": "data/cars.json"},
-        "transform": [],
-        "mark": "?",
-        "encodings": [
-          {
-            "channel": "x",
-            "bin": true,
-            "field": "Q1",
-            "type": "quantitative"
-          }
-        ]
+    const group = recommend(
+      {
+        spec: {
+          data: {url: 'data/movies.json'},
+          transform: [],
+          mark: '?',
+          encodings: [
+            {
+              channel: 'y',
+              field: 'title',
+              type: 'key'
+            }
+          ]
+        },
+        groupBy: 'encoding',
+        orderBy: ['fieldOrder', 'aggregationQuality', 'effectiveness'],
+        chooseBy: ['aggregationQuality', 'effectiveness'],
+        config: {autoAddCount: true}
       },
-      "groupBy": "encoding",
-      "orderBy": ["fieldOrder","aggregationQuality","effectiveness"],
-      "chooseBy": ["aggregationQuality","effectiveness"],
-      "config": {"autoAddCount": true}
-    }, schema);
-
-    assert.equal(getTopResultTreeItem(group.result).getMark(), 'bar');
-  });
-
-
-  it('recommends bar for a histogram of a temporal field', () => {
-    const group = recommend({
-      "spec": {
-        "data": {"url": "data/movies.json"},
-        "transform": [],
-        "mark": "?",
-        "encodings": [
-          {
-            "channel": "y",
-            "field": "title",
-            "type": "key"
-          }
-        ]
-      },
-      "groupBy": "encoding",
-      "orderBy": ["fieldOrder","aggregationQuality","effectiveness"],
-      "chooseBy": ["aggregationQuality","effectiveness"],
-      "config": {"autoAddCount": true}
-    }, schema);
+      schema
+    );
 
     assert.equal(getTopResultTreeItem(group.result).getMark(), 'bar');
   });
@@ -146,27 +153,29 @@ describe('recommend()', () => {
     it('?(Q) x ?(Q) should not produce MEAN(Q)xMEAN(Q) if omitAggregatePlotWithoutDimension is enabled.', () => {
       const q = {
         spec: {
-          mark: Mark.POINT,
-          encodings:[
+          mark: MARK.POINT,
+          encodings: [
             {
-              channel: Channel.X,
+              channel: CHANNEL.X,
               bin: SHORT_WILDCARD,
               aggregate: SHORT_WILDCARD,
               field: 'Q',
-              type: Type.QUANTITATIVE
+              type: TYPE.QUANTITATIVE
             },
             {
-              channel: Channel.Y,
+              channel: CHANNEL.Y,
               bin: SHORT_WILDCARD,
               aggregate: SHORT_WILDCARD,
               field: 'Q1',
-              type: Type.QUANTITATIVE
+              type: TYPE.QUANTITATIVE
             }
-          ],
+          ]
         },
-        nest: [{
-          groupBy: [Property.FIELD, Property.AGGREGATE, Property.BIN, Property.TIMEUNIT]
-        }],
+        nest: [
+          {
+            groupBy: [Property.FIELD, Property.AGGREGATE, Property.BIN, Property.TIMEUNIT]
+          }
+        ],
         config: {
           autoAddCount: true,
           omitAggregatePlotWithoutDimension: true
@@ -184,27 +193,29 @@ describe('recommend()', () => {
     it('?(Q) x ?(Q) should produce MEAN(Q)xMEAN(Q) if omitAggregatePlotWithoutDimension is disabled.', () => {
       const q = {
         spec: {
-          mark: Mark.POINT,
-          encodings:[
+          mark: MARK.POINT,
+          encodings: [
             {
-            channel: Channel.X,
-            bin: SHORT_WILDCARD,
-            aggregate: SHORT_WILDCARD,
-            field: 'Q',
-            type: Type.QUANTITATIVE
+              channel: CHANNEL.X,
+              bin: SHORT_WILDCARD,
+              aggregate: SHORT_WILDCARD,
+              field: 'Q',
+              type: TYPE.QUANTITATIVE
             },
             {
-            channel: Channel.Y,
-            bin: SHORT_WILDCARD,
-            aggregate: SHORT_WILDCARD,
-            field: 'Q1',
-            type: Type.QUANTITATIVE
+              channel: CHANNEL.Y,
+              bin: SHORT_WILDCARD,
+              aggregate: SHORT_WILDCARD,
+              field: 'Q1',
+              type: TYPE.QUANTITATIVE
             }
-          ],
+          ]
         },
-        nest: [{
-          groupBy: [Property.FIELD, Property.AGGREGATE, Property.BIN, Property.TIMEUNIT]
-        }],
+        nest: [
+          {
+            groupBy: [Property.FIELD, Property.AGGREGATE, Property.BIN, Property.TIMEUNIT]
+          }
+        ],
         config: {
           autoAddCount: true,
           omitAggregatePlotWithoutDimension: false
@@ -223,14 +234,10 @@ describe('recommend()', () => {
     const q: Query = {
       spec: {
         mark: '?',
-        encodings: [
-          {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
-        ]
+        encodings: [{channel: CHANNEL.X, field: '*', type: TYPE.QUANTITATIVE}]
       },
-      nest: [
-        {groupBy: 'fieldTransform'}
-      ],
-      orderBy: 'effectiveness',
+      nest: [{groupBy: 'fieldTransform'}],
+      orderBy: 'effectiveness'
     };
     const qCopy = duplicate(q);
     const output = recommend(q, schema);
@@ -239,7 +246,7 @@ describe('recommend()', () => {
     it('enumerates a nested query correctly ', () => {
       assert.isTrue(isResultTree(result.items[0]));
       if (isResultTree(result.items[0])) {
-        const group1: SpecQueryModelGroup = <SpecQueryModelGroup> result.items[0];
+        const group1: SpecQueryModelGroup = <SpecQueryModelGroup>result.items[0];
         assert.isFalse(isResultTree(group1.items[0]));
         assert.equal(group1.items.length, 2);
         assert.equal((<SpecQueryModel>group1.items[0]).specQuery.mark, 'tick');
@@ -257,13 +264,13 @@ describe('recommend()', () => {
   });
 
   describe('rank', () => {
-    it('should sort SpecQueryModelGroup\'s items when passed orderBy is an array', () => {
+    it("should sort SpecQueryModelGroup's items when passed orderBy is an array", () => {
       const q: Query = {
         spec: {
           mark: '?',
           encodings: [
-            {channel: '?', bin: '?', aggregate: '?', field: 'Q', type: Type.QUANTITATIVE},
-            {channel: '?', bin: '?', aggregate: '?', field: 'Q1', type: Type.QUANTITATIVE}
+            {channel: '?', bin: '?', aggregate: '?', field: 'Q', type: TYPE.QUANTITATIVE},
+            {channel: '?', bin: '?', aggregate: '?', field: 'Q1', type: TYPE.QUANTITATIVE}
           ]
         },
         orderBy: ['aggregationQuality', 'effectiveness']
@@ -277,16 +284,13 @@ describe('recommend()', () => {
       }
 
       for (let i = 1; i < result.items.length; i++) {
-        let prev = result.items[i-1];
+        let prev = result.items[i - 1];
         let cur = result.items[i];
-
 
         assert.isTrue(
           score(prev, 'aggregationQuality') >= score(cur, 'aggregationQuality') ||
-          (
-            score(prev, 'aggregationQuality') === score(cur, 'aggregationQuality') &&
-            score(prev, 'effectiveness') >= score(cur, 'effectiveness')
-          )
+            (score(prev, 'aggregationQuality') === score(cur, 'aggregationQuality') &&
+              score(prev, 'effectiveness') >= score(cur, 'effectiveness'))
         );
       }
     });
@@ -296,11 +300,9 @@ describe('recommend()', () => {
     const q: Query = {
       spec: {
         mark: '?',
-        encodings: [
-          {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
-        ]
+        encodings: [{channel: CHANNEL.X, field: '*', type: TYPE.QUANTITATIVE}]
       },
-      orderBy: 'effectiveness',
+      orderBy: 'effectiveness'
     };
     const result = recommend(q, schema).result;
     assert.isFalse(isResultTree(result.items[0]));

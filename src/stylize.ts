@@ -1,10 +1,9 @@
-import {Channel} from 'vega-lite/build/src/channel';
+import * as CHANNEL from 'vega-lite/build/src/channel';
 import {hasDiscreteDomain} from 'vega-lite/build/src/scale';
-import {Type} from 'vega-lite/build/src/type';
-
+import * as TYPE from 'vega-lite/build/src/type';
 import {QueryConfig} from './config';
 import {SpecQueryModel} from './model';
-import {AxisQuery, EncodingQuery, ScaleQuery, scaleType, isFieldQuery} from './query/encoding';
+import {AxisQuery, EncodingQuery, isFieldQuery, ScaleQuery, scaleType} from './query/encoding';
 import {ExpandedType} from './query/expandedtype';
 import {Schema} from './schema';
 import {Dict} from './util';
@@ -14,7 +13,7 @@ export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryC
   answerSet = answerSet.map(function(specM) {
     if (opt.smallRangeStepForHighCardinalityOrFacet) {
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, encQIndex, opt);
-     }
+    }
 
     if (opt.nominalColorScaleForHighCardinality) {
       specM = nominalColorScaleForHighCardinality(specM, schema, encQIndex, opt);
@@ -29,16 +28,22 @@ export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryC
   return answerSet;
 }
 
-export function smallRangeStepForHighCardinalityOrFacet(specM: SpecQueryModel, schema: Schema, encQIndex: Dict<EncodingQuery>, opt: QueryConfig): SpecQueryModel {
-  [Channel.ROW, Channel.Y, Channel.COLUMN, Channel.X].forEach((channel) => {
+export function smallRangeStepForHighCardinalityOrFacet(
+  specM: SpecQueryModel,
+  schema: Schema,
+  encQIndex: Dict<EncodingQuery>,
+  opt: QueryConfig
+): SpecQueryModel {
+  [CHANNEL.ROW, CHANNEL.Y, CHANNEL.COLUMN, CHANNEL.X].forEach(channel => {
     encQIndex[channel] = specM.getEncodingQueryByChannel(channel);
   });
 
-  const yEncQ = encQIndex[Channel.Y];
+  const yEncQ = encQIndex[CHANNEL.Y];
   if (yEncQ !== undefined && isFieldQuery(yEncQ)) {
-    if (encQIndex[Channel.ROW] ||
-        schema.cardinality(yEncQ) > opt.smallRangeStepForHighCardinalityOrFacet.maxCardinality) {
-
+    if (
+      encQIndex[CHANNEL.ROW] ||
+      schema.cardinality(yEncQ) > opt.smallRangeStepForHighCardinalityOrFacet.maxCardinality
+    ) {
       // We check for undefined rather than
       // yEncQ.scale = yEncQ.scale || {} to cover the case where
       // yEncQ.scale has been set to false/null.
@@ -59,11 +64,12 @@ export function smallRangeStepForHighCardinalityOrFacet(specM: SpecQueryModel, s
     }
   }
 
-  const xEncQ = encQIndex[Channel.X];
+  const xEncQ = encQIndex[CHANNEL.X];
   if (isFieldQuery(xEncQ)) {
-    if (encQIndex[Channel.COLUMN] ||
-        schema.cardinality(xEncQ) > opt.smallRangeStepForHighCardinalityOrFacet.maxCardinality) {
-
+    if (
+      encQIndex[CHANNEL.COLUMN] ||
+      schema.cardinality(xEncQ) > opt.smallRangeStepForHighCardinalityOrFacet.maxCardinality
+    ) {
       // Just like y, we don't want to do this if scale is null/false
       if (xEncQ.scale === undefined) {
         xEncQ.scale = {};
@@ -83,13 +89,21 @@ export function smallRangeStepForHighCardinalityOrFacet(specM: SpecQueryModel, s
   return specM;
 }
 
-export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schema: Schema, encQIndex: Dict<EncodingQuery>, opt: QueryConfig): SpecQueryModel {
-  encQIndex[Channel.COLOR] = specM.getEncodingQueryByChannel(Channel.COLOR);
+export function nominalColorScaleForHighCardinality(
+  specM: SpecQueryModel,
+  schema: Schema,
+  encQIndex: Dict<EncodingQuery>,
+  opt: QueryConfig
+): SpecQueryModel {
+  encQIndex[CHANNEL.COLOR] = specM.getEncodingQueryByChannel(CHANNEL.COLOR);
 
-  const colorEncQ = encQIndex[Channel.COLOR];
-  if (isFieldQuery(colorEncQ) && (colorEncQ !== undefined) && (colorEncQ.type === Type.NOMINAL || colorEncQ.type === ExpandedType.KEY) &&
-      (schema.cardinality(colorEncQ) > opt.nominalColorScaleForHighCardinality.maxCardinality)) {
-
+  const colorEncQ = encQIndex[CHANNEL.COLOR];
+  if (
+    isFieldQuery(colorEncQ) &&
+    colorEncQ !== undefined &&
+    (colorEncQ.type === TYPE.NOMINAL || colorEncQ.type === ExpandedType.KEY) &&
+    schema.cardinality(colorEncQ) > opt.nominalColorScaleForHighCardinality.maxCardinality
+  ) {
     if (colorEncQ.scale === undefined) {
       colorEncQ.scale = {};
     }
@@ -104,18 +118,28 @@ export function nominalColorScaleForHighCardinality(specM: SpecQueryModel, schem
   return specM;
 }
 
-export function xAxisOnTopForHighYCardinalityWithoutColumn(specM: SpecQueryModel, schema: Schema, encQIndex: Dict<EncodingQuery>, opt: QueryConfig): SpecQueryModel {
-  [Channel.COLUMN, Channel.X, Channel.Y].forEach((channel) => {
+export function xAxisOnTopForHighYCardinalityWithoutColumn(
+  specM: SpecQueryModel,
+  schema: Schema,
+  encQIndex: Dict<EncodingQuery>,
+  opt: QueryConfig
+): SpecQueryModel {
+  [CHANNEL.COLUMN, CHANNEL.X, CHANNEL.Y].forEach(channel => {
     encQIndex[channel] = specM.getEncodingQueryByChannel(channel);
   });
 
-  if (encQIndex[Channel.COLUMN] === undefined) {
-    const xEncQ = encQIndex[Channel.X];
-    const yEncQ = encQIndex[Channel.Y];
-    if (isFieldQuery(xEncQ) && isFieldQuery(yEncQ) && yEncQ !== undefined && yEncQ.field && hasDiscreteDomain(scaleType(yEncQ))) {
+  if (encQIndex[CHANNEL.COLUMN] === undefined) {
+    const xEncQ = encQIndex[CHANNEL.X];
+    const yEncQ = encQIndex[CHANNEL.Y];
+    if (
+      isFieldQuery(xEncQ) &&
+      isFieldQuery(yEncQ) &&
+      yEncQ !== undefined &&
+      yEncQ.field &&
+      hasDiscreteDomain(scaleType(yEncQ))
+    ) {
       if (xEncQ !== undefined) {
         if (schema.cardinality(yEncQ) > opt.xAxisOnTopForHighYCardinalityWithoutColumn.maxCardinality) {
-
           if (xEncQ.axis === undefined) {
             xEncQ.axis = {};
           }

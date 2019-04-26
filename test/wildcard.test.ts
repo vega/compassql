@@ -1,29 +1,34 @@
-import {Mark} from 'vega-lite/build/src/mark';
-
 import {assert} from 'chai';
-import {initWildcard, isWildcard, SHORT_WILDCARD, getDefaultName, getDefaultEnumValues} from '../src/wildcard';
-import {DEFAULT_PROP_PRECEDENCE, toKey} from '../src/property';
+import * as MARK from 'vega-lite/build/src/mark';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
+import {DEFAULT_PROP_PRECEDENCE, toKey} from '../src/property';
+import {getDefaultEnumValues, getDefaultName, initWildcard, isWildcard, SHORT_WILDCARD} from '../src/wildcard';
 
 describe('wildcard', () => {
   describe('isWildcard', () => {
     it('should return true for a wildcard with name and values', () => {
-      assert(isWildcard({
-        name: 'a',
-        enum: [1,2,3]
-      }));
+      assert(
+        isWildcard({
+          name: 'a',
+          enum: [1, 2, 3]
+        })
+      );
     });
 
     it('should return true for a wildcard with name.', () => {
-      assert(isWildcard({
-        name: 'a'
-      }));
+      assert(
+        isWildcard({
+          name: 'a'
+        })
+      );
     });
 
     it('should return true for a wildcard with values', () => {
-      assert(isWildcard({
-        enum: [1,2,3]
-      }));
+      assert(
+        isWildcard({
+          enum: [1, 2, 3]
+        })
+      );
     });
 
     it('should return true for a short wildcard', () => {
@@ -43,16 +48,16 @@ describe('wildcard', () => {
     });
 
     it('should return false for an array', () => {
-      assert(!isWildcard([1,2]));
+      assert(!isWildcard([1, 2]));
     });
   });
 
   describe('initWildcard', () => {
     it('should not extend the wildcard with SHORT_WILDCARD.', () => {
-      const mark = initWildcard(SHORT_WILDCARD, 'm', [Mark.POINT]);
+      const mark = initWildcard(SHORT_WILDCARD, 'm', [MARK.POINT]);
       assert.deepEqual(mark, {
         name: 'm',
-        enum: [Mark.POINT]
+        enum: [MARK.POINT]
       });
     });
 
@@ -81,7 +86,13 @@ describe('wildcard', () => {
           }
         }
 
-        assert.equal(name in defaultNameIndex, false, `${name} is already used for ${JSON.stringify(defaultNameIndex[name])} and thus can't be used for ${JSON.stringify(prop)}`);
+        assert.equal(
+          name in defaultNameIndex,
+          false,
+          `${name} is already used for ${JSON.stringify(
+            defaultNameIndex[name]
+          )} and thus can't be used for ${JSON.stringify(prop)}`
+        );
         defaultNameIndex[getDefaultName(prop)] = prop;
       }
       assert.equal(missing.length, 0, 'Properties with missing name: ' + missing.join(','));
@@ -91,7 +102,7 @@ describe('wildcard', () => {
     it('should return enum for every properties by default', () => {
       const missing = [];
       const mockSchema = {
-        fieldNames: () => ['a','b']
+        fieldNames: () => ['a', 'b']
       } as any;
       for (const prop of DEFAULT_PROP_PRECEDENCE) {
         const e = getDefaultEnumValues(prop, mockSchema, DEFAULT_QUERY_CONFIG);
@@ -107,10 +118,10 @@ describe('wildcard', () => {
     it('should return enum for every properties by default.', () => {
       const missing = [];
       const mockSchema = {
-        fieldNames: () => ['a','b']
+        fieldNames: () => ['a', 'b']
       } as any;
       for (const prop of DEFAULT_PROP_PRECEDENCE) {
-        const e =getDefaultEnumValues(prop, mockSchema, DEFAULT_QUERY_CONFIG);
+        const e = getDefaultEnumValues(prop, mockSchema, DEFAULT_QUERY_CONFIG);
         if (e === undefined) {
           missing.push(toKey(prop));
         }

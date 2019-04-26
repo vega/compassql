@@ -1,11 +1,11 @@
-import {Scorer} from './base';
+import * as CHANNEL from 'vega-lite/build/src/channel';
+import {DEFAULT_QUERY_CONFIG, QueryConfig} from '../../config';
 import {SpecQueryModel} from '../../model';
+import {EncodingQuery, isAutoCountQuery, isFieldQuery} from '../../query/encoding';
 import {Schema} from '../../schema';
-import {QueryConfig, DEFAULT_QUERY_CONFIG} from '../../config';
-import {FeatureScore} from '../ranking';
-import {EncodingQuery, isFieldQuery, isAutoCountQuery} from '../../query/encoding';
-import {Channel} from 'vega-lite/build/src/channel';
 import {Dict} from '../../util';
+import {FeatureScore} from '../ranking';
+import {Scorer} from './base';
 
 /**
  * Effective Score for preferred facet
@@ -18,12 +18,12 @@ export class FacetScorer extends Scorer {
     opt = {...DEFAULT_QUERY_CONFIG, ...opt};
     let score: Dict<number> = {};
 
-    if (opt.preferredFacet === Channel.ROW) {
+    if (opt.preferredFacet === CHANNEL.ROW) {
       // penalize the other axis
-      score[Channel.COLUMN] = -0.01;
-    } else if (opt.preferredFacet === Channel.COLUMN) {
+      score[CHANNEL.COLUMN] = -0.01;
+    } else if (opt.preferredFacet === CHANNEL.COLUMN) {
       // penalize the other axis
-      score[Channel.ROW] = -0.01;
+      score[CHANNEL.ROW] = -0.01;
     }
 
     return score;
@@ -39,4 +39,4 @@ export class FacetScorer extends Scorer {
       return features;
     }, []);
   }
-};
+}

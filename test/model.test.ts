@@ -1,17 +1,17 @@
 import {assert} from 'chai';
-import {Channel} from 'vega-lite/build/src/channel';
-import {Mark} from 'vega-lite/build/src/mark';
-import {Type} from 'vega-lite/build/src/type';
+import * as CHANNEL from 'vega-lite/build/src/channel';
+import * as MARK from 'vega-lite/build/src/mark';
 import {TitleParams} from 'vega-lite/build/src/title';
-import {schema} from './fixture';
+import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {SpecQueryModel, SpecQueryModelGroup} from '../src/model';
-import {Property, ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS, toKey} from '../src/property';
-import {SHORT_WILDCARD, isWildcard, getDefaultEnumValues} from '../src/wildcard';
+import {ENCODING_NESTED_PROPS, ENCODING_TOPLEVEL_PROPS, Property, toKey} from '../src/property';
+import {AutoCountQuery, FieldQuery} from '../src/query/encoding';
 import {SpecQuery} from '../src/query/spec';
-import {FieldQuery, AutoCountQuery} from '../src/query/encoding';
 import {FieldSchema, Schema} from '../src/schema';
 import {duplicate, extend} from '../src/util';
+import {getDefaultEnumValues, isWildcard, SHORT_WILDCARD} from '../src/wildcard';
+import {schema} from './fixture';
 
 const DEFAULT_SPEC_CONFIG = DEFAULT_QUERY_CONFIG.defaultSpecConfig;
 
@@ -37,20 +37,20 @@ describe('SpecQueryModel', () => {
     it('should have mark wildcardIndex if mark is an Wildcard.', () => {
       const specQ: SpecQuery = {
         mark: {
-          enum: [Mark.BAR]
+          enum: [MARK.BAR]
         },
         encodings: []
       };
       const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
       assert.deepEqual(wildcardIndex.mark, {
         name: 'm',
-        enum: [Mark.BAR]
+        enum: [MARK.BAR]
       });
     });
 
     it('should have no mark wildcardIndex if mark is specific.', () => {
       const specQ: SpecQuery = {
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encodings: []
       };
       const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
@@ -63,10 +63,8 @@ describe('SpecQueryModel', () => {
     describe('type', () => {
       it('should automatically add type as wildcard and index it', () => {
         const specQ: SpecQuery = {
-          mark: Mark.POINT,
-          encodings: [
-            {channel: Channel.X, field: 'A'}
-          ]
+          mark: MARK.POINT,
+          encodings: [{channel: CHANNEL.X, field: 'A'}]
         };
 
         const specM = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG);
@@ -78,13 +76,11 @@ describe('SpecQueryModel', () => {
     });
 
     const templateSpecQ: SpecQuery = {
-      mark: Mark.POINT,
-      encodings: [
-        {channel: Channel.X, field: 'a', type: Type.QUANTITATIVE}
-      ]
+      mark: MARK.POINT,
+      encodings: [{channel: CHANNEL.X, field: 'a', type: TYPE.QUANTITATIVE}]
     };
 
-    ENCODING_TOPLEVEL_PROPS.forEach((prop) => {
+    ENCODING_TOPLEVEL_PROPS.forEach(prop => {
       it('should have ' + prop + ' wildcardIndex if it is a ShortWildcard.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a short wildcard
@@ -98,9 +94,8 @@ describe('SpecQueryModel', () => {
       it('should have ' + prop + ' wildcardIndex if it is an Wildcard.', () => {
         let specQ = duplicate(templateSpecQ);
         // set to a full wildcard
-        const enumValues = prop === Property.FIELD ?
-          ['A', 'B'] :
-          getDefaultEnumValues(prop, schema, DEFAULT_QUERY_CONFIG);
+        const enumValues =
+          prop === Property.FIELD ? ['A', 'B'] : getDefaultEnumValues(prop, schema, DEFAULT_QUERY_CONFIG);
         specQ.encodings[0][prop] = {
           enum: enumValues
         };
@@ -120,7 +115,7 @@ describe('SpecQueryModel', () => {
       });
     });
 
-    ENCODING_NESTED_PROPS.forEach((nestedProp) => {
+    ENCODING_NESTED_PROPS.forEach(nestedProp => {
       const propKey = toKey(nestedProp);
       const parent = nestedProp.parent;
       const child = nestedProp.child;
@@ -159,12 +154,12 @@ describe('SpecQueryModel', () => {
 
     describe('autoCount', () => {
       const specQ: SpecQuery = {
-        mark: Mark.POINT,
-        encodings: [{channel: Channel.X, field: 'a', type: Type.ORDINAL}]
+        mark: MARK.POINT,
+        encodings: [{channel: CHANNEL.X, field: 'a', type: TYPE.ORDINAL}]
       };
       const model = SpecQueryModel.build(specQ, schema, extend({}, DEFAULT_QUERY_CONFIG, {autoAddCount: true}));
 
-      it('should add new encoding if autoCount is enabled' , () => {
+      it('should add new encoding if autoCount is enabled', () => {
         assert.equal(model.specQuery.encodings.length, 2);
         assert.isTrue(isWildcard((model.specQuery.encodings[1] as AutoCountQuery).autoCount));
       });
@@ -179,42 +174,34 @@ describe('SpecQueryModel', () => {
   describe('channelUsed', () => {
     it('should return true if channel is used for general fieldDef', () => {
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: 'max'}
-        ]
+        mark: MARK.BAR,
+        encodings: [{channel: CHANNEL.X, field: 'A', type: TYPE.QUANTITATIVE, aggregate: 'max'}]
       });
-      assert.isTrue(specM.channelUsed(Channel.X));
+      assert.isTrue(specM.channelUsed(CHANNEL.X));
     });
 
     it('should return false if channel is used for general fieldDef', () => {
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: 'max'}
-        ]
+        mark: MARK.BAR,
+        encodings: [{channel: CHANNEL.X, field: 'A', type: TYPE.QUANTITATIVE, aggregate: 'max'}]
       });
-      assert.isFalse(specM.channelUsed(Channel.Y));
+      assert.isFalse(specM.channelUsed(CHANNEL.Y));
     });
 
     it('should return false if channel is used for disabled autoCount', () => {
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, autoCount: false}
-        ]
+        mark: MARK.BAR,
+        encodings: [{channel: CHANNEL.X, autoCount: false}]
       });
-      assert.isFalse(specM.channelUsed(Channel.X));
+      assert.isFalse(specM.channelUsed(CHANNEL.X));
     });
   });
 
   describe('isAggregate', () => {
     it('should return false if the query is not aggregated', () => {
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
-        ]
+        mark: MARK.BAR,
+        encodings: [{channel: CHANNEL.X, field: 'A', type: TYPE.QUANTITATIVE}]
       });
 
       assert.isFalse(specM.isAggregate());
@@ -222,10 +209,8 @@ describe('SpecQueryModel', () => {
 
     it('should return true if the query is aggregated', () => {
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE, aggregate: 'max'}
-        ]
+        mark: MARK.BAR,
+        encodings: [{channel: CHANNEL.X, field: 'A', type: TYPE.QUANTITATIVE, aggregate: 'max'}]
       });
 
       assert.isTrue(specM.isAggregate());
@@ -233,10 +218,8 @@ describe('SpecQueryModel', () => {
 
     it('should return true if the query has autoCount = true', () => {
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, autoCount: true}
-        ]
+        mark: MARK.BAR,
+        encodings: [{channel: CHANNEL.X, autoCount: true}]
       });
 
       assert.isTrue(specM.isAggregate());
@@ -246,17 +229,17 @@ describe('SpecQueryModel', () => {
   describe('getEncodings()', () => {
     it('should return correct encodings', () => {
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encodings: [
-          {channel: Channel.Y, value: 5},
-          {channel: Channel.COLOR, field: 'a', type: 'quantitative'},
-          {channel: Channel.X, autoCount: false}
+          {channel: CHANNEL.Y, value: 5},
+          {channel: CHANNEL.COLOR, field: 'a', type: 'quantitative'},
+          {channel: CHANNEL.X, autoCount: false}
         ]
       });
 
       assert.deepEqual(specM.getEncodings(), [
-        {channel: Channel.Y, value: 5},
-        {channel: Channel.COLOR, field: 'a', type: 'quantitative'}
+        {channel: CHANNEL.Y, value: 5},
+        {channel: CHANNEL.COLOR, field: 'a', type: 'quantitative'}
       ]);
     });
   });
@@ -266,12 +249,12 @@ describe('SpecQueryModel', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{Q: 1}]},
         transform: [{filter: 'datum.Q===1'}],
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encodings: [
           {
-            channel: Channel.X,
+            channel: CHANNEL.X,
             field: '?',
-            type: Type.QUANTITATIVE,
+            type: TYPE.QUANTITATIVE
           }
         ]
       });
@@ -284,19 +267,19 @@ describe('SpecQueryModel', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{Q: 1}]},
         transform: [{filter: 'datum.Q===1'}],
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encodings: [
           {
-            channel: Channel.X,
+            channel: CHANNEL.X,
             field: 'Q',
-            type: Type.QUANTITATIVE,
-            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'},
+            type: TYPE.QUANTITATIVE,
+            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'}
           },
           {
-            channel: Channel.COLOR,
+            channel: CHANNEL.COLOR,
             field: 'Q2',
-            type: Type.QUANTITATIVE,
-            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'},
+            type: TYPE.QUANTITATIVE,
+            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}
           }
         ]
       });
@@ -305,10 +288,18 @@ describe('SpecQueryModel', () => {
       assert.deepEqual(spec, {
         data: {values: [{Q: 1}]},
         transform: [{filter: 'datum.Q===1'}],
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encoding: {
-          x: {field: 'Q', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'}},
-          color: {field: 'Q2', type: Type.QUANTITATIVE, legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}}
+          x: {
+            field: 'Q',
+            type: TYPE.QUANTITATIVE,
+            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'}
+          },
+          color: {
+            field: 'Q2',
+            type: TYPE.QUANTITATIVE,
+            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}
+          }
         },
         config: DEFAULT_SPEC_CONFIG
       });
@@ -318,14 +309,14 @@ describe('SpecQueryModel', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{Q: 1}]},
         transform: [{filter: 'datum.Q===1'}],
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encodings: [
           {
-            channel: Channel.X,
+            channel: CHANNEL.X,
             field: 'Q',
-            type: Type.QUANTITATIVE,
+            type: TYPE.QUANTITATIVE,
             axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'},
-            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'},
+            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}
           }
         ]
       });
@@ -334,9 +325,13 @@ describe('SpecQueryModel', () => {
       assert.deepEqual(spec, {
         data: {values: [{Q: 1}]},
         transform: [{filter: 'datum.Q===1'}],
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encoding: {
-          x: {field: 'Q', type: Type.QUANTITATIVE, axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'}},
+          x: {
+            field: 'Q',
+            type: TYPE.QUANTITATIVE,
+            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'}
+          }
         },
         config: DEFAULT_SPEC_CONFIG
       });
@@ -346,14 +341,14 @@ describe('SpecQueryModel', () => {
       const specQ: SpecQuery = {
         data: {values: [{Q: 1}]},
         transform: [{filter: 'datum.Q===1'}],
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encodings: [
           {
-            channel: Channel.COLOR,
+            channel: CHANNEL.COLOR,
             field: 'Q2',
-            type: Type.QUANTITATIVE,
+            type: TYPE.QUANTITATIVE,
             axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'},
-            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'},
+            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}
           }
         ]
       };
@@ -363,9 +358,13 @@ describe('SpecQueryModel', () => {
       assert.deepEqual(spec, {
         data: {values: [{Q: 1}]},
         transform: [{filter: 'datum.Q===1'}],
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encoding: {
-          color: {field: 'Q2', type: Type.QUANTITATIVE, legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}}
+          color: {
+            field: 'Q2',
+            type: TYPE.QUANTITATIVE,
+            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}
+          }
         },
         config: DEFAULT_SPEC_CONFIG
       });
@@ -374,213 +373,229 @@ describe('SpecQueryModel', () => {
     it('should return a spec with no bin if the bin=false.', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{Q: 1}]},
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, bin: false, field: 'Q', type: Type.QUANTITATIVE}
-        ]
+        mark: MARK.BAR,
+        encodings: [{channel: CHANNEL.X, bin: false, field: 'Q', type: TYPE.QUANTITATIVE}]
       });
 
       const spec = specM.toSpec();
       assert.deepEqual(spec, {
         data: {values: [{Q: 1}]},
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encoding: {
-          x: {field: 'Q', type: Type.QUANTITATIVE}
+          x: {field: 'Q', type: TYPE.QUANTITATIVE}
         },
         config: DEFAULT_SPEC_CONFIG
       });
     });
 
-    it('should return a spec with the domain specified in FieldSchema if the encoding query ' +
-       'already has scale but does not have domain', () => {
-      const specM = SpecQueryModel.build(
-        {
-          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
-          mark: Mark.BAR,
-          encodings: [
-            {channel: Channel.X, field: 'A', type: Type.ORDINAL, scale: {}},
-            {channel: Channel.Y, field: 'B', type: Type.QUANTITATIVE}
-          ]
-        },
-        new Schema({fields:
-          [{
-            name: 'A',
-            vlType: 'ordinal',
-            type: 'string' as any,
-            ordinalDomain: ['S', 'M', 'L'],
-            stats: {
-              distinct: 3
-            }
-          },{
-            name: 'B',
-            vlType: 'quantitative',
-            type: 'number' as any,
-            stats: {
-              distinct: 3
-            }
-          }] as FieldSchema[]
-        }),
-        DEFAULT_QUERY_CONFIG
-      );
+    it(
+      'should return a spec with the domain specified in FieldSchema if the encoding query ' +
+        'already has scale but does not have domain',
+      () => {
+        const specM = SpecQueryModel.build(
+          {
+            data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+            mark: MARK.BAR,
+            encodings: [
+              {channel: CHANNEL.X, field: 'A', type: TYPE.ORDINAL, scale: {}},
+              {channel: CHANNEL.Y, field: 'B', type: TYPE.QUANTITATIVE}
+            ]
+          },
+          new Schema({
+            fields: [
+              {
+                name: 'A',
+                vlType: 'ordinal',
+                type: 'string' as any,
+                ordinalDomain: ['S', 'M', 'L'],
+                stats: {
+                  distinct: 3
+                }
+              },
+              {
+                name: 'B',
+                vlType: 'quantitative',
+                type: 'number' as any,
+                stats: {
+                  distinct: 3
+                }
+              }
+            ] as FieldSchema[]
+          }),
+          DEFAULT_QUERY_CONFIG
+        );
 
-      const spec = specM.toSpec();
-      assert.deepEqual(spec, {
+        const spec = specM.toSpec();
+        assert.deepEqual(spec, {
           data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
-          mark: Mark.BAR,
+          mark: MARK.BAR,
           encoding: {
-            x: {field: 'A', type: Type.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
-            y: {field: 'B', type: Type.QUANTITATIVE}
+            x: {field: 'A', type: TYPE.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
+            y: {field: 'B', type: TYPE.QUANTITATIVE}
           },
           config: DEFAULT_SPEC_CONFIG
-      });
-    });
+        });
+      }
+    );
 
-    it('should return a spec with the domain specified in FieldSchema if the encoding query ' +
-       'already has scale set to true', () => {
-      const specM = SpecQueryModel.build(
-        {
-          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
-          mark: Mark.BAR,
-          encodings: [
-            {channel: Channel.X, field: 'A', type: Type.ORDINAL, scale: true},
-            {channel: Channel.Y, field: 'B', type: Type.QUANTITATIVE}
-          ]
-        },
-        new Schema({fields:
-          [{
-            name: 'A',
-            vlType: 'ordinal',
-            type: 'string' as any,
-            ordinalDomain: ['S', 'M', 'L'],
-            stats: {
-              distinct: 3
-            }
-          },{
-            name: 'B',
-            vlType: 'quantitative',
-            type: 'number' as any,
-            stats: {
-              distinct: 3
-            }
-          }] as FieldSchema[]
-        }),
-        DEFAULT_QUERY_CONFIG
-      );
+    it(
+      'should return a spec with the domain specified in FieldSchema if the encoding query ' +
+        'already has scale set to true',
+      () => {
+        const specM = SpecQueryModel.build(
+          {
+            data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+            mark: MARK.BAR,
+            encodings: [
+              {channel: CHANNEL.X, field: 'A', type: TYPE.ORDINAL, scale: true},
+              {channel: CHANNEL.Y, field: 'B', type: TYPE.QUANTITATIVE}
+            ]
+          },
+          new Schema({
+            fields: [
+              {
+                name: 'A',
+                vlType: 'ordinal',
+                type: 'string' as any,
+                ordinalDomain: ['S', 'M', 'L'],
+                stats: {
+                  distinct: 3
+                }
+              },
+              {
+                name: 'B',
+                vlType: 'quantitative',
+                type: 'number' as any,
+                stats: {
+                  distinct: 3
+                }
+              }
+            ] as FieldSchema[]
+          }),
+          DEFAULT_QUERY_CONFIG
+        );
 
-      const spec = specM.toSpec();
-      assert.deepEqual(spec, {
+        const spec = specM.toSpec();
+        assert.deepEqual(spec, {
           data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
-          mark: Mark.BAR,
+          mark: MARK.BAR,
           encoding: {
-            x: {field: 'A', type: Type.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
-            y: {field: 'B', type: Type.QUANTITATIVE}
+            x: {field: 'A', type: TYPE.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
+            y: {field: 'B', type: TYPE.QUANTITATIVE}
           },
           config: DEFAULT_SPEC_CONFIG
-      });
-    });
+        });
+      }
+    );
 
-    it('should return a spec with the domain specified in FieldSchema if the encoding query ' +
-       'scale is undefined', () => {
-      const specM = SpecQueryModel.build(
-        {
-          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
-          mark: Mark.BAR,
-          encodings: [
-            {channel: Channel.X, field: 'A', type: Type.ORDINAL},
-            {channel: Channel.Y, field: 'B', type: Type.QUANTITATIVE}
-          ]
-        },
-        new Schema({fields:
-          [{
-            name: 'A',
-            vlType: 'ordinal',
-            type: 'string' as any,
-            ordinalDomain: ['S', 'M', 'L'],
-            stats: {
-              distinct: 3
-            }
-          },{
-            name: 'B',
-            vlType: 'quantitative',
-            type: 'number' as any,
-            stats: {
-              distinct: 3
-            }
-          }] as FieldSchema[]
-        }),
-        DEFAULT_QUERY_CONFIG
-      );
+    it(
+      'should return a spec with the domain specified in FieldSchema if the encoding query ' + 'scale is undefined',
+      () => {
+        const specM = SpecQueryModel.build(
+          {
+            data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+            mark: MARK.BAR,
+            encodings: [
+              {channel: CHANNEL.X, field: 'A', type: TYPE.ORDINAL},
+              {channel: CHANNEL.Y, field: 'B', type: TYPE.QUANTITATIVE}
+            ]
+          },
+          new Schema({
+            fields: [
+              {
+                name: 'A',
+                vlType: 'ordinal',
+                type: 'string' as any,
+                ordinalDomain: ['S', 'M', 'L'],
+                stats: {
+                  distinct: 3
+                }
+              },
+              {
+                name: 'B',
+                vlType: 'quantitative',
+                type: 'number' as any,
+                stats: {
+                  distinct: 3
+                }
+              }
+            ] as FieldSchema[]
+          }),
+          DEFAULT_QUERY_CONFIG
+        );
 
-      const spec = specM.toSpec();
-      assert.deepEqual(spec, {
+        const spec = specM.toSpec();
+        assert.deepEqual(spec, {
           data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
-          mark: Mark.BAR,
+          mark: MARK.BAR,
           encoding: {
-            x: {field: 'A', type: Type.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
-            y: {field: 'B', type: Type.QUANTITATIVE}
+            x: {field: 'A', type: TYPE.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
+            y: {field: 'B', type: TYPE.QUANTITATIVE}
           },
           config: DEFAULT_SPEC_CONFIG
-      });
-    });
+        });
+      }
+    );
 
     it('should return a spec with the domain that is already set in an Encoding Query', () => {
       const specM = SpecQueryModel.build(
         {
           data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
-          mark: Mark.BAR,
+          mark: MARK.BAR,
           encodings: [
-            {channel: Channel.X, field: 'A', type: Type.ORDINAL, scale: {domain: ['L', 'M', 'S']}},
-            {channel: Channel.Y, field: 'B', type: Type.QUANTITATIVE}
+            {channel: CHANNEL.X, field: 'A', type: TYPE.ORDINAL, scale: {domain: ['L', 'M', 'S']}},
+            {channel: CHANNEL.Y, field: 'B', type: TYPE.QUANTITATIVE}
           ]
         },
-        new Schema({fields:
-          [{
-            name: 'A',
-            vlType: 'ordinal',
-            type: 'string' as any,
-            ordinalDomain: ['S', 'M', 'L'],
-            stats: {
-              distinct: 3
+        new Schema({
+          fields: [
+            {
+              name: 'A',
+              vlType: 'ordinal',
+              type: 'string' as any,
+              ordinalDomain: ['S', 'M', 'L'],
+              stats: {
+                distinct: 3
+              }
+            },
+            {
+              name: 'B',
+              vlType: 'quantitative',
+              type: 'number' as any,
+              stats: {
+                distinct: 3
+              }
             }
-          },{
-            name: 'B',
-            vlType: 'quantitative',
-            type: 'number' as any,
-            stats: {
-              distinct: 3
-            }
-          }] as FieldSchema[]
+          ] as FieldSchema[]
         }),
         DEFAULT_QUERY_CONFIG
       );
 
       const spec = specM.toSpec();
       assert.deepEqual(spec, {
-          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
-          mark: Mark.BAR,
-          encoding: {
-            x: {field: 'A', type: Type.ORDINAL, scale: {domain: ['L', 'M', 'S']}},
-            y: {field: 'B', type: Type.QUANTITATIVE}
-          },
-          config: DEFAULT_SPEC_CONFIG
+        data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+        mark: MARK.BAR,
+        encoding: {
+          x: {field: 'A', type: TYPE.ORDINAL, scale: {domain: ['L', 'M', 'S']}},
+          y: {field: 'B', type: TYPE.QUANTITATIVE}
+        },
+        config: DEFAULT_SPEC_CONFIG
       });
     });
 
     it('should return a spec with bin as object if the bin has no parameter.', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{Q: 1}]},
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, bin: {maxbins: 50}, field: 'Q', type: Type.QUANTITATIVE}
-        ]
+        mark: MARK.BAR,
+        encodings: [{channel: CHANNEL.X, bin: {maxbins: 50}, field: 'Q', type: TYPE.QUANTITATIVE}]
       });
 
       const spec = specM.toSpec();
       assert.deepEqual(spec, {
         data: {values: [{Q: 1}]},
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encoding: {
-          x: {bin: {maxbins: 50}, field: 'Q', type: Type.QUANTITATIVE}
+          x: {bin: {maxbins: 50}, field: 'Q', type: TYPE.QUANTITATIVE}
         },
         config: DEFAULT_SPEC_CONFIG
       });
@@ -590,11 +605,10 @@ describe('SpecQueryModel', () => {
       const specM = buildSpecQueryModel({
         data: {values: [{Q: 1, O: 1}]},
         transform: [{filter: 'datum.Q===1'}],
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encodings: [
-          {channel: Channel.X, field: 'Q', aggregate: 'mean', type: Type.QUANTITATIVE},
-          {channel: Channel.Y, field: 'O', sort: {field: 'Q', op: 'mean', order: 'ascending'}, type: Type.ORDINAL}
-
+          {channel: CHANNEL.X, field: 'Q', aggregate: 'mean', type: TYPE.QUANTITATIVE},
+          {channel: CHANNEL.Y, field: 'O', sort: {field: 'Q', op: 'mean', order: 'ascending'}, type: TYPE.ORDINAL}
         ]
       });
 
@@ -602,10 +616,10 @@ describe('SpecQueryModel', () => {
       assert.deepEqual(spec, {
         data: {values: [{Q: 1, O: 1}]},
         transform: [{filter: 'datum.Q===1'}],
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encoding: {
-          x: {field: 'Q', aggregate: 'mean', type: Type.QUANTITATIVE},
-          y: {field: 'O', sort: {field: 'Q', op: 'mean', order: 'ascending'}, type: Type.ORDINAL}
+          x: {field: 'Q', aggregate: 'mean', type: TYPE.QUANTITATIVE},
+          y: {field: 'O', sort: {field: 'Q', op: 'mean', order: 'ascending'}, type: TYPE.ORDINAL}
         },
         config: DEFAULT_SPEC_CONFIG
       });
@@ -613,19 +627,19 @@ describe('SpecQueryModel', () => {
 
     it('should return a correct Vega-Lite spec if the query has autoCount=true', () => {
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encodings: [
-          {channel: Channel.X, field: 'O', type: Type.ORDINAL},
-          {channel: Channel.Y, autoCount: true, type: Type.QUANTITATIVE}
+          {channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL},
+          {channel: CHANNEL.Y, autoCount: true, type: TYPE.QUANTITATIVE}
         ]
       });
 
       const spec = specM.toSpec();
       assert.deepEqual(spec, {
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encoding: {
-          x: {field: 'O', type: Type.ORDINAL},
-          y: {aggregate: 'count', field: '*', type: Type.QUANTITATIVE}
+          x: {field: 'O', type: TYPE.ORDINAL},
+          y: {aggregate: 'count', field: '*', type: TYPE.QUANTITATIVE}
         },
         config: DEFAULT_SPEC_CONFIG
       });
@@ -633,39 +647,32 @@ describe('SpecQueryModel', () => {
 
     it('should return a correct Vega-Lite spec if the query has autoCount=false', () => {
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, field: 'O', type: Type.ORDINAL},
-          {channel: Channel.Y, autoCount: false}
-        ]
+        mark: MARK.BAR,
+        encodings: [{channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL}, {channel: CHANNEL.Y, autoCount: false}]
       });
 
       const spec = specM.toSpec();
       assert.deepEqual(spec, {
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encoding: {
-          x: {field: 'O', type: Type.ORDINAL}
+          x: {field: 'O', type: TYPE.ORDINAL}
         },
         config: DEFAULT_SPEC_CONFIG
       });
     });
 
-
     it('should return a correct Vega-Lite spec if the query has autoCount=false even if channel is unspecified', () => {
       // Basically, we no longer enumerate ambiguous channel autoCount is false.
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, field: 'O', type: Type.ORDINAL},
-          {channel: SHORT_WILDCARD, autoCount: false}
-        ]
+        mark: MARK.BAR,
+        encodings: [{channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL}, {channel: SHORT_WILDCARD, autoCount: false}]
       });
 
       const spec = specM.toSpec();
       assert.deepEqual(spec, {
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         encoding: {
-          x: {field: 'O', type: Type.ORDINAL}
+          x: {field: 'O', type: TYPE.ORDINAL}
         },
         config: DEFAULT_SPEC_CONFIG
       });
@@ -673,10 +680,8 @@ describe('SpecQueryModel', () => {
 
     it('should return null if the query is incompleted', () => {
       const specM = buildSpecQueryModel({
-        mark: {enum: [Mark.BAR, Mark.POINT]},
-        encodings: [
-          {channel: Channel.X, field: 'A', type: Type.QUANTITATIVE}
-        ],
+        mark: {enum: [MARK.BAR, MARK.POINT]},
+        encodings: [{channel: CHANNEL.X, field: 'A', type: TYPE.QUANTITATIVE}],
         config: DEFAULT_SPEC_CONFIG
       });
 
@@ -685,10 +690,8 @@ describe('SpecQueryModel', () => {
 
     it('should not output spec with inapplicable scale, sort, axis / legend ', () => {
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, bin: {'maxbins': '?'}, field: 'A', type: Type.QUANTITATIVE}
-        ]
+        mark: MARK.BAR,
+        encodings: [{channel: CHANNEL.X, bin: {maxbins: '?'}, field: 'A', type: TYPE.QUANTITATIVE}]
       });
 
       assert.isNull(specM.toSpec());
@@ -696,12 +699,10 @@ describe('SpecQueryModel', () => {
 
     it('should return a spec with width and height specified', () => {
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         width: 100,
         height: 120,
-        encodings: [
-          {channel: Channel.X, field: 'O', type: Type.ORDINAL}
-        ]
+        encodings: [{channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL}]
       });
 
       assert.equal(specM.toSpec().width, 100);
@@ -710,11 +711,9 @@ describe('SpecQueryModel', () => {
 
     it('should return a spec with background color as specified', () => {
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         background: 'black',
-        encodings: [
-          {channel: Channel.X, field: 'O', type: Type.ORDINAL}
-        ]
+        encodings: [{channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL}]
       });
 
       assert.equal(specM.toSpec().background, 'black');
@@ -722,26 +721,24 @@ describe('SpecQueryModel', () => {
 
     it('should return a spec with padding as specified', () => {
       const specM = buildSpecQueryModel({
-        mark: Mark.BAR,
+        mark: MARK.BAR,
         padding: {
-          left: 1, top: 2, right: 3, bottom: 4
+          left: 1,
+          top: 2,
+          right: 3,
+          bottom: 4
         },
-        encodings: [
-          {channel: Channel.X, field: 'O', type: Type.ORDINAL}
-        ]
+        encodings: [{channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL}]
       });
 
-      assert.deepEqual(specM.toSpec().padding,
-                       { left: 1, top: 2, right: 3, bottom: 4 });
+      assert.deepEqual(specM.toSpec().padding, {left: 1, top: 2, right: 3, bottom: 4});
     });
 
     it('should return a spec with a title string specified', () => {
       const specM = buildSpecQueryModel({
         title: 'Big Title',
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, field: 'O', type: Type.ORDINAL}
-        ]
+        mark: MARK.BAR,
+        encodings: [{channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL}]
       });
 
       assert.equal(specM.toSpec().title, 'Big Title');
@@ -753,10 +750,8 @@ describe('SpecQueryModel', () => {
           text: 'A Simple Bar Chart',
           anchor: 'start'
         },
-        mark: Mark.BAR,
-        encodings: [
-          {channel: Channel.X, field: 'O', type: Type.ORDINAL}
-        ]
+        mark: MARK.BAR,
+        encodings: [{channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL}]
       });
 
       const title = specM.toSpec().title as TitleParams;
@@ -767,12 +762,11 @@ describe('SpecQueryModel', () => {
 });
 
 describe('SpecQueryModelGroup', () => {
-
   describe('constructor', () => {
     const group: SpecQueryModelGroup = {
       name: '',
       path: '',
-      items: [],
+      items: []
     };
 
     it('should have default values', () => {

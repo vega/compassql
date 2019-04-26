@@ -1,8 +1,10 @@
 import {SUM_OPS} from 'vega-lite/build/src/aggregate';
-import {Channel, NONPOSITION_CHANNELS, supportMark} from 'vega-lite/build/src/channel';
+import * as CHANNEL from 'vega-lite/build/src/channel';
+import {NONPOSITION_CHANNELS, supportMark} from 'vega-lite/build/src/channel';
+import * as MARK from 'vega-lite/build/src/mark';
 import {Mark} from 'vega-lite/build/src/mark';
 import {ScaleType} from 'vega-lite/build/src/scale';
-import {Type} from 'vega-lite/build/src/type';
+import * as TYPE from 'vega-lite/build/src/type';
 import {QueryConfig} from '../config';
 import {SpecQueryModel} from '../model';
 import {getEncodingNestedProp, isEncodingNestedProp, isEncodingProperty, Property} from '../property';
@@ -131,12 +133,12 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       const mark = specM.getMark();
       const encodings = specM.getEncodings();
 
-      if (mark === Mark.BAR) {
+      if (mark === MARK.BAR) {
         for (let encQ of encodings) {
           if (
             isFieldQuery(encQ) &&
-            (encQ.channel === Channel.X || encQ.channel === Channel.Y) &&
-            encQ.type === Type.QUANTITATIVE &&
+            (encQ.channel === CHANNEL.X || encQ.channel === CHANNEL.Y) &&
+            encQ.type === TYPE.QUANTITATIVE &&
             (encQ.scale && (encQ.scale as ScaleQuery).zero === false)
           ) {
             // TODO: zero shouldn't be manually specified
@@ -170,13 +172,13 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           }
 
           switch (encQ.type) {
-            case Type.QUANTITATIVE:
+            case TYPE.QUANTITATIVE:
               return !!encQ.bin;
-            case Type.TEMPORAL:
+            case TYPE.TEMPORAL:
               return !!encQ.timeUnit;
-            case Type.ORDINAL:
+            case TYPE.ORDINAL:
             case ExpandedType.KEY:
-            case Type.NOMINAL:
+            case TYPE.NOMINAL:
               return true;
           }
           /* istanbul ignore next */
@@ -196,13 +198,13 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           // (3) nominal or ordinal field
           // or at least have potential to be (still ambiguous).
           return some(specM.getEncodings(), (encQ: EncodingQuery) => {
-            if ((isFieldQuery(encQ) || isAutoCountQuery(encQ)) && encQ.type === Type.QUANTITATIVE) {
+            if ((isFieldQuery(encQ) || isAutoCountQuery(encQ)) && encQ.type === TYPE.QUANTITATIVE) {
               if (isDisabledAutoCountQuery(encQ)) {
                 return false;
               } else {
                 return isFieldQuery(encQ) && (!encQ.bin || isWildcard(encQ.bin));
               }
-            } else if (isFieldQuery(encQ) && encQ.type === Type.TEMPORAL) {
+            } else if (isFieldQuery(encQ) && encQ.type === TYPE.TEMPORAL) {
               return !encQ.timeUnit || isWildcard(encQ.timeUnit);
             }
             return false; // nominal or ordinal
@@ -244,24 +246,24 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       const mark = specM.getMark();
 
       switch (mark) {
-        case Mark.AREA:
-        case Mark.LINE:
-          return specM.channelUsed(Channel.X) && specM.channelUsed(Channel.Y);
-        case Mark.TEXT:
-          return specM.channelUsed(Channel.TEXT);
-        case Mark.BAR:
-        case Mark.CIRCLE:
-        case Mark.SQUARE:
-        case Mark.TICK:
-        case Mark.RULE:
-        case Mark.RECT:
-          return specM.channelUsed(Channel.X) || specM.channelUsed(Channel.Y);
-        case Mark.POINT:
+        case MARK.AREA:
+        case MARK.LINE:
+          return specM.channelUsed(CHANNEL.X) && specM.channelUsed(CHANNEL.Y);
+        case MARK.TEXT:
+          return specM.channelUsed(CHANNEL.TEXT);
+        case MARK.BAR:
+        case MARK.CIRCLE:
+        case MARK.SQUARE:
+        case MARK.TICK:
+        case MARK.RULE:
+        case MARK.RECT:
+          return specM.channelUsed(CHANNEL.X) || specM.channelUsed(CHANNEL.Y);
+        case MARK.POINT:
           // This allows generating a point plot if channel was not a wildcard.
           return (
             !specM.wildcardIndex.hasProperty(Property.CHANNEL) ||
-            specM.channelUsed(Channel.X) ||
-            specM.channelUsed(Channel.Y)
+            specM.channelUsed(CHANNEL.X) ||
+            specM.channelUsed(CHANNEL.Y)
           );
       }
       /* istanbul ignore next */
@@ -299,7 +301,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           if (isFieldQuery(encQ) && !encQ.aggregate) {
             // isDimension
             hasDim = true;
-            if (contains([Channel.ROW, Channel.COLUMN], encQ.channel)) {
+            if (contains([CHANNEL.ROW, CHANNEL.COLUMN], encQ.channel)) {
               if (specM.wildcardIndex.hasEncodingProperty(index, Property.CHANNEL)) {
                 hasEnumeratedFacetDim = true;
               }
@@ -339,12 +341,12 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   {
     // TODO: we can be smarter and check if bar has occlusion based on profiling statistics
     name: 'omitBarLineAreaWithOcclusion',
-    description: 'Don\'t use bar, line or area to visualize raw plot as they often lead to occlusion.',
+    description: "Don't use bar, line or area to visualize raw plot as they often lead to occlusion.",
     properties: [Property.MARK, Property.AGGREGATE, Property.AUTOCOUNT],
     allowWildcardForProperties: false,
     strict: false,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
-      if (contains([Mark.BAR, Mark.LINE, Mark.AREA], specM.getMark())) {
+      if (contains([MARK.BAR, MARK.LINE, MARK.AREA], specM.getMark())) {
         return specM.isAggregate();
       }
       return true;
@@ -358,8 +360,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     strict: false,
     satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
       const mark = specM.getMark();
-      if (contains([Mark.TICK, Mark.BAR], mark)) {
-        if (specM.channelEncodingField(Channel.SIZE)) {
+      if (contains([MARK.TICK, MARK.BAR], mark)) {
+        if (specM.channelEncodingField(CHANNEL.SIZE)) {
           if (opt.constraintManuallySpecifiedValue) {
             // If size is used and we constraintManuallySpecifiedValue,
             // then the spec violates this constraint.
@@ -369,7 +371,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
             const encodings = specM.specQuery.encodings;
             for (let i = 0; i < encodings.length; i++) {
               const encQ = encodings[i];
-              if (encQ.channel === Channel.SIZE) {
+              if (encQ.channel === CHANNEL.SIZE) {
                 if (specM.wildcardIndex.hasEncodingProperty(i, Property.CHANNEL)) {
                   // If enumerated, then this is bad
                   return false;
@@ -387,7 +389,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
   },
   {
     name: 'omitBarAreaForLogScale',
-    description: 'Do not use bar and area mark for x and y\'s log scale',
+    description: "Do not use bar and area mark for x and y's log scale",
     properties: [
       Property.MARK,
       Property.CHANNEL,
@@ -402,9 +404,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       const encodings = specM.getEncodings();
 
       // TODO: mark or scale type should be enumerated
-      if (mark === Mark.AREA || mark === Mark.BAR) {
+      if (mark === MARK.AREA || mark === MARK.BAR) {
         for (let encQ of encodings) {
-          if (isFieldQuery(encQ) && ((encQ.channel === Channel.X || encQ.channel === Channel.Y) && encQ.scale)) {
+          if (isFieldQuery(encQ) && ((encQ.channel === CHANNEL.X || encQ.channel === CHANNEL.Y) && encQ.scale)) {
             let sType = scaleType(encQ);
 
             if (sType === ScaleType.LOG) {
@@ -475,9 +477,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         }
 
         const channel = encQ.channel;
-        if (channel === Channel.X) {
+        if (channel === CHANNEL.X) {
           hasX = true;
-        } else if (channel === Channel.Y) {
+        } else if (channel === CHANNEL.Y) {
           hasY = true;
         } else if (!isWildcard(channel)) {
           // All non positional channel / Facet
@@ -527,7 +529,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
           // TODO: aggregate for ordinal and temporal
 
-          if (isFieldQuery(encQ) && encQ.type === Type.TEMPORAL) {
+          if (isFieldQuery(encQ) && encQ.type === TYPE.TEMPORAL) {
             // Temporal fields should have timeUnit or is still a wildcard
             if (
               !encQ.timeUnit &&
@@ -536,7 +538,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
               return false;
             }
           }
-          if (encQ.type === Type.QUANTITATIVE) {
+          if (encQ.type === TYPE.QUANTITATIVE) {
             if (isFieldQuery(encQ) && !encQ.bin && !encQ.aggregate) {
               // If Raw Q
               if (
@@ -571,7 +573,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       return every(specM.specQuery.encodings, (encQ, index) => {
         if (isValueQuery(encQ) || isDisabledAutoCountQuery(encQ)) return true; // ignore autoCount field
 
-        if (encQ.channel === Channel.DETAIL) {
+        if (encQ.channel === CHANNEL.DETAIL) {
           // Detail channel for raw plot is not good, except when its enumerated
           // or when it's manually specified but we constraintManuallySpecifiedValue.
           if (
@@ -639,7 +641,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     strict: false,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
       const encodings = specM.getEncodings();
-      if (encodings.length === 1 && encodings[0].channel === Channel.Y) {
+      if (encodings.length === 1 && encodings[0].channel === CHANNEL.Y) {
         return false;
       }
       return true;
@@ -664,12 +666,12 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       const mark = specM.getMark();
 
       switch (mark) {
-        case Mark.AREA:
-        case Mark.LINE:
+        case MARK.AREA:
+        case MARK.LINE:
           if (specM.isAggregate()) {
             // TODO: refactor based on profiling statistics
-            const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
-            const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
+            const xEncQ = specM.getEncodingQueryByChannel(CHANNEL.X);
+            const yEncQ = specM.getEncodingQueryByChannel(CHANNEL.Y);
             const xIsMeasure = isMeasure(xEncQ);
             const yIsMeasure = isMeasure(yEncQ);
 
@@ -687,18 +689,18 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
             // TODO: allow connected scatterplot
           }
           return true;
-        case Mark.TEXT:
+        case MARK.TEXT:
           // FIXME correctly when we add text
           return true;
-        case Mark.BAR:
-        case Mark.TICK:
+        case MARK.BAR:
+        case MARK.TICK:
           // Bar and tick should not use size.
-          if (specM.channelEncodingField(Channel.SIZE)) {
+          if (specM.channelEncodingField(CHANNEL.SIZE)) {
             return false;
           } else {
             // Tick and Bar should have one and only one measure
-            const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
-            const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
+            const xEncQ = specM.getEncodingQueryByChannel(CHANNEL.X);
+            const yEncQ = specM.getEncodingQueryByChannel(CHANNEL.Y);
             const xIsMeasure = isMeasure(xEncQ);
             const yIsMeasure = isMeasure(yEncQ);
             if (xIsMeasure !== yIsMeasure) {
@@ -706,32 +708,32 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
             }
             return false;
           }
-        case Mark.RECT:
+        case MARK.RECT:
           // Until CompassQL supports layering, it only makes sense for
           // rect to encode DxD or 1xD (otherwise just use bar).
           // Furthermore, color should only be used in a 'heatmap' fashion
           // (with a measure field).
-          const xEncQ = specM.getEncodingQueryByChannel(Channel.X);
-          const yEncQ = specM.getEncodingQueryByChannel(Channel.Y);
+          const xEncQ = specM.getEncodingQueryByChannel(CHANNEL.X);
+          const yEncQ = specM.getEncodingQueryByChannel(CHANNEL.Y);
           const xIsDimension = isDimension(xEncQ);
           const yIsDimension = isDimension(yEncQ);
 
-          const colorEncQ = specM.getEncodingQueryByChannel(Channel.COLOR);
+          const colorEncQ = specM.getEncodingQueryByChannel(CHANNEL.COLOR);
           const colorIsQuantitative = isMeasure(colorEncQ);
-          const colorIsOrdinal = isFieldQuery(colorEncQ) ? colorEncQ.type === Type.ORDINAL : false;
+          const colorIsOrdinal = isFieldQuery(colorEncQ) ? colorEncQ.type === TYPE.ORDINAL : false;
 
           const correctChannels =
             (xIsDimension && yIsDimension) ||
-            (xIsDimension && !specM.channelUsed(Channel.Y)) ||
-            (yIsDimension && !specM.channelUsed(Channel.X));
+            (xIsDimension && !specM.channelUsed(CHANNEL.Y)) ||
+            (yIsDimension && !specM.channelUsed(CHANNEL.X));
 
           const correctColor = !colorEncQ || (colorEncQ && (colorIsQuantitative || colorIsOrdinal));
 
           return correctChannels && correctColor;
-        case Mark.CIRCLE:
-        case Mark.POINT:
-        case Mark.SQUARE:
-        case Mark.RULE:
+        case MARK.CIRCLE:
+        case MARK.POINT:
+        case MARK.SQUARE:
+        case MARK.RULE:
           return true;
       }
       /* istanbul ignore next */
@@ -822,10 +824,10 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
               let channel = encQ.channel;
 
               if (
-                channel !== Channel.X &&
-                channel !== Channel.Y &&
-                channel !== Channel.ROW &&
-                channel !== Channel.COLUMN
+                channel !== CHANNEL.X &&
+                channel !== CHANNEL.Y &&
+                channel !== CHANNEL.ROW &&
+                channel !== CHANNEL.COLUMN
               ) {
                 // Non-position fields should not be unaggreated fields
                 if (isFieldQuery(encQ) && !encQ.aggregate) {

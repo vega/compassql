@@ -1,7 +1,7 @@
-import {Channel} from 'vega-lite/build/src/channel';
-import {Mark} from 'vega-lite/build/src/mark';
-import {Type} from 'vega-lite/build/src/type';
 import {assert} from 'chai';
+import * as CHANNEL from 'vega-lite/build/src/channel';
+import * as MARK from 'vega-lite/build/src/mark';
+import * as TYPE from 'vega-lite/build/src/type';
 import {normalize} from '../../src/query';
 import {Query} from '../../src/query/query';
 
@@ -10,10 +10,8 @@ describe('query', () => {
     it('should correctly normalize query', () => {
       const q: Query = {
         spec: {
-          mark: Mark.POINT,
-          encodings: [
-            {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
-          ]
+          mark: MARK.POINT,
+          encodings: [{channel: CHANNEL.X, field: '*', type: TYPE.QUANTITATIVE}]
         },
         groupBy: 'fieldTransform',
         chooseBy: 'effectiveness',
@@ -22,15 +20,15 @@ describe('query', () => {
 
       assert.deepEqual(normalize(q), {
         spec: {
-          mark: Mark.POINT,
-          encodings: [
-            {channel: Channel.X, field: '*', type: Type.QUANTITATIVE}
-          ]
+          mark: MARK.POINT,
+          encodings: [{channel: CHANNEL.X, field: '*', type: TYPE.QUANTITATIVE}]
         },
-        nest: [{
-          groupBy: 'fieldTransform',
-          orderGroupBy: 'effectiveness'
-        }],
+        nest: [
+          {
+            groupBy: 'fieldTransform',
+            orderGroupBy: 'effectiveness'
+          }
+        ],
         chooseBy: 'effectiveness'
       });
     });

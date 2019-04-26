@@ -1,17 +1,12 @@
-
-import {Channel} from 'vega-lite/build/src/channel';
-import {Mark} from 'vega-lite/build/src/mark';
+import {assert} from 'chai';
+import * as CHANNEL from 'vega-lite/build/src/channel';
+import * as MARK from 'vega-lite/build/src/mark';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
-import {Type} from 'vega-lite/build/src/type';
-
-import {schema} from '../fixture';
-
+import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SpecQueryModel, SpecQueryModelGroup} from '../../src/model';
-import {rank, comparatorFactory} from '../../src/ranking/ranking';
-
-import {assert} from 'chai';
-
+import {comparatorFactory, rank} from '../../src/ranking/ranking';
+import {schema} from '../fixture';
 
 describe('ranking', () => {
   describe('rank', () => {
@@ -20,14 +15,12 @@ describe('ranking', () => {
         {
           name: '',
           path: '',
-          items: [],
+          items: []
         },
         {
           spec: {
-            mark: Mark.BAR,
-            encodings: [
-              {channel: Channel.SHAPE, field: 'N', type: Type.NOMINAL},
-            ]
+            mark: MARK.BAR,
+            encodings: [{channel: CHANNEL.SHAPE, field: 'N', type: TYPE.NOMINAL}]
           },
           chooseBy: 'effectiveness'
         },
@@ -40,75 +33,81 @@ describe('ranking', () => {
 
   describe('comparatorFactory', () => {
     describe('nested / multiple ranking', () => {
-      it('should create a comparator that uses the second ranker of an orderBy array to specs ' +
-       'if the first ranker results in a tie', () => {
-        const specM1 = SpecQueryModel.build(
-          {
-            mark: Mark.LINE,
-            encodings: [
-              {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
-              {aggregate: 'mean', channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
-            ]
-          },
-          schema,
-          DEFAULT_QUERY_CONFIG
-        );
+      it(
+        'should create a comparator that uses the second ranker of an orderBy array to specs ' +
+          'if the first ranker results in a tie',
+        () => {
+          const specM1 = SpecQueryModel.build(
+            {
+              mark: MARK.LINE,
+              encodings: [
+                {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: TimeUnit.DAY},
+                {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE}
+              ]
+            },
+            schema,
+            DEFAULT_QUERY_CONFIG
+          );
 
-        const specM2 = SpecQueryModel.build(
-          {
-            mark: Mark.POINT,
-            encodings: [
-              {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
-              {aggregate: 'mean', channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE},
-            ]
-          },
-          schema,
-          DEFAULT_QUERY_CONFIG
-        );
+          const specM2 = SpecQueryModel.build(
+            {
+              mark: MARK.POINT,
+              encodings: [
+                {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: TimeUnit.DAY},
+                {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE}
+              ]
+            },
+            schema,
+            DEFAULT_QUERY_CONFIG
+          );
 
-        const comparator = comparatorFactory(['aggregationQuality', 'effectiveness'], schema, DEFAULT_QUERY_CONFIG);
-        assert.isBelow(comparator(specM1, specM2), 0);
-      });
+          const comparator = comparatorFactory(['aggregationQuality', 'effectiveness'], schema, DEFAULT_QUERY_CONFIG);
+          assert.isBelow(comparator(specM1, specM2), 0);
+        }
+      );
 
-      it('should create a comparator that uses the first orderBy to sort specs ' +
-       'if the first ranker does not produce a tie', () => {
-        const specM1 = SpecQueryModel.build(
-          {
-            mark: Mark.POINT,
-            encodings: [
-              {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
-              {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE},
-            ]
-          },
-          schema,
-          DEFAULT_QUERY_CONFIG
-        );
+      it(
+        'should create a comparator that uses the first orderBy to sort specs ' +
+          'if the first ranker does not produce a tie',
+        () => {
+          const specM1 = SpecQueryModel.build(
+            {
+              mark: MARK.POINT,
+              encodings: [
+                {channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE},
+                {channel: CHANNEL.Y, field: 'Q1', type: TYPE.QUANTITATIVE}
+              ]
+            },
+            schema,
+            DEFAULT_QUERY_CONFIG
+          );
 
-        const specM2 = SpecQueryModel.build(
-          {
-            mark: Mark.POINT,
-            encodings: [
-              {aggregate: 'mean', channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
-              {aggregate: 'mean', channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE},
-            ]
-          },
-          schema,
-          DEFAULT_QUERY_CONFIG
-        );
+          const specM2 = SpecQueryModel.build(
+            {
+              mark: MARK.POINT,
+              encodings: [
+                {aggregate: 'mean', channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE},
+                {aggregate: 'mean', channel: CHANNEL.Y, field: 'Q1', type: TYPE.QUANTITATIVE}
+              ]
+            },
+            schema,
+            DEFAULT_QUERY_CONFIG
+          );
 
-        const comparator = comparatorFactory(['aggregationQuality', 'effectiveness'], schema, DEFAULT_QUERY_CONFIG);
-        assert.isBelow(comparator(specM1, specM2), 0);
-      });
+          const comparator = comparatorFactory(['aggregationQuality', 'effectiveness'], schema, DEFAULT_QUERY_CONFIG);
+          assert.isBelow(comparator(specM1, specM2), 0);
+        }
+      );
     });
 
     describe('single ranking', () => {
       it('should create a comparator that returns a value of 0 when the orderBy ranker results in a tie', () => {
         const specM1 = SpecQueryModel.build(
           {
-            mark: Mark.LINE,
+            mark: MARK.LINE,
             encodings: [
-              {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
-              {aggregate: 'mean', channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE}
+              {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: TimeUnit.DAY},
+              {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE}
             ]
           },
           schema,
@@ -117,10 +116,10 @@ describe('ranking', () => {
 
         const specM2 = SpecQueryModel.build(
           {
-            mark: Mark.POINT,
+            mark: MARK.POINT,
             encodings: [
-              {channel: Channel.X, field: 'date', type: Type.TEMPORAL, timeUnit: TimeUnit.DAY},
-              {aggregate: 'mean', channel: Channel.Y, field: 'price', type: Type.QUANTITATIVE}
+              {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: TimeUnit.DAY},
+              {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE}
             ]
           },
           schema,
@@ -134,10 +133,10 @@ describe('ranking', () => {
       it('should create a comparator that correctly sorts two spec when passed an orderBy string of aggregationQuality', () => {
         const specM1 = SpecQueryModel.build(
           {
-            mark: Mark.POINT,
+            mark: MARK.POINT,
             encodings: [
-              {channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
-              {channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE},
+              {channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE},
+              {channel: CHANNEL.Y, field: 'Q1', type: TYPE.QUANTITATIVE}
             ]
           },
           schema,
@@ -146,10 +145,10 @@ describe('ranking', () => {
 
         const specM2 = SpecQueryModel.build(
           {
-            mark: Mark.POINT,
+            mark: MARK.POINT,
             encodings: [
-              {aggregate: 'mean', channel: Channel.X, field: 'Q', type: Type.QUANTITATIVE},
-              {aggregate: 'mean', channel: Channel.Y, field: 'Q1', type: Type.QUANTITATIVE},
+              {aggregate: 'mean', channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE},
+              {aggregate: 'mean', channel: CHANNEL.Y, field: 'Q1', type: TYPE.QUANTITATIVE}
             ]
           },
           schema,

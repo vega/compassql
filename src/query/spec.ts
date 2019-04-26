@@ -3,7 +3,7 @@ import {Channel} from 'vega-lite/build/src/channel';
 import {Config} from 'vega-lite/build/src/config';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
-import {FacetedExtendedUnitSpec, TopLevel} from 'vega-lite/build/src/spec';
+import {FacetedUnitSpec, TopLevel} from 'vega-lite/build/src/spec';
 import {stack, StackOffset, StackProperties} from 'vega-lite/build/src/stack';
 import {TitleParams} from 'vega-lite/build/src/title';
 import {ALL_ENCODING_PROPS, getEncodingNestedProp, isEncodingTopLevelProperty, Property, toKey} from '../property';
@@ -79,7 +79,7 @@ export interface SpecQuery {
  * @param {ExtendedUnitSpec} spec
  * @returns
  */
-export function fromSpec(spec: TopLevel<FacetedExtendedUnitSpec>): SpecQuery {
+export function fromSpec(spec: TopLevel<FacetedUnitSpec>): SpecQuery {
   return extend(
     spec.data ? {data: spec.data} : {},
     spec.transform ? {transform: spec.transform} : {},

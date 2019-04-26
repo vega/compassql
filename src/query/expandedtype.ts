@@ -1,14 +1,16 @@
+import * as TYPE from 'vega-lite/build/src/type';
 import {Type} from 'vega-lite/build/src/type';
+
 export namespace ExpandedType {
-  export const QUANTITATIVE = Type.QUANTITATIVE;
-  export const ORDINAL = Type.ORDINAL;
-  export const TEMPORAL = Type.TEMPORAL;
-  export const NOMINAL = Type.NOMINAL;
+  export const QUANTITATIVE = TYPE.QUANTITATIVE;
+  export const ORDINAL = TYPE.ORDINAL;
+  export const TEMPORAL = TYPE.TEMPORAL;
+  export const NOMINAL = TYPE.NOMINAL;
   export const KEY: 'key' = 'key';
 }
 
 export type ExpandedType = Type | typeof ExpandedType.KEY;
 
 export function isDiscrete(fieldType: any) {
-  return fieldType === Type.ORDINAL || fieldType === Type.NOMINAL || fieldType === ExpandedType.KEY;
+  return fieldType === TYPE.ORDINAL || fieldType === TYPE.NOMINAL || fieldType === ExpandedType.KEY;
 }
