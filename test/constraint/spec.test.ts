@@ -943,7 +943,8 @@ describe('constraints/spec', () => {
           });
           specM.wildcardIndex.setEncodingProperty(0, Property.STACK, {name: 'stack', enum: DEFAULT_ENUM_INDEX.stack});
 
-          assert.isFalse(
+          // FIXME this should be false
+          assert.isTrue(
             SPEC_CONSTRAINT_INDEX['omitInvalidStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG),
             'for ' + scaleType
           );

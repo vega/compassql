@@ -88,6 +88,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         field: 'f', // actual field doesn't really matter here
         ...toFieldDef(fieldQ, {schema, props: ['bin', 'timeUnit', 'type']})
       };
+
       return channelCompatibility(fieldDef, fieldQ.channel as Channel).compatible;
     }
   },
@@ -241,7 +242,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
   },
   {
     name: 'typeMatchesPrimitiveType',
-    description: "Data type should be supported by field's primitive type.",
+    description: 'Data type should be supported by field\'s primitive type.',
     properties: [Property.FIELD, Property.TYPE],
     allowWildcardForProperties: false,
     strict: true,
@@ -277,7 +278,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
   },
   {
     name: 'typeMatchesSchemaType',
-    description: "Enumerated data type of a field should match the field's type in the schema.",
+    description: 'Enumerated data type of a field should match the field\'s type in the schema.',
     properties: [Property.FIELD, Property.TYPE],
     allowWildcardForProperties: false,
     strict: false,

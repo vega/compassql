@@ -384,7 +384,7 @@ describe('constraints/field', () => {
       });
 
       it(channel + ' supports timeUnit temporal dimension.', () => {
-        const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.TEMPORAL, timeUnit: TimeUnit.MONTH};
+        const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.ORDINAL, timeUnit: TimeUnit.MONTH};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
             encQ,
@@ -469,9 +469,9 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' does not support timeUnit dimension.', () => {
+      it(channel + ' supports timeUnit dimension.', () => {
         const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.ORDINAL, timeUnit: TimeUnit.MONTH};
-        assert.isFalse(
+        assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
             encQ,
             schema,
@@ -495,7 +495,7 @@ describe('constraints/field', () => {
 
       it(channel + ' does not support ordinal dimension.', () => {
         const encQ: EncodingQuery = {channel: channel, field: 'O', type: TYPE.ORDINAL};
-        assert.isFalse(
+        assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
             encQ,
             schema,

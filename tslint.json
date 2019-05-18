@@ -17,14 +17,7 @@
     "no-conditional-assignment": true,
     "no-bitwise": true,
     "no-consecutive-blank-lines": [true, 3],
-    "no-console": [
-      true,
-      "debug",
-      "info",
-      "time",
-      "timeEnd",
-      "trace"
-    ],
+    "no-console": [true, "debug", "info", "time", "timeEnd", "trace"],
     "no-construct": true,
     "no-debugger": true,
     "no-empty": true,
@@ -37,13 +30,7 @@
     "no-unused-variable": [true, {"ignore-pattern": "^_"}],
     "no-use-before-declare": true,
     "no-var-keyword": true,
-    "one-line": [
-      true,
-      "check-open-brace",
-      "check-catch",
-      "check-else",
-      "check-whitespace"
-    ],
+    "one-line": [true, "check-open-brace", "check-catch", "check-else", "check-whitespace"],
     "typedef-whitespace": [
       true,
       {
@@ -54,7 +41,7 @@
         "variable-declaration": "nospace"
       }
     ],
-    "quotemark": [true, "single"],
+    "quotemark": [true, "single", "avoid-escape"],
     "triple-equals": [true, "allow-null-check"],
     "variable-name": [true, "check-format", "allow-leading-underscore", "ban-keywords"]
   }

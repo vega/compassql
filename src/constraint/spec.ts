@@ -760,6 +760,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       if (!specM.wildcardIndex.hasProperty(Property.STACK)) {
         return true;
       }
+
       const stackProps = specM.getVlStack();
       if (stackProps === null && specM.getStackOffset() !== null) {
         return false;

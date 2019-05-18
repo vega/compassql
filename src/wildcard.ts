@@ -161,7 +161,7 @@ export function getDefaultName(prop: Property) {
 /**
  * Generic index for default enum (values to enumerate) of a particular definition type.
  */
-export type DefEnumIndex<T> = {[P in keyof T]: T[P][]};
+export type DefEnumIndex<T> = {[P in keyof T]-?: T[P][]};
 
 const DEFAULT_BOOLEAN_ENUM = [false, true];
 
@@ -193,7 +193,10 @@ const DEFAULT_BIN_PROPS_ENUM: DefEnumIndex<BinParams> = {
   step: [undefined],
   steps: [undefined],
   minstep: [undefined],
-  divide: [[5, 2]]
+  divide: [[5, 2]],
+  binned: [false],
+  anchor: [undefined],
+  nice: [true]
 };
 
 const DEFAULT_SORT_PROPS: DefEnumIndex<EncodingSortField<string>> = {
@@ -207,6 +210,9 @@ const DEFAULT_SCALE_PROPS_ENUM: DefEnumIndex<Scale> = {
   domain: [undefined],
   base: [undefined],
   exponent: [1, 2],
+  constant: [undefined],
+
+  bins: [undefined],
 
   clamp: DEFAULT_BOOLEAN_ENUM,
   nice: DEFAULT_BOOLEAN_ENUM,
@@ -231,15 +237,39 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   orient: [undefined],
   values: [undefined],
 
+  bandPosition: [undefined],
   encoding: [undefined],
 
   domain: DEFAULT_BOOLEAN_ENUM,
+  domainColor: [undefined],
+  domainDash: [undefined],
+  domainDashOffset: [undefined],
+  domainOpacity: [undefined],
+  domainWidth: [undefined],
+
+  formatType: [undefined],
 
   grid: DEFAULT_BOOLEAN_ENUM,
+  gridColor: [undefined],
+  gridDash: [undefined],
+  gridDashOffset: [undefined],
+  gridOpacity: [undefined],
+  gridWidth: [undefined],
 
   format: [undefined],
   labels: DEFAULT_BOOLEAN_ENUM,
+  labelAlign: [undefined],
   labelAngle: [undefined],
+  labelBaseline: [undefined],
+  labelColor: [undefined],
+  labelFlushOffset: [undefined],
+  labelFont: [undefined],
+  labelFontSize: [undefined],
+  labelFontStyle: [undefined],
+  labelFontWeight: [undefined],
+  labelLimit: [undefined],
+  labelOpacity: [undefined],
+  labelSeparation: [undefined],
   labelOverlap: [undefined],
   labelPadding: [undefined],
   labelBound: [undefined],
@@ -250,22 +280,102 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   position: [undefined],
 
   ticks: DEFAULT_BOOLEAN_ENUM,
+  tickColor: [undefined],
   tickCount: [undefined],
+  tickDash: [undefined],
+  tickExtra: [undefined],
+  tickDashOffset: [undefined],
+  tickMinStep: [undefined],
+  tickOffset: [undefined],
+  tickOpacity: [undefined],
+  tickRound: [undefined],
   tickSize: [undefined],
+  tickWidth: [undefined],
 
   title: [undefined],
-  titlePadding: [undefined]
+  titleAlign: [undefined],
+  titleAnchor: [undefined],
+  titleAngle: [undefined],
+  titleBaseline: [undefined],
+  titleColor: [undefined],
+  titleFont: [undefined],
+  titleFontSize: [undefined],
+  titleFontStyle: [undefined],
+  titleFontWeight: [undefined],
+  titleLimit: [undefined],
+  titleOpacity: [undefined],
+  titlePadding: [undefined],
+  titleX: [undefined],
+  titleY: [undefined]
 };
 
 const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
   orient: ['left', 'right'],
   format: [undefined],
+  type: [undefined],
   values: [undefined],
+  zindex: [undefined],
+
+  clipHeight: [undefined],
+  columnPadding: [undefined],
+  columns: [undefined],
+  cornerRadius: [undefined],
+  direction: [undefined],
+  encoding: [undefined],
+  fillColor: [undefined],
+  formatType: [undefined],
+  gridAlign: [undefined],
+  offset: [undefined],
+  padding: [undefined],
+  rowPadding: [undefined],
+  strokeColor: [undefined],
+
+  labelAlign: [undefined],
+  labelBaseline: [undefined],
+  labelColor: [undefined],
+  labelFont: [undefined],
+  labelFontSize: [undefined],
+  labelFontStyle: [undefined],
+  labelFontWeight: [undefined],
+  labelLimit: [undefined],
+  labelOffset: [undefined],
+  labelOpacity: [undefined],
+  labelOverlap: [undefined],
+  labelPadding: [undefined],
+  labelSeparation: [undefined],
+
+  gradientLength: [undefined],
+  gradientOpacity: [undefined],
+  gradientStrokeColor: [undefined],
+  gradientStrokeWidth: [undefined],
+  gradientThickness: [undefined],
+
+  symbolDash: [undefined],
+  symbolDashOffset: [undefined],
+  symbolFillColor: [undefined],
+  symbolOffset: [undefined],
+  symbolOpacity: [undefined],
+  symbolSize: [undefined],
+  symbolStrokeColor: [undefined],
+  symbolStrokeWidth: [undefined],
+  symbolType: [undefined],
 
   tickCount: [undefined],
+  tickMinStep: [undefined],
+
   title: [undefined],
-  type: [undefined],
-  zindex: [undefined]
+  titleAnchor: [undefined],
+  titleAlign: [undefined],
+  titleBaseline: [undefined],
+  titleColor: [undefined],
+  titleFont: [undefined],
+  titleFontSize: [undefined],
+  titleFontStyle: [undefined],
+  titleFontWeight: [undefined],
+  titleLimit: [undefined],
+  titleOpacity: [undefined],
+  titleOrient: [undefined],
+  titlePadding: [undefined]
 };
 
 // Use FullEnumIndex to make sure we have all properties specified here!
@@ -287,6 +397,7 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
   value: [undefined],
 
   format: [undefined],
+  title: [undefined],
   scale: [true],
   axis: DEFAULT_BOOLEAN_ENUM,
   legend: DEFAULT_BOOLEAN_ENUM,
