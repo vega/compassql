@@ -135,7 +135,7 @@ export function getVlStack(specQ: SpecQuery): StackProperties {
   const encoding = toEncoding(specQ.encodings, {schema: null, wildcardMode: 'null'});
   const mark = specQ.mark as Mark;
 
-  return stack(mark, encoding, getStackOffset(specQ));
+  return stack(mark, encoding, undefined, {disallowNonLinearStack: true});
 }
 
 /**

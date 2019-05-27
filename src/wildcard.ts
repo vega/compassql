@@ -1,7 +1,7 @@
 import {Axis, AXIS_PROPERTIES} from 'vega-lite/build/src/axis';
 import {BinParams} from 'vega-lite/build/src/bin';
 import {Channel, COLOR, COLUMN, ROW, SIZE, X, Y} from 'vega-lite/build/src/channel';
-import {FieldDef} from 'vega-lite/build/src/channeldef';
+import {TypedFieldDef} from 'vega-lite/build/src/channeldef';
 import {Legend, LEGEND_PROPERTIES} from 'vega-lite/build/src/legend';
 import * as MARK from 'vega-lite/build/src/mark';
 import {Mark} from 'vega-lite/build/src/mark';
@@ -170,7 +170,7 @@ export type EnumIndex = {
   channel: Channel[];
   autoCount: boolean[];
   hasFn: boolean[];
-} & DefEnumIndex<FieldDef<string>> & {
+} & DefEnumIndex<TypedFieldDef<string>> & {
     sort: (EncodingSortField<string> | SortOrder)[];
     stack: StackOffset[];
     format: string[];
@@ -343,6 +343,9 @@ const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
   labelOverlap: [undefined],
   labelPadding: [undefined],
   labelSeparation: [undefined],
+
+  legendX: [undefined],
+  legendY: [undefined],
 
   gradientLength: [undefined],
   gradientOpacity: [undefined],

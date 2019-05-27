@@ -298,7 +298,6 @@ export function scaleType(fieldQ: FieldQuery) {
   // we will just call it with mark = undefined .
   // Thus, currently, we will always get a point scale unless a CompassQuery specifies band.
   const markType: Mark = undefined;
-  const scaleConfig = {};
 
   if (isWildcard(scale.type) || isWildcard(type) || isWildcard(channel) || isWildcard(bin)) {
     return undefined;
@@ -326,5 +325,5 @@ export function scaleType(fieldQ: FieldQuery) {
     timeUnit: timeUnit as TimeUnit,
     bin: bin as BinParams
   };
-  return compileScaleType({type: scale.type}, channel, fieldDef, markType, scaleConfig);
+  return compileScaleType({type: scale.type}, channel, fieldDef, markType);
 }
