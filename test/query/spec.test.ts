@@ -11,7 +11,7 @@ import {DEFAULT_ENUM_INDEX} from '../../src/wildcard';
 describe('query/spec', () => {
   describe('getStackOffset', () => {
     it('should return the stack offset specified', () => {
-      DEFAULT_ENUM_INDEX.stack.forEach(stackOffset => {
+      DEFAULT_ENUM_INDEX.stack.forEach((stackOffset: StackOffset | null) => {
         const specQ: SpecQuery = {
           mark: 'bar',
           encodings: [
@@ -28,7 +28,7 @@ describe('query/spec', () => {
 
   describe('getStackChannel', () => {
     it('should return the channel in which stack is specified', () => {
-      DEFAULT_ENUM_INDEX.stack.forEach(stackOffset => {
+      DEFAULT_ENUM_INDEX.stack.forEach((stackOffset: StackOffset | null) => {
         const specStackInX: SpecQuery = {
           mark: 'bar',
           encodings: [

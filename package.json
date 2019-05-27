@@ -77,7 +77,8 @@
   "dependencies": {
     "datalib": "~1.7.0",
     "typescript-json-schema": "^0.9.0",
-    "vega-lite": "3.3.0"
+    "vega-lite": "^3.3.0",
+    "yargs": "^13.2.4"
   },
   "jest": {
     "transform": {

@@ -33,7 +33,12 @@ export class MarkScorer extends Scorer {
 
     const feature = xType + '_' + yType + '_' + isOccluded + '_' + mark;
     const featureScore = this.getFeatureScore(feature);
-    return [featureScore];
+
+    if (featureScore) {
+      return [featureScore];
+    }
+    console.error('feature score missing for', feature);
+    return [];
   }
 }
 
@@ -254,8 +259,9 @@ function init() {
   });
 
   // DxD
-  DISCRETE_OR_NONE.forEach(xType => {
-    DISCRETE_OR_NONE.forEach(yType => {
+  // Note: We use for loop here because using forEach sometimes leads to a mysterious bug
+  for (const xType of DISCRETE_OR_NONE) {
+    for (const yType of DISCRETE_OR_NONE) {
       // has occlusion
       const ddMark = {
         point: 0,
@@ -278,7 +284,8 @@ function init() {
         const feature = featurize(xType, yType, false, mark);
         SCORE[feature] = score;
       });
-    });
-  });
+    }
+  }
+
   return SCORE;
 }

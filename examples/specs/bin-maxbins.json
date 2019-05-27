@@ -16,8 +16,7 @@
       "groupBy": ["field", "aggregate", "bin", "timeUnit", "stack"],
       "orderGroupBy": "aggregationQuality"
     },
-    {"groupBy": "encoding", "orderGroupBy": "effectiveness"},
-    {"groupBy": "transpose", "orderGroupBy": "effectiveness"}
+    {"groupBy": "encoding", "orderGroupBy": "effectiveness"}
   ],
   "orderBy": "effectiveness",
   "config": {

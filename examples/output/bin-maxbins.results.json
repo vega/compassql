@@ -1,0 +1,31 @@
+{
+  "name": "",
+  "path": "",
+  "items": [
+    {
+      "name": "autocount()|bin(Miles_per_Gallon)",
+      "path": "/autocount()|bin(Miles_per_Gallon)",
+      "items": [
+        {
+          "name": "xy:autocount()|xy:bin(Miles_per_Gallon,q)",
+          "path": "/autocount()|bin(Miles_per_Gallon)/xy:autocount()|xy:bin(Miles_per_Gallon,q)",
+          "items": [
+            "bar|x:bin(Miles_per_Gallon,q,maxbins=5)|y:count(*,q)",
+            "bar|x:bin(Miles_per_Gallon,q,maxbins=10)|y:count(*,q)",
+            "bar|x:bin(Miles_per_Gallon,q,maxbins=20)|y:count(*,q)"
+          ]
+        }
+      ],
+      "groupBy": "encoding",
+      "orderGroupBy": "effectiveness"
+    }
+  ],
+  "groupBy": [
+    "field",
+    "aggregate",
+    "bin",
+    "timeUnit",
+    "stack"
+  ],
+  "orderGroupBy": "aggregationQuality"
+}

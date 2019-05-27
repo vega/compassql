@@ -6,9 +6,7 @@ const fs = require('fs');
 const cql = require('../build/compassql');
 
 // arguments
-const args = require('yargs')
-    .usage('recommend.js <compassql_spec_file>')
-    .argv;
+const args = require('yargs').usage('recommend.js <compassql_spec_file>').argv;
 
 const specFile = args._[0] || 'dev/stdin';
 
@@ -17,7 +15,7 @@ fs.readFile(specFile, 'utf8', (err, text) => {
   if (err) throw err;
   const spec = JSON.parse(text);
   loadDataProcessAndRecommend(spec);
-})
+});
 
 function loadDataProcessAndRecommend(spec) {
   // load the data.
@@ -48,10 +46,10 @@ function processAndRecommend(data, spec) {
   const output = cql.recommend(query, schema, opt);
 
   // get the resulting specs
-  const result = cql.result.mapLeaves(output.result, (item) => {
+  const result = cql.result.mapLeaves(output.result, item => {
     return cql.query.shorthand.vlSpec(item.toSpec());
   });
 
   const toWrite = JSON.stringify(result, null, 2);
-  process.stdout.write(toWrite)
+  process.stdout.write(toWrite);
 }

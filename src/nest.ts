@@ -1,16 +1,11 @@
-
 import {isArray} from 'datalib/src/util';
-
-import { SpecQueryModel, SpecQueryModelGroup } from './model';
+import {SpecQueryModel, SpecQueryModelGroup} from './model';
 import {Property} from './property';
 import {PropIndex} from './propindex';
-import {Dict} from './util';
-
-import {parseGroupBy, GROUP_BY_FIELD_TRANSFORM, GROUP_BY_ENCODING} from './query/groupby';
-import {spec as specShorthand, Replacer} from './query/shorthand';
+import {GROUP_BY_ENCODING, GROUP_BY_FIELD_TRANSFORM, Nest, parseGroupBy} from './query/groupby';
+import {Replacer, spec as specShorthand} from './query/shorthand';
 import {SpecQuery} from './query/spec';
-import {Nest} from './query/groupby';
-
+import {Dict} from './util';
 
 /**
  * Registry for all possible grouping key functions.
@@ -38,7 +33,7 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
     const rootGroup: SpecQueryModelGroup = {
       name: '',
       path: '',
-      items: [],
+      items: []
     };
     let groupIndex: Dict<SpecQueryModelGroup> = {};
 
@@ -49,9 +44,9 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
     let replaces: Array<PropIndex<Dict<string>>> = [];
     let replacers: Array<PropIndex<Replacer>> = [];
 
-    for (let l = 0 ; l < queryNest.length; l++) {
-      includes.push(l > 0 ? includes[l-1].duplicate() : new PropIndex<boolean>());
-      replaces.push(l > 0 ? replaces[l-1].duplicate() : new PropIndex<Dict<string>>());
+    for (let l = 0; l < queryNest.length; l++) {
+      includes.push(l > 0 ? includes[l - 1].duplicate() : new PropIndex<boolean>());
+      replaces.push(l > 0 ? replaces[l - 1].duplicate() : new PropIndex<Dict<string>>());
 
       const groupBy = queryNest[l].groupBy;
       if (isArray(groupBy)) {
@@ -63,23 +58,24 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
 
     // With includes and replacers, now we can construct the nesting tree
 
-    specModels.forEach((specM) => {
+    specModels.forEach(specM => {
       let path = '';
       let group: SpecQueryModelGroup = rootGroup;
-      for (let l = 0 ; l < queryNest.length; l++) {
-        const groupBy = group.groupBy = queryNest[l].groupBy;
+      for (let l = 0; l < queryNest.length; l++) {
+        const groupBy = (group.groupBy = queryNest[l].groupBy);
         group.orderGroupBy = queryNest[l].orderGroupBy;
 
-        const key = isArray(groupBy) ?
-          specShorthand(specM.specQuery, includes[l], replacers[l]) :
-          groupRegistry[groupBy](specM.specQuery);
+        const key = isArray(groupBy)
+          ? specShorthand(specM.specQuery, includes[l], replacers[l])
+          : groupRegistry[groupBy](specM.specQuery);
 
         path += '/' + key;
-        if (!groupIndex[path]) { // this item already exists on the path
+        if (!groupIndex[path]) {
+          // this item already exists on the path
           groupIndex[path] = {
             name: key,
             path: path,
-            items: [],
+            items: []
           };
 
           group.items.push(groupIndex[path]);
@@ -94,7 +90,7 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
     return {
       name: '',
       path: '',
-      items: specModels,
+      items: specModels
     };
   }
 }
@@ -108,29 +104,19 @@ export function getGroupByKey(specM: SpecQuery, groupBy: string) {
 }
 
 registerKeyFn(FIELD, (specQ: SpecQuery) => {
-  return specShorthand(specQ,
-    PARSED_GROUP_BY_FIELD.include,
-    PARSED_GROUP_BY_FIELD.replacer
-  );
+  return specShorthand(specQ, PARSED_GROUP_BY_FIELD.include, PARSED_GROUP_BY_FIELD.replacer);
 });
 
 export const PARSED_GROUP_BY_FIELD_TRANSFORM = parseGroupBy(GROUP_BY_FIELD_TRANSFORM);
 
 registerKeyFn(FIELD_TRANSFORM, (specQ: SpecQuery) => {
-  return specShorthand(specQ,
-    PARSED_GROUP_BY_FIELD_TRANSFORM.include,
-    PARSED_GROUP_BY_FIELD_TRANSFORM.replacer
-  );
+  return specShorthand(specQ, PARSED_GROUP_BY_FIELD_TRANSFORM.include, PARSED_GROUP_BY_FIELD_TRANSFORM.replacer);
 });
-
 
 export const PARSED_GROUP_BY_ENCODING = parseGroupBy(GROUP_BY_ENCODING);
 
 registerKeyFn(ENCODING, (specQ: SpecQuery) => {
-  return specShorthand(specQ,
-    PARSED_GROUP_BY_ENCODING.include,
-    PARSED_GROUP_BY_ENCODING.replacer
-  );
+  return specShorthand(specQ, PARSED_GROUP_BY_ENCODING.include, PARSED_GROUP_BY_ENCODING.replacer);
 });
 
 registerKeyFn(SPEC, (specQ: SpecQuery) => JSON.stringify(specQ));
