@@ -7,6 +7,26 @@
       "path": "/Acceleration|Horsepower|Origin",
       "items": [
         {
+          "name": "style:Origin|xy:Acceleration|xy:Horsepower",
+          "path": "/Acceleration|Horsepower|Origin/style:Origin|xy:Acceleration|xy:Horsepower",
+          "items": [
+            {
+              "name": "style:Origin|xy:Acceleration|xy:Horsepower",
+              "path": "/Acceleration|Horsepower|Origin/style:Origin|xy:Acceleration|xy:Horsepower/style:Origin|xy:Acceleration|xy:Horsepower",
+              "items": [
+                "point|size:Origin,o|x:Horsepower,q|y:Acceleration,q",
+                "point|size:Origin,o|x:Acceleration,q|y:Horsepower,q",
+                "point|color:Origin,o|x:Horsepower,q|y:Acceleration,q",
+                "point|color:Origin,o|x:Acceleration,q|y:Horsepower,q"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
           "name": "style:Acceleration|xy:Horsepower|xy:Origin",
           "path": "/Acceleration|Horsepower|Origin/style:Acceleration|xy:Horsepower|xy:Origin",
           "items": [
@@ -42,24 +62,6 @@
                 "point|size:Horsepower,q|x:Origin,o|y:Acceleration,q",
                 "point|color:Horsepower,q|x:Acceleration,q|y:Origin,o",
                 "point|color:Horsepower,q|x:Origin,o|y:Acceleration,q"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
-          "name": "style:Origin|xy:Acceleration|xy:Horsepower",
-          "path": "/Acceleration|Horsepower|Origin/style:Origin|xy:Acceleration|xy:Horsepower",
-          "items": [
-            {
-              "name": "style:Origin|xy:Acceleration|xy:Horsepower",
-              "path": "/Acceleration|Horsepower|Origin/style:Origin|xy:Acceleration|xy:Horsepower/style:Origin|xy:Acceleration|xy:Horsepower",
-              "items": [
-                "point|color:Origin,o|x:Horsepower,q|y:Acceleration,q",
-                "point|color:Origin,o|x:Acceleration,q|y:Horsepower,q"
               ]
             }
           ],
@@ -142,6 +144,8 @@
               "items": [
                 "tick|color:Origin,o|x:bin(Acceleration,q)|y:Horsepower,q",
                 "tick|color:Origin,o|x:Horsepower,q|y:bin(Acceleration,q)",
+                "point|size:Origin,o|x:bin(Acceleration,q)|y:Horsepower,q",
+                "point|size:Origin,o|x:Horsepower,q|y:bin(Acceleration,q)",
                 "point|color:Origin,o|x:bin(Acceleration,q)|y:Horsepower,q",
                 "point|color:Origin,o|x:Horsepower,q|y:bin(Acceleration,q)"
               ]
@@ -254,6 +258,8 @@
               "items": [
                 "tick|color:Origin,o|x:bin(Horsepower,q)|y:Acceleration,q",
                 "tick|color:Origin,o|x:Acceleration,q|y:bin(Horsepower,q)",
+                "point|size:Origin,o|x:bin(Horsepower,q)|y:Acceleration,q",
+                "point|size:Origin,o|x:Acceleration,q|y:bin(Horsepower,q)",
                 "point|color:Origin,o|x:bin(Horsepower,q)|y:Acceleration,q",
                 "point|color:Origin,o|x:Acceleration,q|y:bin(Horsepower,q)"
               ]
@@ -335,6 +341,26 @@
       "path": "/Origin|mean(Acceleration)|mean(Horsepower)",
       "items": [
         {
+          "name": "style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
+          "path": "/Origin|mean(Acceleration)|mean(Horsepower)/style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
+          "items": [
+            {
+              "name": "style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
+              "path": "/Origin|mean(Acceleration)|mean(Horsepower)/style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)/style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
+              "items": [
+                "point|size:Origin,o|x:mean(Horsepower,q)|y:mean(Acceleration,q)",
+                "point|size:Origin,o|x:mean(Acceleration,q)|y:mean(Horsepower,q)",
+                "point|color:Origin,o|x:mean(Horsepower,q)|y:mean(Acceleration,q)",
+                "point|color:Origin,o|x:mean(Acceleration,q)|y:mean(Horsepower,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
           "name": "style:mean(Acceleration)|xy:Origin|xy:mean(Horsepower)",
           "path": "/Origin|mean(Acceleration)|mean(Horsepower)/style:mean(Acceleration)|xy:Origin|xy:mean(Horsepower)",
           "items": [
@@ -386,24 +412,6 @@
                 "area|color:mean(Horsepower,q)|x:mean(Acceleration,q)|y:Origin,o",
                 "line|color:mean(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)",
                 "area|color:mean(Horsepower,q)|x:Origin,o|y:mean(Acceleration,q)"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
-          "name": "style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
-          "path": "/Origin|mean(Acceleration)|mean(Horsepower)/style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
-          "items": [
-            {
-              "name": "style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
-              "path": "/Origin|mean(Acceleration)|mean(Horsepower)/style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)/style:Origin|xy:mean(Acceleration)|xy:mean(Horsepower)",
-              "items": [
-                "point|color:Origin,o|x:mean(Horsepower,q)|y:mean(Acceleration,q)",
-                "point|color:Origin,o|x:mean(Acceleration,q)|y:mean(Horsepower,q)"
               ]
             }
           ],
@@ -776,10 +784,14 @@
               "name": "style:Origin|xy:bin(Acceleration)|xy:mean(Horsepower)",
               "path": "/Origin|bin(Acceleration)|mean(Horsepower)/style:Origin|xy:bin(Acceleration)|xy:mean(Horsepower)/style:Origin|xy:bin(Acceleration)|xy:mean(Horsepower)",
               "items": [
+                "point|size:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "point|size:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
                 "point|color:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
                 "point|color:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
                 "tick|color:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
                 "tick|color:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
+                "line|size:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
+                "line|size:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)",
                 "line|color:Origin,o|x:bin(Acceleration,q)|y:mean(Horsepower,q)",
                 "line|color:Origin,o|x:mean(Horsepower,q)|y:bin(Acceleration,q)"
               ]
@@ -940,10 +952,14 @@
               "name": "style:Origin|xy:bin(Horsepower)|xy:mean(Acceleration)",
               "path": "/Origin|bin(Horsepower)|mean(Acceleration)/style:Origin|xy:bin(Horsepower)|xy:mean(Acceleration)/style:Origin|xy:bin(Horsepower)|xy:mean(Acceleration)",
               "items": [
+                "point|size:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "point|size:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
                 "point|color:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
                 "point|color:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
                 "tick|color:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
                 "tick|color:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
+                "line|size:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
+                "line|size:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)",
                 "line|color:Origin,o|x:bin(Horsepower,q)|y:mean(Acceleration,q)",
                 "line|color:Origin,o|x:mean(Acceleration,q)|y:bin(Horsepower,q)"
               ]

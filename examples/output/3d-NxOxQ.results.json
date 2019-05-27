@@ -60,6 +60,8 @@
               "items": [
                 "tick|color:Origin,o|x:Acceleration,q|y:Cylinders,n",
                 "tick|color:Origin,o|x:Cylinders,n|y:Acceleration,q",
+                "point|size:Origin,o|x:Acceleration,q|y:Cylinders,n",
+                "point|size:Origin,o|x:Cylinders,n|y:Acceleration,q",
                 "point|color:Origin,o|x:Acceleration,q|y:Cylinders,n",
                 "point|color:Origin,o|x:Cylinders,n|y:Acceleration,q"
               ]
@@ -203,6 +205,28 @@
           "orderGroupBy": "effectiveness"
         },
         {
+          "name": "style:Origin|xy:Cylinders|xy:mean(Acceleration)",
+          "path": "/Cylinders|Origin|mean(Acceleration)/style:Origin|xy:Cylinders|xy:mean(Acceleration)",
+          "items": [
+            {
+              "name": "style:Origin|xy:Cylinders|xy:mean(Acceleration)",
+              "path": "/Cylinders|Origin|mean(Acceleration)/style:Origin|xy:Cylinders|xy:mean(Acceleration)/style:Origin|xy:Cylinders|xy:mean(Acceleration)",
+              "items": [
+                "point|size:Origin,o|x:mean(Acceleration,q)|y:Cylinders,n",
+                "point|size:Origin,o|x:Cylinders,n|y:mean(Acceleration,q)",
+                "point|color:Origin,o|x:mean(Acceleration,q)|y:Cylinders,n",
+                "point|color:Origin,o|x:Cylinders,n|y:mean(Acceleration,q)",
+                "tick|color:Origin,o|x:mean(Acceleration,q)|y:Cylinders,n",
+                "tick|color:Origin,o|x:Cylinders,n|y:mean(Acceleration,q)"
+              ]
+            }
+          ],
+          "groupBy": [
+            "channel"
+          ],
+          "orderGroupBy": "effectiveness"
+        },
+        {
           "name": "style:Cylinders|xy:Origin|xy:mean(Acceleration)",
           "path": "/Cylinders|Origin|mean(Acceleration)/style:Cylinders|xy:Origin|xy:mean(Acceleration)",
           "items": [
@@ -216,26 +240,6 @@
                 "tick|color:Cylinders,n|x:Origin,o|y:mean(Acceleration,q)",
                 "line|color:Cylinders,n|x:mean(Acceleration,q)|y:Origin,o",
                 "line|color:Cylinders,n|x:Origin,o|y:mean(Acceleration,q)"
-              ]
-            }
-          ],
-          "groupBy": [
-            "channel"
-          ],
-          "orderGroupBy": "effectiveness"
-        },
-        {
-          "name": "style:Origin|xy:Cylinders|xy:mean(Acceleration)",
-          "path": "/Cylinders|Origin|mean(Acceleration)/style:Origin|xy:Cylinders|xy:mean(Acceleration)",
-          "items": [
-            {
-              "name": "style:Origin|xy:Cylinders|xy:mean(Acceleration)",
-              "path": "/Cylinders|Origin|mean(Acceleration)/style:Origin|xy:Cylinders|xy:mean(Acceleration)/style:Origin|xy:Cylinders|xy:mean(Acceleration)",
-              "items": [
-                "point|color:Origin,o|x:mean(Acceleration,q)|y:Cylinders,n",
-                "point|color:Origin,o|x:Cylinders,n|y:mean(Acceleration,q)",
-                "tick|color:Origin,o|x:mean(Acceleration,q)|y:Cylinders,n",
-                "tick|color:Origin,o|x:Cylinders,n|y:mean(Acceleration,q)"
               ]
             }
           ],
