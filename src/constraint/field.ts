@@ -8,6 +8,7 @@ import {
   ScaleType,
   scaleTypeSupportProperty
 } from 'vega-lite/build/src/scale';
+import {isLocalSingleTimeUnit, isUtcSingleTimeUnit} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import {QueryConfig} from '../config';
 import {getEncodingNestedProp, Property, SCALE_PROPS} from '../property';
@@ -89,7 +90,19 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         ...toFieldDef(fieldQ, {schema, props: ['bin', 'timeUnit', 'type']})
       };
 
-      return channelCompatibility(fieldDef, fieldQ.channel as Channel).compatible;
+      const {compatible} = channelCompatibility(fieldDef, fieldQ.channel as Channel);
+
+      if (compatible) {
+        return true;
+      } else {
+        // In VL, facet's field def must be discrete (O/N), but in CompassQL we can relax this a bit.
+        const isFacet = fieldQ.channel === 'row' || fieldQ.channel === 'column';
+
+        if (isFacet && (isLocalSingleTimeUnit(fieldDef.timeUnit) || isUtcSingleTimeUnit(fieldDef.timeUnit))) {
+          return true;
+        }
+        return false;
+      }
     }
   },
   {
@@ -242,7 +255,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
   },
   {
     name: 'typeMatchesPrimitiveType',
-    description: 'Data type should be supported by field\'s primitive type.',
+    description: "Data type should be supported by field's primitive type.",
     properties: [Property.FIELD, Property.TYPE],
     allowWildcardForProperties: false,
     strict: true,
@@ -278,7 +291,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
   },
   {
     name: 'typeMatchesSchemaType',
-    description: 'Enumerated data type of a field should match the field\'s type in the schema.',
+    description: "Enumerated data type of a field should match the field's type in the schema.",
     properties: [Property.FIELD, Property.TYPE],
     allowWildcardForProperties: false,
     strict: false,

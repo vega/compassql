@@ -384,15 +384,17 @@ describe('constraints/field', () => {
       });
 
       it(channel + ' supports timeUnit temporal dimension.', () => {
-        const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.ORDINAL, timeUnit: TimeUnit.MONTH};
-        assert.isTrue(
-          FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
-            encQ,
-            schema,
-            new PropIndex<Wildcard<any>>(),
-            CONSTRAINT_MANUALLY_SPECIFIED_CONFIG
-          )
-        );
+        for (const type of [TYPE.ORDINAL, TYPE.TEMPORAL]) {
+          const encQ: EncodingQuery = {channel: channel, field: 'T', type, timeUnit: TimeUnit.MONTH};
+          assert.isTrue(
+            FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
+              encQ,
+              schema,
+              new PropIndex<Wildcard<any>>(),
+              CONSTRAINT_MANUALLY_SPECIFIED_CONFIG
+            )
+          );
+        }
       });
 
       it(channel + ' supports binned quantitative dimension.', () => {
@@ -493,7 +495,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' does not support ordinal dimension.', () => {
+      it(channel + ' supports ordinal dimension.', () => {
         const encQ: EncodingQuery = {channel: channel, field: 'O', type: TYPE.ORDINAL};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -505,7 +507,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' does not support  nominal dimension.', () => {
+      it(channel + ' does not support nominal dimension.', () => {
         const encQ: EncodingQuery = {channel: channel, field: 'N', type: TYPE.NOMINAL};
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
