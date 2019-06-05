@@ -1,4 +1,4 @@
-{
+module.exports = {
   "overrides": [
     {
       "files": "*",
@@ -12,4 +12,4 @@
       }
     }
   ]
-}
+};

@@ -1,4 +1,6 @@
 npm-debug.log
+beemo-error.log
+
 node_modules
 compassql.min.js
 compassql.min.js.map
@@ -8,3 +10,4 @@ bower_components
 coverage
 build
 .nyc_output/
+

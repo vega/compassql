@@ -1,16 +1,27 @@
 {
   "compilerOptions": {
-    "outDir": "build",
     "target": "es6",
     "module": "es2015",
     "moduleResolution": "node",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "declaration": true,
+    "inlineSources": true,
+    "importHelpers": true,
+    "isolatedModules": false,
     "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "preserveConstEnums": true,
+    "removeComments": false,
+    "resolveJsonModule": true,
     "suppressImplicitAnyIndexErrors": true,
-    "sourceMap": true
-  },
-  "files": ["src/index.ts"],
-  "include": ["test/**/*.ts", "typings/*.d.ts", "typings/**/*.d.ts"]
+    "typeRoots": [
+      "node_modules/@types",
+      "typings"
+    ]
+  }
 }
