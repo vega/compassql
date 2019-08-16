@@ -1,4 +1,5 @@
 import {isArray} from 'datalib/src/util';
+import {Flag} from 'vega-lite/build/src/util';
 
 export {cmp, keys, duplicate, extend, isObject, isBoolean, toMap} from 'datalib/src/util';
 
@@ -55,6 +56,10 @@ export function without<T>(array: Array<T>, excludedItems: Array<T>) {
   return array.filter(function(item) {
     return !contains(excludedItems, item);
   });
+}
+
+export function flagKeys<S extends string>(f: Flag<S>): S[] {
+  return Object.keys(f) as S[];
 }
 
 export type Diff<T extends string, U extends string> = ({ [P in T]: P } & { [P in U]: never } & { [x: string]: never })[T];
