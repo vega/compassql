@@ -3,10 +3,10 @@ import {BinParams} from 'vega-lite/build/src/bin';
 import {Legend, LEGEND_PROPERTIES} from 'vega-lite/build/src/legend';
 import {Scale, SCALE_PROPERTIES} from 'vega-lite/build/src/scale';
 import {EncodingSortField} from 'vega-lite/build/src/sort';
-import {Flag, flagKeys} from 'vega-lite/build/src/util';
+import {Flag} from 'vega-lite/build/src/util';
 import {AutoCountQuery, FieldQuery, ValueQuery} from './query/encoding';
 import {TransformQuery} from './query/transform';
-import {Diff} from './util';
+import {Diff, flagKeys} from './util';
 
 /**
  * There are two types of `Property`'s.
