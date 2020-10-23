@@ -4,7 +4,6 @@ compassql.min.js
 compassql.min.js.map
 compassql-schema.json
 compassql.js
-bower_components
 coverage
 build
 .nyc_output/
