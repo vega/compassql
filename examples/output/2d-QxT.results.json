@@ -277,8 +277,8 @@
               "path": "/autocount()|bin(IMDB_Rating)|year(Release_Date)/facet:bin(IMDB_Rating)|xy:autocount()|xy:year(Release_Date)/facet:bin(IMDB_Rating)|xy:autocount()|xy:year(Release_Date)",
               "items": [
                 "line|row:bin(IMDB_Rating,q)|x:year(Release_Date,t)|y:count(*,q)",
-                "line|column:bin(IMDB_Rating,q)|x:year(Release_Date,t)|y:count(*,q)",
                 "line|row:bin(IMDB_Rating,q)|x:count(*,q)|y:year(Release_Date,t)",
+                "line|column:bin(IMDB_Rating,q)|x:year(Release_Date,t)|y:count(*,q)",
                 "line|column:bin(IMDB_Rating,q)|x:count(*,q)|y:year(Release_Date,t)",
                 "area|row:bin(IMDB_Rating,q)|x:year(Release_Date,t)|y:count(*,q)",
                 "area|row:bin(IMDB_Rating,q)|x:count(*,q)|y:year(Release_Date,t)",
@@ -293,8 +293,8 @@
                 "point|column:bin(IMDB_Rating,q)|x:year(Release_Date,t)|y:count(*,q)",
                 "point|column:bin(IMDB_Rating,q)|x:count(*,q)|y:year(Release_Date,t)",
                 "tick|row:bin(IMDB_Rating,q)|x:year(Release_Date,t)|y:count(*,q)",
-                "tick|column:bin(IMDB_Rating,q)|x:year(Release_Date,t)|y:count(*,q)",
                 "tick|row:bin(IMDB_Rating,q)|x:count(*,q)|y:year(Release_Date,t)",
+                "tick|column:bin(IMDB_Rating,q)|x:year(Release_Date,t)|y:count(*,q)",
                 "tick|column:bin(IMDB_Rating,q)|x:count(*,q)|y:year(Release_Date,t)"
               ]
             }
@@ -357,8 +357,8 @@
               "path": "/autocount()|bin(IMDB_Rating)|month(Release_Date)/facet:bin(IMDB_Rating)|xy:autocount()|xy:month(Release_Date)/facet:bin(IMDB_Rating)|xy:autocount()|xy:month(Release_Date)",
               "items": [
                 "line|row:bin(IMDB_Rating,q)|x:month(Release_Date,t)|y:count(*,q)",
-                "line|column:bin(IMDB_Rating,q)|x:month(Release_Date,t)|y:count(*,q)",
                 "line|row:bin(IMDB_Rating,q)|x:count(*,q)|y:month(Release_Date,t)",
+                "line|column:bin(IMDB_Rating,q)|x:month(Release_Date,t)|y:count(*,q)",
                 "line|column:bin(IMDB_Rating,q)|x:count(*,q)|y:month(Release_Date,t)",
                 "area|row:bin(IMDB_Rating,q)|x:month(Release_Date,t)|y:count(*,q)",
                 "area|row:bin(IMDB_Rating,q)|x:count(*,q)|y:month(Release_Date,t)",
@@ -373,8 +373,8 @@
                 "point|column:bin(IMDB_Rating,q)|x:month(Release_Date,t)|y:count(*,q)",
                 "point|column:bin(IMDB_Rating,q)|x:count(*,q)|y:month(Release_Date,t)",
                 "tick|row:bin(IMDB_Rating,q)|x:month(Release_Date,t)|y:count(*,q)",
-                "tick|column:bin(IMDB_Rating,q)|x:month(Release_Date,t)|y:count(*,q)",
                 "tick|row:bin(IMDB_Rating,q)|x:count(*,q)|y:month(Release_Date,t)",
+                "tick|column:bin(IMDB_Rating,q)|x:month(Release_Date,t)|y:count(*,q)",
                 "tick|column:bin(IMDB_Rating,q)|x:count(*,q)|y:month(Release_Date,t)"
               ]
             }
@@ -415,8 +415,8 @@
               "path": "/autocount()|bin(IMDB_Rating)|month(Release_Date)/facet:month(Release_Date)|xy:autocount()|xy:bin(IMDB_Rating)/facet:month(Release_Date)|xy:autocount()|xy:bin(IMDB_Rating)",
               "items": [
                 "bar|row:month(Release_Date,t)|x:bin(IMDB_Rating,q)|y:count(*,q)",
-                "bar|row:month(Release_Date,t)|x:count(*,q)|y:bin(IMDB_Rating,q)",
                 "bar|column:month(Release_Date,t)|x:bin(IMDB_Rating,q)|y:count(*,q)",
+                "bar|row:month(Release_Date,t)|x:count(*,q)|y:bin(IMDB_Rating,q)",
                 "bar|column:month(Release_Date,t)|x:count(*,q)|y:bin(IMDB_Rating,q)",
                 "point|row:month(Release_Date,t)|x:bin(IMDB_Rating,q)|y:count(*,q)",
                 "point|column:month(Release_Date,t)|x:bin(IMDB_Rating,q)|y:count(*,q)",
@@ -426,11 +426,11 @@
                 "tick|column:month(Release_Date,t)|x:bin(IMDB_Rating,q)|y:count(*,q)",
                 "tick|row:month(Release_Date,t)|x:count(*,q)|y:bin(IMDB_Rating,q)",
                 "tick|column:month(Release_Date,t)|x:count(*,q)|y:bin(IMDB_Rating,q)",
-                "area|row:month(Release_Date,t)|x:bin(IMDB_Rating,q)|y:count(*,q)",
                 "line|row:month(Release_Date,t)|x:bin(IMDB_Rating,q)|y:count(*,q)",
+                "area|row:month(Release_Date,t)|x:bin(IMDB_Rating,q)|y:count(*,q)",
                 "line|column:month(Release_Date,t)|x:bin(IMDB_Rating,q)|y:count(*,q)",
-                "line|row:month(Release_Date,t)|x:count(*,q)|y:bin(IMDB_Rating,q)",
                 "area|column:month(Release_Date,t)|x:bin(IMDB_Rating,q)|y:count(*,q)",
+                "line|row:month(Release_Date,t)|x:count(*,q)|y:bin(IMDB_Rating,q)",
                 "area|row:month(Release_Date,t)|x:count(*,q)|y:bin(IMDB_Rating,q)",
                 "line|column:month(Release_Date,t)|x:count(*,q)|y:bin(IMDB_Rating,q)",
                 "area|column:month(Release_Date,t)|x:count(*,q)|y:bin(IMDB_Rating,q)"
