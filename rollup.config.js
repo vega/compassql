@@ -14,23 +14,7 @@ export default {
   plugins: [
     nodeResolve(),
     json(),
-    commonjs({
-      namedExports: {
-        'datalib/src/util': [
-          'isArray',
-          'cmp',
-          'keys',
-          'duplicate',
-          'extend',
-          'isObject',
-          'isBoolean',
-          'toMap',
-          'isString'
-        ],
-        'datalib/src/stats.js': ['summary'],
-        'datalib/src/import/type': ['inferAll']
-      }
-    }),
+    commonjs(),
     sourcemaps()
   ]
 };
