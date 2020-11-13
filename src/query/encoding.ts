@@ -2,7 +2,7 @@ import {isObject} from 'datalib/src/util';
 import {AggregateOp} from 'vega';
 import {Axis} from 'vega-lite/build/src/axis';
 import {BinParams} from 'vega-lite/build/src/bin';
-import {Channel} from 'vega-lite/build/src/channel';
+import {ExtendedChannel} from 'vega-lite/build/src/channel';
 import * as vlChannelDef from 'vega-lite/build/src/channeldef';
 import {ValueDef} from 'vega-lite/build/src/channeldef';
 import {scaleType as compileScaleType} from 'vega-lite/build/src/compile/scale/type';
@@ -24,7 +24,7 @@ import {PROPERTY_SUPPORTED_CHANNELS} from './shorthand';
 export type EncodingQuery = FieldQuery | ValueQuery | AutoCountQuery;
 
 export interface EncodingQueryBase {
-  channel: WildcardProperty<Channel>;
+  channel: WildcardProperty<ExtendedChannel>;
 
   description?: string;
 }
@@ -196,7 +196,7 @@ export function toFieldDef(
       if (encodingProperty !== undefined) {
         // if the channel supports this prop
         const isSupportedByChannel =
-          !PROPERTY_SUPPORTED_CHANNELS[prop] || PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel];
+          !PROPERTY_SUPPORTED_CHANNELS[prop] || PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as ExtendedChannel];
         if (!isSupportedByChannel) {
           continue;
         }

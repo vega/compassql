@@ -1,5 +1,5 @@
 import * as CHANNEL from 'vega-lite/build/src/channel';
-import {Channel} from 'vega-lite/build/src/channel';
+import {Channel, ExtendedChannel} from 'vega-lite/build/src/channel';
 import {channelCompatibility, TypedFieldDef} from 'vega-lite/build/src/channeldef';
 import {
   channelScalePropertyIncompatability,
@@ -8,7 +8,7 @@ import {
   ScaleType,
   scaleTypeSupportProperty
 } from 'vega-lite/build/src/scale';
-import {isLocalSingleTimeUnit, isUtcSingleTimeUnit} from 'vega-lite/build/src/timeunit';
+import {isLocalSingleTimeUnit, isUTCTimeUnit} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import {QueryConfig} from '../config';
 import {getEncodingNestedProp, Property, SCALE_PROPS} from '../property';
@@ -90,7 +90,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         ...toFieldDef(fieldQ, {schema, props: ['bin', 'timeUnit', 'type']})
       };
 
-      const {compatible} = channelCompatibility(fieldDef, fieldQ.channel as Channel);
+      const {compatible} = channelCompatibility(fieldDef, fieldQ.channel as ExtendedChannel);
 
       if (compatible) {
         return true;
@@ -98,7 +98,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         // In VL, facet's field def must be discrete (O/N), but in CompassQL we can relax this a bit.
         const isFacet = fieldQ.channel === 'row' || fieldQ.channel === 'column';
 
-        if (isFacet && (isLocalSingleTimeUnit(fieldDef.timeUnit) || isUtcSingleTimeUnit(fieldDef.timeUnit))) {
+        if (isFacet && (isLocalSingleTimeUnit(fieldDef.timeUnit.toString()) || isUTCTimeUnit(fieldDef.timeUnit.toString()))) {
           return true;
         }
         return false;
@@ -230,7 +230,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     strict: true,
     satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
       if (fieldQ) {
-        let channel: Channel = fieldQ.channel as Channel;
+        let channel: ExtendedChannel = fieldQ.channel as ExtendedChannel;
         let scale: ScaleQuery = fieldQ.scale as ScaleQuery;
         if (channel && !isWildcard(channel) && scale) {
           if (channel === 'row' || channel === 'column') {
@@ -243,7 +243,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
               // ignore type and properties of wildcards
               continue;
             }
-            let isSupported = channelScalePropertyIncompatability(channel, scaleProp as keyof Scale) === undefined;
+            let isSupported = channelScalePropertyIncompatability(channel as Channel, scaleProp as keyof Scale) === undefined;
             if (!isSupported) {
               return false;
             }
