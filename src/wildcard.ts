@@ -1,6 +1,6 @@
 import {Axis, AXIS_PROPERTIES} from 'vega-lite/build/src/axis';
 import {BinParams} from 'vega-lite/build/src/bin';
-import {Channel, COLOR, COLUMN, ROW, SIZE, X, Y} from 'vega-lite/build/src/channel';
+import {ExtendedChannel, COLOR, COLUMN, ROW, SIZE, X, Y} from 'vega-lite/build/src/channel';
 import {TypedFieldDef} from 'vega-lite/build/src/channeldef';
 import {Legend, LEGEND_PROPERTIES} from 'vega-lite/build/src/legend';
 import * as MARK from 'vega-lite/build/src/mark';
@@ -8,7 +8,6 @@ import {Mark} from 'vega-lite/build/src/mark';
 import {Scale, ScaleType, SCALE_PROPERTIES} from 'vega-lite/build/src/scale';
 import {EncodingSortField, SortOrder} from 'vega-lite/build/src/sort';
 import {StackOffset} from 'vega-lite/build/src/stack';
-import {TimeUnit} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import {QueryConfig} from './config';
 import {isEncodingNestedProp, Property} from './property';
@@ -167,7 +166,7 @@ const DEFAULT_BOOLEAN_ENUM = [false, true];
 
 export type EnumIndex = {
   mark: Mark[];
-  channel: Channel[];
+  channel: ExtendedChannel[];
   autoCount: boolean[];
   hasFn: boolean[];
 } & DefEnumIndex<TypedFieldDef<string>> & {
@@ -183,7 +182,7 @@ export type EnumIndex = {
     sortProps: Partial<DefEnumIndex<EncodingSortField<string>>>;
     scaleProps: Partial<DefEnumIndex<Scale>>;
     axisProps: Partial<DefEnumIndex<Axis>>;
-    legendProps: Partial<DefEnumIndex<Legend>>;
+    legendProps: Partial<DefEnumIndex<Legend<any>>>;
   };
 
 const DEFAULT_BIN_PROPS_ENUM: DefEnumIndex<BinParams> = {
@@ -206,8 +205,12 @@ const DEFAULT_SORT_PROPS: DefEnumIndex<EncodingSortField<string>> = {
 };
 
 const DEFAULT_SCALE_PROPS_ENUM: DefEnumIndex<Scale> = {
+  align: [undefined],
   type: [undefined, ScaleType.LOG],
   domain: [undefined],
+  domainMax: [undefined],
+  domainMid: [undefined],
+  domainMin: [undefined],
   base: [undefined],
   exponent: [1, 2],
   constant: [undefined],
@@ -227,11 +230,14 @@ const DEFAULT_SCALE_PROPS_ENUM: DefEnumIndex<Scale> = {
   interpolate: [undefined],
 
   range: [undefined],
-  rangeStep: [17, 21],
+  rangeMax: [undefined],
+  rangeMin: [undefined],
   scheme: [undefined]
 };
 
 const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
+  aria: [undefined],
+  description: [undefined],
   zindex: [1, 0],
   offset: [undefined],
   orient: [undefined],
@@ -241,6 +247,7 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   encoding: [undefined],
 
   domain: DEFAULT_BOOLEAN_ENUM,
+  domainCap: [undefined],
   domainColor: [undefined],
   domainDash: [undefined],
   domainDashOffset: [undefined],
@@ -250,6 +257,7 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   formatType: [undefined],
 
   grid: DEFAULT_BOOLEAN_ENUM,
+  gridCap: [undefined],
   gridColor: [undefined],
   gridDash: [undefined],
   gridDashOffset: [undefined],
@@ -262,12 +270,15 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   labelAngle: [undefined],
   labelBaseline: [undefined],
   labelColor: [undefined],
+  labelExpr: [undefined],
   labelFlushOffset: [undefined],
   labelFont: [undefined],
   labelFontSize: [undefined],
   labelFontStyle: [undefined],
   labelFontWeight: [undefined],
   labelLimit: [undefined],
+  labelLineHeight: [undefined],
+  labelOffset: [undefined],
   labelOpacity: [undefined],
   labelSeparation: [undefined],
   labelOverlap: [undefined],
@@ -279,7 +290,11 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   minExtent: [undefined],
   position: [undefined],
 
+  style: [undefined], 
+
   ticks: DEFAULT_BOOLEAN_ENUM,
+  tickBand: [undefined],
+  tickCap: [undefined],
   tickColor: [undefined],
   tickCount: [undefined],
   tickDash: [undefined],
@@ -303,13 +318,18 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   titleFontStyle: [undefined],
   titleFontWeight: [undefined],
   titleLimit: [undefined],
+  titleLineHeight: [undefined],
   titleOpacity: [undefined],
   titlePadding: [undefined],
   titleX: [undefined],
-  titleY: [undefined]
+  titleY: [undefined],
+
+  translate: [undefined],
 };
 
-const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
+const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend<any>> = {
+  aria: [undefined],
+  description: [undefined], 
   orient: ['left', 'right'],
   format: [undefined],
   type: [undefined],
@@ -333,6 +353,7 @@ const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
   labelAlign: [undefined],
   labelBaseline: [undefined],
   labelColor: [undefined],
+  labelExpr: [undefined],
   labelFont: [undefined],
   labelFontSize: [undefined],
   labelFontStyle: [undefined],
@@ -356,6 +377,7 @@ const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
   symbolDash: [undefined],
   symbolDashOffset: [undefined],
   symbolFillColor: [undefined],
+  symbolLimit: [undefined],
   symbolOffset: [undefined],
   symbolOpacity: [undefined],
   symbolSize: [undefined],
@@ -376,21 +398,23 @@ const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend> = {
   titleFontStyle: [undefined],
   titleFontWeight: [undefined],
   titleLimit: [undefined],
+  titleLineHeight: [undefined],
   titleOpacity: [undefined],
   titleOrient: [undefined],
-  titlePadding: [undefined]
+  titlePadding: [undefined],
 };
 
 // Use FullEnumIndex to make sure we have all properties specified here!
 export const DEFAULT_ENUM_INDEX: EnumIndex = {
   mark: [MARK.POINT, MARK.BAR, MARK.LINE, MARK.AREA, MARK.RECT, MARK.TICK, MARK.TEXT],
   channel: [X, Y, ROW, COLUMN, SIZE, COLOR], // TODO: TEXT
+  band: [undefined],
 
   aggregate: [undefined, 'mean'],
   autoCount: DEFAULT_BOOLEAN_ENUM,
   bin: DEFAULT_BOOLEAN_ENUM,
   hasFn: DEFAULT_BOOLEAN_ENUM,
-  timeUnit: [undefined, TimeUnit.YEAR, TimeUnit.MONTH, TimeUnit.MINUTES, TimeUnit.SECONDS],
+  timeUnit: [undefined, "year", "month", "minutes", "seconds"],
 
   field: [undefined], // This is not used as field should be read from schema
   type: [TYPE.NOMINAL, TYPE.ORDINAL, TYPE.QUANTITATIVE, TYPE.TEMPORAL],

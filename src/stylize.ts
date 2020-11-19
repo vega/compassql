@@ -52,15 +52,6 @@ export function smallRangeStepForHighCardinalityOrFacet(
       if (yEncQ.scale === undefined) {
         yEncQ.scale = {};
       }
-
-      // We do not want to assign a rangeStep if scale is set to false
-      // and we only apply this if the scale is (or can be) an ordinal scale.
-      const yScaleType = scaleType(yEncQ);
-      if (yEncQ.scale && (yScaleType === undefined || hasDiscreteDomain(yScaleType))) {
-        if (!(yEncQ.scale as ScaleQuery).rangeStep) {
-          (yEncQ.scale as ScaleQuery).rangeStep = 12;
-        }
-      }
     }
   }
 
@@ -73,15 +64,6 @@ export function smallRangeStepForHighCardinalityOrFacet(
       // Just like y, we don't want to do this if scale is null/false
       if (xEncQ.scale === undefined) {
         xEncQ.scale = {};
-      }
-
-      // We do not want to assign a rangeStep if scale is set to false
-      // and we only apply this if the scale is (or can be) an ordinal scale.
-      const xScaleType = scaleType(xEncQ);
-      if (xEncQ.scale && (xScaleType === undefined || hasDiscreteDomain(xScaleType))) {
-        if (!(xEncQ.scale as ScaleQuery).rangeStep) {
-          (xEncQ.scale as ScaleQuery).rangeStep = 12;
-        }
       }
     }
   }

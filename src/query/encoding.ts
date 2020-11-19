@@ -2,7 +2,7 @@ import {isObject} from 'datalib/src/util';
 import {AggregateOp} from 'vega';
 import {Axis} from 'vega-lite/build/src/axis';
 import {BinParams} from 'vega-lite/build/src/bin';
-import {ExtendedChannel} from 'vega-lite/build/src/channel';
+import {Channel,ExtendedChannel} from 'vega-lite/build/src/channel';
 import * as vlChannelDef from 'vega-lite/build/src/channeldef';
 import {ValueDef} from 'vega-lite/build/src/channeldef';
 import {scaleType as compileScaleType} from 'vega-lite/build/src/compile/scale/type';
@@ -118,7 +118,7 @@ export type FlatQueryWithEnableFlag<T> = (Wildcard<boolean> | {}) & FlatQuery<T>
 export type BinQuery = FlatQueryWithEnableFlag<BinParams>;
 export type ScaleQuery = FlatQueryWithEnableFlag<Scale>;
 export type AxisQuery = FlatQueryWithEnableFlag<Axis>;
-export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
+export type LegendQuery = FlatQueryWithEnableFlag<Legend<any>>;
 
 const DEFAULT_PROPS = [
   Property.AGGREGATE,
@@ -303,6 +303,11 @@ export function scaleType(fieldQ: FieldQuery) {
     return undefined;
   }
 
+  // leilani: ignore if faceting
+  if (channel === 'row' || channel === 'column') {
+    return undefined;
+  }
+
   // If scale type is specified, then use scale.type
   if (scale.type) {
     return scale.type;
@@ -325,5 +330,5 @@ export function scaleType(fieldQ: FieldQuery) {
     timeUnit: timeUnit as TimeUnit,
     bin: bin as BinParams
   };
-  return compileScaleType({type: scale.type}, channel, fieldDef, markType);
+  return compileScaleType({type: scale.type}, channel as Channel, fieldDef, markType);
 }
