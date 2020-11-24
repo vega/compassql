@@ -4,11 +4,12 @@ import {Config} from 'vega-lite/build/src/config';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
 import {FacetedUnitSpec, TopLevel} from 'vega-lite/build/src/spec';
+import {Step} from 'vega-lite/build/src/spec/base';
 import {stack, StackOffset, StackProperties} from 'vega-lite/build/src/stack';
 import {TitleParams} from 'vega-lite/build/src/title';
 import {ALL_ENCODING_PROPS, getEncodingNestedProp, isEncodingTopLevelProperty, Property, toKey} from '../property';
 import {contains, extend, isObject, keys, some, without} from '../util';
-import {isWildcard, WildcardProperty} from '../wildcard';
+import {isWildcard, WildcardProperty, Wildcard} from '../wildcard';
 import {EncodingQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, isFieldQuery, toEncoding} from './encoding';
 import {TransformQuery} from './transform';
 
@@ -36,13 +37,13 @@ export interface SpecQuery {
    * The width of the resulting encodings.
    * __NOTE:__ Does not support wildcards.
    */
-  width?: number;
+  width?: number | 'container' | Step | Wildcard<Step>;
 
   /**
    * The height of the resulting encodings.
    * __NOTE:__ Does not support wildcards.
    */
-  height?: number;
+  height?: number | 'container' | Step | Wildcard<Step>;
 
   /**
    * CSS color property to use as the background of visualization.

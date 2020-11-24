@@ -3,6 +3,7 @@ import * as CHANNEL from 'vega-lite/build/src/channel';
 import * as MARK from 'vega-lite/build/src/mark';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import * as VEGA_TIME from 'vega-time'; // leilani: added
 import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {getEnumerator} from '../src/enumerator';
@@ -558,7 +559,7 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               field: 'T',
-              timeUnit: {enum: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR, undefined]},
+              timeUnit: {enum: [VEGA_TIME.MONTH, VEGA_TIME.DAY, VEGA_TIME.YEAR, undefined]},
               type: TYPE.TEMPORAL
             }
           ]
@@ -567,9 +568,9 @@ describe('enumerator', () => {
 
         const answerSet = enumerator([], specM);
         assert.equal(answerSet.length, 4);
-        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).timeUnit, TimeUnit.MONTH);
-        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).timeUnit, TimeUnit.DAY);
-        assert.equal((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).timeUnit, TimeUnit.YEAR);
+        assert.equal((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).timeUnit, VEGA_TIME.MONTH);
+        assert.equal((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).timeUnit, VEGA_TIME.DAY);
+        assert.equal((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).timeUnit, VEGA_TIME.YEAR);
         assert.equal((answerSet[3].getEncodingQueryByIndex(0) as FieldQuery).timeUnit, undefined);
       });
 
@@ -580,7 +581,7 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               field: 'Q',
-              timeUnit: {enum: [TimeUnit.MONTH, TimeUnit.DAY, TimeUnit.YEAR, undefined]},
+              timeUnit: {enum: [VEGA_TIME.MONTH, VEGA_TIME.DAY, VEGA_TIME.YEAR, undefined]},
               type: TYPE.QUANTITATIVE
             }
           ]

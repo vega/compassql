@@ -1,7 +1,7 @@
 import * as CHANNEL from 'vega-lite/build/src/channel';
-import {Channel, COLOR, COLUMN, OPACITY, ROW, SHAPE, SIZE, X, Y} from 'vega-lite/build/src/channel';
+import {ExtendedChannel, COLOR, COLUMN, OPACITY, ROW, SHAPE, SIZE, X, Y} from 'vega-lite/build/src/channel';
 import {AREA, BAR, CIRCLE, LINE, Mark, POINT, RULE, SQUARE, TICK} from 'vega-lite/build/src/mark';
-import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import * as VEGA_TIME from 'vega-time'; // leilani: added
 import * as TYPE from 'vega-lite/build/src/type';
 import {Type} from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../../../src/config';
@@ -24,7 +24,7 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
   rules: (function() {
     const rules: Rule<SpecQueryModel>[] = [];
 
-    function plot1d(mark: Mark, channel: Channel, type: Type) {
+    function plot1d(mark: Mark, channel: ExtendedChannel, type: Type) {
       return SpecQueryModel.build(
         {
           mark: mark,
@@ -135,7 +135,7 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
       items: nestedMap([LINE, AREA, BAR, POINT, TICK, RULE], mark => {
         return histogram(mark, {
           channel: X,
-          timeUnit: TimeUnit.MONTH,
+          timeUnit: VEGA_TIME.MONTH,
           field: 'T',
           type: TYPE.TEMPORAL
         });
@@ -297,7 +297,7 @@ export const SET_AXIS_PREFERRENCE: RuleSet<SpecQueryModel> = {
   rules: (function() {
     const rules: Rule<SpecQueryModel>[] = [];
 
-    function countplot(dimType: Type, dimChannel: Channel, countChannel: Channel, dimMixins?: any) {
+    function countplot(dimType: Type, dimChannel: ExtendedChannel, countChannel: ExtendedChannel, dimMixins?: any) {
       return build({
         mark: 'point',
         encodings: [
@@ -337,7 +337,7 @@ export const SET_FACET_PREFERENCE: RuleSet<SpecQueryModel> = {
   name: 'Facet Preference',
   rules: (function() {
     const rules: Rule<SpecQueryModel>[] = [];
-    function facetedPlot(_: Mark, facet: Channel) {
+    function facetedPlot(_: Mark, facet: ExtendedChannel) {
       return build({
         mark: 'point',
         encodings: [
@@ -363,7 +363,7 @@ export const DIMENSION_PREFERENCE: RuleSet<SpecQueryModel> = {
   name: 'Dimension Preference',
   rules: (function() {
     const rules: Rule<SpecQueryModel>[] = [];
-    function facetedPlot(mark: Mark, dim: Channel) {
+    function facetedPlot(mark: Mark, dim: ExtendedChannel) {
       return build({
         mark: mark,
         encodings: [
@@ -377,7 +377,7 @@ export const DIMENSION_PREFERENCE: RuleSet<SpecQueryModel> = {
     POINTS.concat([BAR, TICK, LINE, AREA]).forEach(mark => {
       rules.push({
         name: 'Row over column',
-        items: nestedMap([[COLOR, SIZE, OPACITY, SHAPE], [ROW, COLUMN]], (dim: Channel) => {
+        items: nestedMap([[COLOR, SIZE, OPACITY, SHAPE], [ROW, COLUMN]], (dim: ExtendedChannel) => {
           return facetedPlot(mark, dim);
         })
       });

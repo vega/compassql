@@ -1,10 +1,12 @@
 import {assert} from 'chai';
-import {TextFieldDef} from 'vega-lite/build/src/channeldef';
+import {TextDef} from 'vega-lite/build/src/channeldef';
 import {ScaleType} from 'vega-lite/build/src/scale';
-import {TIMEUNITS} from 'vega-lite/build/src/timeunit';
+import {TimeUnit, LOCAL_SINGLE_TIMEUNIT_INDEX,UTC_SINGLE_TIMEUNIT_INDEX,LOCAL_MULTI_TIMEUNIT_INDEX,UTC_MULTI_TIMEUNIT_INDEX} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import {scaleType, toFieldDef, toValueDef} from '../../src/query/encoding';
 import {SHORT_WILDCARD} from '../../src/wildcard';
+
+const TIMEUNITS = Object.keys(LOCAL_SINGLE_TIMEUNIT_INDEX).concat(Object.keys(UTC_SINGLE_TIMEUNIT_INDEX), Object.keys(LOCAL_MULTI_TIMEUNIT_INDEX), Object.keys(UTC_MULTI_TIMEUNIT_INDEX));
 
 describe('query/encoding', () => {
   describe('toFieldDef', () => {
@@ -27,11 +29,11 @@ describe('query/encoding', () => {
     });
 
     it('return correct fieldDef for Text FieldQuery with format', () => {
-      assert.deepEqual<TextFieldDef<string>>(
+      assert.deepEqual<TextDef<string>>(
         toFieldDef(
           {format: '.3f', channel: 'text', field: 'Q', type: 'quantitative'},
           {props: ['field', 'format', 'type'], wildcardMode: 'skip'}
-        ) as TextFieldDef<string>,
+        ) as TextDef<string>,
         {format: '.3f', field: 'Q', type: 'quantitative'}
       );
     });
@@ -148,7 +150,7 @@ describe('query/encoding', () => {
       it('should return ScaleType.TIME if type is temporal and has timeUnit', () => {
         const sType = scaleType({
           channel: 'x',
-          timeUnit: timeUnit,
+          timeUnit: timeUnit as TimeUnit,
           type: TYPE.TEMPORAL
         });
         assert.equal(sType, ScaleType.TIME);

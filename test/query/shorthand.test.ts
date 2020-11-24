@@ -2,7 +2,7 @@ import {assert} from 'chai';
 import * as CHANNEL from 'vega-lite/build/src/channel';
 import * as MARK from 'vega-lite/build/src/mark';
 import {ScaleType} from 'vega-lite/build/src/scale';
-import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import * as VEGA_TIME from 'vega-time'; // leilani: added
 import * as TYPE from 'vega-lite/build/src/type';
 import {PropIndex} from '../../src/propindex';
 import {REPLACE_BLANK_FIELDS} from '../../src/query/groupby';
@@ -122,7 +122,7 @@ describe('query/shorthand', () => {
 
       it('should correctly parse an encoding query given a fieldDefShorthand with timeunit function', () => {
         const encQ = shorthandParser.fn('hours(a,t)');
-        assert.deepEqual(encQ, {field: 'a', timeUnit: TimeUnit.HOURS, type: TYPE.TEMPORAL});
+        assert.deepEqual(encQ, {field: 'a', timeUnit: VEGA_TIME.HOURS, type: TYPE.TEMPORAL});
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with maxbins bin function', () => {
@@ -322,8 +322,7 @@ describe('query/shorthand', () => {
       const str = specShorthand({
         transform: [{calculate: '3*datum["b2"]', as: 'b2'}, {filter: 'datum["b2"] > 60'}],
         mark: MARK.POINT,
-        encodings: [{channel: CHANNEL.X, field: 'b2', type: TYPE.QUANTITATIVE}],
-        config: {invalidValues: 'filter'}
+        encodings: [{channel: CHANNEL.X, field: 'b2', type: TYPE.QUANTITATIVE}]
       });
       assert.equal(
         str,
@@ -340,8 +339,7 @@ describe('query/shorthand', () => {
           {filter: {field: 'x', range: [0, 5]}}
         ],
         mark: MARK.POINT,
-        encodings: [{channel: CHANNEL.X, field: 'b2', type: TYPE.QUANTITATIVE}],
-        config: {invalidValues: 'filter'}
+        encodings: [{channel: CHANNEL.X, field: 'b2', type: TYPE.QUANTITATIVE}]
       });
       assert.deepEqual(
         str,
@@ -511,7 +509,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.TEMPORAL,
-        timeUnit: TimeUnit.HOURS
+        timeUnit: VEGA_TIME.HOURS
       });
       assert.equal(str, 'hours(a,t)');
     });
