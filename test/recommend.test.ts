@@ -108,7 +108,8 @@ describe('recommend()', () => {
               channel: 'x',
               bin: true,
               field: 'Q1',
-              type: 'quantitative'
+              type: 'temporal',
+              timeUnit: 'quarter'
             }
           ]
         },

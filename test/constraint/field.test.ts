@@ -978,27 +978,6 @@ describe('constraints/field', () => {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
         field: 'A',
-        type: 'quantitative',
-        scale: {
-          type: 'linear'
-        }
-      };
-
-      assert.isFalse(
-        FIELD_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(
-          encQ,
-          schema,
-          new PropIndex<Wildcard<any>>(),
-          defaultOpt
-        )
-      );
-    });
-
-    it('should return false if scale property is not supported by the scale type', () => {
-      let encQ: EncodingQuery = {
-        // Scale type depends on channel, so this will make scale type ambiguous.
-        channel: 'x',
-        field: 'A',
         type: 'nominal',
         scale: {
           // type: point

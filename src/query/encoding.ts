@@ -274,7 +274,8 @@ export function isMeasure(encQ: EncodingQuery) {
  */
 export function isDimension(encQ: EncodingQuery) {
   if (isFieldQuery(encQ)) {
-    const fieldDef = toFieldDef(encQ, {props: ['bin', 'timeUnit', 'type']});
+    const props: FlatProp[] = !!encQ['field'] ? ['field', 'bin', 'timeUnit', 'type'] : ['bin', 'timeUnit', 'type'];
+    const fieldDef = toFieldDef(encQ, {props: props});
     return vlChannelDef.isDiscrete(fieldDef) || !!fieldDef.timeUnit;
   }
   return false;
