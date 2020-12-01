@@ -2,7 +2,7 @@ import {assert} from 'chai';
 import * as CHANNEL from 'vega-lite/build/src/channel';
 import * as MARK from 'vega-lite/build/src/mark';
 import {ScaleType} from 'vega-lite/build/src/scale';
-import * as VEGA_TIME from 'vega-time'; // leilani: added
+import * as VEGA_TIME from 'vega-time';
 import * as TYPE from 'vega-lite/build/src/type';
 import {PropIndex} from '../../src/propindex';
 import {REPLACE_BLANK_FIELDS} from '../../src/query/groupby';

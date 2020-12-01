@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 import * as CHANNEL from 'vega-lite/build/src/channel';
 import * as MARK from 'vega-lite/build/src/mark';
-import * as VEGA_TIME from 'vega-time'; // leilani: added
+import * as VEGA_TIME from 'vega-time';
 import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SpecQueryModel, SpecQueryModelGroup} from '../../src/model';

@@ -6,7 +6,7 @@ import * as MARK from 'vega-lite/build/src/mark';
 // import * as log from 'vega-lite/build/src/log';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
-import * as VEGA_TIME from 'vega-time'; // leilani: added
+import * as VEGA_TIME from 'vega-time';
 import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SpecConstraintModel, SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX} from '../../src/constraint/spec';

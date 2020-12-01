@@ -232,7 +232,6 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         // channel unspecified, no need to check
         if (isWildcard(encQ.channel)) return true;
 
-        // leilani: if facet, no need to check
         if (encQ.channel === 'row' || encQ.channel === 'column') return true;
 
         return !!supportMark(encQ.channel as CHANNEL.Channel, mark as Mark);

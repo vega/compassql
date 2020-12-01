@@ -4,7 +4,7 @@ import * as CHANNEL from 'vega-lite/build/src/channel';
 import {CHANNELS} from 'vega-lite/build/src/channel';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
-import * as VEGA_TIME from 'vega-time'; // leilani: added
+import * as VEGA_TIME from 'vega-time';
 import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {EncodingConstraintModel} from '../../src/constraint/base';

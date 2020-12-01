@@ -57,12 +57,9 @@ export function smallRangeStepForHighCardinalityOrFacet(
       // and we only apply this if the scale is (or can be) an ordinal scale.
       const yScaleType = scaleType(yEncQ);
       if (yEncQ.scale && (yScaleType === undefined || hasDiscreteDomain(yScaleType))) {
-        if(!specM.specQuery.height) { // leilani: added
+        if(!specM.specQuery.height) {
           specM.specQuery.height = { step: 12 };
         }
-        //if (!(yEncQ.scale as ScaleQuery).rangeStep) {
-        //  (yEncQ.scale as ScaleQuery).rangeStep = 12;
-        //}
       }
     }
   }
@@ -82,12 +79,9 @@ export function smallRangeStepForHighCardinalityOrFacet(
       // and we only apply this if the scale is (or can be) an ordinal scale.
       const xScaleType = scaleType(xEncQ);
       if (xEncQ.scale && (xScaleType === undefined || hasDiscreteDomain(xScaleType))) {
-        if(!specM.specQuery.width) { // leilani: added
+        if(!specM.specQuery.width) {
           specM.specQuery.width = { step: 12 };
         }
-        //if (!(xEncQ.scale as ScaleQuery).rangeStep) {
-        //  (xEncQ.scale as ScaleQuery).rangeStep = 12;
-        //}
       }
     }
   }

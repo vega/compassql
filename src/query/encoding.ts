@@ -304,7 +304,6 @@ export function scaleType(fieldQ: FieldQuery) {
     return undefined;
   }
 
-  // leilani: ignore if faceting
   if (channel === 'row' || channel === 'column') {
     return undefined;
   }
