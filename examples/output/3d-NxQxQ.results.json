@@ -184,14 +184,14 @@
               "name": "facet:bin(Acceleration)|xy:Cylinders|xy:Horsepower",
               "path": "/Cylinders|Horsepower|bin(Acceleration)/facet:bin(Acceleration)|xy:Cylinders|xy:Horsepower/facet:bin(Acceleration)|xy:Cylinders|xy:Horsepower",
               "items": [
-                "tick|row:bin(Acceleration,q)|x:Horsepower,q|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "tick|row:bin(Acceleration,q)|x:Horsepower,q|y:Cylinders,n|height={\"step\":12}",
                 "tick|row:bin(Acceleration,q)|x:Cylinders,n|y:Horsepower,q",
                 "tick|column:bin(Acceleration,q)|x:Horsepower,q|y:Cylinders,n",
-                "tick|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:Horsepower,q",
-                "point|row:bin(Acceleration,q)|x:Horsepower,q|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "tick|column:bin(Acceleration,q)|x:Cylinders,n|y:Horsepower,q|width={\"step\":12}",
+                "point|row:bin(Acceleration,q)|x:Horsepower,q|y:Cylinders,n|height={\"step\":12}",
                 "point|row:bin(Acceleration,q)|x:Cylinders,n|y:Horsepower,q",
                 "point|column:bin(Acceleration,q)|x:Horsepower,q|y:Cylinders,n",
-                "point|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:Horsepower,q"
+                "point|column:bin(Acceleration,q)|x:Cylinders,n|y:Horsepower,q|width={\"step\":12}"
               ]
             }
           ],
@@ -296,14 +296,14 @@
               "name": "facet:bin(Horsepower)|xy:Acceleration|xy:Cylinders",
               "path": "/Acceleration|Cylinders|bin(Horsepower)/facet:bin(Horsepower)|xy:Acceleration|xy:Cylinders/facet:bin(Horsepower)|xy:Acceleration|xy:Cylinders",
               "items": [
-                "tick|row:bin(Horsepower,q)|x:Acceleration,q|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "tick|row:bin(Horsepower,q)|x:Acceleration,q|y:Cylinders,n|height={\"step\":12}",
                 "tick|row:bin(Horsepower,q)|x:Cylinders,n|y:Acceleration,q",
                 "tick|column:bin(Horsepower,q)|x:Acceleration,q|y:Cylinders,n",
-                "tick|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:Acceleration,q",
-                "point|row:bin(Horsepower,q)|x:Acceleration,q|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "tick|column:bin(Horsepower,q)|x:Cylinders,n|y:Acceleration,q|width={\"step\":12}",
+                "point|row:bin(Horsepower,q)|x:Acceleration,q|y:Cylinders,n|height={\"step\":12}",
                 "point|row:bin(Horsepower,q)|x:Cylinders,n|y:Acceleration,q",
                 "point|column:bin(Horsepower,q)|x:Acceleration,q|y:Cylinders,n",
-                "point|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:Acceleration,q"
+                "point|column:bin(Horsepower,q)|x:Cylinders,n|y:Acceleration,q|width={\"step\":12}"
               ]
             }
           ],
@@ -458,18 +458,18 @@
               "name": "facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:bin(Horsepower)",
               "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:bin(Horsepower)/facet:bin(Acceleration)|style:autocount()|xy:Cylinders|xy:bin(Horsepower)",
               "items": [
-                "point|row:bin(Acceleration,q)|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "point|row:bin(Acceleration,q)|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,n|height={\"step\":12}",
                 "point|column:bin(Acceleration,q)|size:count(*,q)|x:bin(Horsepower,q)|y:Cylinders,n",
                 "point|row:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n|y:bin(Horsepower,q)",
-                "point|column:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)",
-                "point|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Acceleration,q)|size:count(*,q)|x:Cylinders,n|y:bin(Horsepower,q)|width={\"step\":12}",
+                "point|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n|height={\"step\":12}",
+                "rect|color:count(*,q)|row:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n|height={\"step\":12}",
                 "point|color:count(*,q)|column:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
                 "rect|color:count(*,q)|column:bin(Acceleration,q)|x:bin(Horsepower,q)|y:Cylinders,n",
                 "point|color:count(*,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)",
                 "rect|color:count(*,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)",
-                "point|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)",
-                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Horsepower,q)"
+                "point|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)|width={\"step\":12}",
+                "rect|color:count(*,q)|column:bin(Acceleration,q)|x:Cylinders,n|y:bin(Horsepower,q)|width={\"step\":12}"
               ]
             }
           ],
@@ -486,18 +486,18 @@
               "name": "facet:bin(Horsepower)|style:autocount()|xy:Cylinders|xy:bin(Acceleration)",
               "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Horsepower)|style:autocount()|xy:Cylinders|xy:bin(Acceleration)/facet:bin(Horsepower)|style:autocount()|xy:Cylinders|xy:bin(Acceleration)",
               "items": [
-                "point|row:bin(Horsepower,q)|size:count(*,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "point|row:bin(Horsepower,q)|size:count(*,q)|x:bin(Acceleration,q)|y:Cylinders,n|height={\"step\":12}",
                 "point|column:bin(Horsepower,q)|size:count(*,q)|x:bin(Acceleration,q)|y:Cylinders,n",
                 "point|row:bin(Horsepower,q)|size:count(*,q)|x:Cylinders,n|y:bin(Acceleration,q)",
-                "point|column:bin(Horsepower,q)|size:count(*,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
-                "point|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "rect|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Horsepower,q)|size:count(*,q)|x:Cylinders,n|y:bin(Acceleration,q)|width={\"step\":12}",
+                "point|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n|height={\"step\":12}",
+                "rect|color:count(*,q)|row:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n|height={\"step\":12}",
                 "point|color:count(*,q)|column:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
                 "rect|color:count(*,q)|column:bin(Horsepower,q)|x:bin(Acceleration,q)|y:Cylinders,n",
                 "point|color:count(*,q)|row:bin(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)",
                 "rect|color:count(*,q)|row:bin(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)",
-                "point|color:count(*,q)|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)",
-                "rect|color:count(*,q)|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:bin(Acceleration,q)"
+                "point|color:count(*,q)|column:bin(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)|width={\"step\":12}",
+                "rect|color:count(*,q)|column:bin(Horsepower,q)|x:Cylinders,n|y:bin(Acceleration,q)|width={\"step\":12}"
               ]
             }
           ],
@@ -586,18 +586,18 @@
               "name": "facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Cylinders|xy:autocount()",
               "path": "/Cylinders|autocount()|bin(Acceleration)|bin(Horsepower)/facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Cylinders|xy:autocount()/facet:bin(Acceleration)|facet:bin(Horsepower)|xy:Cylinders|xy:autocount()",
               "items": [
-                "bar|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "bar|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "bar|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:count(*,q)",
-                "bar|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:count(*,q)",
-                "point|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "point|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "point|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:count(*,q)",
-                "point|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:count(*,q)",
-                "tick|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "tick|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
-                "tick|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:count(*,q)",
-                "tick|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:count(*,q)"
+                "bar|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,n|height={\"step\":12}",
+                "bar|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Cylinders,n|height={\"step\":12}",
+                "bar|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Cylinders,n|y:count(*,q)|width={\"step\":12}",
+                "bar|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:count(*,q)|width={\"step\":12}",
+                "point|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,n|height={\"step\":12}",
+                "point|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Cylinders,n|height={\"step\":12}",
+                "point|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Cylinders,n|y:count(*,q)|width={\"step\":12}",
+                "point|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:count(*,q)|width={\"step\":12}",
+                "tick|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:count(*,q)|y:Cylinders,n|height={\"step\":12}",
+                "tick|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:count(*,q)|y:Cylinders,n|height={\"step\":12}",
+                "tick|column:bin(Acceleration,q)|row:bin(Horsepower,q)|x:Cylinders,n|y:count(*,q)|width={\"step\":12}",
+                "tick|column:bin(Horsepower,q)|row:bin(Acceleration,q)|x:Cylinders,n|y:count(*,q)|width={\"step\":12}"
               ]
             }
           ],
@@ -694,18 +694,18 @@
               "name": "facet:bin(Acceleration)|xy:Cylinders|xy:mean(Horsepower)",
               "path": "/Cylinders|bin(Acceleration)|mean(Horsepower)/facet:bin(Acceleration)|xy:Cylinders|xy:mean(Horsepower)/facet:bin(Acceleration)|xy:Cylinders|xy:mean(Horsepower)",
               "items": [
-                "bar|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "bar|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Cylinders,n|height={\"step\":12}",
                 "bar|row:bin(Acceleration,q)|x:Cylinders,n|y:mean(Horsepower,q)",
                 "bar|column:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Cylinders,n",
-                "bar|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:mean(Horsepower,q)",
-                "point|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "bar|column:bin(Acceleration,q)|x:Cylinders,n|y:mean(Horsepower,q)|width={\"step\":12}",
+                "point|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Cylinders,n|height={\"step\":12}",
                 "point|row:bin(Acceleration,q)|x:Cylinders,n|y:mean(Horsepower,q)",
                 "point|column:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Cylinders,n",
-                "point|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:mean(Horsepower,q)",
-                "tick|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Acceleration,q)|x:Cylinders,n|y:mean(Horsepower,q)|width={\"step\":12}",
+                "tick|row:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Cylinders,n|height={\"step\":12}",
                 "tick|row:bin(Acceleration,q)|x:Cylinders,n|y:mean(Horsepower,q)",
                 "tick|column:bin(Acceleration,q)|x:mean(Horsepower,q)|y:Cylinders,n",
-                "tick|column:bin(Acceleration,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:mean(Horsepower,q)"
+                "tick|column:bin(Acceleration,q)|x:Cylinders,n|y:mean(Horsepower,q)|width={\"step\":12}"
               ]
             }
           ],
@@ -846,18 +846,18 @@
               "name": "facet:bin(Horsepower)|xy:Cylinders|xy:mean(Acceleration)",
               "path": "/Cylinders|bin(Horsepower)|mean(Acceleration)/facet:bin(Horsepower)|xy:Cylinders|xy:mean(Acceleration)/facet:bin(Horsepower)|xy:Cylinders|xy:mean(Acceleration)",
               "items": [
-                "bar|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "bar|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Cylinders,n|height={\"step\":12}",
                 "bar|row:bin(Horsepower,q)|x:Cylinders,n|y:mean(Acceleration,q)",
                 "bar|column:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Cylinders,n",
-                "bar|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:mean(Acceleration,q)",
-                "point|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "bar|column:bin(Horsepower,q)|x:Cylinders,n|y:mean(Acceleration,q)|width={\"step\":12}",
+                "point|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Cylinders,n|height={\"step\":12}",
                 "point|row:bin(Horsepower,q)|x:Cylinders,n|y:mean(Acceleration,q)",
                 "point|column:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Cylinders,n",
-                "point|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:mean(Acceleration,q)",
-                "tick|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Cylinders,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Horsepower,q)|x:Cylinders,n|y:mean(Acceleration,q)|width={\"step\":12}",
+                "tick|row:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Cylinders,n|height={\"step\":12}",
                 "tick|row:bin(Horsepower,q)|x:Cylinders,n|y:mean(Acceleration,q)",
                 "tick|column:bin(Horsepower,q)|x:mean(Acceleration,q)|y:Cylinders,n",
-                "tick|column:bin(Horsepower,q)|x:Cylinders,n,scale={\"rangeStep\":12}|y:mean(Acceleration,q)"
+                "tick|column:bin(Horsepower,q)|x:Cylinders,n|y:mean(Acceleration,q)|width={\"step\":12}"
               ]
             }
           ],

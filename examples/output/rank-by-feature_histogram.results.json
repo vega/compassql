@@ -13,7 +13,7 @@
       "name": "Name|count(*)",
       "path": "/Name|count(*)",
       "items": [
-        "bar|x:count(*,q,axis={\"orient\":\"top\"})|y:Name,n,scale={\"rangeStep\":12}"
+        "bar|x:count(*,q,axis={\"orient\":\"top\"})|y:Name,n|height={\"step\":12}"
       ]
     },
     {
