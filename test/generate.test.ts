@@ -4,7 +4,7 @@ import * as MARK from 'vega-lite/build/src/mark';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
 import {Step} from 'vega-lite/build/src/spec/base';
-import * as VEGA_TIME from 'vega-time';
+import * as vegaTime from 'vega-time';
 import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
@@ -613,7 +613,7 @@ describe('generate', function() {
             scale: {type: {enum: [ScaleType.TIME, ScaleType.UTC, ScaleType.POINT, undefined, ScaleType.LOG]}},
             field: 'T',
             type: TYPE.TEMPORAL,
-            timeUnit: VEGA_TIME.MINUTES
+            timeUnit: vegaTime.MINUTES
           }
         ]
       };
@@ -635,7 +635,7 @@ describe('generate', function() {
             scale: {type: {enum: [ScaleType.POINT, undefined, ScaleType.LOG]}},
             field: 'O',
             type: TYPE.ORDINAL,
-            timeUnit: VEGA_TIME.MINUTES
+            timeUnit: vegaTime.MINUTES
           }
         ]
       };

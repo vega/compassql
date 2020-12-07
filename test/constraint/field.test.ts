@@ -4,7 +4,7 @@ import * as CHANNEL from 'vega-lite/build/src/channel';
 import {CHANNELS} from 'vega-lite/build/src/channel';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
-import * as VEGA_TIME from 'vega-time';
+import * as vegaTime from 'vega-time';
 import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {EncodingConstraintModel} from '../../src/constraint/base';
@@ -300,7 +300,7 @@ describe('constraints/field', () => {
       });
 
       it(channel + ' supports timeUnit temporal dimension.', () => {
-        const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.QUANTITATIVE, timeUnit: VEGA_TIME.MONTH};
+        const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.QUANTITATIVE, timeUnit: vegaTime.MONTH};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
             encQ,
@@ -387,7 +387,7 @@ describe('constraints/field', () => {
 
       it(channel + ' supports timeUnit temporal dimension.', () => {
         for (const type of [TYPE.ORDINAL, TYPE.TEMPORAL]) {
-          const encQ: EncodingQuery = {channel: channel, field: 'T', type, timeUnit: VEGA_TIME.MONTH};
+          const encQ: EncodingQuery = {channel: channel, field: 'T', type, timeUnit: vegaTime.MONTH};
           assert.isTrue(
             FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
               encQ,
@@ -474,7 +474,7 @@ describe('constraints/field', () => {
       });
 
       it(channel + ' supports timeUnit dimension.', () => {
-        const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.ORDINAL, timeUnit: VEGA_TIME.MONTH};
+        const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.ORDINAL, timeUnit: vegaTime.MONTH};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
             encQ,
@@ -569,7 +569,7 @@ describe('constraints/field', () => {
       const encQ: EncodingQuery = {
         hasFn: true,
         channel: CHANNEL.COLOR,
-        timeUnit: VEGA_TIME.HOURS,
+        timeUnit: vegaTime.HOURS,
         field: 'T',
         type: TYPE.TEMPORAL
       };
@@ -769,7 +769,7 @@ describe('constraints/field', () => {
           field: 'O',
           scale: {type: scaleType},
           type: TYPE.ORDINAL,
-          timeUnit: VEGA_TIME.MINUTES
+          timeUnit: vegaTime.MINUTES
         };
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(
@@ -789,7 +789,7 @@ describe('constraints/field', () => {
           field: 'N',
           scale: {type: scaleType},
           type: TYPE.NOMINAL,
-          timeUnit: VEGA_TIME.MINUTES
+          timeUnit: vegaTime.MINUTES
         };
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(
@@ -809,7 +809,7 @@ describe('constraints/field', () => {
           field: 'T',
           scale: {type: scaleType},
           type: TYPE.TEMPORAL,
-          timeUnit: VEGA_TIME.MINUTES
+          timeUnit: vegaTime.MINUTES
         };
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(
@@ -861,7 +861,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true if there is only one function', () => {
-      [['aggregate', 'mean'], ['timeUnit', VEGA_TIME.MONTH], ['bin', true], , ['autoCount', true]].forEach(
+      [['aggregate', 'mean'], ['timeUnit', vegaTime.MONTH], ['bin', true], , ['autoCount', true]].forEach(
         (tuple: any) => {
           let modifiedEncQ = duplicate(encQ);
           modifiedEncQ[tuple[0]] = tuple[1];
@@ -879,10 +879,10 @@ describe('constraints/field', () => {
 
     it('should return false if there are multiple functions', () => {
       [
-        ['mean', VEGA_TIME.MONTH, true],
+        ['mean', vegaTime.MONTH, true],
         ['mean', undefined, true],
-        ['mean', VEGA_TIME.MONTH, undefined],
-        [undefined, VEGA_TIME.MONTH, true]
+        ['mean', vegaTime.MONTH, undefined],
+        [undefined, vegaTime.MONTH, true]
       ].forEach(tuple => {
         encQ.aggregate = tuple[0] as AggregateOp;
         encQ.timeUnit = tuple[1] as TimeUnit;
@@ -903,7 +903,7 @@ describe('constraints/field', () => {
   describe('timeUnitAppliedForTemporal', () => {
     let encQ: FieldQuery = {
       channel: CHANNEL.X,
-      timeUnit: VEGA_TIME.MONTH,
+      timeUnit: vegaTime.MONTH,
       field: 'A',
       type: undefined
     };

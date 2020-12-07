@@ -1,7 +1,7 @@
 import * as CHANNEL from 'vega-lite/build/src/channel';
 import {ExtendedChannel, COLOR, COLUMN, OPACITY, ROW, SHAPE, SIZE, X, Y} from 'vega-lite/build/src/channel';
 import {AREA, BAR, CIRCLE, LINE, Mark, POINT, RULE, SQUARE, TICK} from 'vega-lite/build/src/mark';
-import * as VEGA_TIME from 'vega-time';
+import * as vegaTime from 'vega-time';
 import * as TYPE from 'vega-lite/build/src/type';
 import {Type} from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../../../src/config';
@@ -135,7 +135,7 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
       items: nestedMap([LINE, AREA, BAR, POINT, TICK, RULE], mark => {
         return histogram(mark, {
           channel: X,
-          timeUnit: VEGA_TIME.MONTH,
+          timeUnit: vegaTime.MONTH,
           field: 'T',
           type: TYPE.TEMPORAL
         });

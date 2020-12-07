@@ -5,7 +5,7 @@ import {autoMaxBins} from 'vega-lite/build/src/bin';
 import {Channel} from 'vega-lite/build/src/channel';
 import {SingleTimeUnit,LocalSingleTimeUnit,isUTCTimeUnit,containsTimeUnit, TimeUnit, TIMEUNIT_PARTS} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
-import * as VEGA_TIME from 'vega-time';
+import * as vegaTime from 'vega-time';
 import {DEFAULT_QUERY_CONFIG, QueryConfig} from './config';
 import {BinQuery, EncodingQuery, FieldQuery, isAutoCountQuery} from './query/encoding';
 import {ExpandedType} from './query/expandedtype';
@@ -293,21 +293,21 @@ export class Schema {
       if (augmentTimeUnitDomain) {
         switch (fieldQ.timeUnit) {
           // TODO: this should not always be the case once Vega-Lite supports turning off domain augmenting (VL issue #1385)
-          case VEGA_TIME.SECONDS:
+          case vegaTime.SECONDS:
             return 60;
-          case VEGA_TIME.MINUTES:
+          case vegaTime.MINUTES:
             return 60;
-          case VEGA_TIME.HOURS:
+          case vegaTime.HOURS:
             return 24;
-          case VEGA_TIME.DAY:
+          case vegaTime.DAY:
             return 7;
-          case VEGA_TIME.DATE:
+          case vegaTime.DATE:
             return 31;
-          case VEGA_TIME.MONTH:
+          case vegaTime.MONTH:
             return 12;
-          case VEGA_TIME.QUARTER:
+          case vegaTime.QUARTER:
             return 4;
-          case VEGA_TIME.MILLISECONDS:
+          case vegaTime.MILLISECONDS:
             return 1000;
         }
       }
@@ -353,8 +353,8 @@ export class Schema {
     }
 
     // if there is no variation in `date`, there should not be variation in `day`
-    if (fieldQ.timeUnit === VEGA_TIME.DAY) {
-      const dateEncQ: EncodingQuery = extend({}, fieldQ, {timeUnit: VEGA_TIME.DATE});
+    if (fieldQ.timeUnit === vegaTime.DAY) {
+      const dateEncQ: EncodingQuery = extend({}, fieldQ, {timeUnit: vegaTime.DATE});
       if (this.cardinality(dateEncQ, false, true) <= 1) {
         return false;
       }
@@ -461,13 +461,13 @@ function convert(unit: TimeUnit, date: Date): Date {
   for (const timeUnitPart of TIMEUNIT_PARTS) {
     if (containsTimeUnit(unit, timeUnitPart)) {
       switch (timeUnitPart) {
-        case VEGA_TIME.DAY:
+        case vegaTime.DAY:
           throw new Error("Cannot convert to TimeUnits containing 'day'");
-        case VEGA_TIME.DAYOFYEAR:
+        case vegaTime.DAYOFYEAR:
           throw new Error("Cannot convert to TimeUnits containing 'dayofyear'");
-        case VEGA_TIME.WEEK:
+        case vegaTime.WEEK:
           throw new Error("Cannot convert to TimeUnits containing 'week'");
-        case VEGA_TIME.QUARTER: {
+        case vegaTime.QUARTER: {
           const {getDateMethod, setDateMethod} = dateMethods('month', isUTC);
           // indicate quarter by setting month to be the first of the quarter i.e. may (4) -> april (3)
           result[setDateMethod](Math.floor(date[getDateMethod]() / 3) * 3);
@@ -500,7 +500,7 @@ function timeSummary(timeunit: TimeUnit, summary: DLFieldProfile): DLFieldProfil
     } else if (isNaN(date.getTime())) {
       key = 'Invalid Date';
     } else {
-      key = (timeunit === VEGA_TIME.DAY ? date.getDay() : convert(timeunit, date)).toString();
+      key = (timeunit === vegaTime.DAY ? date.getDay() : convert(timeunit, date)).toString();
     }
     unique[key] = (unique[key] || 0) + summary.unique[dateString];
   });

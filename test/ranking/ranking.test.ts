@@ -1,7 +1,7 @@
 import {assert} from 'chai';
 import * as CHANNEL from 'vega-lite/build/src/channel';
 import * as MARK from 'vega-lite/build/src/mark';
-import * as VEGA_TIME from 'vega-time';
+import * as vegaTime from 'vega-time';
 import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SpecQueryModel, SpecQueryModelGroup} from '../../src/model';
@@ -41,7 +41,7 @@ describe('ranking', () => {
             {
               mark: MARK.LINE,
               encodings: [
-                {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: VEGA_TIME.DAY},
+                {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: vegaTime.DAY},
                 {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE}
               ]
             },
@@ -53,7 +53,7 @@ describe('ranking', () => {
             {
               mark: MARK.POINT,
               encodings: [
-                {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: VEGA_TIME.DAY},
+                {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: vegaTime.DAY},
                 {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE}
               ]
             },
@@ -106,7 +106,7 @@ describe('ranking', () => {
           {
             mark: MARK.LINE,
             encodings: [
-              {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: VEGA_TIME.DAY},
+              {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: vegaTime.DAY},
               {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE}
             ]
           },
@@ -118,7 +118,7 @@ describe('ranking', () => {
           {
             mark: MARK.POINT,
             encodings: [
-              {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: VEGA_TIME.DAY},
+              {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: vegaTime.DAY},
               {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE}
             ]
           },

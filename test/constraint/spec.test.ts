@@ -6,7 +6,7 @@ import * as MARK from 'vega-lite/build/src/mark';
 // import * as log from 'vega-lite/build/src/log';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
-import * as VEGA_TIME from 'vega-time';
+import * as vegaTime from 'vega-time';
 import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SpecConstraintModel, SPEC_CONSTRAINTS, SPEC_CONSTRAINT_INDEX} from '../../src/constraint/spec';
@@ -147,7 +147,7 @@ describe('constraints/spec', () => {
     autoCountShouldBe(true, 'there is only a temporal field with timeUnit or a binned quantitative field', {
       mark: MARK.POINT,
       encodings: [
-        {channel: CHANNEL.X, field: 'A', type: TYPE.TEMPORAL, timeUnit: VEGA_TIME.HOURS},
+        {channel: CHANNEL.X, field: 'A', type: TYPE.TEMPORAL, timeUnit: vegaTime.HOURS},
         {channel: CHANNEL.COLOR, field: 'A', type: TYPE.QUANTITATIVE, bin: true}
       ]
     });
@@ -205,7 +205,7 @@ describe('constraints/spec', () => {
           {channel: CHANNEL.SHAPE, field: 'A', type: TYPE.NOMINAL},
           {channel: CHANNEL.COLOR, field: 'B', type: TYPE.ORDINAL},
           {channel: CHANNEL.X, field: 'A', type: TYPE.QUANTITATIVE, bin: true},
-          {channel: CHANNEL.Y, field: 'B', type: TYPE.TEMPORAL, timeUnit: VEGA_TIME.HOURS}
+          {channel: CHANNEL.Y, field: 'B', type: TYPE.TEMPORAL, timeUnit: vegaTime.HOURS}
         ]
       });
 
@@ -349,7 +349,7 @@ describe('constraints/spec', () => {
           const specM = buildSpecQueryModel({
             mark: mark,
             encodings: [
-              {channel: CHANNEL.X, field: 'T', type: TYPE.TEMPORAL, timeUnit: VEGA_TIME.MONTH},
+              {channel: CHANNEL.X, field: 'T', type: TYPE.TEMPORAL, timeUnit: vegaTime.MONTH},
               {channel: CHANNEL.Y, field: 'Q', type: TYPE.QUANTITATIVE}
             ]
           });
@@ -1418,7 +1418,7 @@ describe('constraints/spec', () => {
         mark: MARK.POINT,
         encodings: [
           {channel: CHANNEL.X, aggregate: 'mean', field: 'A', type: TYPE.NOMINAL},
-          {channel: CHANNEL.Y, timeUnit: VEGA_TIME.MONTH, field: 'C', type: TYPE.TEMPORAL}
+          {channel: CHANNEL.Y, timeUnit: vegaTime.MONTH, field: 'C', type: TYPE.TEMPORAL}
         ]
       });
 
@@ -1432,7 +1432,7 @@ describe('constraints/spec', () => {
         mark: MARK.POINT,
         encodings: [
           {channel: CHANNEL.X, aggregate: 'mean', field: 'A', type: TYPE.NOMINAL},
-          {channel: CHANNEL.Y, timeUnit: {enum: [VEGA_TIME.MONTH, undefined]}, field: 'C', type: TYPE.TEMPORAL}
+          {channel: CHANNEL.Y, timeUnit: {enum: [vegaTime.MONTH, undefined]}, field: 'C', type: TYPE.TEMPORAL}
         ]
       });
 
@@ -1529,7 +1529,7 @@ describe('constraints/spec', () => {
     });
 
     it('should return true for any raw plot', () => {
-      [VEGA_TIME.MONTH, undefined, {enum: [VEGA_TIME.MONTH, undefined]}].forEach(timeUnit => {
+      [vegaTime.MONTH, undefined, {enum: [vegaTime.MONTH, undefined]}].forEach(timeUnit => {
         const specM = buildSpecQueryModel({
           mark: MARK.POINT,
           encodings: [

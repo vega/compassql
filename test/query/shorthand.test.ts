@@ -2,7 +2,7 @@ import {assert} from 'chai';
 import * as CHANNEL from 'vega-lite/build/src/channel';
 import * as MARK from 'vega-lite/build/src/mark';
 import {ScaleType} from 'vega-lite/build/src/scale';
-import * as VEGA_TIME from 'vega-time';
+import * as vegaTime from 'vega-time';
 import * as TYPE from 'vega-lite/build/src/type';
 import {PropIndex} from '../../src/propindex';
 import {REPLACE_BLANK_FIELDS} from '../../src/query/groupby';
@@ -122,7 +122,7 @@ describe('query/shorthand', () => {
 
       it('should correctly parse an encoding query given a fieldDefShorthand with timeunit function', () => {
         const encQ = shorthandParser.fn('hours(a,t)');
-        assert.deepEqual(encQ, {field: 'a', timeUnit: VEGA_TIME.HOURS, type: TYPE.TEMPORAL});
+        assert.deepEqual(encQ, {field: 'a', timeUnit: vegaTime.HOURS, type: TYPE.TEMPORAL});
       });
 
       it('should correctly parse an encoding query given a fieldDefShorthand with maxbins bin function', () => {
@@ -509,7 +509,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.TEMPORAL,
-        timeUnit: VEGA_TIME.HOURS
+        timeUnit: vegaTime.HOURS
       });
       assert.equal(str, 'hours(a,t)');
     });
