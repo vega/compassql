@@ -27,7 +27,6 @@ describe('stylize', () => {
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
       assert.equal(
-        //((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep,
         specM.specQuery.height,
         undefined
       );
@@ -45,7 +44,6 @@ describe('stylize', () => {
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      //assert.equal(((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 21);
       assert.equal((specM.specQuery.height as Step).step, 21);
     });
 
@@ -60,7 +58,6 @@ describe('stylize', () => {
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      //assert.equal(((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
       assert.equal((specM.specQuery.height as Step).step, 12);
     });
 
@@ -79,7 +76,6 @@ describe('stylize', () => {
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      //assert.equal(((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 21);
       assert.equal((specM.specQuery.height as Step).step, 21);
     });
 
@@ -97,7 +93,6 @@ describe('stylize', () => {
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      //assert.equal(((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
       assert.equal((specM.specQuery.height as Step).step, 12);
     });
 
@@ -113,7 +108,6 @@ describe('stylize', () => {
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
       assert.equal(
-        //((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep,
         specM.specQuery.height,
         undefined
       );
@@ -132,7 +126,6 @@ describe('stylize', () => {
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      //assert.equal(((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
       assert.equal((specM.specQuery.height as Step).step, 12);
     });
 
@@ -154,7 +147,6 @@ describe('stylize', () => {
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      //assert.deepEqual(((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep, {
       assert.deepEqual(specM.specQuery.height, {
         name: 'step',
         enum: [{step: 17}, {step: 21}]
