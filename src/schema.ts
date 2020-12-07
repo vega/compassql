@@ -3,7 +3,7 @@ import {inferAll} from 'datalib/src/import/type';
 import {summary} from 'datalib/src/stats';
 import {autoMaxBins} from 'vega-lite/build/src/bin';
 import {Channel} from 'vega-lite/build/src/channel';
-import {TimeUnitParams,SingleTimeUnit,LocalSingleTimeUnit,isUTCTimeUnit,containsTimeUnit, TimeUnit, TIMEUNIT_PARTS} from 'vega-lite/build/src/timeunit';
+import {SingleTimeUnit,LocalSingleTimeUnit,isUTCTimeUnit,containsTimeUnit, TimeUnit, TIMEUNIT_PARTS} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import * as VEGA_TIME from 'vega-time';
 import {DEFAULT_QUERY_CONFIG, QueryConfig} from './config';

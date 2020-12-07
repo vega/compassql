@@ -1,10 +1,6 @@
 module.exports = {
-  preset: "ts-jest",
+  preset: "ts-jest/presets/js-with-babel",
   testEnvironment: "node",
-  transform: {
-    "^.+\\.tsx?$": "ts-jest",
-    "^.+\\.jsx?$": "babel-jest"
-  },
   testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
   moduleFileExtensions: [
     "ts",
