@@ -847,7 +847,6 @@ describe('generate', function() {
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
         assert.equal((answerSet[0].specQuery.height as Step).step, 12);
-        //assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
       });
 
       it('should output height step = 12', () => {
@@ -870,7 +869,6 @@ describe('generate', function() {
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
         assert.equal((answerSet[0].specQuery.height as Step).step, 12);
-        //assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
       });
     });
   });
