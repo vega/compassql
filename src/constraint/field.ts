@@ -96,7 +96,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         return true;
       } else {
         // In VL, facet's field def must be discrete (O/N), but in CompassQL we can relax this a bit.
-        const isFacet = fieldQ.channel === 'row' || fieldQ.channel === 'column';
+        const isFacet = fieldQ.channel === 'row' || fieldQ.channel === 'column' || fieldQ.channel === 'facet';
 
         const unit = fieldDef.timeUnit && normalizeTimeUnit(fieldDef.timeUnit)?.unit;
         if (isFacet && unit && (isLocalSingleTimeUnit(unit) || isUTCTimeUnit(unit))) {
