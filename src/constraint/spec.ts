@@ -232,9 +232,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         // channel unspecified, no need to check
         if (isWildcard(encQ.channel)) return true;
 
-        if (encQ.channel === 'row' || encQ.channel === 'column') return true;
+        if (encQ.channel === 'row' || encQ.channel === 'column' || encQ.channel === 'facet') return true;
 
-        return !!supportMark(encQ.channel as CHANNEL.Channel, mark as Mark);
+        return !!supportMark(encQ.channel, mark as Mark);
       });
     }
   },

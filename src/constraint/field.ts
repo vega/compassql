@@ -1,5 +1,5 @@
 import * as CHANNEL from 'vega-lite/build/src/channel';
-import {Channel, ExtendedChannel} from 'vega-lite/build/src/channel';
+import {ExtendedChannel} from 'vega-lite/build/src/channel';
 import {channelCompatibility, TypedFieldDef} from 'vega-lite/build/src/channeldef';
 import {
   channelScalePropertyIncompatability,
@@ -234,7 +234,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         let channel: ExtendedChannel = fieldQ.channel as ExtendedChannel;
         let scale: ScaleQuery = fieldQ.scale as ScaleQuery;
         if (channel && !isWildcard(channel) && scale) {
-          if (channel === 'row' || channel === 'column') {
+          if (channel === 'row' || channel === 'column' || channel === 'facet') {
             // row / column do not have scale
             return false;
           }
@@ -244,7 +244,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
               // ignore type and properties of wildcards
               continue;
             }
-            let isSupported = channelScalePropertyIncompatability(channel as Channel, scaleProp as keyof Scale) === undefined;
+            let isSupported = channelScalePropertyIncompatability(channel, scaleProp as keyof Scale) === undefined;
             if (!isSupported) {
               return false;
             }

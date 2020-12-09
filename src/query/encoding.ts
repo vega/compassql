@@ -2,7 +2,7 @@ import {isObject} from 'datalib/src/util';
 import {AggregateOp} from 'vega';
 import {Axis} from 'vega-lite/build/src/axis';
 import {BinParams} from 'vega-lite/build/src/bin';
-import {Channel,ExtendedChannel} from 'vega-lite/build/src/channel';
+import {ExtendedChannel} from 'vega-lite/build/src/channel';
 import * as vlChannelDef from 'vega-lite/build/src/channeldef';
 import {ValueDef} from 'vega-lite/build/src/channeldef';
 import {scaleType as compileScaleType} from 'vega-lite/build/src/compile/scale/type';
@@ -304,7 +304,7 @@ export function scaleType(fieldQ: FieldQuery) {
     return undefined;
   }
 
-  if (channel === 'row' || channel === 'column') {
+  if (channel === 'row' || channel === 'column' || channel === 'facet') {
     return undefined;
   }
 
@@ -330,5 +330,5 @@ export function scaleType(fieldQ: FieldQuery) {
     timeUnit: timeUnit as TimeUnit,
     bin: bin as BinParams
   };
-  return compileScaleType({type: scale.type}, channel as Channel, fieldDef, markType);
+  return compileScaleType({type: scale.type}, channel, fieldDef, markType);
 }
