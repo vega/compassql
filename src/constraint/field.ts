@@ -8,7 +8,7 @@ import {
   ScaleType,
   scaleTypeSupportProperty
 } from 'vega-lite/build/src/scale';
-import {isLocalSingleTimeUnit, isUTCTimeUnit} from 'vega-lite/build/src/timeunit';
+import {normalizeTimeUnit, isLocalSingleTimeUnit, isUTCTimeUnit} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import {QueryConfig} from '../config';
 import {getEncodingNestedProp, Property, SCALE_PROPS} from '../property';
@@ -98,7 +98,8 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         // In VL, facet's field def must be discrete (O/N), but in CompassQL we can relax this a bit.
         const isFacet = fieldQ.channel === 'row' || fieldQ.channel === 'column';
 
-        if (isFacet && !!fieldDef.timeUnit && (isLocalSingleTimeUnit(fieldDef.timeUnit as string) || isUTCTimeUnit(fieldDef.timeUnit as string))) {
+        const unit = fieldDef.timeUnit && normalizeTimeUnit(fieldDef.timeUnit)?.unit;
+        if (isFacet && unit && (isLocalSingleTimeUnit(unit) || isUTCTimeUnit(unit))) {
           return true;
         }
         return false;
