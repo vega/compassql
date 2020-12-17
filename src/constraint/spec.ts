@@ -293,9 +293,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     strict: false,
     satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
       if (specM.isAggregate()) {
-        let hasNonFacetDim = false,
-          hasDim = false,
-          hasEnumeratedFacetDim = false;
+        let hasNonFacetDim = false;
+        let hasDim = false;
+        let hasEnumeratedFacetDim = false;
         specM.specQuery.encodings.forEach((encQ, index) => {
           if (isValueQuery(encQ) || isDisabledAutoCountQuery(encQ)) return; // skip unused field
 
@@ -470,8 +470,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       const encodings = specM.specQuery.encodings;
       let hasNonPositionalChannelOrFacet = false;
       let hasEnumeratedNonPositionOrFacetChannel = false;
-      let hasX = false,
-        hasY = false;
+      let hasX = false;
+      let hasY = false;
       for (let i = 0; i < encodings.length; i++) {
         const encQ = encodings[i];
         if (isValueQuery(encQ) || isDisabledAutoCountQuery(encQ)) {

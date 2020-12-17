@@ -33,7 +33,8 @@ export function forEach(obj: any, f: (item: any, key: number|string, i: number)=
 };
 
 export function some<T>(arr: T[], f: (item: T, key: number|string, i: number)=>boolean) {
-  let i = 0, k;
+  let i = 0;
+  let k;
   for (k in arr) {
     if (f(arr[k], k, i++)) {
       return true;

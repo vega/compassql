@@ -28,7 +28,8 @@ export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): Ra
   const numFields = schema.fieldSchemas.length;
 
   const features: FeatureScore[] = [];
-  let totalScore = 0, base = 1;
+  let totalScore = 0;
+  let base = 1;
 
   for (let i = fieldWildcardIndices.length - 1; i >= 0; i--) {
     const index = fieldWildcardIndices[i];
