@@ -151,7 +151,7 @@ export function fromKey(k: string): Property {
       child: split[1]
     } as EncodingNestedProp;
   } else {
-    throw 'Invalid property key with ' + split.length + ' dots: ' + k;
+    throw `Invalid property key with ${split.length} dots: ${k}`;
   }
 }
 

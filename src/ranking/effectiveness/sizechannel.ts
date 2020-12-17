@@ -25,7 +25,7 @@ export class SizeChannelScorer extends Scorer {
     const mark = specM.getMark();
     return specM.getEncodings().reduce((featureScores, encQ) => {
       if (isFieldQuery(encQ) || isAutoCountQuery(encQ)) {
-        const feature = mark + '_' + encQ.channel;
+        const feature = `${mark}_${encQ.channel}`;
         const featureScore = this.getFeatureScore(feature);
         if (featureScore) {
           featureScores.push(featureScore);

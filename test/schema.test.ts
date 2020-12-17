@@ -221,7 +221,7 @@ describe('schema', () => {
       const cardinalityData = [];
       for (let i = 1; i <= 30; i++) {
         cardinalityData.push({
-          a: 'June ' + i + ', 2000'
+          a: `June ${i}, 2000`
         });
       }
       const cardinalitySchema = build(cardinalityData);
@@ -239,7 +239,7 @@ describe('schema', () => {
       const cardinalityData = [];
       for (let i = 1; i <= numYears; i++) {
         cardinalityData.push({
-          a: 'June ' + i + ', 200' + i
+          a: `June ${i}, 200${i}`
         });
       }
       const cardinalitySchema = build(cardinalityData);

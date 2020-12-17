@@ -12,7 +12,7 @@ export const PREFERRED_AXIS_RULESET: RuleSet<string> = {
   rules: [].concat(
     [BIN_Q, TIMEUNIT_T, TIMEUNIT_O, T].map((type) => {
       return {
-        name: type + '',
+        name: `${type}`,
         items: nestedMap([X, Y], (channel) => {
           return scorer.featurize(type, channel);
         })
@@ -20,7 +20,7 @@ export const PREFERRED_AXIS_RULESET: RuleSet<string> = {
     }),
     [O, N].map((type) => {
         return {
-          name: type + '',
+          name: `${type}`,
           items: nestedMap([Y, X], (channel) => {
             return scorer.featurize(type, channel);
           })

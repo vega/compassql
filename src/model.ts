@@ -149,7 +149,7 @@ export class SpecQueryModel {
     this._channelFieldCount = spec.encodings.reduce(
       (m, encQ) => {
         if (!isWildcard(encQ.channel) && (!isAutoCountQuery(encQ) || encQ.autoCount !== false)) {
-          m[encQ.channel + ''] = 1;
+          m[`${encQ.channel}`] = 1;
         }
         return m;
       },

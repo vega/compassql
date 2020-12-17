@@ -94,7 +94,7 @@ export class TypeChannelScorer extends Scorer {
   }
 
   public featurize(type: ExtendedType, channel: Channel) {
-    return type + '_' + channel;
+    return `${type}_${channel}`;
   }
 
   public getScore(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): FeatureScore[] {

@@ -69,7 +69,7 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
           ? specShorthand(specM.specQuery, includes[l], replacers[l])
           : groupRegistry[groupBy](specM.specQuery);
 
-        path += '/' + key;
+        path += `/${key}`;
         if (!groupIndex[path]) {
           // this item already exists on the path
           groupIndex[path] = {

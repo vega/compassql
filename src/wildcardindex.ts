@@ -52,7 +52,7 @@ export class WildcardIndex {
       return !!this.mark;
     }
     /* istanbul ignore next */
-    throw new Error('Unimplemented for property ' + prop);
+    throw new Error(`Unimplemented for property ${prop}`);
   }
 
   public isEmpty() {

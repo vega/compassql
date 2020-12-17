@@ -161,7 +161,7 @@ function extendEnumIndex(enumIndex: Partial<EnumIndex>) {
 
 function extendNestedEnumIndex(enumIndex: Partial<EnumIndex>, prop: 'bin' | 'scale' | 'axis' | 'legend') {
   return {
-    ...DEFAULT_ENUM_INDEX[prop + 'Props'],
-    ...enumIndex[prop + 'Props']
+    ...DEFAULT_ENUM_INDEX[`${prop}Props`],
+    ...enumIndex[`${prop}Props`]
   };
 }

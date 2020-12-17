@@ -95,8 +95,8 @@ describe('wildcard', () => {
         );
         defaultNameIndex[getDefaultName(prop)] = prop;
       }
-      assert.equal(missing.length, 0, 'Properties with missing name: ' + missing.join(','));
-      assert.equal(Object.keys(duplicated).length, 0, 'Properties with duplicate names: ' + JSON.stringify(duplicated));
+      assert.equal(missing.length, 0, `Properties with missing name: ${missing.join(',')}`);
+      assert.equal(Object.keys(duplicated).length, 0, `Properties with duplicate names: ${JSON.stringify(duplicated)}`);
     });
 
     it('should return enum for every properties by default', () => {
@@ -110,7 +110,7 @@ describe('wildcard', () => {
           missing.push(toKey(prop));
         }
       }
-      assert.equal(missing.length, 0, 'Properties with missing enum: ' + missing.join(','));
+      assert.equal(missing.length, 0, `Properties with missing enum: ${missing.join(',')}`);
     });
   });
 
@@ -126,7 +126,7 @@ describe('wildcard', () => {
           missing.push(toKey(prop));
         }
       }
-      assert.equal(missing.length, 0, 'Properties with missing enum: ' + missing.join(','));
+      assert.equal(missing.length, 0, `Properties with missing enum: ${missing.join(',')}`);
     });
   });
 });

@@ -54,10 +54,10 @@ export class AxisScorer extends Scorer {
     preferredAxes.forEach(pAxis => {
       if (opt[pAxis.opt] === CHANNEL.X) {
         // penalize the other axis
-        score[pAxis.feature + '_' + CHANNEL.Y] = -0.01;
+        score[`${pAxis.feature}_${CHANNEL.Y}`] = -0.01;
       } else if (opt[pAxis.opt] === CHANNEL.Y) {
         // penalize the other axis
-        score[pAxis.feature + '_' + CHANNEL.X] = -0.01;
+        score[`${pAxis.feature}_${CHANNEL.X}`] = -0.01;
       }
     });
 
@@ -65,7 +65,7 @@ export class AxisScorer extends Scorer {
   }
 
   public featurize(type: ExtendedType, channel: Channel) {
-    return type + '_' + channel;
+    return `${type}_${channel}`;
   }
 
   public getScore(specM: SpecQueryModel, _: Schema, __: QueryConfig): FeatureScore[] {

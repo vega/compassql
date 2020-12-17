@@ -269,7 +269,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           );
       }
       /* istanbul ignore next */
-      throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + JSON.stringify(mark));
+      throw new Error(`hasAllRequiredChannelsForMark not implemented for mark${JSON.stringify(mark)}`);
     }
   },
   {
@@ -443,7 +443,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
         const channel = encQ.channel;
         if (!isWildcard(channel)) {
-          if (NONPOSITION_CHANNELS_INDEX[channel + '']) {
+          if (NONPOSITION_CHANNELS_INDEX[`${channel}`]) {
             nonPositionChannelCount += 1;
             if (specM.wildcardIndex.hasEncodingProperty(i, Property.CHANNEL)) {
               hasEnumeratedNonPositionChannel = true;
@@ -739,7 +739,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           return true;
       }
       /* istanbul ignore next */
-      throw new Error('hasAllRequiredChannelsForMark not implemented for mark' + mark);
+      throw new Error(`hasAllRequiredChannelsForMark not implemented for mark${mark}`);
     }
   },
   {
@@ -885,10 +885,10 @@ export function checkSpec(
 
       const satisfy = c.satisfy(specM, schema, opt);
       if (!satisfy) {
-        let violatedConstraint = '(spec) ' + c.name();
+        let violatedConstraint = `(spec) ${c.name()}`;
         /* istanbul ignore if */
         if (opt.verbose) {
-          console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + wildcard.name);
+          console.log(`${violatedConstraint} failed with ${specM.toShorthand()} for ${wildcard.name}`);
         }
         return violatedConstraint;
       }

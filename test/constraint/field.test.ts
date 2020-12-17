@@ -27,7 +27,7 @@ describe('constraints/field', () => {
   // Make sure all non-strict constraints have their configs.
   FIELD_CONSTRAINTS.forEach(constraint => {
     if (!constraint.strict()) {
-      it(constraint.name() + ' should have default config for all non-strict constraints', () => {
+      it(`${constraint.name()} should have default config for all non-strict constraints`, () => {
         assert.isDefined(DEFAULT_QUERY_CONFIG[constraint.name()]);
       });
     }
@@ -251,7 +251,7 @@ describe('constraints/field', () => {
 
   describe('channelFieldCompatible', () => {
     [CHANNEL.X, CHANNEL.Y, CHANNEL.COLOR, CHANNEL.TEXT, CHANNEL.DETAIL].forEach(channel => {
-      it(channel + ' supports raw measure.', () => {
+      it(`${channel} supports raw measure.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'Q', type: TYPE.QUANTITATIVE};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -263,7 +263,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports aggregate measure.', () => {
+      it(`${channel} supports aggregate measure.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'Q', type: TYPE.QUANTITATIVE, aggregate: 'mean'};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -275,7 +275,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports aggregate measure.', () => {
+      it(`${channel} supports aggregate measure.`, () => {
         const encQ: EncodingQuery = {channel: channel, type: TYPE.QUANTITATIVE, autoCount: true};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -287,7 +287,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports raw temporal measure.', () => {
+      it(`${channel} supports raw temporal measure.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.TEMPORAL};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -299,7 +299,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports timeUnit temporal dimension.', () => {
+      it(`${channel} supports timeUnit temporal dimension.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.QUANTITATIVE, timeUnit: vegaTime.MONTH};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -311,7 +311,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports binned quantitative dimension.', () => {
+      it(`${channel} supports binned quantitative dimension.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'Q', type: TYPE.QUANTITATIVE, bin: true};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -323,7 +323,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports ordinal dimension.', () => {
+      it(`${channel} supports ordinal dimension.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'O', type: TYPE.ORDINAL};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -335,7 +335,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports nominal dimension.', () => {
+      it(`${channel} supports nominal dimension.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'N', type: TYPE.NOMINAL};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -349,7 +349,7 @@ describe('constraints/field', () => {
     });
 
     [CHANNEL.ROW, CHANNEL.COLUMN].forEach(channel => {
-      it(channel + ' does not support raw measure.', () => {
+      it(`${channel} does not support raw measure.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'Q', type: TYPE.QUANTITATIVE};
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -361,7 +361,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' does not support aggregate measure.', () => {
+      it(`${channel} does not support aggregate measure.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'Q', type: TYPE.QUANTITATIVE, aggregate: 'mean'};
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -373,7 +373,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' does not support raw temporal measure.', () => {
+      it(`${channel} does not support raw temporal measure.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.TEMPORAL};
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -385,7 +385,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports timeUnit temporal dimension.', () => {
+      it(`${channel} supports timeUnit temporal dimension.`, () => {
         for (const type of [TYPE.ORDINAL, TYPE.TEMPORAL]) {
           const encQ: EncodingQuery = {channel: channel, field: 'T', type, timeUnit: vegaTime.MONTH};
           assert.isTrue(
@@ -399,7 +399,7 @@ describe('constraints/field', () => {
         }
       });
 
-      it(channel + ' supports binned quantitative dimension.', () => {
+      it(`${channel} supports binned quantitative dimension.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'Q', type: TYPE.QUANTITATIVE, bin: true};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -411,7 +411,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports ordinal dimension.', () => {
+      it(`${channel} supports ordinal dimension.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'O', type: TYPE.ORDINAL};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -423,7 +423,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports nominal dimension.', () => {
+      it(`${channel} supports nominal dimension.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'N', type: TYPE.NOMINAL};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -437,7 +437,7 @@ describe('constraints/field', () => {
     });
 
     [CHANNEL.SIZE].forEach(channel => {
-      it(channel + ' supports raw measure.', () => {
+      it(`${channel} supports raw measure.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'Q', type: TYPE.QUANTITATIVE};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -449,7 +449,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports aggregate measure.', () => {
+      it(`${channel} supports aggregate measure.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'Q', type: TYPE.QUANTITATIVE, aggregate: 'mean'};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -461,7 +461,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports raw temporal measure.', () => {
+      it(`${channel} supports raw temporal measure.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.TEMPORAL};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -473,7 +473,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports timeUnit dimension.', () => {
+      it(`${channel} supports timeUnit dimension.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.ORDINAL, timeUnit: vegaTime.MONTH};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -485,7 +485,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports binned quantitative dimension.', () => {
+      it(`${channel} supports binned quantitative dimension.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'Q', type: TYPE.QUANTITATIVE, bin: true};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -497,7 +497,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' supports ordinal dimension.', () => {
+      it(`${channel} supports ordinal dimension.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'O', type: TYPE.ORDINAL};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -509,7 +509,7 @@ describe('constraints/field', () => {
         );
       });
 
-      it(channel + ' does not support nominal dimension.', () => {
+      it(`${channel} does not support nominal dimension.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'N', type: TYPE.NOMINAL};
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
@@ -763,7 +763,7 @@ describe('constraints/field', () => {
 
   describe('dataTypeAndFunctionMatchScaleType', () => {
     [ScaleType.ORDINAL, ScaleType.POINT, ScaleType.BAND].forEach(scaleType => {
-      it('scaleType of ' + scaleType + ' matches data type ordinal with timeUnit', () => {
+      it(`scaleType of ${scaleType} matches data type ordinal with timeUnit`, () => {
         const encQ: EncodingQuery = {
           channel: CHANNEL.X,
           field: 'O',
@@ -783,7 +783,7 @@ describe('constraints/field', () => {
     });
 
     [ScaleType.ORDINAL, ScaleType.POINT, ScaleType.BAND].forEach(scaleType => {
-      it('scaleType of ' + scaleType + ' matches data type nominal', () => {
+      it(`scaleType of ${scaleType} matches data type nominal`, () => {
         const encQ: EncodingQuery = {
           channel: CHANNEL.X,
           field: 'N',
@@ -803,7 +803,7 @@ describe('constraints/field', () => {
     });
 
     [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, ScaleType.POINT, ScaleType.BAND].forEach(scaleType => {
-      it('scaleType of ' + scaleType + ' matches data type temporal', () => {
+      it(`scaleType of ${scaleType} matches data type temporal`, () => {
         const encQ: EncodingQuery = {
           channel: CHANNEL.X,
           field: 'T',
@@ -828,7 +828,7 @@ describe('constraints/field', () => {
       ScaleType.SQRT, // ScaleType.QUANTILE, ScaleType.QUANTIZE,
       ScaleType.LINEAR
     ].forEach(scaleType => {
-      it('scaleType of ' + scaleType + ' matches data type quantitative', () => {
+      it(`scaleType of ${scaleType} matches data type quantitative`, () => {
         const encQ: EncodingQuery = {channel: CHANNEL.X, field: 'Q', scale: {type: scaleType}, type: TYPE.QUANTITATIVE};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(

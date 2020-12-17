@@ -63,9 +63,9 @@ export function toString(groupBy: GroupBy): string {
             return index;
           }, {});
 
-          return g.property + '[' + keys(replaceIndex).map((valTo) => {
+          return `${g.property}[` + keys(replaceIndex).map((valTo) => {
             const valsFrom = replaceIndex[valTo].sort();
-            return valsFrom.join(',') + '=>' + valTo;
+            return `${valsFrom.join(',')}=>${valTo}`;
           }).join(';') + ']';
         }
         return g.property;

@@ -111,7 +111,7 @@ export function spec(
   }
 
   if (specQ.transform && specQ.transform.length > 0) {
-    parts.push('transform:' + JSON.stringify(specQ.transform));
+    parts.push(`transform:${JSON.stringify(specQ.transform)}`);
   }
 
   let stack: StackProperties;
@@ -212,17 +212,17 @@ export function fieldDef(
     // type
     if (include.get(Property.TYPE)) {
       if (isWildcard(encQ.type)) {
-        fieldAndParams += ',' + value(encQ.type, replacer.get(Property.TYPE));
+        fieldAndParams += `,${value(encQ.type, replacer.get(Property.TYPE))}`;
       } else {
-        const typeShort = ((encQ.type || TYPE.QUANTITATIVE) + '').substr(0, 1);
-        fieldAndParams += ',' + value(typeShort, replacer.get(Property.TYPE));
+        const typeShort = (`${encQ.type || TYPE.QUANTITATIVE}`).substr(0, 1);
+        fieldAndParams += `,${value(typeShort, replacer.get(Property.TYPE))}`;
       }
     }
     // encoding properties
     fieldAndParams += props
       .map(p => {
-        let val = p.value instanceof Array ? '[' + p.value + ']' : p.value;
-        return ',' + p.key + '=' + val;
+        let val = p.value instanceof Array ? `[${p.value}]` : p.value;
+        return `,${p.key}=${val}`;
       })
       .join('');
   } else if (isAutoCountQuery(encQ)) {
@@ -235,7 +235,7 @@ export function fieldDef(
   if (fn) {
     let fnPrefix = isString(fn) ? fn : SHORT_WILDCARD + (keys(fn).length > 0 ? JSON.stringify(fn) : '');
 
-    return fnPrefix + '(' + fieldAndParams + ')';
+    return `${fnPrefix}(${fieldAndParams})`;
   }
   return fieldAndParams;
 }
@@ -303,13 +303,13 @@ function fieldDefProps(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer
       if (isBoolean(parentValue) || parentValue === null) {
         // `scale`, `axis`, `legend` can be false/null.
         props.push({
-          key: parent + '',
+          key: `${parent}`,
           value: parentValue || false // return true or false (false if null)
         });
       } else if (isString(parentValue)) {
         // `sort` can be a string (ascending/descending).
         props.push({
-          key: parent + '',
+          key: `${parent}`,
           value: replace(JSON.stringify(parentValue), replacer.get(parent))
         });
       } else {
@@ -334,7 +334,7 @@ function fieldDefProps(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer
 
           // Sort to make sure that parameter are ordered consistently
           props.push({
-            key: parent + '',
+            key: `${parent}`,
             value: JSON.stringify(nestedPropObject)
           });
         }
