@@ -1,5 +1,5 @@
 import {isAggregateOp} from 'vega-lite/build/src/aggregate';
-import {isTimeUnit} from 'vega-lite/build/src/timeunit';
+import {isUTCTimeUnit,isLocalSingleTimeUnit} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SpecQueryModel} from '../../src/model';
@@ -22,7 +22,7 @@ function getScore(shortenedFields: string) {
       const fn = split[0];
       if (fn === 'bin') {
         encQ.bin = true;
-      } else if (isTimeUnit(fn)) {
+      } else if (isUTCTimeUnit(fn) || isLocalSingleTimeUnit(fn)) {
         encQ.timeUnit = fn;
       } else if (isAggregateOp(fn)) {
         encQ.aggregate = fn;

@@ -1,5 +1,5 @@
 import * as CHANNEL from 'vega-lite/build/src/channel';
-import {Channel} from 'vega-lite/build/src/channel';
+import {Channel, ExtendedChannel} from 'vega-lite/build/src/channel';
 import {Config} from 'vega-lite/build/src/config';
 import {DEFAULT_PROP_PRECEDENCE, toKey} from './property';
 import {DEFAULT_ENUM_INDEX, EnumIndex} from './wildcard';
@@ -53,7 +53,7 @@ export interface QueryConfig {
   preferredTemporalAxis?: Channel;
   preferredOrdinalAxis?: Channel;
   preferredNominalAxis?: Channel;
-  preferredFacet?: Channel;
+  preferredFacet?: ExtendedChannel;
 
   // Field Encoding Constraints
   minCardinalityForBin?: number;

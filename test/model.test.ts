@@ -273,7 +273,7 @@ describe('SpecQueryModel', () => {
             channel: CHANNEL.X,
             field: 'Q',
             type: TYPE.QUANTITATIVE,
-            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'}
+            axis: {orient: 'top', tickCount: 5, title: 'test x channel'}
           },
           {
             channel: CHANNEL.COLOR,
@@ -293,7 +293,7 @@ describe('SpecQueryModel', () => {
           x: {
             field: 'Q',
             type: TYPE.QUANTITATIVE,
-            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'}
+            axis: {orient: 'top', tickCount: 5, title: 'test x channel'}
           },
           color: {
             field: 'Q2',
@@ -315,7 +315,7 @@ describe('SpecQueryModel', () => {
             channel: CHANNEL.X,
             field: 'Q',
             type: TYPE.QUANTITATIVE,
-            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'},
+            axis: {orient: 'top', tickCount: 5, title: 'test x channel'},
             legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}
           }
         ]
@@ -330,7 +330,7 @@ describe('SpecQueryModel', () => {
           x: {
             field: 'Q',
             type: TYPE.QUANTITATIVE,
-            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'}
+            axis: {orient: 'top', tickCount: 5, title: 'test x channel'}
           }
         },
         config: DEFAULT_SPEC_CONFIG
@@ -347,7 +347,7 @@ describe('SpecQueryModel', () => {
             channel: CHANNEL.COLOR,
             field: 'Q2',
             type: TYPE.QUANTITATIVE,
-            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'},
+            axis: {orient: 'top', tickCount: 5, title: 'test x channel'},
             legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}
           }
         ]
@@ -754,7 +754,7 @@ describe('SpecQueryModel', () => {
         encodings: [{channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL}]
       });
 
-      const title = specM.toSpec().title as TitleParams;
+      const title = specM.toSpec().title as TitleParams<any>;
       assert.equal(title.text, 'A Simple Bar Chart');
       assert.equal(title.anchor, 'start');
     });

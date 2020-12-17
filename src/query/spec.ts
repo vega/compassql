@@ -1,14 +1,15 @@
 import {toMap} from 'datalib/src/util';
-import {Channel} from 'vega-lite/build/src/channel';
+import {ExtendedChannel} from 'vega-lite/build/src/channel';
 import {Config} from 'vega-lite/build/src/config';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
 import {FacetedUnitSpec, TopLevel} from 'vega-lite/build/src/spec';
+import {Step} from 'vega-lite/build/src/spec/base';
 import {stack, StackOffset, StackProperties} from 'vega-lite/build/src/stack';
 import {TitleParams} from 'vega-lite/build/src/title';
 import {ALL_ENCODING_PROPS, getEncodingNestedProp, isEncodingTopLevelProperty, Property, toKey} from '../property';
 import {contains, extend, isObject, keys, some, without} from '../util';
-import {isWildcard, WildcardProperty} from '../wildcard';
+import {isWildcard, WildcardProperty, Wildcard} from '../wildcard';
 import {EncodingQuery, isDisabledAutoCountQuery, isEnabledAutoCountQuery, isFieldQuery, toEncoding} from './encoding';
 import {TransformQuery} from './transform';
 
@@ -36,13 +37,13 @@ export interface SpecQuery {
    * The width of the resulting encodings.
    * __NOTE:__ Does not support wildcards.
    */
-  width?: number;
+  width?: number | 'container' | Step | Wildcard<Step>;
 
   /**
    * The height of the resulting encodings.
    * __NOTE:__ Does not support wildcards.
    */
-  height?: number;
+  height?: number | 'container' | Step | Wildcard<Step>;
 
   /**
    * CSS color property to use as the background of visualization.
@@ -65,7 +66,7 @@ export interface SpecQuery {
    * Title for the plot.
    * __NOTE:__ Does not support wildcards.
    */
-  title?: string | TitleParams;
+  title?: string | TitleParams<any>;
 
   // TODO: make config query (not important at all, only for the sake of completeness.)
   /**
@@ -90,7 +91,7 @@ export function fromSpec(spec: TopLevel<FacetedUnitSpec>): SpecQuery {
     spec.title ? {title: spec.title} : {},
     {
       mark: spec.mark,
-      encodings: keys(spec.encoding).map((channel: Channel) => {
+      encodings: keys(spec.encoding).map((channel: ExtendedChannel) => {
         let encQ: EncodingQuery = {channel: channel};
         let channelDef = spec.encoding[channel];
 
@@ -135,7 +136,7 @@ export function getVlStack(specQ: SpecQuery): StackProperties {
   const encoding = toEncoding(specQ.encodings, {schema: null, wildcardMode: 'null'});
   const mark = specQ.mark as Mark;
 
-  return stack(mark, encoding, undefined, {disallowNonLinearStack: true});
+  return stack(mark, encoding, {disallowNonLinearStack: true});
 }
 
 /**
@@ -152,10 +153,10 @@ export function getStackOffset(specQ: SpecQuery): StackOffset {
 }
 
 /**
- * @return The `Channel` in which `stack` is specified in `specQ`, or
+ * @return The `ExtendedChannel` in which `stack` is specified in `specQ`, or
  * `null` if none is specified.
  */
-export function getStackChannel(specQ: SpecQuery): Channel {
+export function getStackChannel(specQ: SpecQuery): ExtendedChannel {
   for (const encQ of specQ.encodings) {
     if (encQ[Property.STACK] !== undefined && !isWildcard(encQ.channel)) {
       return encQ.channel;

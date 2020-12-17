@@ -66,8 +66,8 @@ describe('query/spec', () => {
   });
 
   describe('getVlStack', () => {
-    const NON_STACKABLE_MARKS = without(PRIMITIVE_MARKS, STACKABLE_MARKS);
-    const NON_STACK_BY_DEFAULT_MARKS = without(PRIMITIVE_MARKS, STACK_BY_DEFAULT_MARKS);
+    const NON_STACKABLE_MARKS = without(PRIMITIVE_MARKS, Array.from(STACKABLE_MARKS.values()));
+    const NON_STACK_BY_DEFAULT_MARKS = without(PRIMITIVE_MARKS, Array.from(STACK_BY_DEFAULT_MARKS.values()));
 
     it('should always return null for nonstackable marks with at least of of the stack channel', () => {
       [undefined, 'center', null, 'zero', 'normalize'].forEach((_stack: StackOffset) => {
@@ -320,7 +320,7 @@ describe('query/spec', () => {
           x: {
             field: 'x',
             type: TYPE.QUANTITATIVE,
-            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'}
+            axis: {orient: 'top', tickCount: 5, title: 'test x channel'}
           },
           y: {
             field: 'x',
@@ -344,7 +344,7 @@ describe('query/spec', () => {
             channel: 'x',
             field: 'x',
             type: TYPE.QUANTITATIVE,
-            axis: {orient: 'top', shortTimeLabels: true, tickCount: 5, title: 'test x channel'}
+            axis: {orient: 'top', tickCount: 5, title: 'test x channel'}
           },
           {channel: 'y', field: 'x', type: TYPE.QUANTITATIVE, scale: false},
           {

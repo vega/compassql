@@ -1,5 +1,5 @@
 import {isString} from 'datalib/src/util';
-import {Channel} from 'vega-lite/build/src/channel';
+import {ExtendedChannel} from 'vega-lite/build/src/channel';
 import {Data} from 'vega-lite/build/src/data';
 import {Mark} from 'vega-lite/build/src/mark';
 import {FacetedUnitSpec, TopLevel} from 'vega-lite/build/src/spec';
@@ -113,7 +113,7 @@ export class SpecQueryModel {
     // AUTO COUNT
     // Add Auto Count Field
     if (opt.autoAddCount) {
-      const channel: Wildcard<Channel> = {
+      const channel: Wildcard<ExtendedChannel> = {
         name: getDefaultName(Property.CHANNEL) + specQ.encodings.length,
         enum: getDefaultEnumValues(Property.CHANNEL, schema, opt)
       };
@@ -212,7 +212,7 @@ export class SpecQueryModel {
 
     if (prop === Property.CHANNEL && encQ.channel && !isWildcard(encQ.channel)) {
       // If there is an old channel
-      this._channelFieldCount[encQ.channel as Channel]--;
+      this._channelFieldCount[encQ.channel as ExtendedChannel]--;
     }
 
     if (isEncodingNestedProp(prop)) {
@@ -240,7 +240,7 @@ export class SpecQueryModel {
   public resetEncodingProperty(index: number, prop: Property, wildcard: Wildcard<any>) {
     const encQ = this._spec.encodings[index];
     if (prop === Property.CHANNEL) {
-      this._channelFieldCount[encQ.channel as Channel]--;
+      this._channelFieldCount[encQ.channel as ExtendedChannel]--;
     }
 
     // reset it to wildcard
@@ -256,12 +256,12 @@ export class SpecQueryModel {
     delete this._assignedWildcardIndex[wildcard.name];
   }
 
-  public channelUsed(channel: Channel) {
+  public channelUsed(channel: ExtendedChannel) {
     // do not include encoding that has autoCount = false because it is not a part of the output spec.
     return this._channelFieldCount[channel] > 0;
   }
 
-  public channelEncodingField(channel: Channel) {
+  public channelEncodingField(channel: ExtendedChannel) {
     const encodingQuery = this.getEncodingQueryByChannel(channel);
     return isFieldQuery(encodingQuery);
   }
@@ -271,7 +271,7 @@ export class SpecQueryModel {
     return this._spec.encodings.filter(encQ => !isDisabledAutoCountQuery(encQ));
   }
 
-  public getEncodingQueryByChannel(channel: Channel) {
+  public getEncodingQueryByChannel(channel: ExtendedChannel) {
     for (let specEncoding of this._spec.encodings) {
       if (specEncoding.channel === channel) {
         return specEncoding;
@@ -305,10 +305,10 @@ export class SpecQueryModel {
   }
 
   /**
-   * @return The `Channel` in which `stack` is specified in `this`, or
+   * @return The `ExtendedChannel` in which `stack` is specified in `this`, or
    * `null` if none is specified.
    */
-  public getStackChannel(): Channel {
+  public getStackChannel(): ExtendedChannel {
     return getStackChannel(this._spec);
   }
 

@@ -2,7 +2,7 @@ import {isObject} from 'datalib/src/util';
 import {AggregateOp} from 'vega';
 import {Axis} from 'vega-lite/build/src/axis';
 import {BinParams} from 'vega-lite/build/src/bin';
-import {Channel} from 'vega-lite/build/src/channel';
+import {ExtendedChannel} from 'vega-lite/build/src/channel';
 import * as vlChannelDef from 'vega-lite/build/src/channeldef';
 import {ValueDef} from 'vega-lite/build/src/channeldef';
 import {scaleType as compileScaleType} from 'vega-lite/build/src/compile/scale/type';
@@ -24,7 +24,7 @@ import {PROPERTY_SUPPORTED_CHANNELS} from './shorthand';
 export type EncodingQuery = FieldQuery | ValueQuery | AutoCountQuery;
 
 export interface EncodingQueryBase {
-  channel: WildcardProperty<Channel>;
+  channel: WildcardProperty<ExtendedChannel>;
 
   description?: string;
 }
@@ -118,7 +118,7 @@ export type FlatQueryWithEnableFlag<T> = (Wildcard<boolean> | {}) & FlatQuery<T>
 export type BinQuery = FlatQueryWithEnableFlag<BinParams>;
 export type ScaleQuery = FlatQueryWithEnableFlag<Scale>;
 export type AxisQuery = FlatQueryWithEnableFlag<Axis>;
-export type LegendQuery = FlatQueryWithEnableFlag<Legend>;
+export type LegendQuery = FlatQueryWithEnableFlag<Legend<any>>;
 
 const DEFAULT_PROPS = [
   Property.AGGREGATE,
@@ -196,7 +196,7 @@ export function toFieldDef(
       if (encodingProperty !== undefined) {
         // if the channel supports this prop
         const isSupportedByChannel =
-          !PROPERTY_SUPPORTED_CHANNELS[prop] || PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as Channel];
+          !PROPERTY_SUPPORTED_CHANNELS[prop] || PROPERTY_SUPPORTED_CHANNELS[prop][encQ.channel as ExtendedChannel];
         if (!isSupportedByChannel) {
           continue;
         }
@@ -274,7 +274,8 @@ export function isMeasure(encQ: EncodingQuery) {
  */
 export function isDimension(encQ: EncodingQuery) {
   if (isFieldQuery(encQ)) {
-    const fieldDef = toFieldDef(encQ, {props: ['bin', 'timeUnit', 'type']});
+    const props: FlatProp[] = !!encQ['field'] ? ['field', 'bin', 'timeUnit', 'type'] : ['bin', 'timeUnit', 'type'];
+    const fieldDef = toFieldDef(encQ, {props: props});
     return vlChannelDef.isDiscrete(fieldDef) || !!fieldDef.timeUnit;
   }
   return false;
@@ -300,6 +301,10 @@ export function scaleType(fieldQ: FieldQuery) {
   const markType: Mark = undefined;
 
   if (isWildcard(scale.type) || isWildcard(type) || isWildcard(channel) || isWildcard(bin)) {
+    return undefined;
+  }
+
+  if (channel === 'row' || channel === 'column' || channel === 'facet') {
     return undefined;
   }
 

@@ -29,7 +29,7 @@ export type EncodingNestedChildProp =
   | keyof EncodingSortField<string>
   | keyof Scale
   | keyof Axis
-  | keyof Legend;
+  | keyof Legend<any>;
 
 /**
  * An object that describes a parent property (e.g., `scale`) and the child property (e.g., `type`)
@@ -43,7 +43,7 @@ export type BinProp = BaseEncodingNestedProp<'bin', BinParams>;
 export type SortProp = BaseEncodingNestedProp<'sort', EncodingSortField<string>>;
 export type ScaleProp = BaseEncodingNestedProp<'scale', Scale>;
 export type AxisProp = BaseEncodingNestedProp<'axis', Axis>;
-export type LegendProp = BaseEncodingNestedProp<'legend', Legend>;
+export type LegendProp = BaseEncodingNestedProp<'legend', Legend<any>>;
 
 export function isEncodingNestedProp(p: Property): p is EncodingNestedProp {
   return !!p['parent'];
@@ -70,7 +70,7 @@ const ENCODING_TOPLEVEL_PROP_INDEX: Flag<EncodingTopLevelProp> = {
 export const ENCODING_TOPLEVEL_PROPS = flagKeys(ENCODING_TOPLEVEL_PROP_INDEX);
 
 export function isEncodingTopLevelProperty(p: Property): p is EncodingTopLevelProp {
-  return p in ENCODING_TOPLEVEL_PROP_INDEX;
+  return p.toString() in ENCODING_TOPLEVEL_PROP_INDEX;
 }
 
 export type EncodingNestedPropParent = 'bin' | 'scale' | 'sort' | 'axis' | 'legend';

@@ -158,18 +158,18 @@
               "name": "facet:bin(Horsepower)|xy:Origin|xy:autocount()",
               "path": "/Origin|autocount()|bin(Horsepower)/facet:bin(Horsepower)|xy:Origin|xy:autocount()/facet:bin(Horsepower)|xy:Origin|xy:autocount()",
               "items": [
-                "bar|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "bar|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,n|height={\"step\":12}",
                 "bar|row:bin(Horsepower,q)|x:Origin,n|y:count(*,q)",
                 "bar|column:bin(Horsepower,q)|x:count(*,q)|y:Origin,n",
-                "bar|column:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:count(*,q)",
-                "point|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "bar|column:bin(Horsepower,q)|x:Origin,n|y:count(*,q)|width={\"step\":12}",
+                "point|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,n|height={\"step\":12}",
                 "point|row:bin(Horsepower,q)|x:Origin,n|y:count(*,q)",
                 "point|column:bin(Horsepower,q)|x:count(*,q)|y:Origin,n",
-                "point|column:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:count(*,q)",
-                "tick|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,n,scale={\"rangeStep\":12}",
+                "point|column:bin(Horsepower,q)|x:Origin,n|y:count(*,q)|width={\"step\":12}",
+                "tick|row:bin(Horsepower,q)|x:count(*,q)|y:Origin,n|height={\"step\":12}",
                 "tick|row:bin(Horsepower,q)|x:Origin,n|y:count(*,q)",
                 "tick|column:bin(Horsepower,q)|x:count(*,q)|y:Origin,n",
-                "tick|column:bin(Horsepower,q)|x:Origin,n,scale={\"rangeStep\":12}|y:count(*,q)"
+                "tick|column:bin(Horsepower,q)|x:Origin,n|y:count(*,q)|width={\"step\":12}"
               ]
             }
           ],

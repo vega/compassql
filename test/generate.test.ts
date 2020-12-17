@@ -3,6 +3,8 @@ import * as CHANNEL from 'vega-lite/build/src/channel';
 import * as MARK from 'vega-lite/build/src/mark';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import {Step} from 'vega-lite/build/src/spec/base';
+import * as vegaTime from 'vega-time';
 import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../src/config';
 import {generate} from '../src/generate';
@@ -396,14 +398,14 @@ describe('generate', function() {
   });
 
   describe('scale-rangeStep', () => {
-    it('should enumerate correct scaleType with rangeStep', () => {
+    it('should enumerate correct scaleType with width step', () => {
       const specQ = {
+        width: {step: 10},
         mark: MARK.POINT,
         encodings: [
           {
             channel: CHANNEL.X,
             scale: {
-              rangeStep: 10,
               type: {enum: [undefined, ScaleType.LOG, ScaleType.TIME, ScaleType.POINT]}
             },
             field: 'Q',
@@ -611,7 +613,7 @@ describe('generate', function() {
             scale: {type: {enum: [ScaleType.TIME, ScaleType.UTC, ScaleType.POINT, undefined, ScaleType.LOG]}},
             field: 'T',
             type: TYPE.TEMPORAL,
-            timeUnit: TimeUnit.MINUTES
+            timeUnit: vegaTime.MINUTES
           }
         ]
       };
@@ -633,7 +635,7 @@ describe('generate', function() {
             scale: {type: {enum: [ScaleType.POINT, undefined, ScaleType.LOG]}},
             field: 'O',
             type: TYPE.ORDINAL,
-            timeUnit: TimeUnit.MINUTES
+            timeUnit: vegaTime.MINUTES
           }
         ]
       };
@@ -830,7 +832,7 @@ describe('generate', function() {
     });
 
     describe('smallRangeStepForHighCardinalityOrFacet', () => {
-      it('should output rangeStep = 12', () => {
+      it('should output height step = 12', () => {
         const specQ = {
           mark: MARK.BAR,
           encodings: [
@@ -844,10 +846,10 @@ describe('generate', function() {
         };
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-        assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
+        assert.equal((answerSet[0].specQuery.height as Step).step, 12);
       });
 
-      it('should output rangeStep = 12', () => {
+      it('should output height step = 12', () => {
         const specQ = {
           mark: MARK.BAR,
           encodings: [
@@ -866,7 +868,7 @@ describe('generate', function() {
         };
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
-        assert.equal(((answerSet[0].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
+        assert.equal((answerSet[0].specQuery.height as Step).step, 12);
       });
     });
   });

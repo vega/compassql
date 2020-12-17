@@ -1,4 +1,5 @@
 import {assert} from 'chai';
+import {Step} from 'vega-lite/build/src/spec/base';
 import * as CHANNEL from 'vega-lite/build/src/channel';
 import * as MARK from 'vega-lite/build/src/mark';
 import * as TYPE from 'vega-lite/build/src/type';
@@ -26,7 +27,7 @@ describe('stylize', () => {
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
       assert.equal(
-        ((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep,
+        specM.specQuery.height,
         undefined
       );
     });
@@ -35,14 +36,15 @@ describe('stylize', () => {
       let specM = SpecQueryModel.build(
         {
           mark: MARK.BAR,
-          encodings: [{channel: CHANNEL.Y, field: 'O_100', scale: {rangeStep: 21}, type: TYPE.ORDINAL}]
+          height: {step: 21},
+          encodings: [{channel: CHANNEL.Y, field: 'O_100', type: TYPE.ORDINAL}]
         },
         schema,
         DEFAULT_QUERY_CONFIG
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal(((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 21);
+      assert.equal((specM.specQuery.height as Step).step, 21);
     });
 
     it('should assign a rangeStep of 12 if cardinality of Y is over 10 and rangeStep is not already set', () => {
@@ -56,15 +58,16 @@ describe('stylize', () => {
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal(((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
+      assert.equal((specM.specQuery.height as Step).step, 12);
     });
 
     it('should not assign a rangeStep of 12 if there is a row channel and rangeStep is already set', () => {
       let specM = SpecQueryModel.build(
         {
           mark: MARK.BAR,
+          height: {step: 21},
           encodings: [
-            {channel: CHANNEL.Y, field: 'A', scale: {rangeStep: 21}, type: TYPE.ORDINAL},
+            {channel: CHANNEL.Y, field: 'A', type: TYPE.ORDINAL},
             {channel: CHANNEL.ROW, field: 'A', type: TYPE.ORDINAL}
           ]
         },
@@ -73,7 +76,7 @@ describe('stylize', () => {
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal(((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 21);
+      assert.equal((specM.specQuery.height as Step).step, 21);
     });
 
     it('should assign a rangeStep of 12 if there is a row channel and rangeStep is not already set', () => {
@@ -90,7 +93,7 @@ describe('stylize', () => {
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal(((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
+      assert.equal((specM.specQuery.height as Step).step, 12);
     });
 
     it('should not assign a rangeStep if scale is false', () => {
@@ -105,7 +108,7 @@ describe('stylize', () => {
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
       assert.equal(
-        ((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep,
+        specM.specQuery.height,
         undefined
       );
     });
@@ -123,18 +126,18 @@ describe('stylize', () => {
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal(((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep, 12);
+      assert.equal((specM.specQuery.height as Step).step, 12);
     });
 
     it('should not assign a rangeStep if rangeStep is a Wildcard', () => {
       let specM = SpecQueryModel.build(
         {
           mark: MARK.BAR,
+          height: {name: 'step', enum: [{step: 17}, {step: 21}]},
           encodings: [
             {
               channel: CHANNEL.Y,
               field: 'O_100',
-              scale: {rangeStep: {name: 'scaleRangeStep', enum: [17, 21]}},
               type: TYPE.ORDINAL
             }
           ]
@@ -144,9 +147,9 @@ describe('stylize', () => {
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.deepEqual(((specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).scale as ScaleQuery).rangeStep, {
-        name: 'scaleRangeStep',
-        enum: [17, 21]
+      assert.deepEqual(specM.specQuery.height, {
+        name: 'step',
+        enum: [{step: 17}, {step: 21}]
       });
     });
   });

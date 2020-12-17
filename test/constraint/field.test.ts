@@ -4,6 +4,7 @@ import * as CHANNEL from 'vega-lite/build/src/channel';
 import {CHANNELS} from 'vega-lite/build/src/channel';
 import {ScaleType} from 'vega-lite/build/src/scale';
 import {TimeUnit} from 'vega-lite/build/src/timeunit';
+import * as vegaTime from 'vega-time';
 import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {EncodingConstraintModel} from '../../src/constraint/base';
@@ -14,6 +15,7 @@ import {EncodingQuery, FieldQuery, ScaleQuery} from '../../src/query/encoding';
 import {duplicate, extend, without} from '../../src/util';
 import {SHORT_WILDCARD, Wildcard} from '../../src/wildcard';
 import {schema} from '../fixture';
+import {DEFAULT_ENUM_INDEX} from '../../src/wildcard';
 
 describe('constraints/field', () => {
   const defaultOpt = DEFAULT_QUERY_CONFIG;
@@ -298,7 +300,7 @@ describe('constraints/field', () => {
       });
 
       it(channel + ' supports timeUnit temporal dimension.', () => {
-        const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.QUANTITATIVE, timeUnit: TimeUnit.MONTH};
+        const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.QUANTITATIVE, timeUnit: vegaTime.MONTH};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
             encQ,
@@ -385,7 +387,7 @@ describe('constraints/field', () => {
 
       it(channel + ' supports timeUnit temporal dimension.', () => {
         for (const type of [TYPE.ORDINAL, TYPE.TEMPORAL]) {
-          const encQ: EncodingQuery = {channel: channel, field: 'T', type, timeUnit: TimeUnit.MONTH};
+          const encQ: EncodingQuery = {channel: channel, field: 'T', type, timeUnit: vegaTime.MONTH};
           assert.isTrue(
             FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
               encQ,
@@ -472,7 +474,7 @@ describe('constraints/field', () => {
       });
 
       it(channel + ' supports timeUnit dimension.', () => {
-        const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.ORDINAL, timeUnit: TimeUnit.MONTH};
+        const encQ: EncodingQuery = {channel: channel, field: 'T', type: TYPE.ORDINAL, timeUnit: vegaTime.MONTH};
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['channelFieldCompatible'].satisfy(
             encQ,
@@ -567,7 +569,7 @@ describe('constraints/field', () => {
       const encQ: EncodingQuery = {
         hasFn: true,
         channel: CHANNEL.COLOR,
-        timeUnit: TimeUnit.HOURS,
+        timeUnit: vegaTime.HOURS,
         field: 'T',
         type: TYPE.TEMPORAL
       };
@@ -767,7 +769,7 @@ describe('constraints/field', () => {
           field: 'O',
           scale: {type: scaleType},
           type: TYPE.ORDINAL,
-          timeUnit: TimeUnit.MINUTES
+          timeUnit: vegaTime.MINUTES
         };
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(
@@ -787,7 +789,7 @@ describe('constraints/field', () => {
           field: 'N',
           scale: {type: scaleType},
           type: TYPE.NOMINAL,
-          timeUnit: TimeUnit.MINUTES
+          timeUnit: vegaTime.MINUTES
         };
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(
@@ -807,7 +809,7 @@ describe('constraints/field', () => {
           field: 'T',
           scale: {type: scaleType},
           type: TYPE.TEMPORAL,
-          timeUnit: TimeUnit.MINUTES
+          timeUnit: vegaTime.MINUTES
         };
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(
@@ -859,7 +861,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true if there is only one function', () => {
-      [['aggregate', 'mean'], ['timeUnit', TimeUnit.MONTH], ['bin', true], , ['autoCount', true]].forEach(
+      [['aggregate', 'mean'], ['timeUnit', vegaTime.MONTH], ['bin', true], , ['autoCount', true]].forEach(
         (tuple: any) => {
           let modifiedEncQ = duplicate(encQ);
           modifiedEncQ[tuple[0]] = tuple[1];
@@ -877,10 +879,10 @@ describe('constraints/field', () => {
 
     it('should return false if there are multiple functions', () => {
       [
-        ['mean', TimeUnit.MONTH, true],
+        ['mean', vegaTime.MONTH, true],
         ['mean', undefined, true],
-        ['mean', TimeUnit.MONTH, undefined],
-        [undefined, TimeUnit.MONTH, true]
+        ['mean', vegaTime.MONTH, undefined],
+        [undefined, vegaTime.MONTH, true]
       ].forEach(tuple => {
         encQ.aggregate = tuple[0] as AggregateOp;
         encQ.timeUnit = tuple[1] as TimeUnit;
@@ -901,7 +903,7 @@ describe('constraints/field', () => {
   describe('timeUnitAppliedForTemporal', () => {
     let encQ: FieldQuery = {
       channel: CHANNEL.X,
-      timeUnit: TimeUnit.MONTH,
+      timeUnit: vegaTime.MONTH,
       field: 'A',
       type: undefined
     };
@@ -962,28 +964,6 @@ describe('constraints/field', () => {
       };
 
       assert.isTrue(
-        FIELD_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(
-          encQ,
-          schema,
-          new PropIndex<Wildcard<any>>(),
-          defaultOpt
-        )
-      );
-    });
-
-    it('should return false if scale property is not supported by the scale type', () => {
-      let encQ: EncodingQuery = {
-        // Scale type depends on channel, so this will make scale type ambiguous.
-        channel: 'x',
-        field: 'A',
-        type: 'quantitative',
-        scale: {
-          type: 'linear',
-          rangeStep: 20 // rangeStep should not work with linear
-        }
-      };
-
-      assert.isFalse(
         FIELD_CONSTRAINT_INDEX['scalePropertiesSupportedByScaleType'].satisfy(
           encQ,
           schema,
@@ -1187,90 +1167,6 @@ describe('constraints/field', () => {
       );
     });
 
-    it('should return false when scale property rangeStep with channel row', () => {
-      let encQ: EncodingQuery = {
-        // Scale type depends on channel, so this will make scale type ambiguous.
-        channel: 'row',
-        field: 'A',
-        type: 'quantitative',
-        scale: {
-          rangeStep: 20
-        }
-      };
-
-      assert.isFalse(
-        FIELD_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(
-          encQ,
-          schema,
-          new PropIndex<Wildcard<any>>(),
-          defaultOpt
-        )
-      );
-    });
-
-    it('should return false when scale property rangeStep with channel column', () => {
-      let encQ: EncodingQuery = {
-        // Scale type depends on channel, so this will make scale type ambiguous.
-        channel: 'column',
-        field: 'A',
-        type: 'quantitative',
-        scale: {
-          rangeStep: 20
-        }
-      };
-
-      assert.isFalse(
-        FIELD_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(
-          encQ,
-          schema,
-          new PropIndex<Wildcard<any>>(),
-          defaultOpt
-        )
-      );
-    });
-
-    it('should return true when scale property rangeStep with channel column', () => {
-      let encQ: EncodingQuery = {
-        // Scale type depends on channel, so this will make scale type ambiguous.
-        channel: 'x',
-        field: 'A',
-        type: 'quantitative',
-        scale: {
-          rangeStep: 20
-        }
-      };
-
-      assert.isTrue(
-        FIELD_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(
-          encQ,
-          schema,
-          new PropIndex<Wildcard<any>>(),
-          defaultOpt
-        )
-      );
-    });
-
-    it('should return true when scale property rangeStep with channel column', () => {
-      let encQ: EncodingQuery = {
-        // Scale type depends on channel, so this will make scale type ambiguous.
-        channel: 'x',
-        field: 'A',
-        type: 'quantitative',
-        scale: {
-          rangeStep: 20
-        }
-      };
-
-      assert.isTrue(
-        FIELD_CONSTRAINT_INDEX['scalePropertiesSupportedByChannel'].satisfy(
-          encQ,
-          schema,
-          new PropIndex<Wildcard<any>>(),
-          defaultOpt
-        )
-      );
-    });
-
     it('should return true when scale property type with channel x with name, enum scale props', () => {
       let encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
@@ -1280,7 +1176,7 @@ describe('constraints/field', () => {
         scale: {
           type: 'linear',
           name: '?',
-          enum: '?'
+          enum: DEFAULT_ENUM_INDEX.scale
         }
       };
 

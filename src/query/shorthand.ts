@@ -4,7 +4,7 @@ import {Channel, isChannel} from 'vega-lite/build/src/channel';
 import {Mark} from 'vega-lite/build/src/mark';
 import {FacetedUnitSpec} from 'vega-lite/build/src/spec';
 import {StackProperties} from 'vega-lite/build/src/stack';
-import {isTimeUnit} from 'vega-lite/build/src/timeunit';
+import {isUTCTimeUnit,isLocalSingleTimeUnit} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import {getFullName} from 'vega-lite/build/src/type';
 import {
@@ -522,7 +522,7 @@ export namespace shorthandParser {
           aggregate: func,
           ...rawFieldDef(insideFnParts)
         };
-      } else if (isTimeUnit(func)) {
+      } else if (isUTCTimeUnit(func) || isLocalSingleTimeUnit(func)) {
         return {
           timeUnit: func,
           ...rawFieldDef(insideFnParts)

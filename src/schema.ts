@@ -3,8 +3,9 @@ import {inferAll} from 'datalib/src/import/type';
 import {summary} from 'datalib/src/stats';
 import {autoMaxBins} from 'vega-lite/build/src/bin';
 import {Channel} from 'vega-lite/build/src/channel';
-import {containsTimeUnit, convert, TimeUnit, TIMEUNIT_PARTS} from 'vega-lite/build/src/timeunit';
+import {SingleTimeUnit,LocalSingleTimeUnit,isUTCTimeUnit,containsTimeUnit, TimeUnit, TIMEUNIT_PARTS} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
+import * as vegaTime from 'vega-time';
 import {DEFAULT_QUERY_CONFIG, QueryConfig} from './config';
 import {BinQuery, EncodingQuery, FieldQuery, isAutoCountQuery} from './query/encoding';
 import {ExpandedType} from './query/expandedtype';
@@ -162,7 +163,15 @@ export function build(
     } else if (fieldSchema.vlType === TYPE.TEMPORAL) {
       for (let unit of opt.enum.timeUnit) {
         if (unit !== undefined) {
-          fieldSchema.timeStats[unit] = timeSummary(unit, fieldSchema.stats);
+          if(typeof unit === "object") {
+            if("unit" in unit) { // is TimeUnitParams
+              fieldSchema.timeStats[unit.unit] = timeSummary(unit.unit, fieldSchema.stats);
+            } else {
+              throw new Error("Unrecognized TimeUnit type when calculating fieldSchema.stats");
+            }
+          } else {
+            fieldSchema.timeStats[unit] = timeSummary(unit,fieldSchema.stats);
+          }
         }
       }
     }
@@ -284,21 +293,21 @@ export class Schema {
       if (augmentTimeUnitDomain) {
         switch (fieldQ.timeUnit) {
           // TODO: this should not always be the case once Vega-Lite supports turning off domain augmenting (VL issue #1385)
-          case TimeUnit.SECONDS:
+          case vegaTime.SECONDS:
             return 60;
-          case TimeUnit.MINUTES:
+          case vegaTime.MINUTES:
             return 60;
-          case TimeUnit.HOURS:
+          case vegaTime.HOURS:
             return 24;
-          case TimeUnit.DAY:
+          case vegaTime.DAY:
             return 7;
-          case TimeUnit.DATE:
+          case vegaTime.DATE:
             return 31;
-          case TimeUnit.MONTH:
+          case vegaTime.MONTH:
             return 12;
-          case TimeUnit.QUARTER:
+          case vegaTime.QUARTER:
             return 4;
-          case TimeUnit.MILLISECONDS:
+          case vegaTime.MILLISECONDS:
             return 1000;
         }
       }
@@ -344,8 +353,8 @@ export class Schema {
     }
 
     // if there is no variation in `date`, there should not be variation in `day`
-    if (fieldQ.timeUnit === TimeUnit.DAY) {
-      const dateEncQ: EncodingQuery = extend({}, fieldQ, {timeUnit: TimeUnit.DATE});
+    if (fieldQ.timeUnit === vegaTime.DAY) {
+      const dateEncQ: EncodingQuery = extend({}, fieldQ, {timeUnit: vegaTime.DATE});
       if (this.cardinality(dateEncQ, false, true) <= 1) {
         return false;
       }
@@ -421,6 +430,59 @@ function binSummary(maxbins: number, summary: DLFieldProfile): DLFieldProfile {
   return result;
 }
 
+const SET_DATE_METHOD: Record<LocalSingleTimeUnit, any> = {
+  year: 'setFullYear',
+  month: 'setMonth',
+  date: 'setDate',
+  hours: 'setHours',
+  minutes: 'setMinutes',
+  seconds: 'setSeconds',
+  milliseconds: 'setMilliseconds',
+  // the units below have their own special cases
+  dayofyear: null,
+  week: null,
+  quarter: null,
+  day: null
+};
+
+function dateMethods(singleUnit: SingleTimeUnit, isUtc: boolean) {
+  const rawSetDateMethod = SET_DATE_METHOD[singleUnit];
+  const setDateMethod = isUtc ? 'setUTC' + rawSetDateMethod.substr(3) : rawSetDateMethod;
+  const getDateMethod = 'get' + (isUtc ? 'UTC' : '') + rawSetDateMethod.substr(3);
+  return {setDateMethod, getDateMethod};
+}
+
+function convert(unit: TimeUnit, date: Date): Date {
+  const isUTC = isUTCTimeUnit(unit);
+  const result: Date = isUTC
+    ? // start with uniform date
+      new Date(Date.UTC(1972, 0, 1, 0, 0, 0, 0)) // 1972 is the first leap year after 1970, the start of unix time
+    : new Date(1972, 0, 1, 0, 0, 0, 0);
+  for (const timeUnitPart of TIMEUNIT_PARTS) {
+    if (containsTimeUnit(unit, timeUnitPart)) {
+      switch (timeUnitPart) {
+        case vegaTime.DAY:
+          throw new Error("Cannot convert to TimeUnits containing 'day'");
+        case vegaTime.DAYOFYEAR:
+          throw new Error("Cannot convert to TimeUnits containing 'dayofyear'");
+        case vegaTime.WEEK:
+          throw new Error("Cannot convert to TimeUnits containing 'week'");
+        case vegaTime.QUARTER: {
+          const {getDateMethod, setDateMethod} = dateMethods('month', isUTC);
+          // indicate quarter by setting month to be the first of the quarter i.e. may (4) -> april (3)
+          result[setDateMethod](Math.floor(date[getDateMethod]() / 3) * 3);
+          break;
+        }
+        default: {
+          const {getDateMethod, setDateMethod} = dateMethods(timeUnitPart, isUTC);
+          result[setDateMethod](date[getDateMethod]());
+        }
+      }
+    }
+  }
+  return result;
+}
+
 /** @return a modified version of the passed summary with unique and distinct set according to the timeunit.
  *  Maps 'null' (string) keys to the null value and invalid dates to 'Invalid Date' in the unique dictionary.
  */
@@ -438,7 +500,7 @@ function timeSummary(timeunit: TimeUnit, summary: DLFieldProfile): DLFieldProfil
     } else if (isNaN(date.getTime())) {
       key = 'Invalid Date';
     } else {
-      key = (timeunit === TimeUnit.DAY ? date.getDay() : convert(timeunit, date)).toString();
+      key = (timeunit === vegaTime.DAY ? date.getDay() : convert(timeunit, date)).toString();
     }
     unique[key] = (unique[key] || 0) + summary.unique[dateString];
   });
