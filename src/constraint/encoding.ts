@@ -25,10 +25,10 @@ export function checkEncoding(prop: Property, wildcard: Wildcard<any>, index: nu
 
       const satisfy = c.satisfy(encQ, schema, specM.wildcardIndex.encodings[index], opt);
       if (!satisfy) {
-        let violatedConstraint = '(enc) ' + c.name();
+        let violatedConstraint = `(enc) ${c.name()}`;
         /* istanbul ignore if */
         if (opt.verbose) {
-          console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + wildcard.name);
+          console.log(`${violatedConstraint} failed with ${specM.toShorthand()} for ${wildcard.name}`);
         }
         return violatedConstraint;
       }
@@ -43,10 +43,10 @@ export function checkEncoding(prop: Property, wildcard: Wildcard<any>, index: nu
       // For strict constraint, or enabled non-strict, check the constraints
       const satisfy = c.satisfy(encQ, schema, specM.wildcardIndex.encodings[index], opt);
       if (!satisfy) {
-        let violatedConstraint = '(enc) ' + c.name();
+        let violatedConstraint = `(enc) ${c.name()}`;
         /* istanbul ignore if */
         if (opt.verbose) {
-          console.log(violatedConstraint + ' failed with ' + specM.toShorthand() + ' for ' + wildcard.name);
+          console.log(`${violatedConstraint} failed with ${specM.toShorthand()} for ${wildcard.name}`);
         }
         return violatedConstraint;
       }

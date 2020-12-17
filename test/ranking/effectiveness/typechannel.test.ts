@@ -13,7 +13,7 @@ export const TYPE_CHANNEL_RULESET: RuleSet<string> = {
     [Q, T, TIMEUNIT_T].map((type) => {
       const order = [[X, Y], SIZE, COLOR, TEXT, OPACITY, [ROW, COLUMN, SHAPE], DETAIL];
       return {
-        name: type + '',
+        name: `${type}`,
         items: nestedMap(order, (channel) => {
           return typeChannelScorer.featurize(type, channel);
         })
@@ -22,7 +22,7 @@ export const TYPE_CHANNEL_RULESET: RuleSet<string> = {
     [BIN_Q, TIMEUNIT_O, O].map((type) => {
       const order = [[X, Y], SIZE, COLOR, [ROW, COLUMN], OPACITY, SHAPE, TEXT, DETAIL];
       return {
-        name: type + '',
+        name: `${type}`,
         items: nestedMap(order, (channel) => {
           return typeChannelScorer.featurize(type, channel);
         })

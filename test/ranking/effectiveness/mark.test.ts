@@ -25,14 +25,14 @@ export const CC_RULESET = {
       [Q, T].forEach((yType) => {
         const continuousRank = [POINT, TEXTMARK, TICK, [BAR, LINE, AREA], RULE];
         _rules.push({
-          name: xType + ' x ' + yType + ' (with occlusion)',
+          name: `${xType} x ${yType} (with occlusion)`,
           items: nestedMap(continuousRank, (mark: Mark) => {
             return featurize(xType, yType, true, mark);
           })
         });
 
         _rules.push({
-          name: xType + ' x ' + yType + ' (without occlusion)',
+          name: `${xType} x ${yType} (without occlusion)`,
           items: nestedMap(continuousRank, (mark: Mark) => {
             return featurize(xType, yType, false, mark);
           })
@@ -54,14 +54,14 @@ export const CD_RULESET = {
       [TIMEUNIT_O, O, BIN_Q, N].forEach((dimensionType) => {
         const dimWithOcclusionRank = [TICK, POINT, TEXTMARK, [LINE, AREA, BAR], RULE];
         _rules.push({
-          name: measureType + ' x ' + dimensionType + ' (with occlusion)',
+          name: `${measureType} x ${dimensionType} (with occlusion)`,
           items: nestedMap(dimWithOcclusionRank, (mark: Mark) => {
             return featurize(measureType, dimensionType, true, mark);
           })
         });
 
         _rules.push({
-          name: dimensionType + ' x ' + measureType + ' (with occlusion)',
+          name: `${dimensionType} x ${measureType} (with occlusion)`,
           items: nestedMap(dimWithOcclusionRank, (mark: Mark) => {
             return featurize(dimensionType, measureType, true, mark);
           })
@@ -72,14 +72,14 @@ export const CD_RULESET = {
       [TIMEUNIT_T].forEach((dimensionType) => {
         const dimWithOcclusionRank = [POINT, TEXTMARK, TICK, [LINE, AREA, BAR], RULE];
         _rules.push({
-          name: measureType + ' x ' + dimensionType + ' (with occlusion)',
+          name: `${measureType} x ${dimensionType} (with occlusion)`,
           items: nestedMap(dimWithOcclusionRank, (mark: Mark) => {
             return featurize(measureType, dimensionType, true, mark);
           })
         });
 
         _rules.push({
-          name: dimensionType + ' x ' + measureType + ' (with occlusion)',
+          name: `${dimensionType} x ${measureType} (with occlusion)`,
           items: nestedMap(dimWithOcclusionRank, (mark: Mark) => {
             return featurize(dimensionType, measureType, true, mark);
           })
@@ -93,14 +93,14 @@ export const CD_RULESET = {
         const orderedDimNoOcclusionRank = [LINE, AREA, BAR, POINT, TICK, TEXTMARK, RULE];
 
         _rules.push({
-          name: measureType + ' x ' + dimensionType + ' (without occlusion)',
+          name: `${measureType} x ${dimensionType} (without occlusion)`,
           items: nestedMap(orderedDimNoOcclusionRank, (mark: Mark) => {
             return featurize(measureType, dimensionType, false, mark);
           })
         });
 
         _rules.push({
-          name: dimensionType + ' x ' + measureType + ' (without occlusion)',
+          name: `${dimensionType} x ${measureType} (without occlusion)`,
           items: nestedMap(orderedDimNoOcclusionRank, (mark: Mark) => {
             return featurize(dimensionType, measureType, false, mark);
           })
@@ -112,14 +112,14 @@ export const CD_RULESET = {
         const binDimNoOcclusionRank = [BAR, POINT, TICK, TEXTMARK, [LINE, AREA], RULE];
 
         _rules.push({
-          name: measureType + ' x ' + dimensionType + ' (without occlusion)',
+          name: `${measureType} x ${dimensionType} (without occlusion)`,
           items: nestedMap(binDimNoOcclusionRank, (mark: Mark) => {
             return featurize(measureType, dimensionType, false, mark);
           })
         });
 
         _rules.push({
-          name: dimensionType + ' x ' + measureType + ' (without occlusion)',
+          name: `${dimensionType} x ${measureType} (without occlusion)`,
           items: nestedMap(binDimNoOcclusionRank, (mark: Mark) => {
             return featurize(dimensionType, measureType, false, mark);
           })
@@ -131,14 +131,14 @@ export const CD_RULESET = {
         const binDimNoOcclusionRank = [BAR, POINT, TICK, TEXTMARK, [LINE, AREA], RULE];
 
         _rules.push({
-          name: measureType + ' x ' + dimensionType + ' (without occlusion)',
+          name: `${measureType} x ${dimensionType} (without occlusion)`,
           items: nestedMap(binDimNoOcclusionRank, (mark: Mark) => {
             return featurize(measureType, dimensionType, false, mark);
           })
         });
 
         _rules.push({
-          name: dimensionType + ' x ' + measureType + ' (without occlusion)',
+          name: `${dimensionType} x ${measureType} (without occlusion)`,
           items: nestedMap(binDimNoOcclusionRank, (mark: Mark) => {
             return featurize(dimensionType, measureType, false, mark);
           })
@@ -161,14 +161,14 @@ export const TT_RULESET = {
         const ddRank = [POINT, TEXTMARK, TICK, [BAR, LINE, AREA], RULE];
 
         _rules.push({
-          name: xType + ' x ' + yType + ' (with occlusion)',
+          name: `${xType} x ${yType} (with occlusion)`,
           items: nestedMap(ddRank, (mark: Mark) => {
             return featurize(xType, yType, true, mark);
           })
         });
 
         _rules.push({
-          name: xType + ' x ' + yType + ' (without occlusion)',
+          name: `${xType} x ${yType} (without occlusion)`,
           items: nestedMap(ddRank, (mark: Mark) => {
             return featurize(xType, yType, false, mark);
           })
@@ -190,14 +190,14 @@ export const TD_RULESET = {
         const ddRank = [TICK, POINT, TEXTMARK, [BAR, LINE, AREA], RULE];
 
         _rules.push({
-          name: xType + ' x ' + yType + ' (with occlusion)',
+          name: `${xType} x ${yType} (with occlusion)`,
           items: nestedMap(ddRank, (mark: Mark) => {
             return featurize(xType, yType, true, mark);
           })
         });
 
         _rules.push({
-          name: xType + ' x ' + yType + ' (without occlusion)',
+          name: `${xType} x ${yType} (without occlusion)`,
           items: nestedMap(ddRank, (mark: Mark) => {
             return featurize(xType, yType, false, mark);
           })
@@ -219,7 +219,7 @@ export const DD_RULESET = {
       [TIMEUNIT_O, O, BIN_Q, N].forEach((yType) => {
         const ddRank = [[POINT, RECT], TEXTMARK, TICK, [BAR, LINE, AREA], RULE];
         _rules.push({
-          name: xType + ' x ' + yType + ' (with occlusion)',
+          name: `${xType} x ${yType} (with occlusion)`,
           items: nestedMap(ddRank, (mark: Mark) => {
             return featurize(xType, yType, true, mark);
           })
@@ -227,7 +227,7 @@ export const DD_RULESET = {
 
         // the same for no occlusion.
         _rules.push({
-          name: xType + ' x ' + yType + ' (without occlusion)',
+          name: `${xType} x ${yType} (without occlusion)`,
           items: nestedMap(ddRank, (mark: Mark) => {
             return featurize(xType, yType, false, mark);
           })

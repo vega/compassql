@@ -29,7 +29,7 @@ export class DimensionScorer extends Scorer {
     if (specM.isAggregate()) {
       specM.getEncodings().reduce((maxFScore, encQ: EncodingQuery) => {
         if (isAutoCountQuery(encQ) || (isFieldQuery(encQ) && !encQ.aggregate)) { // isDimension
-          const featureScore = this.getFeatureScore(encQ.channel + '');
+          const featureScore = this.getFeatureScore(`${encQ.channel}`);
           if (featureScore && featureScore.score > maxFScore.score) {
             return featureScore;
           }

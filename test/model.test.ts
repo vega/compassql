@@ -81,7 +81,7 @@ describe('SpecQueryModel', () => {
     };
 
     ENCODING_TOPLEVEL_PROPS.forEach(prop => {
-      it('should have ' + prop + ' wildcardIndex if it is a ShortWildcard.', () => {
+      it(`should have ${prop} wildcardIndex if it is a ShortWildcard.`, () => {
         let specQ = duplicate(templateSpecQ);
         // set to a short wildcard
         specQ.encodings[0][prop] = SHORT_WILDCARD;
@@ -91,7 +91,7 @@ describe('SpecQueryModel', () => {
         assert.isOk(wildcardIndex.encodings[0].get(prop));
       });
 
-      it('should have ' + prop + ' wildcardIndex if it is an Wildcard.', () => {
+      it(`should have ${prop} wildcardIndex if it is an Wildcard.`, () => {
         let specQ = duplicate(templateSpecQ);
         // set to a full wildcard
         const enumValues =
@@ -105,7 +105,7 @@ describe('SpecQueryModel', () => {
         assert.isOk(wildcardIndex.encodings[0].get(prop));
       });
 
-      it('should not have ' + prop + ' wildcardIndex if it is specific.', () => {
+      it(`should not have ${prop} wildcardIndex if it is specific.`, () => {
         let specQ = duplicate(templateSpecQ);
         // do not set to wildcard = make it specific
 
@@ -120,7 +120,7 @@ describe('SpecQueryModel', () => {
       const parent = nestedProp.parent;
       const child = nestedProp.child;
 
-      it('should have ' + propKey + ' wildcardIndex if it is a ShortWildcard.', () => {
+      it(`should have ${propKey} wildcardIndex if it is a ShortWildcard.`, () => {
         let specQ = duplicate(templateSpecQ);
         // set to a short wildcard
         specQ.encodings[0][parent] = {};
@@ -131,7 +131,7 @@ describe('SpecQueryModel', () => {
         assert.isOk(wildcardIndex.encodings[0].get(nestedProp));
       });
 
-      it('should have ' + propKey + ' wildcardIndex if it is an Wildcard.', () => {
+      it(`should have ${propKey} wildcardIndex if it is an Wildcard.`, () => {
         let specQ = duplicate(templateSpecQ);
         specQ.encodings[0][parent] = {};
         specQ.encodings[0][parent][child] = {
@@ -143,7 +143,7 @@ describe('SpecQueryModel', () => {
         assert.isOk(wildcardIndex.encodings[0].get(nestedProp));
       });
 
-      it('should not have ' + propKey + ' wildcardIndex if it is specific.', () => {
+      it(`should not have ${propKey} wildcardIndex if it is specific.`, () => {
         let specQ = duplicate(templateSpecQ);
 
         const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
@@ -489,7 +489,7 @@ describe('SpecQueryModel', () => {
     );
 
     it(
-      'should return a spec with the domain specified in FieldSchema if the encoding query ' + 'scale is undefined',
+      'should return a spec with the domain specified in FieldSchema if the encoding query scale is undefined',
       () => {
         const specM = SpecQueryModel.build(
           {

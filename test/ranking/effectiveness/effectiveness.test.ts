@@ -309,22 +309,22 @@ export const SET_AXIS_PREFERRENCE: RuleSet<SpecQueryModel> = {
 
     [BAR, POINTS, TICK, LINE, AREA].forEach(mark => {
       rules.push({
-        name: 'Nx# Count Plot (' + mark + ')',
+        name: `Nx# Count Plot (${mark})`,
         items: [countplot(TYPE.NOMINAL, Y, X), countplot(TYPE.NOMINAL, X, Y)]
       });
 
       rules.push({
-        name: 'Ox# Count Plot (' + mark + ')',
+        name: `Ox# Count Plot (${mark})`,
         items: [countplot(TYPE.ORDINAL, Y, X), countplot(TYPE.ORDINAL, X, Y)]
       });
 
       rules.push({
-        name: 'Tx# Count Plot (' + mark + ')',
+        name: `Tx# Count Plot (${mark})`,
         items: [countplot(TYPE.TEMPORAL, X, Y), countplot(TYPE.TEMPORAL, Y, X)]
       });
 
       rules.push({
-        name: 'BIN(Q)x# Count Plot (' + mark + ')',
+        name: `BIN(Q)x# Count Plot (${mark})`,
         items: [countplot(TYPE.QUANTITATIVE, X, Y, {bin: true}), countplot(TYPE.QUANTITATIVE, Y, X, {bin: true})]
       });
     });

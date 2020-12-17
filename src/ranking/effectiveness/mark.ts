@@ -31,7 +31,7 @@ export class MarkScorer extends Scorer {
 
     const isOccluded = !specM.isAggregate(); // FIXME
 
-    const feature = xType + '_' + yType + '_' + isOccluded + '_' + mark;
+    const feature = `${xType}_${yType}_${isOccluded}_${mark}`;
     const featureScore = this.getFeatureScore(feature);
 
     if (featureScore) {
@@ -43,7 +43,7 @@ export class MarkScorer extends Scorer {
 }
 
 export function featurize(xType: ExtendedType, yType: ExtendedType, hasOcclusion: boolean, mark: Mark) {
-  return xType + '_' + yType + '_' + hasOcclusion + '_' + mark;
+  return `${xType}_${yType}_${hasOcclusion}_${mark}`;
 }
 
 function init() {

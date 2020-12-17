@@ -447,8 +447,8 @@ const SET_DATE_METHOD: Record<LocalSingleTimeUnit, any> = {
 
 function dateMethods(singleUnit: SingleTimeUnit, isUtc: boolean) {
   const rawSetDateMethod = SET_DATE_METHOD[singleUnit];
-  const setDateMethod = isUtc ? 'setUTC' + rawSetDateMethod.substr(3) : rawSetDateMethod;
-  const getDateMethod = 'get' + (isUtc ? 'UTC' : '') + rawSetDateMethod.substr(3);
+  const setDateMethod = isUtc ? `setUTC${rawSetDateMethod.substr(3)}` : rawSetDateMethod;
+  const getDateMethod = `get${isUtc ? 'UTC' : ''}${rawSetDateMethod.substr(3)}`;
   return {setDateMethod, getDateMethod};
 }
 

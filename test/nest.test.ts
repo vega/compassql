@@ -687,7 +687,7 @@ describe('nest', () => {
 
   describe('encoding', () => {
     [ENCODING].forEach(groupBy => {
-      it(groupBy + ' should group transposed visualizations', () => {
+      it(`${groupBy} should group transposed visualizations`, () => {
         const query: Query = {
           spec: {
             mark: SHORT_WILDCARD,
@@ -713,7 +713,7 @@ describe('nest', () => {
         assert.equal(groups.length, 1);
       });
 
-      it(groupBy + ' should group transposed facets visualizations', () => {
+      it(`${groupBy} should group transposed facets visualizations`, () => {
         const query: Query = {
           spec: {
             mark: SHORT_WILDCARD,
@@ -749,7 +749,7 @@ describe('nest', () => {
         assert.equal(groups.length, 1);
       });
 
-      it(groupBy + ' should not group visualizations that map same variable to y and color', () => {
+      it(`${groupBy} should not group visualizations that map same variable to y and color`, () => {
         const query: Query = {
           spec: {
             mark: MARK.POINT,

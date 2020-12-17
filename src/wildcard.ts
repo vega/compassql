@@ -96,7 +96,7 @@ function initNestedPropName(fullNames: string[]) {
       }
     }
     for (let i = 1; !index[fullName]; i++) {
-      let shortNameWithNo = shortName + '_' + i;
+      let shortNameWithNo = `${shortName}_${i}`;
       if (!has[shortNameWithNo]) {
         index[fullName] = shortNameWithNo;
         has[shortNameWithNo] = true;
@@ -148,13 +148,13 @@ export const DEFAULT_NAME = {
 
 export function getDefaultName(prop: Property) {
   if (isEncodingNestedProp(prop)) {
-    return DEFAULT_NAME[prop.parent] + '-' + DEFAULT_NAME[prop.parent + 'Props'][prop.child];
+    return `${DEFAULT_NAME[prop.parent]}-${DEFAULT_NAME[`${prop.parent}Props`][prop.child]}`;
   }
   if (DEFAULT_NAME[prop]) {
     return DEFAULT_NAME[prop];
   }
   /* istanbul ignore next */
-  throw new Error('Default name undefined for ' + prop);
+  throw new Error(`Default name undefined for ${prop}`);
 }
 
 /**
@@ -445,7 +445,7 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
 
   let val;
   if (isEncodingNestedProp(prop)) {
-    val = opt.enum[prop.parent + 'Props'][prop.child];
+    val = opt.enum[`${prop.parent}Props`][prop.child];
   } else {
     val = opt.enum[prop];
   }
@@ -455,5 +455,5 @@ export function getDefaultEnumValues(prop: Property, schema: Schema, opt: QueryC
   }
 
   /* istanbul ignore next */
-  throw new Error('No default enumValues for ' + JSON.stringify(prop));
+  throw new Error(`No default enumValues for ${JSON.stringify(prop)}`);
 }

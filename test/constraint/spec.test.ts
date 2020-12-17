@@ -32,7 +32,7 @@ describe('constraints/spec', () => {
   // Make sure all non-strict constraints have their configs.
   SPEC_CONSTRAINTS.forEach(constraint => {
     if (!constraint.strict()) {
-      it(constraint.name() + ' should have default config for all non-strict constraints', () => {
+      it(`${constraint.name()} should have default config for all non-strict constraints`, () => {
         assert.isDefined(DEFAULT_QUERY_CONFIG[constraint.name()]);
       });
     }
@@ -131,7 +131,7 @@ describe('constraints/spec', () => {
     }
 
     [TYPE.NOMINAL, TYPE.ORDINAL].forEach(type => {
-      autoCountShouldBe(true, 'there is only a/an ' + type + ' field', {
+      autoCountShouldBe(true, `there is only a/an ${type} field`, {
         mark: MARK.POINT,
         encodings: [{channel: CHANNEL.X, field: 'A', type: type}]
       });
@@ -658,7 +658,7 @@ describe('constraints/spec', () => {
 
   describe('omitBarLineAreaWithOcclusion', () => {
     [MARK.BAR, MARK.LINE, MARK.AREA].forEach(mark => {
-      it('should return false for raw ' + mark, () => {
+      it(`should return false for raw ${mark}`, () => {
         const specM = buildSpecQueryModel({
           mark: mark,
           encodings: [
@@ -672,7 +672,7 @@ describe('constraints/spec', () => {
         );
       });
 
-      it('should return true for aggregate ' + mark, () => {
+      it(`should return true for aggregate ${mark}`, () => {
         const specM = buildSpecQueryModel({
           mark: mark,
           encodings: [
@@ -688,7 +688,7 @@ describe('constraints/spec', () => {
     });
 
     [MARK.POINT, MARK.TICK, MARK.SQUARE].forEach(mark => {
-      it('should return true for raw ' + mark, () => {
+      it(`should return true for raw ${mark}`, () => {
         const specM = buildSpecQueryModel({
           mark: mark,
           encodings: [
@@ -702,7 +702,7 @@ describe('constraints/spec', () => {
         );
       });
 
-      it('should return true for aggregate ' + mark, () => {
+      it(`should return true for aggregate ${mark}`, () => {
         const specM = buildSpecQueryModel({
           mark: mark,
           encodings: [
@@ -946,7 +946,7 @@ describe('constraints/spec', () => {
 
           assert.isFalse(
             SPEC_CONSTRAINT_INDEX['omitInvalidStackSpec'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG),
-            'for ' + scaleType
+            `for ${scaleType}`
           );
         });
       });
