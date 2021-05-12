@@ -16,7 +16,7 @@ import {schema} from './fixture';
 
 const CONFIG_WITH_AUTO_ADD_COUNT = extend({}, DEFAULT_QUERY_CONFIG, {autoAddCount: true});
 
-describe('generate', function() {
+describe('generate', function () {
   describe('1D', () => {
     describe('Q with mark=?, channel=size', () => {
       it('should enumerate mark=point and generate a point plot', () => {

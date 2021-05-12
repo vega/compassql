@@ -91,35 +91,25 @@ export function isEncodingNestedParent(prop: string): prop is EncodingNestedProp
 export const BIN_CHILD_PROPS: (keyof BinParams)[] = ['maxbins', 'divide', 'extent', 'base', 'step', 'steps', 'minstep'];
 export const SORT_CHILD_PROPS: (keyof EncodingSortField<string>)[] = ['field', 'op', 'order'];
 
-const BIN_PROPS = BIN_CHILD_PROPS.map(
-  (c): BinProp => {
-    return {parent: 'bin', child: c};
-  }
-);
+const BIN_PROPS = BIN_CHILD_PROPS.map((c): BinProp => {
+  return {parent: 'bin', child: c};
+});
 
-export const SORT_PROPS = SORT_CHILD_PROPS.map(
-  (c): SortProp => {
-    return {parent: 'sort', child: c};
-  }
-);
+export const SORT_PROPS = SORT_CHILD_PROPS.map((c): SortProp => {
+  return {parent: 'sort', child: c};
+});
 
-export const SCALE_PROPS = SCALE_PROPERTIES.map(
-  (c): ScaleProp => {
-    return {parent: 'scale', child: c};
-  }
-);
+export const SCALE_PROPS = SCALE_PROPERTIES.map((c): ScaleProp => {
+  return {parent: 'scale', child: c};
+});
 
-const AXIS_PROPS = AXIS_PROPERTIES.map(
-  (c): AxisProp => {
-    return {parent: 'axis', child: c};
-  }
-);
+const AXIS_PROPS = AXIS_PROPERTIES.map((c): AxisProp => {
+  return {parent: 'axis', child: c};
+});
 
-const LEGEND_PROPS = LEGEND_PROPERTIES.map(
-  (c): LegendProp => {
-    return {parent: 'legend', child: c};
-  }
-);
+const LEGEND_PROPS = LEGEND_PROPERTIES.map((c): LegendProp => {
+  return {parent: 'legend', child: c};
+});
 
 export const ENCODING_NESTED_PROPS = ([] as EncodingNestedProp[]).concat(
   BIN_PROPS,
@@ -172,28 +162,30 @@ export function isEncodingProperty(p: Property): p is EncodingTopLevelProp | Enc
 
 export const ALL_ENCODING_PROPS = ([] as Property[]).concat(ENCODING_TOPLEVEL_PROPS, ENCODING_NESTED_PROPS);
 
-export const DEFAULT_PROP_PRECEDENCE: Property[] = ([
-  'type', // type is a constraint for field
-  'field',
+export const DEFAULT_PROP_PRECEDENCE: Property[] = (
+  [
+    'type', // type is a constraint for field
+    'field',
 
-  // Field Transform
-  'bin',
-  'timeUnit',
-  'aggregate',
-  'autoCount',
+    // Field Transform
+    'bin',
+    'timeUnit',
+    'aggregate',
+    'autoCount',
 
-  // Encoding
-  'channel',
+    // Encoding
+    'channel',
 
-  // Mark
-  'mark',
-  'stack',
+    // Mark
+    'mark',
+    'stack',
 
-  'scale',
-  'sort',
-  'axis',
-  'legend'
-] as Property[]).concat(BIN_PROPS, SCALE_PROPS, AXIS_PROPS, LEGEND_PROPS, SORT_PROPS);
+    'scale',
+    'sort',
+    'axis',
+    'legend'
+  ] as Property[]
+).concat(BIN_PROPS, SCALE_PROPS, AXIS_PROPS, LEGEND_PROPS, SORT_PROPS);
 
 export namespace Property {
   export const MARK: 'mark' = 'mark';

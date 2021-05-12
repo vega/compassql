@@ -9,7 +9,7 @@ describe('config', () => {
       enum: {
         mark: ['point'],
         binProps: {
-          maxbins: [100,200]
+          maxbins: [100, 200]
         }
       }
     });
@@ -17,7 +17,6 @@ describe('config', () => {
     it('should preserve default config for ones not overridden.', () => {
       assert.equal(extendedOpt.autoAddCount, DEFAULT_QUERY_CONFIG.autoAddCount);
     });
-
 
     it('should successfully override top-level config without changing the default', () => {
       assert.equal(extendedOpt.verbose, true);
@@ -30,7 +29,7 @@ describe('config', () => {
     });
 
     it('should successfully override nested enum config without changing the default', () => {
-      assert.deepEqual(extendedOpt.enum.binProps.maxbins, [100,200]);
+      assert.deepEqual(extendedOpt.enum.binProps.maxbins, [100, 200]);
       assert.notDeepEqual(extendedOpt.enum.binProps.maxbins, DEFAULT_QUERY_CONFIG.enum.binProps.maxbins);
     });
   });

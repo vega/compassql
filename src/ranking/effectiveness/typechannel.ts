@@ -1,6 +1,3 @@
-
-
-
 import {QueryConfig} from '../../config';
 import {SpecQueryModel} from '../../model';
 import {fieldDef as fieldDefShorthand} from '../../query/shorthand';
@@ -11,11 +8,8 @@ import {Schema} from '../../schema';
 import {FeatureScore} from '../ranking';
 import {BIN_Q, TIMEUNIT_T, TIMEUNIT_O, Q, N, O, T, ExtendedType, getExtendedType, K} from './type';
 
-
 import {Scorer} from './base';
 import {Channel} from 'vega-lite/build/src/channel';
-
-
 
 export const TERRIBLE = -10;
 
@@ -28,14 +22,14 @@ export class TypeChannelScorer extends Scorer {
     super('TypeChannel');
   }
   protected initScore() {
-    let SCORE = {} as Dict<number>;
+    const SCORE = {} as Dict<number>;
 
     // Continuous Quantitative / Temporal Fields
     const CONTINUOUS_TYPE_CHANNEL_SCORE = {
       x: 0,
       y: 0,
       size: -0.575,
-      color: -0.725,  // Middle between -0.7 and -0.75
+      color: -0.725, // Middle between -0.7 and -0.75
       text: -2,
       opacity: -3,
 
@@ -45,7 +39,7 @@ export class TypeChannelScorer extends Scorer {
       detail: 2 * TERRIBLE
     };
 
-    [Q, T, TIMEUNIT_T].forEach((type) => {
+    [Q, T, TIMEUNIT_T].forEach(type => {
       keys(CONTINUOUS_TYPE_CHANNEL_SCORE).forEach((channel: Channel) => {
         SCORE[this.featurize(type, channel)] = CONTINUOUS_TYPE_CHANNEL_SCORE[channel];
       });
@@ -62,7 +56,7 @@ export class TypeChannelScorer extends Scorer {
       detail: -4
     });
 
-    [BIN_Q, TIMEUNIT_O, O].forEach((type) => {
+    [BIN_Q, TIMEUNIT_O, O].forEach(type => {
       keys(ORDERED_TYPE_CHANNEL_SCORE).forEach((channel: Channel) => {
         SCORE[this.featurize(type, channel)] = ORDERED_TYPE_CHANNEL_SCORE[channel];
       });
@@ -79,15 +73,14 @@ export class TypeChannelScorer extends Scorer {
 
       detail: -2,
       size: -3,
-      opacity: -3.1,
+      opacity: -3.1
     };
 
     keys(NOMINAL_TYPE_CHANNEL_SCORE).forEach((channel: Channel) => {
       SCORE[this.featurize(N, channel)] = NOMINAL_TYPE_CHANNEL_SCORE[channel];
       SCORE[this.featurize(K, channel)] =
         // Putting key on position or detail isn't terrible
-        contains(['x', 'y', 'detail'], channel) ? -1 :
-          NOMINAL_TYPE_CHANNEL_SCORE[channel] - 2;
+        contains(['x', 'y', 'detail'], channel) ? -1 : NOMINAL_TYPE_CHANNEL_SCORE[channel] - 2;
     });
 
     return SCORE;

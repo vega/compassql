@@ -9,8 +9,8 @@ import {Schema} from './schema';
 import {Dict} from './util';
 
 export function stylize(answerSet: SpecQueryModel[], schema: Schema, opt: QueryConfig): SpecQueryModel[] {
-  let encQIndex: Dict<EncodingQuery> = {};
-  answerSet = answerSet.map(function(specM) {
+  const encQIndex: Dict<EncodingQuery> = {};
+  answerSet = answerSet.map(function (specM) {
     if (opt.smallRangeStepForHighCardinalityOrFacet) {
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, encQIndex, opt);
     }
@@ -57,8 +57,8 @@ export function smallRangeStepForHighCardinalityOrFacet(
       // and we only apply this if the scale is (or can be) an ordinal scale.
       const yScaleType = scaleType(yEncQ);
       if (yEncQ.scale && (yScaleType === undefined || hasDiscreteDomain(yScaleType))) {
-        if(!specM.specQuery.height) {
-          specM.specQuery.height = { step: 12 };
+        if (!specM.specQuery.height) {
+          specM.specQuery.height = {step: 12};
         }
       }
     }
@@ -79,8 +79,8 @@ export function smallRangeStepForHighCardinalityOrFacet(
       // and we only apply this if the scale is (or can be) an ordinal scale.
       const xScaleType = scaleType(xEncQ);
       if (xEncQ.scale && (xScaleType === undefined || hasDiscreteDomain(xScaleType))) {
-        if(!specM.specQuery.width) {
-          specM.specQuery.width = { step: 12 };
+        if (!specM.specQuery.width) {
+          specM.specQuery.width = {step: 12};
         }
       }
     }

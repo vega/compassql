@@ -40,14 +40,15 @@ export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): Ra
 
     if (isFieldQuery(encoding)) {
       field = encoding.field as string;
-    } else { // ignore ValueQuery / AutoCountQuery
+    } else {
+      // ignore ValueQuery / AutoCountQuery
       continue;
     }
 
     const fieldWildcard = specM.wildcardIndex.encodings[index].get('field');
     const fieldIndex = schema.fieldSchema(field).index;
-     // reverse order field with lower index should get higher score and come first
-    const score = - fieldIndex * base;
+    // reverse order field with lower index should get higher score and come first
+    const score = -fieldIndex * base;
     totalScore += score;
 
     features.push({

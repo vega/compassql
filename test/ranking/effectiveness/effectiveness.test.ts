@@ -21,7 +21,7 @@ const POINTS = [POINT, SQUARE, CIRCLE] as Mark[];
 
 export const SET_1D: RuleSet<SpecQueryModel> = {
   name: 'mark for plots with 1 field',
-  rules: (function() {
+  rules: (function () {
     const rules: Rule<SpecQueryModel>[] = [];
 
     function plot1d(mark: Mark, channel: ExtendedChannel, type: Type) {
@@ -147,7 +147,7 @@ export const SET_1D: RuleSet<SpecQueryModel> = {
 
 export const SET_2D: RuleSet<SpecQueryModel> = {
   name: 'mark for plots with 2 fields',
-  rules: (function() {
+  rules: (function () {
     const rules: Rule<SpecQueryModel>[] = [];
 
     rules.push({
@@ -204,7 +204,7 @@ export const SET_2D: RuleSet<SpecQueryModel> = {
 
 export const SET_3D: RuleSet<SpecQueryModel> = {
   name: 'encoding for plots with 3 fields',
-  rules: (function() {
+  rules: (function () {
     const rules: Rule<SpecQueryModel>[] = [];
 
     rules.push({
@@ -294,7 +294,7 @@ export const SET_3D: RuleSet<SpecQueryModel> = {
 
 export const SET_AXIS_PREFERRENCE: RuleSet<SpecQueryModel> = {
   name: 'Axis Preference',
-  rules: (function() {
+  rules: (function () {
     const rules: Rule<SpecQueryModel>[] = [];
 
     function countplot(dimType: Type, dimChannel: ExtendedChannel, countChannel: ExtendedChannel, dimMixins?: any) {
@@ -335,7 +335,7 @@ export const SET_AXIS_PREFERRENCE: RuleSet<SpecQueryModel> = {
 
 export const SET_FACET_PREFERENCE: RuleSet<SpecQueryModel> = {
   name: 'Facet Preference',
-  rules: (function() {
+  rules: (function () {
     const rules: Rule<SpecQueryModel>[] = [];
     function facetedPlot(_: Mark, facet: ExtendedChannel) {
       return build({
@@ -361,7 +361,7 @@ export const SET_FACET_PREFERENCE: RuleSet<SpecQueryModel> = {
 
 export const DIMENSION_PREFERENCE: RuleSet<SpecQueryModel> = {
   name: 'Dimension Preference',
-  rules: (function() {
+  rules: (function () {
     const rules: Rule<SpecQueryModel>[] = [];
     function facetedPlot(mark: Mark, dim: ExtendedChannel) {
       return build({
@@ -377,9 +377,15 @@ export const DIMENSION_PREFERENCE: RuleSet<SpecQueryModel> = {
     POINTS.concat([BAR, TICK, LINE, AREA]).forEach(mark => {
       rules.push({
         name: 'Row over column',
-        items: nestedMap([[COLOR, SIZE, OPACITY, SHAPE], [ROW, COLUMN]], (dim: ExtendedChannel) => {
-          return facetedPlot(mark, dim);
-        })
+        items: nestedMap(
+          [
+            [COLOR, SIZE, OPACITY, SHAPE],
+            [ROW, COLUMN]
+          ],
+          (dim: ExtendedChannel) => {
+            return facetedPlot(mark, dim);
+          }
+        )
       });
     });
 

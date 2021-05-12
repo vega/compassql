@@ -10,21 +10,21 @@ const scorer = new AxisScorer();
 export const PREFERRED_AXIS_RULESET: RuleSet<string> = {
   name: 'preferredAxisScore (bin, temporal)',
   rules: [].concat(
-    [BIN_Q, TIMEUNIT_T, TIMEUNIT_O, T].map((type) => {
+    [BIN_Q, TIMEUNIT_T, TIMEUNIT_O, T].map(type => {
       return {
         name: `${type}`,
-        items: nestedMap([X, Y], (channel) => {
+        items: nestedMap([X, Y], channel => {
           return scorer.featurize(type, channel);
         })
       };
     }),
-    [O, N].map((type) => {
-        return {
-          name: `${type}`,
-          items: nestedMap([Y, X], (channel) => {
-            return scorer.featurize(type, channel);
-          })
-        };
+    [O, N].map(type => {
+      return {
+        name: `${type}`,
+        items: nestedMap([Y, X], channel => {
+          return scorer.featurize(type, channel);
+        })
+      };
     })
   )
 };

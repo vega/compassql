@@ -11,9 +11,14 @@ import {VALUE_CONSTRAINTS_BY_PROPERTY} from './value';
 /**
  * Check all encoding constraints for a particular property and index tuple
  */
-export function checkEncoding(prop: Property, wildcard: Wildcard<any>, index: number,
-  specM: SpecQueryModel, schema: Schema, opt: QueryConfig): string {
-
+export function checkEncoding(
+  prop: Property,
+  wildcard: Wildcard<any>,
+  index: number,
+  specM: SpecQueryModel,
+  schema: Schema,
+  opt: QueryConfig
+): string {
   // Check encoding constraint
   const encodingConstraints = FIELD_CONSTRAINTS_BY_PROPERTY.get(prop) || [];
   const encQ = specM.getEncodingQueryByIndex(index);
@@ -25,7 +30,7 @@ export function checkEncoding(prop: Property, wildcard: Wildcard<any>, index: nu
 
       const satisfy = c.satisfy(encQ, schema, specM.wildcardIndex.encodings[index], opt);
       if (!satisfy) {
-        let violatedConstraint = `(enc) ${c.name()}`;
+        const violatedConstraint = `(enc) ${c.name()}`;
         /* istanbul ignore if */
         if (opt.verbose) {
           console.log(`${violatedConstraint} failed with ${specM.toShorthand()} for ${wildcard.name}`);
@@ -43,7 +48,7 @@ export function checkEncoding(prop: Property, wildcard: Wildcard<any>, index: nu
       // For strict constraint, or enabled non-strict, check the constraints
       const satisfy = c.satisfy(encQ, schema, specM.wildcardIndex.encodings[index], opt);
       if (!satisfy) {
-        let violatedConstraint = `(enc) ${c.name()}`;
+        const violatedConstraint = `(enc) ${c.name()}`;
         /* istanbul ignore if */
         if (opt.verbose) {
           console.log(`${violatedConstraint} failed with ${specM.toShorthand()} for ${wildcard.name}`);

@@ -1,5 +1,5 @@
 declare module 'datalib/src/import/load' {
-  function load(param:any, callback:any): void;
+  function load(param: any, callback: any): void;
   export = load;
 }
 
@@ -25,13 +25,13 @@ declare module 'datalib/src/util' {
 }
 
 declare module 'datalib/src/import/readers' {
-  export function json(param:any): any;
+  export function json(param: any): any;
 }
 
 interface DLFieldProfile {
   field: string;
   type: string;
-  unique: { [value: string] : number };
+  unique: {[value: string]: number};
   count: number;
   valid: number;
   missing: number;
@@ -47,7 +47,7 @@ interface DLFieldProfile {
 }
 
 declare module 'datalib/src/stats' {
-  export function summary(data:any): DLFieldProfile[];
+  export function summary(data: any): DLFieldProfile[];
 }
 
 declare module 'datalib/src/import/type' {

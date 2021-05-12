@@ -16,7 +16,7 @@ export class FacetScorer extends Scorer {
   }
   protected initScore(opt?: QueryConfig) {
     opt = {...DEFAULT_QUERY_CONFIG, ...opt};
-    let score: Dict<number> = {};
+    const score: Dict<number> = {};
 
     if (opt.preferredFacet === CHANNEL.ROW) {
       // penalize the other axis

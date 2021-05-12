@@ -10,7 +10,7 @@ import {Dict} from './util';
 /**
  * Registry for all possible grouping key functions.
  */
-let groupRegistry: Dict<(specM: SpecQuery) => string> = {};
+const groupRegistry: Dict<(specM: SpecQuery) => string> = {};
 
 /**
  * Add a grouping function to the registry.
@@ -35,14 +35,14 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
       path: '',
       items: []
     };
-    let groupIndex: Dict<SpecQueryModelGroup> = {};
+    const groupIndex: Dict<SpecQueryModelGroup> = {};
 
     // global `includes` and `replaces` will get augmented by each level's groupBy.
     // Upper level's `groupBy` will get cascaded to lower-level groupBy.
     // `replace` can be overriden in a lower-level to support different grouping.
-    let includes: Array<PropIndex<boolean>> = [];
-    let replaces: Array<PropIndex<Dict<string>>> = [];
-    let replacers: Array<PropIndex<Replacer>> = [];
+    const includes: Array<PropIndex<boolean>> = [];
+    const replaces: Array<PropIndex<Dict<string>>> = [];
+    const replacers: Array<PropIndex<Replacer>> = [];
 
     for (let l = 0; l < queryNest.length; l++) {
       includes.push(l > 0 ? includes[l - 1].duplicate() : new PropIndex<boolean>());
@@ -51,7 +51,7 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
       const groupBy = queryNest[l].groupBy;
       if (isArray(groupBy)) {
         // If group is array, it's an array of extended group by that need to be parsed
-        let parsedGroupBy = parseGroupBy(groupBy, includes[l], replaces[l]);
+        const parsedGroupBy = parseGroupBy(groupBy, includes[l], replaces[l]);
         replacers.push(parsedGroupBy.replacer);
       }
     }

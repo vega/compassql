@@ -60,7 +60,10 @@ describe('recommend()', () => {
         spec: {
           data: {url: 'data/cars.json'},
           mark: '?',
-          encodings: [{channel: '?', field: 'Origin', type: 'nominal'}, {channel: 'size', value: 52}]
+          encodings: [
+            {channel: '?', field: 'Origin', type: 'nominal'},
+            {channel: 'size', value: 52}
+          ]
         },
         nest: [
           {
@@ -244,7 +247,7 @@ describe('recommend()', () => {
     const output = recommend(q, schema);
     const result = output.result;
 
-    it('enumerates a nested query correctly ', () => {
+    it('enumerates a nested query correctly', () => {
       assert.isTrue(isResultTree(result.items[0]));
       if (isResultTree(result.items[0])) {
         const group1: SpecQueryModelGroup = <SpecQueryModelGroup>result.items[0];
@@ -285,8 +288,8 @@ describe('recommend()', () => {
       }
 
       for (let i = 1; i < result.items.length; i++) {
-        let prev = result.items[i - 1];
-        let cur = result.items[i];
+        const prev = result.items[i - 1];
+        const cur = result.items[i];
 
         assert.isTrue(
           score(prev, 'aggregationQuality') >= score(cur, 'aggregationQuality') ||
@@ -297,7 +300,7 @@ describe('recommend()', () => {
     });
   });
 
-  it('enumerates a flat query correctly ', () => {
+  it('enumerates a flat query correctly', () => {
     const q: Query = {
       spec: {
         mark: '?',

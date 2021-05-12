@@ -357,7 +357,7 @@ describe('nest', () => {
       });
     });
 
-    it('should separate different types of stacked and non-stacked visualizations even if it is nested ', () => {
+    it('should separate different types of stacked and non-stacked visualizations even if it is nested', () => {
       const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,
@@ -650,7 +650,7 @@ describe('nest', () => {
       });
     });
 
-    it('should separate different types of stacked and non-stacked visualizations even if it is nested ', () => {
+    it('should separate different types of stacked and non-stacked visualizations even if it is nested', () => {
       const query: Query = {
         spec: {
           mark: SHORT_WILDCARD,

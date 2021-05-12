@@ -1,12 +1,22 @@
 import {assert} from 'chai';
 import {TextDef} from 'vega-lite/build/src/channeldef';
 import {ScaleType} from 'vega-lite/build/src/scale';
-import {TimeUnit, LOCAL_SINGLE_TIMEUNIT_INDEX,UTC_SINGLE_TIMEUNIT_INDEX,LOCAL_MULTI_TIMEUNIT_INDEX,UTC_MULTI_TIMEUNIT_INDEX} from 'vega-lite/build/src/timeunit';
+import {
+  TimeUnit,
+  LOCAL_SINGLE_TIMEUNIT_INDEX,
+  UTC_SINGLE_TIMEUNIT_INDEX,
+  LOCAL_MULTI_TIMEUNIT_INDEX,
+  UTC_MULTI_TIMEUNIT_INDEX
+} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import {scaleType, toFieldDef, toValueDef} from '../../src/query/encoding';
 import {SHORT_WILDCARD} from '../../src/wildcard';
 
-const TIMEUNITS = Object.keys(LOCAL_SINGLE_TIMEUNIT_INDEX).concat(Object.keys(UTC_SINGLE_TIMEUNIT_INDEX), Object.keys(LOCAL_MULTI_TIMEUNIT_INDEX), Object.keys(UTC_MULTI_TIMEUNIT_INDEX));
+const TIMEUNITS = Object.keys(LOCAL_SINGLE_TIMEUNIT_INDEX).concat(
+  Object.keys(UTC_SINGLE_TIMEUNIT_INDEX),
+  Object.keys(LOCAL_MULTI_TIMEUNIT_INDEX),
+  Object.keys(UTC_MULTI_TIMEUNIT_INDEX)
+);
 
 describe('query/encoding', () => {
   describe('toFieldDef', () => {

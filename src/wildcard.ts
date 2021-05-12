@@ -64,8 +64,8 @@ export function initWildcard(
  * For each camelCaseNames, return unique short names based on initial (e.g., `ccn`)
  */
 function initNestedPropName(fullNames: string[]) {
-  let index = {};
-  let has = {};
+  const index = {};
+  const has = {};
   for (const fullName of fullNames) {
     const initialIndices = [0];
     for (let i = 0; i < fullName.length; i++) {
@@ -96,7 +96,7 @@ function initNestedPropName(fullNames: string[]) {
       }
     }
     for (let i = 1; !index[fullName]; i++) {
-      let shortNameWithNo = `${shortName}_${i}`;
+      const shortNameWithNo = `${shortName}_${i}`;
       if (!has[shortNameWithNo]) {
         index[fullName] = shortNameWithNo;
         has[shortNameWithNo] = true;
@@ -290,7 +290,7 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   minExtent: [undefined],
   position: [undefined],
 
-  style: [undefined], 
+  style: [undefined],
 
   ticks: DEFAULT_BOOLEAN_ENUM,
   tickBand: [undefined],
@@ -324,12 +324,12 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   titleX: [undefined],
   titleY: [undefined],
 
-  translate: [undefined],
+  translate: [undefined]
 };
 
 const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend<any>> = {
   aria: [undefined],
-  description: [undefined], 
+  description: [undefined],
   orient: ['left', 'right'],
   format: [undefined],
   type: [undefined],
@@ -401,7 +401,7 @@ const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend<any>> = {
   titleLineHeight: [undefined],
   titleOpacity: [undefined],
   titleOrient: [undefined],
-  titlePadding: [undefined],
+  titlePadding: [undefined]
 };
 
 // Use FullEnumIndex to make sure we have all properties specified here!
@@ -414,7 +414,7 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
   autoCount: DEFAULT_BOOLEAN_ENUM,
   bin: DEFAULT_BOOLEAN_ENUM,
   hasFn: DEFAULT_BOOLEAN_ENUM,
-  timeUnit: [undefined, "year", "month", "minutes", "seconds"],
+  timeUnit: [undefined, 'year', 'month', 'minutes', 'seconds'],
 
   field: [undefined], // This is not used as field should be read from schema
   type: [TYPE.NOMINAL, TYPE.ORDINAL, TYPE.QUANTITATIVE, TYPE.TEMPORAL],

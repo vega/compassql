@@ -6,10 +6,12 @@ const scorer = new FacetScorer();
 
 export const PREFERRED_FACET_RULESET: RuleSet<string> = {
   name: 'preferredFacetScore',
-  rules: [{
-    name: 'preferredFacetScore',
-    items: [ROW, COLUMN] as any[]
-  }]
+  rules: [
+    {
+      name: 'preferredFacetScore',
+      items: [ROW, COLUMN] as any[]
+    }
+  ]
 };
 
 describe('preferredFacetScore', () => {

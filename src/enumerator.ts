@@ -30,7 +30,7 @@ ENUMERATOR_INDEX.set('mark', (wildcardIndex: WildcardIndex, schema: Schema, opt:
     const markWildcard = specM.getMark() as Wildcard<Mark>;
 
     // enumerate the value
-    markWildcard.enum.forEach((mark) => {
+    markWildcard.enum.forEach(mark => {
       specM.setMark(mark);
       // Check spec constraint
       const violatedSpecConstraint = checkSpec('mark', wildcardIndex.mark, specM, schema, opt);
@@ -47,11 +47,11 @@ ENUMERATOR_INDEX.set('mark', (wildcardIndex: WildcardIndex, schema: Schema, opt:
   };
 });
 
-ENCODING_TOPLEVEL_PROPS.forEach((prop) => {
+ENCODING_TOPLEVEL_PROPS.forEach(prop => {
   ENUMERATOR_INDEX.set(prop, EncodingPropertyGeneratorFactory(prop));
 });
 
-ENCODING_NESTED_PROPS.forEach((nestedProp) => {
+ENCODING_NESTED_PROPS.forEach(nestedProp => {
   ENUMERATOR_INDEX.set(nestedProp, EncodingPropertyGeneratorFactory(nestedProp));
 });
 
@@ -64,7 +64,6 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
    * @return as reducer that takes a specQueryModel as input and output an answer set array.
    */
   return (wildcardIndex: WildcardIndex, schema: Schema, opt: QueryConfig): Enumerator => {
-
     return (answerSet: SpecQueryModel[], specM: SpecQueryModel) => {
       // index of encoding mappings that require enumeration
       const indices = wildcardIndex.encodingIndicesByProperty.get(prop);
@@ -80,20 +79,21 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
         const encQ = specM.getEncodingQueryByIndex(index);
         const propWildcard = specM.getEncodingProperty(index, prop);
 
-        if (isValueQuery(encQ) || (
-              // TODO: encQ.exclude
-              // If this encoding query is an excluded autoCount, there is no point enumerating other properties
-              // for this encoding query because they will be excluded anyway.
-              // Thus, we can just move on to the next encoding to enumerate.
-              (isDisabledAutoCountQuery(encQ)) ||
-              // nested encoding property might have its parent set to false
-              // therefore, we no longer have to enumerate them
-              !propWildcard
-            )
-          ) { // TODO: encQ.excluded
+        if (
+          isValueQuery(encQ) ||
+          // TODO: encQ.exclude
+          // If this encoding query is an excluded autoCount, there is no point enumerating other properties
+          // for this encoding query because they will be excluded anyway.
+          // Thus, we can just move on to the next encoding to enumerate.
+          isDisabledAutoCountQuery(encQ) ||
+          // nested encoding property might have its parent set to false
+          // therefore, we no longer have to enumerate them
+          !propWildcard
+        ) {
+          // TODO: encQ.excluded
           enumerate(jobIndex + 1);
         } else {
-          wildcard.enum.forEach((propVal) => {
+          wildcard.enum.forEach(propVal => {
             if (propVal === null) {
               // our duplicate() method use JSON.stringify, parse and thus can accidentally
               // convert undefined in an array into null

@@ -34,7 +34,7 @@ describe('constraints/field', () => {
   });
 
   describe('hasAllRequiredPropertiesSpecific', () => {
-    let encModel = new EncodingConstraintModel({
+    const encModel = new EncodingConstraintModel({
       name: 'TestEncoding for hasAllRequiredProperties class method',
       description: 'TestEncoding for hasAllRequirdProperties class method',
       properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, {parent: 'scale', child: 'type'}],
@@ -44,7 +44,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true if all properties is defined', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         channel: CHANNEL.X,
         aggregate: 'mean',
         field: 'A',
@@ -55,7 +55,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true if a required property is undefined', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         channel: CHANNEL.X,
         field: 'A',
         scale: {type: ScaleType.LOG},
@@ -65,7 +65,7 @@ describe('constraints/field', () => {
     });
 
     it('should return false if a required property is a wildcard', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         channel: CHANNEL.X,
         aggregate: SHORT_WILDCARD,
         scale: {type: ScaleType.LOG},
@@ -75,7 +75,7 @@ describe('constraints/field', () => {
     });
 
     it('should return false if a nested required property is a wildcard', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         channel: CHANNEL.X,
         aggregate: 'mean',
         field: 'A',
@@ -87,7 +87,7 @@ describe('constraints/field', () => {
   });
 
   describe('aggregateOpSupportedByType', () => {
-    let encQ: FieldQuery = {
+    const encQ: FieldQuery = {
       channel: CHANNEL.X,
       aggregate: 'mean',
       field: 'A',
@@ -200,7 +200,7 @@ describe('constraints/field', () => {
   });
 
   describe('binAppliedForQuantitative', () => {
-    let encQ: FieldQuery = {
+    const encQ: FieldQuery = {
       channel: CHANNEL.X,
       bin: true,
       field: 'A',
@@ -728,7 +728,7 @@ describe('constraints/field', () => {
   });
 
   describe('omitScaleZeroWithBinnedField', () => {
-    let encQ: FieldQuery = {
+    const encQ: FieldQuery = {
       channel: CHANNEL.X,
       bin: true,
       field: 'A',
@@ -861,20 +861,23 @@ describe('constraints/field', () => {
     });
 
     it('should return true if there is only one function', () => {
-      [['aggregate', 'mean'], ['timeUnit', vegaTime.MONTH], ['bin', true], , ['autoCount', true]].forEach(
-        (tuple: any) => {
-          let modifiedEncQ = duplicate(encQ);
-          modifiedEncQ[tuple[0]] = tuple[1];
-          assert.isTrue(
-            FIELD_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(
-              encQ,
-              schema,
-              new PropIndex<Wildcard<any>>(),
-              defaultOpt
-            )
-          );
-        }
-      );
+      [
+        ['aggregate', 'mean'],
+        ['timeUnit', vegaTime.MONTH],
+        ['bin', true],
+        ['autoCount', true]
+      ].forEach((tuple: any) => {
+        const modifiedEncQ = duplicate(encQ);
+        modifiedEncQ[tuple[0]] = tuple[1];
+        assert.isTrue(
+          FIELD_CONSTRAINT_INDEX['onlyOneTypeOfFunction'].satisfy(
+            encQ,
+            schema,
+            new PropIndex<Wildcard<any>>(),
+            defaultOpt
+          )
+        );
+      });
     });
 
     it('should return false if there are multiple functions', () => {
@@ -901,7 +904,7 @@ describe('constraints/field', () => {
   });
 
   describe('timeUnitAppliedForTemporal', () => {
-    let encQ: FieldQuery = {
+    const encQ: FieldQuery = {
       channel: CHANNEL.X,
       timeUnit: vegaTime.MONTH,
       field: 'A',
@@ -938,7 +941,7 @@ describe('constraints/field', () => {
 
   describe('scalePropertiesSupportedByScaleType', () => {
     it('should return true if scaleType is not specified.', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         channel: '?',
         field: 'A',
         type: '?'
@@ -955,7 +958,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true if scaleType is still ambiguous.', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: '?',
         field: 'A',
@@ -974,7 +977,7 @@ describe('constraints/field', () => {
     });
 
     it('should return false if scale property is not supported by the scale type', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
         field: 'A',
@@ -996,7 +999,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true if scale property is supported', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
         field: 'A',
@@ -1018,7 +1021,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true if scale type is point and a property is supported by band', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
         field: 'A',
@@ -1043,7 +1046,7 @@ describe('constraints/field', () => {
 
   describe('scalePropertiesSupportedByChannel', () => {
     it('should return true when channel is a wildcard', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         channel: '?',
         field: 'A',
         type: '?',
@@ -1063,7 +1066,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true when scale property range with channel x', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
         field: 'A',
@@ -1084,7 +1087,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true when scale property range with channel y', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'y',
         field: 'A',
@@ -1105,7 +1108,7 @@ describe('constraints/field', () => {
     });
 
     it('should return false when scale property range with channel row', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'row',
         field: 'A',
@@ -1126,7 +1129,7 @@ describe('constraints/field', () => {
     });
 
     it('should return false when scale property range with channel column', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'column',
         field: 'A',
@@ -1147,7 +1150,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true when scale property range with channel x2', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x2',
         field: 'A',
@@ -1168,7 +1171,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true when scale property type with channel x with name, enum scale props', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
         field: 'A',
@@ -1191,7 +1194,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true when scale property padding with channel x', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
         field: 'A',
@@ -1212,7 +1215,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true when encoding query is missing scale prop', () => {
-      let encQ: EncodingQuery = {
+      const encQ: EncodingQuery = {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
         field: 'A',
@@ -1231,7 +1234,7 @@ describe('constraints/field', () => {
   });
 
   describe('typeMatchesSchemaType', () => {
-    let encQ: FieldQuery = {
+    const encQ: FieldQuery = {
       channel: CHANNEL.X,
       field: 'O',
       type: undefined
@@ -1251,7 +1254,7 @@ describe('constraints/field', () => {
       });
     });
 
-    it("should return true if string matches schema's type ", () => {
+    it("should return true if string matches schema's type", () => {
       [TYPE.ORDINAL].forEach(type => {
         encQ.type = type;
         assert.isTrue(
@@ -1315,7 +1318,7 @@ describe('constraints/field', () => {
   });
 
   describe('typeMatchesPrimitiveType', () => {
-    let encQ: FieldQuery = {
+    const encQ: FieldQuery = {
       channel: CHANNEL.X,
       field: 'O',
       type: undefined
@@ -1335,7 +1338,7 @@ describe('constraints/field', () => {
       });
     });
 
-    it('should return true if string is used as ordinal or nominal ', () => {
+    it('should return true if string is used as ordinal or nominal', () => {
       [TYPE.NOMINAL, TYPE.ORDINAL].forEach(type => {
         encQ.type = type;
         assert.isTrue(

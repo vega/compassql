@@ -4,7 +4,6 @@ import {Wildcard} from './wildcard';
 import {Property, isEncodingProperty} from './property';
 import {PropIndex} from './propindex';
 
-
 export interface EncodingsWildcardIndex {
   [index: number]: PropIndex<Wildcard<any>>;
 }
@@ -30,12 +29,12 @@ export class WildcardIndex {
     const encodingsIndex = this._encodings;
 
     // Init encoding index and set prop
-    const encIndex = encodingsIndex[index] = encodingsIndex[index] || new PropIndex<Wildcard<any>>();
+    const encIndex = (encodingsIndex[index] = encodingsIndex[index] || new PropIndex<Wildcard<any>>());
     encIndex.set(prop, wildcard);
 
     // Initialize indicesByProperty[prop] and add index
     const indicesByProp = this._encodingIndicesByProperty;
-    indicesByProp.set(prop, (indicesByProp.get(prop) || []));
+    indicesByProp.set(prop, indicesByProp.get(prop) || []);
     indicesByProp.get(prop).push(index);
 
     return this;

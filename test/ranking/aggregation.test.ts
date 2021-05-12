@@ -1,5 +1,5 @@
 import {isAggregateOp} from 'vega-lite/build/src/aggregate';
-import {isUTCTimeUnit,isLocalSingleTimeUnit} from 'vega-lite/build/src/timeunit';
+import {isUTCTimeUnit, isLocalSingleTimeUnit} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import {DEFAULT_QUERY_CONFIG} from '../../src/config';
 import {SpecQueryModel} from '../../src/model';
@@ -11,7 +11,7 @@ import {RuleSet, testRuleSet} from './rule';
 
 function getScore(shortenedFields: string) {
   const encodings: EncodingQuery[] = shortenedFields.split('x').map((shortenedEncQ: string) => {
-    let encQ: EncodingQuery = {channel: SHORT_WILDCARD};
+    const encQ: EncodingQuery = {channel: SHORT_WILDCARD};
     const split = shortenedEncQ.trim().split('_');
 
     const field: string = (encQ.field = split.length > 1 ? split[1] : split[0]);

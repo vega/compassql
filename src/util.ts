@@ -11,7 +11,7 @@ export interface Dict<T> {
 
 export function contains(array: any[], item: any) {
   return array.indexOf(item) !== -1;
-};
+}
 
 export function every<T>(arr: T[], f: (item: T, key: number) => boolean) {
   for (let i = 0; i < arr.length; i++) {
@@ -20,31 +20,30 @@ export function every<T>(arr: T[], f: (item: T, key: number) => boolean) {
     }
   }
   return true;
-};
+}
 
-export function forEach(obj: any, f: (item: any, key: number|string, i: number)=>void, thisArg?: any) {
+export function forEach(obj: any, f: (item: any, key: number | string, i: number) => void, thisArg?: any) {
   if (obj.forEach) {
     obj.forEach.call(thisArg, f);
   } else {
-    for (let k in obj) {
+    for (const k in obj) {
       f.call(thisArg, obj[k], k, obj);
     }
   }
-};
+}
 
-export function some<T>(arr: T[], f: (item: T, key: number|string, i: number)=>boolean) {
+export function some<T>(arr: T[], f: (item: T, key: number | string, i: number) => boolean) {
   let i = 0;
-  let k;
-  for (k in arr) {
+  for (let k = 0; k < arr.length; k++) {
     if (f(arr[k], k, i++)) {
       return true;
     }
   }
   return false;
-};
+}
 
-export function nestedMap(array: any[], f: (item: any)=>any): any[] {
-  return array.map((a) => {
+export function nestedMap(array: any[], f: (item: any) => any): any[] {
+  return array.map(a => {
     if (isArray(a)) {
       return nestedMap(a, f);
     }
@@ -54,7 +53,7 @@ export function nestedMap(array: any[], f: (item: any)=>any): any[] {
 
 /** Returns the array without the elements in item */
 export function without<T>(array: Array<T>, excludedItems: Array<T>) {
-  return array.filter(function(item) {
+  return array.filter(function (item) {
     return !contains(excludedItems, item);
   });
 }
@@ -63,4 +62,4 @@ export function flagKeys<S extends string>(f: Flag<S>): S[] {
   return Object.keys(f) as S[];
 }
 
-export type Diff<T extends string, U extends string> = ({ [P in T]: P } & { [P in U]: never } & { [x: string]: never })[T];
+export type Diff<T extends string, U extends string> = ({[P in T]: P} & {[P in U]: never} & {[x: string]: never})[T];

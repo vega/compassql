@@ -16,8 +16,6 @@ import * as util from './util';
 export {generate} from './generate';
 export {recommend} from './recommend';
 
-export {
-  version
-} from './package.json';
+export {version} from './package.json';
 
 export {config, constraint, enumerate, wildcard, model, nest, property, query, ranking, result, schema, util};

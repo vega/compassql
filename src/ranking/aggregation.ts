@@ -38,10 +38,10 @@ function aggregationQualityFeature(specM: SpecQueryModel, _: Schema, __: QueryCo
     }
 
     if (some(encodings, encQ => isFieldQuery(encQ) && isDimension(encQ))) {
-      let hasCount = some(encodings, (encQ: EncodingQuery) => {
+      const hasCount = some(encodings, (encQ: EncodingQuery) => {
         return (isFieldQuery(encQ) && encQ.aggregate === 'count') || isEnabledAutoCountQuery(encQ);
       });
-      let hasBin = some(encodings, (encQ: EncodingQuery) => {
+      const hasBin = some(encodings, (encQ: EncodingQuery) => {
         return isFieldQuery(encQ) && !!encQ.bin;
       });
 
