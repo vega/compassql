@@ -7,3 +7,7 @@ compassql.js
 coverage
 build
 .nyc_output/
+.eslintrc.js
+prettier.config.js
+.prettierignore
+.eslintignore
