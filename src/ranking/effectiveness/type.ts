@@ -8,7 +8,7 @@ import {ExpandedType} from '../../query/expandedtype';
  */
 export enum ExtendedType {
   Q = TYPE.QUANTITATIVE as any,
-  BIN_Q = (`bin_${TYPE.QUANTITATIVE}`) as any,
+  BIN_Q = `bin_${TYPE.QUANTITATIVE}` as any,
   T = TYPE.TEMPORAL as any,
 
   /**
@@ -18,7 +18,7 @@ export enum ExtendedType {
   /**
    * Time Unit Temporal Field with ordinal scale.
    */
-  TIMEUNIT_O = (`timeUnit_${TYPE.ORDINAL}`) as any,
+  TIMEUNIT_O = `timeUnit_${TYPE.ORDINAL}` as any,
   O = TYPE.ORDINAL as any,
   N = TYPE.NOMINAL as any,
   K = ExpandedType.KEY as any,

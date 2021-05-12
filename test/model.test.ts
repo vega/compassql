@@ -82,7 +82,7 @@ describe('SpecQueryModel', () => {
 
     ENCODING_TOPLEVEL_PROPS.forEach(prop => {
       it(`should have ${prop} wildcardIndex if it is a ShortWildcard.`, () => {
-        let specQ = duplicate(templateSpecQ);
+        const specQ = duplicate(templateSpecQ);
         // set to a short wildcard
         specQ.encodings[0][prop] = SHORT_WILDCARD;
 
@@ -92,7 +92,7 @@ describe('SpecQueryModel', () => {
       });
 
       it(`should have ${prop} wildcardIndex if it is an Wildcard.`, () => {
-        let specQ = duplicate(templateSpecQ);
+        const specQ = duplicate(templateSpecQ);
         // set to a full wildcard
         const enumValues =
           prop === Property.FIELD ? ['A', 'B'] : getDefaultEnumValues(prop, schema, DEFAULT_QUERY_CONFIG);
@@ -106,7 +106,7 @@ describe('SpecQueryModel', () => {
       });
 
       it(`should not have ${prop} wildcardIndex if it is specific.`, () => {
-        let specQ = duplicate(templateSpecQ);
+        const specQ = duplicate(templateSpecQ);
         // do not set to wildcard = make it specific
 
         const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
@@ -121,7 +121,7 @@ describe('SpecQueryModel', () => {
       const child = nestedProp.child;
 
       it(`should have ${propKey} wildcardIndex if it is a ShortWildcard.`, () => {
-        let specQ = duplicate(templateSpecQ);
+        const specQ = duplicate(templateSpecQ);
         // set to a short wildcard
         specQ.encodings[0][parent] = {};
         specQ.encodings[0][parent][child] = SHORT_WILDCARD;
@@ -132,7 +132,7 @@ describe('SpecQueryModel', () => {
       });
 
       it(`should have ${propKey} wildcardIndex if it is an Wildcard.`, () => {
-        let specQ = duplicate(templateSpecQ);
+        const specQ = duplicate(templateSpecQ);
         specQ.encodings[0][parent] = {};
         specQ.encodings[0][parent][child] = {
           enum: getDefaultEnumValues(nestedProp, schema, DEFAULT_QUERY_CONFIG)
@@ -144,7 +144,7 @@ describe('SpecQueryModel', () => {
       });
 
       it(`should not have ${propKey} wildcardIndex if it is specific.`, () => {
-        let specQ = duplicate(templateSpecQ);
+        const specQ = duplicate(templateSpecQ);
 
         const wildcardIndex = SpecQueryModel.build(specQ, schema, DEFAULT_QUERY_CONFIG).wildcardIndex;
         assert.isNotOk(wildcardIndex.encodingIndicesByProperty.get(nestedProp));
@@ -394,7 +394,13 @@ describe('SpecQueryModel', () => {
       () => {
         const specM = SpecQueryModel.build(
           {
-            data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+            data: {
+              values: [
+                {A: 'L', B: 4},
+                {A: 'S', B: 2},
+                {A: 'M', B: 42}
+              ]
+            },
             mark: MARK.BAR,
             encodings: [
               {channel: CHANNEL.X, field: 'A', type: TYPE.ORDINAL, scale: {}},
@@ -427,7 +433,13 @@ describe('SpecQueryModel', () => {
 
         const spec = specM.toSpec();
         assert.deepEqual(spec, {
-          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+          data: {
+            values: [
+              {A: 'L', B: 4},
+              {A: 'S', B: 2},
+              {A: 'M', B: 42}
+            ]
+          },
           mark: MARK.BAR,
           encoding: {
             x: {field: 'A', type: TYPE.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
@@ -444,7 +456,13 @@ describe('SpecQueryModel', () => {
       () => {
         const specM = SpecQueryModel.build(
           {
-            data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+            data: {
+              values: [
+                {A: 'L', B: 4},
+                {A: 'S', B: 2},
+                {A: 'M', B: 42}
+              ]
+            },
             mark: MARK.BAR,
             encodings: [
               {channel: CHANNEL.X, field: 'A', type: TYPE.ORDINAL, scale: true},
@@ -477,56 +495,13 @@ describe('SpecQueryModel', () => {
 
         const spec = specM.toSpec();
         assert.deepEqual(spec, {
-          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
-          mark: MARK.BAR,
-          encoding: {
-            x: {field: 'A', type: TYPE.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
-            y: {field: 'B', type: TYPE.QUANTITATIVE}
-          },
-          config: DEFAULT_SPEC_CONFIG
-        });
-      }
-    );
-
-    it(
-      'should return a spec with the domain specified in FieldSchema if the encoding query scale is undefined',
-      () => {
-        const specM = SpecQueryModel.build(
-          {
-            data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
-            mark: MARK.BAR,
-            encodings: [
-              {channel: CHANNEL.X, field: 'A', type: TYPE.ORDINAL},
-              {channel: CHANNEL.Y, field: 'B', type: TYPE.QUANTITATIVE}
+          data: {
+            values: [
+              {A: 'L', B: 4},
+              {A: 'S', B: 2},
+              {A: 'M', B: 42}
             ]
           },
-          new Schema({
-            fields: [
-              {
-                name: 'A',
-                vlType: 'ordinal',
-                type: 'string' as any,
-                ordinalDomain: ['S', 'M', 'L'],
-                stats: {
-                  distinct: 3
-                }
-              },
-              {
-                name: 'B',
-                vlType: 'quantitative',
-                type: 'number' as any,
-                stats: {
-                  distinct: 3
-                }
-              }
-            ] as FieldSchema[]
-          }),
-          DEFAULT_QUERY_CONFIG
-        );
-
-        const spec = specM.toSpec();
-        assert.deepEqual(spec, {
-          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
           mark: MARK.BAR,
           encoding: {
             x: {field: 'A', type: TYPE.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
@@ -536,11 +511,75 @@ describe('SpecQueryModel', () => {
         });
       }
     );
+
+    it('should return a spec with the domain specified in FieldSchema if the encoding query scale is undefined', () => {
+      const specM = SpecQueryModel.build(
+        {
+          data: {
+            values: [
+              {A: 'L', B: 4},
+              {A: 'S', B: 2},
+              {A: 'M', B: 42}
+            ]
+          },
+          mark: MARK.BAR,
+          encodings: [
+            {channel: CHANNEL.X, field: 'A', type: TYPE.ORDINAL},
+            {channel: CHANNEL.Y, field: 'B', type: TYPE.QUANTITATIVE}
+          ]
+        },
+        new Schema({
+          fields: [
+            {
+              name: 'A',
+              vlType: 'ordinal',
+              type: 'string' as any,
+              ordinalDomain: ['S', 'M', 'L'],
+              stats: {
+                distinct: 3
+              }
+            },
+            {
+              name: 'B',
+              vlType: 'quantitative',
+              type: 'number' as any,
+              stats: {
+                distinct: 3
+              }
+            }
+          ] as FieldSchema[]
+        }),
+        DEFAULT_QUERY_CONFIG
+      );
+
+      const spec = specM.toSpec();
+      assert.deepEqual(spec, {
+        data: {
+          values: [
+            {A: 'L', B: 4},
+            {A: 'S', B: 2},
+            {A: 'M', B: 42}
+          ]
+        },
+        mark: MARK.BAR,
+        encoding: {
+          x: {field: 'A', type: TYPE.ORDINAL, scale: {domain: ['S', 'M', 'L']}},
+          y: {field: 'B', type: TYPE.QUANTITATIVE}
+        },
+        config: DEFAULT_SPEC_CONFIG
+      });
+    });
 
     it('should return a spec with the domain that is already set in an Encoding Query', () => {
       const specM = SpecQueryModel.build(
         {
-          data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+          data: {
+            values: [
+              {A: 'L', B: 4},
+              {A: 'S', B: 2},
+              {A: 'M', B: 42}
+            ]
+          },
           mark: MARK.BAR,
           encodings: [
             {channel: CHANNEL.X, field: 'A', type: TYPE.ORDINAL, scale: {domain: ['L', 'M', 'S']}},
@@ -573,7 +612,13 @@ describe('SpecQueryModel', () => {
 
       const spec = specM.toSpec();
       assert.deepEqual(spec, {
-        data: {values: [{A: 'L', B: 4}, {A: 'S', B: 2}, {A: 'M', B: 42}]},
+        data: {
+          values: [
+            {A: 'L', B: 4},
+            {A: 'S', B: 2},
+            {A: 'M', B: 42}
+          ]
+        },
         mark: MARK.BAR,
         encoding: {
           x: {field: 'A', type: TYPE.ORDINAL, scale: {domain: ['L', 'M', 'S']}},
@@ -648,7 +693,10 @@ describe('SpecQueryModel', () => {
     it('should return a correct Vega-Lite spec if the query has autoCount=false', () => {
       const specM = buildSpecQueryModel({
         mark: MARK.BAR,
-        encodings: [{channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL}, {channel: CHANNEL.Y, autoCount: false}]
+        encodings: [
+          {channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL},
+          {channel: CHANNEL.Y, autoCount: false}
+        ]
       });
 
       const spec = specM.toSpec();
@@ -665,7 +713,10 @@ describe('SpecQueryModel', () => {
       // Basically, we no longer enumerate ambiguous channel autoCount is false.
       const specM = buildSpecQueryModel({
         mark: MARK.BAR,
-        encodings: [{channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL}, {channel: SHORT_WILDCARD, autoCount: false}]
+        encodings: [
+          {channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL},
+          {channel: SHORT_WILDCARD, autoCount: false}
+        ]
       });
 
       const spec = specM.toSpec();
@@ -688,7 +739,7 @@ describe('SpecQueryModel', () => {
       assert.isNull(specM.toSpec());
     });
 
-    it('should not output spec with inapplicable scale, sort, axis / legend ', () => {
+    it('should not output spec with inapplicable scale, sort, axis / legend', () => {
       const specM = buildSpecQueryModel({
         mark: MARK.BAR,
         encodings: [{channel: CHANNEL.X, bin: {maxbins: '?'}, field: 'A', type: TYPE.QUANTITATIVE}]

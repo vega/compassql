@@ -4,7 +4,7 @@ import {Channel, isChannel} from 'vega-lite/build/src/channel';
 import {Mark} from 'vega-lite/build/src/mark';
 import {FacetedUnitSpec} from 'vega-lite/build/src/spec';
 import {StackProperties} from 'vega-lite/build/src/stack';
-import {isUTCTimeUnit,isLocalSingleTimeUnit} from 'vega-lite/build/src/timeunit';
+import {isUTCTimeUnit, isLocalSingleTimeUnit} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import {getFullName} from 'vega-lite/build/src/type';
 import {
@@ -145,7 +145,7 @@ export function spec(
     }
   }
 
-  for (let viewProp of VIEW_PROPS) {
+  for (const viewProp of VIEW_PROPS) {
     const propString = viewProp.toString();
     if (include.get(viewProp) && !!specQ[propString]) {
       const value = specQ[propString];
@@ -214,14 +214,14 @@ export function fieldDef(
       if (isWildcard(encQ.type)) {
         fieldAndParams += `,${value(encQ.type, replacer.get(Property.TYPE))}`;
       } else {
-        const typeShort = (`${encQ.type || TYPE.QUANTITATIVE}`).substr(0, 1);
+        const typeShort = `${encQ.type || TYPE.QUANTITATIVE}`.substr(0, 1);
         fieldAndParams += `,${value(typeShort, replacer.get(Property.TYPE))}`;
       }
     }
     // encoding properties
     fieldAndParams += props
       .map(p => {
-        let val = p.value instanceof Array ? `[${p.value}]` : p.value;
+        const val = p.value instanceof Array ? `[${p.value}]` : p.value;
         return `,${p.key}=${val}`;
       })
       .join('');
@@ -233,7 +233,7 @@ export function fieldDef(
     return null;
   }
   if (fn) {
-    let fnPrefix = isString(fn) ? fn : SHORT_WILDCARD + (keys(fn).length > 0 ? JSON.stringify(fn) : '');
+    const fnPrefix = isString(fn) ? fn : SHORT_WILDCARD + (keys(fn).length > 0 ? JSON.stringify(fn) : '');
 
     return `${fnPrefix}(${fieldAndParams})`;
   }
@@ -313,7 +313,7 @@ function fieldDefProps(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer
           value: replace(JSON.stringify(parentValue), replacer.get(parent))
         });
       } else {
-        let nestedPropChildren = [];
+        const nestedPropChildren = [];
         for (const child in parentValue) {
           const nestedProp = getEncodingNestedProp(parent, child as EncodingNestedChildProp);
           if (nestedProp && include.get(nestedProp) && parentValue[child] !== undefined) {
@@ -347,15 +347,15 @@ function fieldDefProps(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer
 export function parse(shorthand: string): SpecQuery {
   // TODO(https://github.com/uwdata/compassql/issues/259):
   // Do not split directly, but use an upgraded version of `getClosingBraceIndex()`
-  let splitShorthand = shorthand.split('|');
+  const splitShorthand = shorthand.split('|');
 
-  let specQ: SpecQuery = {
+  const specQ: SpecQuery = {
     mark: splitShorthand[0] as Mark,
     encodings: [] as EncodingQuery[]
   };
 
   for (let i = 1; i < splitShorthand.length; i++) {
-    let part = splitShorthand[i];
+    const part = splitShorthand[i];
     const splitPart = splitWithTail(part, ':', 1);
     const splitPartKey = splitPart[0];
     const splitPartValue = splitPart[1];
@@ -382,11 +382,11 @@ export function parse(shorthand: string): SpecQuery {
  * @param number The value used to determine how many times the string is split
  */
 export function splitWithTail(str: string, delim: string, count: number): string[] {
-  let result = [];
+  const result = [];
   let lastIndex = 0;
 
   for (let i = 0; i < count; i++) {
-    let indexOfDelim = str.indexOf(delim, lastIndex);
+    const indexOfDelim = str.indexOf(delim, lastIndex);
 
     if (indexOfDelim !== -1) {
       result.push(str.substring(lastIndex, indexOfDelim));
@@ -411,7 +411,7 @@ export function splitWithTail(str: string, delim: string, count: number): string
 
 export namespace shorthandParser {
   export function encoding(channel: Channel | SHORT_WILDCARD, fieldDefShorthand: string): EncodingQuery {
-    let encQMixins =
+    const encQMixins =
       fieldDefShorthand.indexOf('(') !== -1
         ? fn(fieldDefShorthand)
         : rawFieldDef(splitWithTail(fieldDefShorthand, ',', 2));
@@ -426,17 +426,17 @@ export namespace shorthandParser {
     fieldQ.field = fieldDefPart[0];
     fieldQ.type = getFullName(fieldDefPart[1].toUpperCase()) || '?';
 
-    let partParams = fieldDefPart[2];
+    const partParams = fieldDefPart[2];
     let closingBraceIndex = 0;
     let i = 0;
 
     while (i < partParams.length) {
-      let propEqualSignIndex = partParams.indexOf('=', i);
+      const propEqualSignIndex = partParams.indexOf('=', i);
       let parsedValue;
       if (propEqualSignIndex !== -1) {
-        let prop = partParams.substring(i, propEqualSignIndex);
+        const prop = partParams.substring(i, propEqualSignIndex);
         if (partParams[i + prop.length + 1] === '{') {
-          let openingBraceIndex = i + prop.length + 1;
+          const openingBraceIndex = i + prop.length + 1;
           closingBraceIndex = getClosingIndex(openingBraceIndex, partParams, '}');
           const value = partParams.substring(openingBraceIndex, closingBraceIndex + 1);
           parsedValue = JSON.parse(value);
@@ -445,15 +445,15 @@ export namespace shorthandParser {
           i = closingBraceIndex + 2;
         } else if (partParams[i + prop.length + 1] === '[') {
           // find closing square bracket
-          let openingBracketIndex = i + prop.length + 1;
-          let closingBracketIndex = getClosingIndex(openingBracketIndex, partParams, ']');
+          const openingBracketIndex = i + prop.length + 1;
+          const closingBracketIndex = getClosingIndex(openingBracketIndex, partParams, ']');
           const value = partParams.substring(openingBracketIndex, closingBracketIndex + 1);
           parsedValue = JSON.parse(value);
 
           // index after next comma
           i = closingBracketIndex + 2;
         } else {
-          let propIndex = i;
+          const propIndex = i;
           // Substring until the next comma (or end of the string)
           let nextCommaIndex = partParams.indexOf(',', i + prop.length);
           if (nextCommaIndex === -1) {
@@ -493,11 +493,11 @@ export namespace shorthandParser {
     const fieldQ: FieldQueryBase = {};
     // Aggregate, Bin, TimeUnit as wildcard case
     if (fieldDefShorthand[0] === '?') {
-      let closingBraceIndex = getClosingIndex(1, fieldDefShorthand, '}');
+      const closingBraceIndex = getClosingIndex(1, fieldDefShorthand, '}');
 
-      let fnEnumIndex = JSON.parse(fieldDefShorthand.substring(1, closingBraceIndex + 1));
+      const fnEnumIndex = JSON.parse(fieldDefShorthand.substring(1, closingBraceIndex + 1));
 
-      for (let encodingProperty in fnEnumIndex) {
+      for (const encodingProperty in fnEnumIndex) {
         if (isArray(fnEnumIndex[encodingProperty])) {
           fieldQ[encodingProperty] = {enum: fnEnumIndex[encodingProperty]};
         } else {
@@ -513,9 +513,9 @@ export namespace shorthandParser {
         )
       };
     } else {
-      let func = fieldDefShorthand.substring(0, fieldDefShorthand.indexOf('('));
-      let insideFn = fieldDefShorthand.substring(func.length + 1, fieldDefShorthand.length - 1);
-      let insideFnParts = splitWithTail(insideFn, ',', 2);
+      const func = fieldDefShorthand.substring(0, fieldDefShorthand.indexOf('('));
+      const insideFn = fieldDefShorthand.substring(func.length + 1, fieldDefShorthand.length - 1);
+      const insideFnParts = splitWithTail(insideFn, ',', 2);
 
       if (isAggregateOp(func)) {
         return {

@@ -3,7 +3,14 @@ import {inferAll} from 'datalib/src/import/type';
 import {summary} from 'datalib/src/stats';
 import {autoMaxBins} from 'vega-lite/build/src/bin';
 import {Channel} from 'vega-lite/build/src/channel';
-import {SingleTimeUnit,LocalSingleTimeUnit,isUTCTimeUnit,containsTimeUnit, TimeUnit, TIMEUNIT_PARTS} from 'vega-lite/build/src/timeunit';
+import {
+  SingleTimeUnit,
+  LocalSingleTimeUnit,
+  isUTCTimeUnit,
+  containsTimeUnit,
+  TimeUnit,
+  TIMEUNIT_PARTS
+} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import * as vegaTime from 'vega-time';
 import {DEFAULT_QUERY_CONFIG, QueryConfig} from './config';
@@ -85,19 +92,19 @@ export function build(
   opt = extend({}, DEFAULT_QUERY_CONFIG, opt);
 
   // create profiles for each variable
-  let summaries: DLFieldProfile[] = summary(data);
-  let types = inferAll(data); // inferAll does stronger type inference than summary
+  const summaries: DLFieldProfile[] = summary(data);
+  const types = inferAll(data); // inferAll does stronger type inference than summary
 
-  let tableSchemaFieldIndex = tableSchema.fields.reduce((m, field: TableSchemaFieldDescriptor) => {
+  const tableSchemaFieldIndex = tableSchema.fields.reduce((m, field: TableSchemaFieldDescriptor) => {
     m[field.name] = field;
     return m;
   }, {});
 
-  let fieldSchemas: FieldSchema[] = summaries.map(function(fieldProfile, index) {
+  const fieldSchemas: FieldSchema[] = summaries.map(function (fieldProfile, index) {
     const name: string = fieldProfile.field;
     // In Table schema, 'date' doesn't include time so use 'datetime'
     const type: PrimitiveType = types[name] === 'date' ? PrimitiveType.DATETIME : (types[name] as any);
-    let distinct: number = fieldProfile.distinct;
+    const distinct: number = fieldProfile.distinct;
     let vlType: ExpandedType;
 
     if (type === PrimitiveType.NUMBER) {
@@ -155,22 +162,23 @@ export function build(
   });
 
   // calculate preset bins for quantitative and temporal data
-  for (let fieldSchema of fieldSchemas) {
+  for (const fieldSchema of fieldSchemas) {
     if (fieldSchema.vlType === TYPE.QUANTITATIVE) {
-      for (let maxbins of opt.enum.binProps.maxbins) {
+      for (const maxbins of opt.enum.binProps.maxbins) {
         fieldSchema.binStats[maxbins] = binSummary(maxbins, fieldSchema.stats);
       }
     } else if (fieldSchema.vlType === TYPE.TEMPORAL) {
-      for (let unit of opt.enum.timeUnit) {
+      for (const unit of opt.enum.timeUnit) {
         if (unit !== undefined) {
-          if(typeof unit === "object") {
-            if("unit" in unit) { // is TimeUnitParams
+          if (typeof unit === 'object') {
+            if ('unit' in unit) {
+              // is TimeUnitParams
               fieldSchema.timeStats[unit.unit] = timeSummary(unit.unit, fieldSchema.stats);
             } else {
-              throw new Error("Unrecognized TimeUnit type when calculating fieldSchema.stats");
+              throw new Error('Unrecognized TimeUnit type when calculating fieldSchema.stats');
             }
           } else {
-            fieldSchema.timeStats[unit] = timeSummary(unit,fieldSchema.stats);
+            fieldSchema.timeStats[unit] = timeSummary(unit, fieldSchema.stats);
           }
         }
       }
@@ -202,7 +210,7 @@ export class Schema {
   constructor(tableSchema: TableSchema<FieldSchema>) {
     this._tableSchema = tableSchema;
 
-    tableSchema.fields.sort(function(a: FieldSchema, b: FieldSchema) {
+    tableSchema.fields.sort(function (a: FieldSchema, b: FieldSchema) {
       // first order by vlType: nominal < temporal < quantitative < ordinal
       if (order[a.vlType] < order[b.vlType]) {
         return -1;
@@ -263,7 +271,7 @@ export class Schema {
   /** @return cardinality of the field associated with encQ, null if it doesn't exist.
    *  @param augmentTimeUnitDomain - TimeUnit field domains will not be augmented if explicitly set to false.
    */
-  public cardinality(fieldQ: FieldQuery, augmentTimeUnitDomain: boolean = true, excludeInvalid: boolean = false) {
+  public cardinality(fieldQ: FieldQuery, augmentTimeUnitDomain = true, excludeInvalid = false) {
     const fieldSchema = this._fieldSchemaIndex[fieldQ.field as string];
     if (fieldQ.aggregate || (isAutoCountQuery(fieldQ) && fieldQ.autoCount)) {
       return 1;
@@ -311,7 +319,7 @@ export class Schema {
             return 1000;
         }
       }
-      let unit = fieldQ.timeUnit as string;
+      const unit = fieldQ.timeUnit as string;
       let timeStats = fieldSchema.timeStats;
       // if the cardinality for the timeUnit is not cached, calculate it
       if (!timeStats || !timeStats[unit]) {
@@ -360,8 +368,8 @@ export class Schema {
       }
     }
 
-    let fullTimeUnit = fieldQ.timeUnit;
-    for (let timeUnitPart of TIMEUNIT_PARTS) {
+    const fullTimeUnit = fieldQ.timeUnit;
+    for (const timeUnitPart of TIMEUNIT_PARTS) {
       if (containsTimeUnit(fullTimeUnit as TimeUnit, timeUnitPart)) {
         // Create a clone of encQ, but with singleTimeUnit
         const singleUnitEncQ = extend({}, fieldQ, {timeUnit: timeUnitPart});
@@ -489,10 +497,10 @@ function convert(unit: TimeUnit, date: Date): Date {
 function timeSummary(timeunit: TimeUnit, summary: DLFieldProfile): DLFieldProfile {
   const result = extend({}, summary);
 
-  let unique: {[value: string]: number} = {};
-  keys(summary.unique).forEach(function(dateString) {
+  const unique: {[value: string]: number} = {};
+  keys(summary.unique).forEach(function (dateString) {
     // don't convert null value because the Date constructor will actually convert it to a date
-    let date: Date = dateString === 'null' ? null : new Date(dateString);
+    const date: Date = dateString === 'null' ? null : new Date(dateString);
     // at this point, `date` is either the null value, a valid Date object, or "Invalid Date" which is a Date
     let key: string;
     if (date === null) {
@@ -516,7 +524,7 @@ function timeSummary(timeunit: TimeUnit, summary: DLFieldProfile): DLFieldProfil
  */
 function binUnique(bin: any, oldUnique: any) {
   const newUnique = {};
-  for (let value in oldUnique) {
+  for (const value in oldUnique) {
     let bucket: number;
     if (value === null) {
       bucket = null;
@@ -532,7 +540,7 @@ function binUnique(bin: any, oldUnique: any) {
 
 /** @return the number of items in list that occur as keys of unique */
 function invalidCount(unique: {}, list: any[]) {
-  return list.reduce(function(prev, cur) {
+  return list.reduce(function (prev, cur) {
     return unique[cur] ? prev + 1 : prev;
   }, 0);
 }

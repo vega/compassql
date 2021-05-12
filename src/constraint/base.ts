@@ -3,7 +3,7 @@ import {isEncodingNestedProp, Property} from '../property';
 import {PropIndex} from '../propindex';
 import {isWildcard, Wildcard} from '../wildcard';
 import {Schema} from '../schema';
-import { every} from '../util';
+import {every} from '../util';
 
 import {EncodingQueryBase} from '../query/encoding';
 
@@ -70,10 +70,9 @@ export class EncodingConstraintModel<E extends EncodingQueryBase> extends Abstra
 
   public hasAllRequiredPropertiesSpecific(encQ: E): boolean {
     return every(this.constraint.properties, (prop: Property) => {
-
       if (isEncodingNestedProp(prop)) {
-        let parent = prop.parent;
-        let child = prop.child;
+        const parent = prop.parent;
+        const child = prop.child;
 
         if (!encQ[parent]) {
           return true;

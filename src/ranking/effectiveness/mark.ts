@@ -51,7 +51,7 @@ function init() {
   const DISCRETE = [BIN_Q, TIMEUNIT_O, O, N, K];
   const DISCRETE_OR_NONE = DISCRETE.concat([NONE]);
 
-  let SCORE = {} as Dict<number>;
+  const SCORE = {} as Dict<number>;
   // QxQ
   MEASURES.forEach(xType => {
     MEASURES.forEach(yType => {

@@ -4,7 +4,6 @@ import {QueryConfig} from '../../config';
 import {FeatureScore} from '../ranking';
 import {Dict} from '../../util';
 
-
 export abstract class Scorer {
   public readonly type: string;
   public readonly scoreIndex: Dict<number>;

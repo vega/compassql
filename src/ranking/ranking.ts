@@ -44,7 +44,7 @@ export interface RankingFunction {
 /**
  * Registry for all encoding ranking functions
  */
-let rankingRegistry: Dict<RankingFunction>  = {};
+const rankingRegistry: Dict<RankingFunction> = {};
 
 /**
  * Add an ordering function to the registry.
@@ -70,7 +70,7 @@ export function rank(group: SpecQueryModelGroup, query: Query, schema: Schema, l
     }
   } else {
     // sort lower-level nodes first because our ranking takes top-item in the subgroup
-    group.items.forEach((subgroup) => {
+    group.items.forEach(subgroup => {
       rank(subgroup as SpecQueryModelGroup, query, schema, level + 1);
     });
     if (query.nest[level].orderGroupBy) {
@@ -90,7 +90,11 @@ export function comparatorFactory(name: string | string[], schema: Schema, opt: 
   };
 }
 
-export function groupComparatorFactory(name: string | string[], schema: Schema, opt: QueryConfig): (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup) => number {
+export function groupComparatorFactory(
+  name: string | string[],
+  schema: Schema,
+  opt: QueryConfig
+): (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup) => number {
   return (g1: SpecQueryModelGroup, g2: SpecQueryModelGroup): number => {
     const m1 = getTopResultTreeItem(g1);
     const m2 = getTopResultTreeItem(g2);
@@ -102,9 +106,15 @@ export function groupComparatorFactory(name: string | string[], schema: Schema, 
   };
 }
 
-function getScoreDifference(name: string[], m1: SpecQueryModel, m2: SpecQueryModel, schema: Schema, opt: QueryConfig): number {
-  for (let rankingName of name) {
-    let scoreDifference = getScore(m2, rankingName, schema, opt).score - getScore(m1, rankingName, schema, opt).score;
+function getScoreDifference(
+  name: string[],
+  m1: SpecQueryModel,
+  m2: SpecQueryModel,
+  schema: Schema,
+  opt: QueryConfig
+): number {
+  for (const rankingName of name) {
+    const scoreDifference = getScore(m2, rankingName, schema, opt).score - getScore(m1, rankingName, schema, opt).score;
     if (scoreDifference !== 0) {
       return scoreDifference;
     }

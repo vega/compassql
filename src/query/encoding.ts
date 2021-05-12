@@ -142,7 +142,7 @@ export interface ConversionParams {
 
 export function toEncoding(encQs: EncodingQuery[], params: ConversionParams): Encoding<string> {
   const {wildcardMode = 'skip'} = params;
-  let encoding: Encoding<string> = {};
+  const encoding: Encoding<string> = {};
 
   for (const encQ of encQs) {
     if (isDisabledAutoCountQuery(encQ)) {
@@ -274,7 +274,7 @@ export function isMeasure(encQ: EncodingQuery) {
  */
 export function isDimension(encQ: EncodingQuery) {
   if (isFieldQuery(encQ)) {
-    const props: FlatProp[] = !!encQ['field'] ? ['field', 'bin', 'timeUnit', 'type'] : ['bin', 'timeUnit', 'type'];
+    const props: FlatProp[] = encQ['field'] ? ['field', 'bin', 'timeUnit', 'type'] : ['bin', 'timeUnit', 'type'];
     const fieldDef = toFieldDef(encQ, {props: props});
     return vlChannelDef.isDiscrete(fieldDef) || !!fieldDef.timeUnit;
   }
@@ -323,7 +323,7 @@ export function scaleType(fieldQ: FieldQuery) {
     return undefined;
   }
 
-  let vegaLiteType: VLType = type === ExpandedType.KEY ? 'nominal' : type;
+  const vegaLiteType: VLType = type === ExpandedType.KEY ? 'nominal' : type;
 
   const fieldDef = {
     type: vegaLiteType,

@@ -12,6 +12,7 @@
     "test": "test"
   },
   "scripts": {
+    "prepare": "beemo create-config",
     "prebuild": "mkdir -p build",
     "build": "tsc && cp package.json build/src/ && rollup -c",
     "build:examples": "npm run build && ./scripts/build-examples.sh",
@@ -19,9 +20,12 @@
     "postbuild": "terser build/compassql.js -cm --source-map content=build/compassql.js.map,filename=build/compassql.min.js.map -o build/compassql.min.js",
     "clean": "rm -rf build",
     "deploy": "npm run clean && npm run lint && npm run test && scripts/deploy.sh",
-    "lint": "tslint -c tslint.json src/**/*.ts test/**/*.ts",
+    "prettierbase": "beemo prettier '*.{css,scss,html,md,yml}'",
+    "eslintbase": "beemo eslint .",
+    "format": "yarn eslintbase --fix && yarn prettierbase --write",
+    "lint": "yarn eslintbase && yarn prettierbase --check",
     "schema": "npm run prebuild && typescript-json-schema --required true src/query.ts Query > build/compassql-schema.json",
-    "test": "jest --maxWorkers=4 && npm run lint",
+    "test": "jest --maxWorkers=4 && yarn lint",
     "test:inspect": "node --inspect-brk ./node_modules/.bin/jest --runInBand",
     "check:examples": "./scripts/check-examples.sh",
     "watch:build": "npm run build && concurrently --kill-others -n Typescript,Rollup 'tsc -w' 'rollup -c -w'",
@@ -72,7 +76,8 @@
     "tslint": "~4.3.1",
     "typescript": "^4.0.5",
     "typescript-json-schema": "^0.50.0",
-    "vega-datasets": "latest"
+    "vega-datasets": "latest",
+    "vega-lite-dev-config": "^0.17.3"
   },
   "dependencies": {
     "datalib": "~1.9.3",

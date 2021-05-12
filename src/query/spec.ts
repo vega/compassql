@@ -92,8 +92,8 @@ export function fromSpec(spec: TopLevel<FacetedUnitSpec>): SpecQuery {
     {
       mark: spec.mark,
       encodings: keys(spec.encoding).map((channel: ExtendedChannel) => {
-        let encQ: EncodingQuery = {channel: channel};
-        let channelDef = spec.encoding[channel];
+        const encQ: EncodingQuery = {channel: channel};
+        const channelDef = spec.encoding[channel];
 
         for (const prop in channelDef) {
           if (isEncodingTopLevelProperty(prop as Property) && channelDef[prop] !== undefined) {

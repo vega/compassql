@@ -1,7 +1,5 @@
-import { Dict, keys } from './util';
-import {
-  Property, toKey,
-} from './property';
+import {Dict, keys} from './util';
+import {Property, toKey} from './property';
 
 export interface PropIndexReader<T> {
   has(p: Property): boolean;
@@ -15,7 +13,7 @@ export class PropIndex<T> implements PropIndexReader<T> {
   private index: Dict<T>;
 
   constructor(i: Dict<T> = null) {
-    this.index = i ? { ...i } : {};
+    this.index = i ? {...i} : {};
   }
 
   public has(p: Property) {

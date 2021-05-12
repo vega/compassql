@@ -9,7 +9,7 @@ describe('schema', () => {
   describe('build', () => {
     it('should correctly create a Schema object with empty data', () => {
       const data: any[] = [];
-      let schema = build(data);
+      const schema = build(data);
 
       assert.isNotNull(schema);
       assert.equal(schema.fieldNames().length, 0);
@@ -17,7 +17,7 @@ describe('schema', () => {
 
     it('should store FieldSchemas in the correct order', () => {
       const data = [{a: '1/1/2000', c: 'abc', d: 1, b: 1}];
-      let schema = build(data);
+      const schema = build(data);
 
       assert.equal(schema['fieldSchemas'][0]['name'], 'c');
       assert.equal(schema['fieldSchemas'][1]['name'], 'a');
@@ -26,7 +26,10 @@ describe('schema', () => {
     });
   });
 
-  const data = [{a: 1, b: 'a', c: 1.1, d: '1/1/2010'}, {a: 2, b: 'b', c: 1.1, d: '1/1/2010'}];
+  const data = [
+    {a: 1, b: 'a', c: 1.1, d: '1/1/2010'},
+    {a: 2, b: 'b', c: 1.1, d: '1/1/2010'}
+  ];
   const schema = build(data);
 
   describe('fields', () => {
@@ -51,7 +54,7 @@ describe('schema', () => {
   });
 
   describe('vlType', () => {
-    let configWithOrdinalInference = extend({}, DEFAULT_QUERY_CONFIG, {
+    const configWithOrdinalInference = extend({}, DEFAULT_QUERY_CONFIG, {
       numberOrdinalProportion: 0.05,
       numberOrdinalLimit: 50
     });
@@ -66,7 +69,7 @@ describe('schema', () => {
     it('should infer quantitative type for integers when cardinality is much less than the total but distinct is high', () => {
       const numberData = [];
       // add enough non-distinct data to make the field nominal
-      let total = 1 / configWithOrdinalInference.numberOrdinalProportion + 1;
+      const total = 1 / configWithOrdinalInference.numberOrdinalProportion + 1;
       for (let i = 0; i < total * configWithOrdinalInference.numberOrdinalLimit; i++) {
         numberData.push({a: 1});
       }
@@ -81,7 +84,7 @@ describe('schema', () => {
     it('should infer nominal type for integers when cardinality is much less than the total', () => {
       const numberData = [];
       // add enough non-distinct data to make the field nominal
-      let total = 1 / configWithOrdinalInference.numberOrdinalProportion + 1;
+      const total = 1 / configWithOrdinalInference.numberOrdinalProportion + 1;
       for (let i = 0; i < total; i++) {
         numberData.push({a: 1});
       }
@@ -93,7 +96,7 @@ describe('schema', () => {
       const numberData = [];
       // add enough non-distinct data to make the field nominal/ordinal and have multiple in-order, non-skipping values that starts at 0
       // (and by default, we set them to nominal)
-      let total = 3 * (1 / configWithOrdinalInference.numberOrdinalProportion + 1);
+      const total = 3 * (1 / configWithOrdinalInference.numberOrdinalProportion + 1);
       for (let i = 0; i < total; i++) {
         numberData.push({a: 0});
         numberData.push({a: 1});
@@ -107,7 +110,7 @@ describe('schema', () => {
       const numberData = [];
       // add enough non-distinct data to make the field nominal/ordinal and have multiple in-order, non-skipping values that starts at 1
       // (and by default, we set them to nominal)
-      let total = 3 * (1 / configWithOrdinalInference.numberOrdinalProportion + 1);
+      const total = 3 * (1 / configWithOrdinalInference.numberOrdinalProportion + 1);
       for (let i = 0; i < total; i++) {
         numberData.push({a: 1});
         numberData.push({a: 2});
@@ -298,9 +301,9 @@ describe('schema', () => {
 
     it('should correctly compute cardinality for `quartermonth` timeunit', () => {
       // should be the same as the 'month' cardinality
-      let cardinalityData = [{a: 'June 1, 2000'}, {a: 'May  1, 2000'}, {a: 'May  1, 2000'}, {a: 'January  1, 2000'}];
-      let cardinalitySchema = build(cardinalityData);
-      let cardinality: number = cardinalitySchema.cardinality({
+      const cardinalityData = [{a: 'June 1, 2000'}, {a: 'May  1, 2000'}, {a: 'May  1, 2000'}, {a: 'January  1, 2000'}];
+      const cardinalitySchema = build(cardinalityData);
+      const cardinality: number = cardinalitySchema.cardinality({
         field: 'a',
         channel: CHANNEL.X,
         timeUnit: 'quartermonth'
@@ -311,14 +314,14 @@ describe('schema', () => {
 
     it('should correctly compute cardinality for `hoursminutes` timeunit', () => {
       // should be the same as the 'month' cardinality
-      let cardinalityData = [
+      const cardinalityData = [
         {a: 'June 1, 2000 00:00:00'},
         {a: 'June 1, 2000 01:01:00'},
         {a: 'May 15, 2000 01:01:00'},
         {a: 'June 1, 2000 01:02:00'}
       ];
-      let cardinalitySchema = build(cardinalityData);
-      let cardinality: number = cardinalitySchema.cardinality({
+      const cardinalitySchema = build(cardinalityData);
+      const cardinality: number = cardinalitySchema.cardinality({
         field: 'a',
         channel: CHANNEL.X,
         timeUnit: 'hoursminutes'
@@ -328,7 +331,7 @@ describe('schema', () => {
     });
 
     it('should correctly compute cardinality for TEMPORAL data when the excludeValid flag is specified', () => {
-      let cardinalityData = [
+      const cardinalityData = [
         {a: 'June 1, 2000 00:00:00'},
         {a: 'June 1, 2000 00:00:00'},
         {a: null}, // maps to null
@@ -336,7 +339,7 @@ describe('schema', () => {
         {a: NaN}, // maps to 'Invalid Date'
         {a: NaN}
       ];
-      let cardinalitySchema = build(cardinalityData);
+      const cardinalitySchema = build(cardinalityData);
       let cardinality: number = cardinalitySchema.cardinality(
         {
           field: 'a',
@@ -361,8 +364,8 @@ describe('schema', () => {
     });
 
     it('should correctly compute cardinality for QUANTITATIVE data when the excludeValid flag is specified', () => {
-      let cardinalityData = [{a: 1}, {a: 1}, {a: null}, {a: null}, {a: NaN}, {a: NaN}];
-      let cardinalitySchema = build(cardinalityData);
+      const cardinalityData = [{a: 1}, {a: 1}, {a: null}, {a: null}, {a: NaN}, {a: NaN}];
+      const cardinalitySchema = build(cardinalityData);
       let cardinality: number = cardinalitySchema.cardinality(
         {
           field: 'a',
@@ -385,8 +388,8 @@ describe('schema', () => {
     });
 
     it('should correctly compute cardinality for QUANTITATIVE binned data when the excludeValid flag is specified', () => {
-      let cardinalityData = [{a: 0}, {a: 10}, {a: null}, {a: null}, {a: NaN}, {a: NaN}];
-      let cardinalitySchema = build(cardinalityData);
+      const cardinalityData = [{a: 0}, {a: 10}, {a: null}, {a: null}, {a: NaN}, {a: NaN}];
+      const cardinalitySchema = build(cardinalityData);
       let cardinality: number = cardinalitySchema.cardinality(
         {
           field: 'a',
@@ -516,7 +519,7 @@ describe('schema', () => {
     });
 
     it('should return a date array containing correctly translated date types', () => {
-      let domain: Date[] = domainSchema.domain({field: 'e'});
+      const domain: Date[] = domainSchema.domain({field: 'e'});
       assert.equal(domain.length, 2);
       assert.equal(domain[0].getTime(), new Date('6/14/2016').getTime());
       assert.equal(domain[1].getTime(), new Date('7/14/2016').getTime());
@@ -540,7 +543,7 @@ describe('schema', () => {
     };
 
     // build schema with passed in dataTable schema
-    let dataTableSchema: Schema = build(dataTableData, {}, dataTable);
+    const dataTableSchema: Schema = build(dataTableData, {}, dataTable);
 
     it('should have data table schema values override inferred values', () => {
       assert.equal(dataTableSchema.primitiveType('b'), PrimitiveType.INTEGER);

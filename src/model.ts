@@ -55,7 +55,7 @@ export class SpecQueryModel {
    * @return a SpecQueryModel that wraps the specQuery and the WildcardIndex.
    */
   public static build(specQ: SpecQuery, schema: Schema, opt: QueryConfig): SpecQueryModel {
-    let wildcardIndex: WildcardIndex = new WildcardIndex();
+    const wildcardIndex: WildcardIndex = new WildcardIndex();
     // mark
     if (isWildcard(specQ.mark)) {
       const name = getDefaultName(Property.MARK);
@@ -146,15 +146,12 @@ export class SpecQueryModel {
     wildcardAssignment: Dict<any>
   ) {
     this._spec = spec;
-    this._channelFieldCount = spec.encodings.reduce(
-      (m, encQ) => {
-        if (!isWildcard(encQ.channel) && (!isAutoCountQuery(encQ) || encQ.autoCount !== false)) {
-          m[`${encQ.channel}`] = 1;
-        }
-        return m;
-      },
-      {} as Dict<number>
-    );
+    this._channelFieldCount = spec.encodings.reduce((m, encQ) => {
+      if (!isWildcard(encQ.channel) && (!isAutoCountQuery(encQ) || encQ.autoCount !== false)) {
+        m[`${encQ.channel}`] = 1;
+      }
+      return m;
+    }, {} as Dict<number>);
 
     this._wildcardIndex = wildcardIndex;
     this._assignedWildcardIndex = wildcardAssignment;
@@ -272,7 +269,7 @@ export class SpecQueryModel {
   }
 
   public getEncodingQueryByChannel(channel: ExtendedChannel) {
-    for (let specEncoding of this._spec.encodings) {
+    for (const specEncoding of this._spec.encodings) {
       if (specEncoding.channel === channel) {
         return specEncoding;
       }
@@ -330,7 +327,7 @@ export class SpecQueryModel {
   public toSpec(data?: Data): TopLevel<FacetedUnitSpec> {
     if (isWildcard(this._spec.mark)) return null;
 
-    let spec: any = {};
+    const spec: any = {};
     data = data || this._spec.data;
     if (data) {
       spec.data = data;

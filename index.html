@@ -1,63 +1,61 @@
 <html>
-<body>
-From the following query for automatically selecting a mark:
+  <body>
+    From the following query for automatically selecting a mark:
 
-<div><pre id='query'></pre></div>
+    <div><pre id="query"></pre></div>
 
-we get the following Vega-Lite spec:
+    we get the following Vega-Lite spec: (See this file's source code for steps to reproduce this!)
 
-(See this file's source code for steps to reproduce this!)
+    <div><pre id="spec"></pre></div>
 
-<div><pre id='spec'></pre></div>
+    <script src="./node_modules/d3/build/d3.min.js"></script>
+    <script src="./build/compassql.js"></script>
+    <script>
+      d3.json('node_modules/vega-datasets/data/cars.json', function (error, data) {
+        // 1) Specify a query config
+        var opt = {};
 
-<script src="./node_modules/d3/build/d3.min.js"></script>
-<script src="./build/compassql.js"/></script>
-<script>
-d3.json('node_modules/vega-datasets/data/cars.json', function(error, data) {
-  // 1) Specify a query config
-  var opt = {};
+        // 2) Build a data schema.
+        var schema = cql.schema.build(data, opt);
 
-  // 2) Build a data schema.
-  var schema = cql.schema.build(data, opt);
+        // 3) Specify a Query (e.g., a query for automatically selecting a mark)
+        var query = {
+          spec: {
+            data: {url: 'node_modules/vega-datasets/data/cars.json'},
+            mark: '?',
+            encodings: [
+              {
+                channel: 'x',
+                aggregate: 'mean',
+                field: 'Horsepower',
+                type: 'quantitative'
+              },
+              {
+                channel: 'y',
+                field: 'Cylinders',
+                type: 'ordinal'
+              }
+            ]
+          },
+          chooseBy: 'effectiveness'
+        };
 
-  // 3) Specify a Query (e.g., a query for automatically selecting a mark)
-  var query = {
-    "spec": {
-      "data": {"url": "node_modules/vega-datasets/data/cars.json"},
-      "mark": "?",
-      "encodings": [
-        {
-          "channel": "x",
-          "aggregate": "mean",
-          "field": "Horsepower",
-          "type": "quantitative"
-        },{
-          "channel": "y",
-          "field": "Cylinders",
-          "type": "ordinal"
-        }
-      ]
-    },
-    "chooseBy": "effectiveness"
-  };
+        // 4) Execute a CompassQL `query`.
+        var output = cql.recommend(query, schema, opt);
+        var result = output.result;
 
-  // 4) Execute a CompassQL `query`.
-  var output = cql.recommend(query, schema, opt);
-  var result = output.result;
+        // 5) Convert the result tree of SpecQueryModel into a tree of Vega-Lite specifications.
+        var vlTree = cql.result.mapLeaves(result, function (item) {
+          return item.toSpec();
+        });
 
-  // 5) Convert the result tree of SpecQueryModel into a tree of Vega-Lite specifications.
-  var vlTree = cql.result.mapLeaves(result, function(item) {
-    return item.toSpec();
-  });
+        // 6) Use the result.  In this case, the tree has only 2 levels (the root and leaves).
+        // We can just get the top visualization by accessing the 0-th item.
+        var topVlSpec = vlTree.items[0];
 
-  // 6) Use the result.  In this case, the tree has only 2 levels (the root and leaves).
-  // We can just get the top visualization by accessing the 0-th item.
-  var topVlSpec = vlTree.items[0];
-
-  document.querySelector('#query').innerHTML =  JSON.stringify(query, null, 2);
-  document.querySelector('#spec').innerHTML =  JSON.stringify(topVlSpec, null, 2);
-});
-</script>
-
-</body>
+        document.querySelector('#query').innerHTML = JSON.stringify(query, null, 2);
+        document.querySelector('#spec').innerHTML = JSON.stringify(topVlSpec, null, 2);
+      });
+    </script>
+  </body>
 </html>

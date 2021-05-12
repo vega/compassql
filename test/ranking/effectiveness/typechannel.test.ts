@@ -10,30 +10,32 @@ const typeChannelScorer = new TypeChannelScorer();
 export const TYPE_CHANNEL_RULESET: RuleSet<string> = {
   name: 'typeChannelScore (quantitative)',
   rules: [].concat(
-    [Q, T, TIMEUNIT_T].map((type) => {
+    [Q, T, TIMEUNIT_T].map(type => {
       const order = [[X, Y], SIZE, COLOR, TEXT, OPACITY, [ROW, COLUMN, SHAPE], DETAIL];
       return {
         name: `${type}`,
-        items: nestedMap(order, (channel) => {
+        items: nestedMap(order, channel => {
           return typeChannelScorer.featurize(type, channel);
         })
       };
     }),
-    [BIN_Q, TIMEUNIT_O, O].map((type) => {
+    [BIN_Q, TIMEUNIT_O, O].map(type => {
       const order = [[X, Y], SIZE, COLOR, [ROW, COLUMN], OPACITY, SHAPE, TEXT, DETAIL];
       return {
         name: `${type}`,
-        items: nestedMap(order, (channel) => {
+        items: nestedMap(order, channel => {
           return typeChannelScorer.featurize(type, channel);
         })
       };
     }),
-    [{
-      name: 'nominal',
-      items: nestedMap([[X, Y], COLOR, SHAPE, [ROW, COLUMN], TEXT, DETAIL, SIZE, OPACITY], (channel) => {
+    [
+      {
+        name: 'nominal',
+        items: nestedMap([[X, Y], COLOR, SHAPE, [ROW, COLUMN], TEXT, DETAIL, SIZE, OPACITY], channel => {
           return typeChannelScorer.featurize(N, channel);
         })
-    }]
+      }
+    ]
   )
 };
 

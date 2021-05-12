@@ -5,7 +5,6 @@ import {MarkScorer, featurize} from '../../../src/ranking/effectiveness/mark';
 import {nestedMap} from '../../../src/util';
 import {testRuleSet} from '../rule';
 
-
 const scorer = new MarkScorer();
 
 function getScore(feature: string) {
@@ -19,10 +18,10 @@ export interface Rule {
 
 export const CC_RULESET = {
   name: 'Continous-Continuous Plots',
-  rules: function() {
+  rules: (function () {
     const _rules: Rule[] = [];
-    [Q, T].forEach((xType) => {
-      [Q, T].forEach((yType) => {
+    [Q, T].forEach(xType => {
+      [Q, T].forEach(yType => {
         const continuousRank = [POINT, TEXTMARK, TICK, [BAR, LINE, AREA], RULE];
         _rules.push({
           name: `${xType} x ${yType} (with occlusion)`,
@@ -42,16 +41,16 @@ export const CC_RULESET = {
       });
     });
     return _rules;
-  }()
+  })()
 };
 
 export const CD_RULESET = {
   name: 'Continous-Discrete Plots',
-  rules: function() {
+  rules: (function () {
     const _rules: Rule[] = [];
-    [Q, T].forEach((measureType) => {
+    [Q, T].forEach(measureType => {
       // Has Occlusion
-      [TIMEUNIT_O, O, BIN_Q, N].forEach((dimensionType) => {
+      [TIMEUNIT_O, O, BIN_Q, N].forEach(dimensionType => {
         const dimWithOcclusionRank = [TICK, POINT, TEXTMARK, [LINE, AREA, BAR], RULE];
         _rules.push({
           name: `${measureType} x ${dimensionType} (with occlusion)`,
@@ -69,7 +68,7 @@ export const CD_RULESET = {
         // TODO: BAR, LINE, AREA, RULE should be terrible
       });
 
-      [TIMEUNIT_T].forEach((dimensionType) => {
+      [TIMEUNIT_T].forEach(dimensionType => {
         const dimWithOcclusionRank = [POINT, TEXTMARK, TICK, [LINE, AREA, BAR], RULE];
         _rules.push({
           name: `${measureType} x ${dimensionType} (with occlusion)`,
@@ -89,7 +88,7 @@ export const CD_RULESET = {
 
       // No Occlusion
 
-      [TIMEUNIT_O, TIMEUNIT_T].forEach((dimensionType) => {
+      [TIMEUNIT_O, TIMEUNIT_T].forEach(dimensionType => {
         const orderedDimNoOcclusionRank = [LINE, AREA, BAR, POINT, TICK, TEXTMARK, RULE];
 
         _rules.push({
@@ -108,7 +107,7 @@ export const CD_RULESET = {
         // TODO: BAR, LINE, AREA, RULE should be terrible
       });
 
-      [BIN_Q].forEach((dimensionType) => {
+      [BIN_Q].forEach(dimensionType => {
         const binDimNoOcclusionRank = [BAR, POINT, TICK, TEXTMARK, [LINE, AREA], RULE];
 
         _rules.push({
@@ -127,7 +126,7 @@ export const CD_RULESET = {
         // TODO: RULE should be terrible
       });
 
-      [N, O].forEach((dimensionType) => {
+      [N, O].forEach(dimensionType => {
         const binDimNoOcclusionRank = [BAR, POINT, TICK, TEXTMARK, [LINE, AREA], RULE];
 
         _rules.push({
@@ -148,16 +147,15 @@ export const CD_RULESET = {
       });
     });
     return _rules;
-  }()
+  })()
 };
-
 
 export const TT_RULESET = {
   name: 'TimeUnitTime-TimeUnitTime',
-  rules: function() {
+  rules: (function () {
     const _rules: Rule[] = [];
-    [TIMEUNIT_T].forEach((xType) => {
-      [TIMEUNIT_T].forEach((yType) => {
+    [TIMEUNIT_T].forEach(xType => {
+      [TIMEUNIT_T].forEach(yType => {
         const ddRank = [POINT, TEXTMARK, TICK, [BAR, LINE, AREA], RULE];
 
         _rules.push({
@@ -178,15 +176,15 @@ export const TT_RULESET = {
       });
     });
     return _rules;
-  }()
+  })()
 };
 
 export const TD_RULESET = {
   name: 'TimeUnitTime-Discrete Plots',
-  rules: function() {
+  rules: (function () {
     const _rules: Rule[] = [];
-    [TIMEUNIT_T].forEach((xType) => {
-      [TIMEUNIT_O, O, BIN_Q, N].forEach((yType) => {
+    [TIMEUNIT_T].forEach(xType => {
+      [TIMEUNIT_O, O, BIN_Q, N].forEach(yType => {
         const ddRank = [TICK, POINT, TEXTMARK, [BAR, LINE, AREA], RULE];
 
         _rules.push({
@@ -207,16 +205,15 @@ export const TD_RULESET = {
       });
     });
     return _rules;
-  }()
+  })()
 };
-
 
 export const DD_RULESET = {
   name: 'Discrete-Discrete Plots',
-  rules: function() {
+  rules: (function () {
     const _rules: Rule[] = [];
-    [TIMEUNIT_O, O, BIN_Q, N].forEach((xType) => {
-      [TIMEUNIT_O, O, BIN_Q, N].forEach((yType) => {
+    [TIMEUNIT_O, O, BIN_Q, N].forEach(xType => {
+      [TIMEUNIT_O, O, BIN_Q, N].forEach(yType => {
         const ddRank = [[POINT, RECT], TEXTMARK, TICK, [BAR, LINE, AREA], RULE];
         _rules.push({
           name: `${xType} x ${yType} (with occlusion)`,
@@ -237,11 +234,11 @@ export const DD_RULESET = {
       });
     });
     return _rules;
-  }()
+  })()
 };
 
 describe('markScore', () => {
-  [CC_RULESET, CD_RULESET, TT_RULESET, TD_RULESET, DD_RULESET].forEach((ruleSet) => {
+  [CC_RULESET, CD_RULESET, TT_RULESET, TD_RULESET, DD_RULESET].forEach(ruleSet => {
     describe(ruleSet.name, () => {
       testRuleSet(ruleSet, getScore);
     });

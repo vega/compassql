@@ -51,8 +51,8 @@ export class SpecConstraintModel extends AbstractConstraintModel {
       // TODO: transform
 
       if (isEncodingNestedProp(prop)) {
-        let parent = prop.parent;
-        let child = prop.child;
+        const parent = prop.parent;
+        const child = prop.child;
 
         return every(specM.getEncodings(), encQ => {
           if (!encQ[parent]) {
@@ -101,7 +101,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     allowWildcardForProperties: true,
     strict: true,
     satisfy: (specM: SpecQueryModel, _: Schema, __: QueryConfig) => {
-      let usedChannel = {};
+      const usedChannel = {};
 
       // channel for all encodings should be valid
       return every(specM.getEncodings(), encQ => {
@@ -134,12 +134,13 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       const encodings = specM.getEncodings();
 
       if (mark === MARK.BAR) {
-        for (let encQ of encodings) {
+        for (const encQ of encodings) {
           if (
             isFieldQuery(encQ) &&
             (encQ.channel === CHANNEL.X || encQ.channel === CHANNEL.Y) &&
             encQ.type === TYPE.QUANTITATIVE &&
-            (encQ.scale && (encQ.scale as ScaleQuery).zero === false)
+            encQ.scale &&
+            (encQ.scale as ScaleQuery).zero === false
           ) {
             // TODO: zero shouldn't be manually specified
             return false;
@@ -187,7 +188,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       } else {
         const autoCountEncIndex = specM.wildcardIndex.encodingIndicesByProperty.get('autoCount') || [];
         const neverHaveAutoCount = every(autoCountEncIndex, (index: number) => {
-          let encQ = specM.getEncodingQueryByIndex(index);
+          const encQ = specM.getEncodingQueryByIndex(index);
           return isAutoCountQuery(encQ) && !isWildcard(encQ.autoCount);
         });
         if (neverHaveAutoCount) {
@@ -407,9 +408,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
       // TODO: mark or scale type should be enumerated
       if (mark === MARK.AREA || mark === MARK.BAR) {
-        for (let encQ of encodings) {
-          if (isFieldQuery(encQ) && ((encQ.channel === CHANNEL.X || encQ.channel === CHANNEL.Y) && encQ.scale)) {
-            let sType = scaleType(encQ);
+        for (const encQ of encodings) {
+          if (isFieldQuery(encQ) && (encQ.channel === CHANNEL.X || encQ.channel === CHANNEL.Y) && encQ.scale) {
+            const sType = scaleType(encQ);
 
             if (sType === ScaleType.LOG) {
               return false;
@@ -596,8 +597,8 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
     allowWildcardForProperties: true,
     strict: false, // over-encoding is sometimes good, but let's turn it off by default
     satisfy: (specM: SpecQueryModel, _: Schema, opt: QueryConfig) => {
-      let fieldUsed = {};
-      let fieldEnumerated = {};
+      const fieldUsed = {};
+      const fieldEnumerated = {};
 
       const encodings = specM.specQuery.encodings;
       for (let i = 0; i < encodings.length; i++) {
@@ -824,7 +825,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
             return false;
           } else {
             return every(specM.getEncodings(), encQ => {
-              let channel = encQ.channel;
+              const channel = encQ.channel;
 
               if (
                 channel !== CHANNEL.X &&
@@ -885,7 +886,7 @@ export function checkSpec(
 
       const satisfy = c.satisfy(specM, schema, opt);
       if (!satisfy) {
-        let violatedConstraint = `(spec) ${c.name()}`;
+        const violatedConstraint = `(spec) ${c.name()}`;
         /* istanbul ignore if */
         if (opt.verbose) {
           console.log(`${violatedConstraint} failed with ${specM.toShorthand()} for ${wildcard.name}`);

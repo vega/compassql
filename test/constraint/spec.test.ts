@@ -121,9 +121,12 @@ describe('constraints/spec', () => {
             autoAddCount: true
           });
           const autoCountIndex = model.getEncodings().length - 1;
-          model.setEncodingProperty(autoCountIndex, 'autoCount', autoCount, (model.getEncodingQueryByIndex(
-            autoCountIndex
-          ) as AutoCountQuery).autoCount as Wildcard<any>);
+          model.setEncodingProperty(
+            autoCountIndex,
+            'autoCount',
+            autoCount,
+            (model.getEncodingQueryByIndex(autoCountIndex) as AutoCountQuery).autoCount as Wildcard<any>
+          );
 
           assert.equal(SPEC_CONSTRAINT_INDEX['autoAddCount'].satisfy(model, schema, DEFAULT_QUERY_CONFIG), satisfy);
         });
@@ -503,7 +506,7 @@ describe('constraints/spec', () => {
   });
 
   describe('noRepeatedChannel', () => {
-    it('should return true when there is no repeated channels', function() {
+    it('should return true when there is no repeated channels', function () {
       const specM = buildSpecQueryModel({
         mark: MARK.POINT,
         encodings: [{channel: CHANNEL.SHAPE, field: 'A', type: TYPE.NOMINAL}]
@@ -512,7 +515,7 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['noRepeatedChannel'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should return false when there are repeated channels', function() {
+    it('should return false when there are repeated channels', function () {
       const specM = buildSpecQueryModel({
         mark: MARK.POINT,
         encodings: [
@@ -1339,7 +1342,7 @@ describe('constraints/spec', () => {
       assert.isFalse(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('It should return true if there is a wildcard aggregate', () => {
+    it('should return true if there is a wildcard aggregate', () => {
       const specM = buildSpecQueryModel({
         mark: MARK.POINT,
         encodings: [{aggregate: SHORT_WILDCARD, channel: CHANNEL.X, field: 'A', type: TYPE.QUANTITATIVE}]
@@ -1347,7 +1350,7 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRaw'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('It should return true if there is a wildcard autoCount', () => {
+    it('should return true if there is a wildcard autoCount', () => {
       const specM = buildSpecQueryModel({
         mark: MARK.POINT,
         encodings: [{autoCount: SHORT_WILDCARD, channel: CHANNEL.X, field: 'A', type: TYPE.QUANTITATIVE}]
@@ -1599,7 +1602,7 @@ describe('constraints/spec', () => {
   });
 
   describe('omitRepeatedField', () => {
-    it('should return true when there is no repeated field', function() {
+    it('should return true when there is no repeated field', function () {
       const specM = buildSpecQueryModel({
         mark: MARK.POINT,
         encodings: [
@@ -1611,7 +1614,7 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should return true when repeated fields are not enumerated', function() {
+    it('should return true when repeated fields are not enumerated', function () {
       const specM = buildSpecQueryModel({
         mark: MARK.POINT,
         encodings: [
@@ -1623,7 +1626,7 @@ describe('constraints/spec', () => {
       assert.isTrue(SPEC_CONSTRAINT_INDEX['omitRepeatedField'].satisfy(specM, schema, DEFAULT_QUERY_CONFIG));
     });
 
-    it('should return false when repeated fields are not enumerated but constraintManuallySpecifiedValue=true', function() {
+    it('should return false when repeated fields are not enumerated but constraintManuallySpecifiedValue=true', function () {
       const specM = buildSpecQueryModel({
         mark: MARK.POINT,
         encodings: [
@@ -1637,7 +1640,7 @@ describe('constraints/spec', () => {
       );
     });
 
-    it('should return false when one of the repeated fields is enumerated', function() {
+    it('should return false when one of the repeated fields is enumerated', function () {
       const specM = buildSpecQueryModel({
         mark: MARK.POINT,
         encodings: [

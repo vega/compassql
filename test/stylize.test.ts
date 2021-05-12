@@ -26,10 +26,7 @@ describe('stylize', () => {
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal(
-        specM.specQuery.height,
-        undefined
-      );
+      assert.equal(specM.specQuery.height, undefined);
     });
 
     it('should not assign a rangeStep of 12 if cardinality of Y is over 10 and rangeStep is already set', () => {
@@ -107,10 +104,7 @@ describe('stylize', () => {
       );
 
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.equal(
-        specM.specQuery.height,
-        undefined
-      );
+      assert.equal(specM.specQuery.height, undefined);
     });
 
     it('should assign a rangeStep if scale is an Wildcard', () => {
@@ -183,10 +177,10 @@ describe('stylize', () => {
       );
 
       specM = nominalColorScaleForHighCardinality(specM, schema, {}, DEFAULT_QUERY_CONFIG);
-      assert.deepEqual(((specM.getEncodingQueryByChannel(CHANNEL.COLOR) as FieldQuery).scale as ScaleQuery).range, [
-        10,
-        20
-      ]);
+      assert.deepEqual(
+        ((specM.getEncodingQueryByChannel(CHANNEL.COLOR) as FieldQuery).scale as ScaleQuery).range,
+        [10, 20]
+      );
     });
 
     it('should assign a range of category20 if cardinality of color is over 10 and range is not already set', () => {

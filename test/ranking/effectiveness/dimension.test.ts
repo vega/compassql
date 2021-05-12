@@ -2,15 +2,19 @@ import {SIZE, COLOR, OPACITY, ROW, COLUMN, SHAPE} from 'vega-lite/build/src/chan
 import {DimensionScorer} from '../../../src/ranking/effectiveness/dimension';
 import {RuleSet, testRuleSet} from '../rule';
 
-
 const scorer = new DimensionScorer();
 
 export const PREFERRED_DIMENSION_RULESET: RuleSet<string> = {
   name: 'dimensionScore',
-  rules: [{
-    name: 'dimensionScore',
-    items: [[COLOR, SIZE, OPACITY, SHAPE], [ROW, COLUMN]] as any[]
-  }]
+  rules: [
+    {
+      name: 'dimensionScore',
+      items: [
+        [COLOR, SIZE, OPACITY, SHAPE],
+        [ROW, COLUMN]
+      ] as any[]
+    }
+  ]
 };
 
 describe('dimensionScore', () => {

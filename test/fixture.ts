@@ -113,7 +113,7 @@ const fixtures: FieldSchema[] = [
 ];
 
 // make sure binStats isn't undefined
-for (let fieldSchema of fixtures) {
+for (const fieldSchema of fixtures) {
   fieldSchema.binStats = {};
 }
 

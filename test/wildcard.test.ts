@@ -71,11 +71,11 @@ describe('wildcard', () => {
 
   describe('getDefaultName', () => {
     it('should return name for all properties and have no duplicate default names', () => {
-      let defaultNameIndex = {};
+      const defaultNameIndex = {};
       const missing = [];
       const duplicated = {};
 
-      for (let prop of DEFAULT_PROP_PRECEDENCE) {
+      for (const prop of DEFAULT_PROP_PRECEDENCE) {
         const name = getDefaultName(prop);
         if (name === undefined) {
           missing.push(toKey(prop));

@@ -22,7 +22,7 @@ export class AxisScorer extends Scorer {
   }
   protected initScore(opt: QueryConfig = {}) {
     opt = {...DEFAULT_QUERY_CONFIG, ...opt};
-    let score: Dict<number> = {};
+    const score: Dict<number> = {};
 
     const preferredAxes = [
       {

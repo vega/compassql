@@ -39,19 +39,19 @@ describe('query/shorthand', () => {
 
   describe('splitWithTail', () => {
     it('should correctly split a string', () => {
-      let result = splitWithTail('012-345-678-9', '-', 2);
+      const result = splitWithTail('012-345-678-9', '-', 2);
       assert.deepEqual(result, ['012', '345', '678-9']);
     });
 
     it('should correctly split a string when `count` is greater than the number of delimiters in the string', () => {
-      let result = splitWithTail('012-345', '-', 3);
+      const result = splitWithTail('012-345', '-', 3);
       assert.deepEqual(result, ['012', '345', '', '']);
     });
   });
 
   describe('parse', () => {
     it('should correctly parse a shorthand string with calculate, filter, and filterInvalid', () => {
-      let specQ: SpecQuery = parse(
+      const specQ: SpecQuery = parse(
         'point|transform:[{"calculate":"3*datum[\\"b2\\"]", "as": "b2"},{"filter":"datum[\\"b2\\"] > 60"}]|x:b2,q|y:bin(balance,q)'
       );
 
@@ -66,7 +66,7 @@ describe('query/shorthand', () => {
     });
 
     it('should correctly parse an ambiguous shorthand with aggregate, bin as wildcard, and with hasFn', () => {
-      let specQ: SpecQuery = parse('?|?:?{"aggregate":"?","bin":"?","hasFn":true}(?,?)');
+      const specQ: SpecQuery = parse('?|?:?{"aggregate":"?","bin":"?","hasFn":true}(?,?)');
 
       assert.equal(specQ.mark, '?');
       assert.deepEqual(specQ.encodings[0], {
@@ -80,7 +80,7 @@ describe('query/shorthand', () => {
     });
 
     it('should correctly parse an ambiguous shorthand with aggregate and bin as wildcard', () => {
-      let specQ: SpecQuery = parse('?|?:?{"aggregate":["max","min"],"bin":[false,true],"hasFn":true}(?,?)');
+      const specQ: SpecQuery = parse('?|?:?{"aggregate":["max","min"],"bin":[false,true],"hasFn":true}(?,?)');
 
       assert.equal(specQ.mark, '?');
       assert.deepEqual(specQ.encodings[0], {
@@ -191,7 +191,7 @@ describe('query/shorthand', () => {
 
     describe('rawFieldDef', () => {
       it('should correctly parse an encoding query from fieldDef parts', () => {
-        let encQ = shorthandParser.rawFieldDef(
+        const encQ = shorthandParser.rawFieldDef(
           splitWithTail('a,q,scale={"domain":[1,2],"exponent":3,"type":"pow"},axis={"orient":"top"}', ',', 2)
         );
         assert.deepEqual(encQ, {
@@ -203,7 +203,7 @@ describe('query/shorthand', () => {
       });
 
       it('should correctly parse an encoding query from fieldDef parts', () => {
-        let encQ = shorthandParser.rawFieldDef(
+        const encQ = shorthandParser.rawFieldDef(
           splitWithTail('a,n,sort={"field":"a","op":"mean","order":"descending"}', ',', 2)
         );
         assert.deepEqual(encQ, {field: 'a', sort: {field: 'a', op: 'mean', order: 'descending'}, type: TYPE.NOMINAL});
@@ -544,7 +544,7 @@ describe('query/shorthand', () => {
       assert.equal(str, 'a,q,sort={"field":"a","op":"mean","order":"descending"}');
     });
 
-    it('should return correct fieldDefShorthand string for bin with maxbins, and scale with scaleType ', () => {
+    it('should return correct fieldDefShorthand string for bin with maxbins, and scale with scaleType', () => {
       const str = fieldDefShorthand({
         bin: {maxbins: 20},
         channel: CHANNEL.X,
@@ -566,7 +566,7 @@ describe('query/shorthand', () => {
       assert.equal(str, 'a,o,scale={"type":"point"},sort={"field":"b","op":"mean"}');
     });
 
-    it('should return correct fieldDefShorthand string for bin with maxbins, axis with orient, scale with scaleType ', () => {
+    it('should return correct fieldDefShorthand string for bin with maxbins, axis with orient, scale with scaleType', () => {
       const str = fieldDefShorthand({
         axis: {orient: 'top'},
         bin: {maxbins: 20},
@@ -971,9 +971,7 @@ describe('query/shorthand', () => {
           width: 1440,
           height: 1080
         },
-        INCLUDE_ALL.duplicate()
-          .set('width', false)
-          .set('height', false)
+        INCLUDE_ALL.duplicate().set('width', false).set('height', false)
       );
       assert.equal(str, 'point|x:a,q');
     });

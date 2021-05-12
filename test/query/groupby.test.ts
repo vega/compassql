@@ -1,14 +1,15 @@
-import { assert } from 'chai';
+import {assert} from 'chai';
 
-import { Property } from '../../src/property';
+import {Property} from '../../src/property';
 import {
-  isExtendedGroupBy, toString, REPLACE_MARK_STYLE_CHANNELS,
-  parseGroupBy, GROUP_BY_ENCODING
+  isExtendedGroupBy,
+  toString,
+  REPLACE_MARK_STYLE_CHANNELS,
+  parseGroupBy,
+  GROUP_BY_ENCODING
 } from '../../src/query/groupby';
 
-
 describe('query/groupby', () => {
-
   describe('parse', () => {
     it('should return correct include and replacer for GROUP_BY_ENCODING', () => {
       const parsed = parseGroupBy(GROUP_BY_ENCODING);
@@ -39,14 +40,17 @@ describe('query/groupby', () => {
 
   describe('toString', () => {
     it('should return correct string for groupBy properties (array)', () => {
-      assert.equal(toString([
-        Property.FIELD,
-        {property: Property.AGGREGATE},
-        {
-          property: Property.CHANNEL,
-          replace: REPLACE_MARK_STYLE_CHANNELS
-        }
-      ]), 'field,aggregate,channel[color,opacity,shape,size=>style]');
+      assert.equal(
+        toString([
+          Property.FIELD,
+          {property: Property.AGGREGATE},
+          {
+            property: Property.CHANNEL,
+            replace: REPLACE_MARK_STYLE_CHANNELS
+          }
+        ]),
+        'field,aggregate,channel[color,opacity,shape,size=>style]'
+      );
     });
 
     it('should return correct string for string groupBy', () => {

@@ -11,7 +11,7 @@ import {schema} from '../fixture';
 describe('ranking', () => {
   describe('rank', () => {
     it('should return an empty group if the input group is empty', () => {
-      let group: SpecQueryModelGroup = rank(
+      const group: SpecQueryModelGroup = rank(
         {
           name: '',
           path: '',

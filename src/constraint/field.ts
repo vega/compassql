@@ -54,7 +54,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     satisfy: (fieldQ: FieldQuery, schema: Schema, _: PropIndex<Wildcard<any>>, opt: QueryConfig) => {
       if (fieldQ.bin && fieldQ.type === TYPE.QUANTITATIVE) {
         // We remove bin so schema can infer the raw unbinned cardinality.
-        let fieldQwithoutBin: FieldQuery = {
+        const fieldQwithoutBin: FieldQuery = {
           channel: fieldQ.channel,
           field: fieldQ.field,
           type: fieldQ.type
@@ -203,7 +203,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
           return true;
         }
 
-        for (let scaleProp in scale) {
+        for (const scaleProp in scale) {
           if (scaleProp === 'type' || scaleProp === 'name' || scaleProp === 'enum') {
             // ignore type and properties of wildcards
             continue;
@@ -231,20 +231,20 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     strict: true,
     satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
       if (fieldQ) {
-        let channel: ExtendedChannel = fieldQ.channel as ExtendedChannel;
-        let scale: ScaleQuery = fieldQ.scale as ScaleQuery;
+        const channel: ExtendedChannel = fieldQ.channel as ExtendedChannel;
+        const scale: ScaleQuery = fieldQ.scale as ScaleQuery;
         if (channel && !isWildcard(channel) && scale) {
           if (channel === 'row' || channel === 'column' || channel === 'facet') {
             // row / column do not have scale
             return false;
           }
-          for (let scaleProp in scale) {
+          for (const scaleProp in scale) {
             if (!scale.hasOwnProperty(scaleProp)) continue;
             if (scaleProp === 'type' || scaleProp === 'name' || scaleProp === 'enum') {
               // ignore type and properties of wildcards
               continue;
             }
-            let isSupported = channelScalePropertyIncompatability(channel, scaleProp as keyof Scale) === undefined;
+            const isSupported = channelScalePropertyIncompatability(channel, scaleProp as keyof Scale) === undefined;
             if (!isSupported) {
               return false;
             }
@@ -404,7 +404,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     allowWildcardForProperties: false,
     strict: true,
     satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
-      if (!!fieldQ.stack) {
+      if (fieldQ.stack) {
         return fieldQ.channel === CHANNEL.X || fieldQ.channel === CHANNEL.Y;
       }
       return true;
