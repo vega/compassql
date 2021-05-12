@@ -1,5 +1,3 @@
-/* tslint:disable:quotemark */
-
 import {assert} from 'chai';
 import * as CHANNEL from 'vega-lite/build/src/channel';
 import * as MARK from 'vega-lite/build/src/mark';
@@ -29,24 +27,24 @@ describe('recommend()', () => {
               channel: 'x',
               timeUnit: 'year',
               field: 'T1',
-              type: 'temporal'
+              type: 'temporal',
             },
             {
               channel: 'y',
               field: '*',
               type: 'quantitative',
-              aggregate: 'count'
-            }
+              aggregate: 'count',
+            },
           ],
           config: {
             // "overlay": {"line": true},
-            scale: {useUnaggregatedDomain: true}
-          }
+            scale: {useUnaggregatedDomain: true},
+          },
         },
         groupBy: 'encoding',
         orderBy: ['fieldOrder', 'aggregationQuality', 'effectiveness'],
         chooseBy: ['aggregationQuality', 'effectiveness'],
-        config: {autoAddCount: false}
+        config: {autoAddCount: false},
       },
       schema
     );
@@ -62,13 +60,13 @@ describe('recommend()', () => {
           mark: '?',
           encodings: [
             {channel: '?', field: 'Origin', type: 'nominal'},
-            {channel: 'size', value: 52}
-          ]
+            {channel: 'size', value: 52},
+          ],
         },
         nest: [
           {
             groupBy: ['field', 'aggregate', 'bin', 'timeUnit', 'stack'],
-            orderGroupBy: 'aggregationQuality'
+            orderGroupBy: 'aggregationQuality',
           },
           {
             groupBy: [
@@ -82,16 +80,16 @@ describe('recommend()', () => {
                   shape: 'style',
                   opacity: 'style',
                   row: 'facet',
-                  column: 'facet'
-                }
-              }
+                  column: 'facet',
+                },
+              },
             ],
-            orderGroupBy: 'effectiveness'
+            orderGroupBy: 'effectiveness',
           },
-          {groupBy: ['channel'], orderGroupBy: 'effectiveness'}
+          {groupBy: ['channel'], orderGroupBy: 'effectiveness'},
         ],
         orderBy: 'effectiveness',
-        config: {autoAddCount: true}
+        config: {autoAddCount: true},
       },
       schema
     );
@@ -112,14 +110,14 @@ describe('recommend()', () => {
               bin: true,
               field: 'Q1',
               type: 'temporal',
-              timeUnit: 'quarter'
-            }
-          ]
+              timeUnit: 'quarter',
+            },
+          ],
         },
         groupBy: 'encoding',
         orderBy: ['fieldOrder', 'aggregationQuality', 'effectiveness'],
         chooseBy: ['aggregationQuality', 'effectiveness'],
-        config: {autoAddCount: true}
+        config: {autoAddCount: true},
       },
       schema
     );
@@ -138,14 +136,14 @@ describe('recommend()', () => {
             {
               channel: 'y',
               field: 'title',
-              type: 'key'
-            }
-          ]
+              type: 'key',
+            },
+          ],
         },
         groupBy: 'encoding',
         orderBy: ['fieldOrder', 'aggregationQuality', 'effectiveness'],
         chooseBy: ['aggregationQuality', 'effectiveness'],
-        config: {autoAddCount: true}
+        config: {autoAddCount: true},
       },
       schema
     );
@@ -164,30 +162,30 @@ describe('recommend()', () => {
               bin: SHORT_WILDCARD,
               aggregate: SHORT_WILDCARD,
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: CHANNEL.Y,
               bin: SHORT_WILDCARD,
               aggregate: SHORT_WILDCARD,
               field: 'Q1',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         },
         nest: [
           {
-            groupBy: [Property.FIELD, Property.AGGREGATE, Property.BIN, Property.TIMEUNIT]
-          }
+            groupBy: [Property.FIELD, Property.AGGREGATE, Property.BIN, Property.TIMEUNIT],
+          },
         ],
         config: {
           autoAddCount: true,
-          omitAggregatePlotWithoutDimension: true
-        }
+          omitAggregatePlotWithoutDimension: true,
+        },
       };
       const CONFIG_WITH_OMIT_AGGREGATE_PLOT_WITHOUT_DIMENSION = {
         ...DEFAULT_QUERY_CONFIG,
-        omitAggregatePlotWithoutDimension: true
+        omitAggregatePlotWithoutDimension: true,
       };
 
       const result = recommend(q, schema, CONFIG_WITH_OMIT_AGGREGATE_PLOT_WITHOUT_DIMENSION).result;
@@ -204,30 +202,30 @@ describe('recommend()', () => {
               bin: SHORT_WILDCARD,
               aggregate: SHORT_WILDCARD,
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: CHANNEL.Y,
               bin: SHORT_WILDCARD,
               aggregate: SHORT_WILDCARD,
               field: 'Q1',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         },
         nest: [
           {
-            groupBy: [Property.FIELD, Property.AGGREGATE, Property.BIN, Property.TIMEUNIT]
-          }
+            groupBy: [Property.FIELD, Property.AGGREGATE, Property.BIN, Property.TIMEUNIT],
+          },
         ],
         config: {
           autoAddCount: true,
-          omitAggregatePlotWithoutDimension: false
-        }
+          omitAggregatePlotWithoutDimension: false,
+        },
       };
       const CONFIG_WITH_OMIT_AGGREGATE_PLOT_WITHOUT_DIMENSION = {
         ...DEFAULT_QUERY_CONFIG,
-        omitAggregatePlotWithoutDimension: false
+        omitAggregatePlotWithoutDimension: false,
       };
       const result = recommend(q, schema, CONFIG_WITH_OMIT_AGGREGATE_PLOT_WITHOUT_DIMENSION).result;
       assert.equal(result.items.length, 7);
@@ -238,10 +236,10 @@ describe('recommend()', () => {
     const q: Query = {
       spec: {
         mark: '?',
-        encodings: [{channel: CHANNEL.X, field: '*', type: TYPE.QUANTITATIVE}]
+        encodings: [{channel: CHANNEL.X, field: '*', type: TYPE.QUANTITATIVE}],
       },
       nest: [{groupBy: 'fieldTransform'}],
-      orderBy: 'effectiveness'
+      orderBy: 'effectiveness',
     };
     const qCopy = duplicate(q);
     const output = recommend(q, schema);
@@ -274,10 +272,10 @@ describe('recommend()', () => {
           mark: '?',
           encodings: [
             {channel: '?', bin: '?', aggregate: '?', field: 'Q', type: TYPE.QUANTITATIVE},
-            {channel: '?', bin: '?', aggregate: '?', field: 'Q1', type: TYPE.QUANTITATIVE}
-          ]
+            {channel: '?', bin: '?', aggregate: '?', field: 'Q1', type: TYPE.QUANTITATIVE},
+          ],
         },
-        orderBy: ['aggregationQuality', 'effectiveness']
+        orderBy: ['aggregationQuality', 'effectiveness'],
       };
 
       const output = recommend(q, schema);
@@ -304,9 +302,9 @@ describe('recommend()', () => {
     const q: Query = {
       spec: {
         mark: '?',
-        encodings: [{channel: CHANNEL.X, field: '*', type: TYPE.QUANTITATIVE}]
+        encodings: [{channel: CHANNEL.X, field: '*', type: TYPE.QUANTITATIVE}],
       },
-      orderBy: 'effectiveness'
+      orderBy: 'effectiveness',
     };
     const result = recommend(q, schema).result;
     assert.isFalse(isResultTree(result.items[0]));

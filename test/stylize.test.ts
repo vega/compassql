@@ -9,7 +9,7 @@ import {AxisQuery, FieldQuery, ScaleQuery} from '../src/query/encoding';
 import {
   nominalColorScaleForHighCardinality,
   smallRangeStepForHighCardinalityOrFacet,
-  xAxisOnTopForHighYCardinalityWithoutColumn
+  xAxisOnTopForHighYCardinalityWithoutColumn,
 } from '../src/stylize';
 import {schema} from './fixture';
 
@@ -19,7 +19,7 @@ describe('stylize', () => {
       let specM = SpecQueryModel.build(
         {
           mark: MARK.BAR,
-          encodings: [{channel: CHANNEL.Y, field: 'O', scale: {}, type: TYPE.ORDINAL}]
+          encodings: [{channel: CHANNEL.Y, field: 'O', scale: {}, type: TYPE.ORDINAL}],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -34,7 +34,7 @@ describe('stylize', () => {
         {
           mark: MARK.BAR,
           height: {step: 21},
-          encodings: [{channel: CHANNEL.Y, field: 'O_100', type: TYPE.ORDINAL}]
+          encodings: [{channel: CHANNEL.Y, field: 'O_100', type: TYPE.ORDINAL}],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -48,7 +48,7 @@ describe('stylize', () => {
       let specM = SpecQueryModel.build(
         {
           mark: MARK.BAR,
-          encodings: [{channel: CHANNEL.Y, field: 'O_100', scale: {}, type: TYPE.ORDINAL}]
+          encodings: [{channel: CHANNEL.Y, field: 'O_100', scale: {}, type: TYPE.ORDINAL}],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -65,8 +65,8 @@ describe('stylize', () => {
           height: {step: 21},
           encodings: [
             {channel: CHANNEL.Y, field: 'A', type: TYPE.ORDINAL},
-            {channel: CHANNEL.ROW, field: 'A', type: TYPE.ORDINAL}
-          ]
+            {channel: CHANNEL.ROW, field: 'A', type: TYPE.ORDINAL},
+          ],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -82,8 +82,8 @@ describe('stylize', () => {
           mark: MARK.BAR,
           encodings: [
             {channel: CHANNEL.Y, field: 'A', scale: {}, type: TYPE.ORDINAL},
-            {channel: CHANNEL.ROW, field: 'A', type: TYPE.ORDINAL}
-          ]
+            {channel: CHANNEL.ROW, field: 'A', type: TYPE.ORDINAL},
+          ],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -97,7 +97,7 @@ describe('stylize', () => {
       let specM = SpecQueryModel.build(
         {
           mark: MARK.BAR,
-          encodings: [{channel: CHANNEL.Y, field: 'O_100', scale: false, type: TYPE.ORDINAL}]
+          encodings: [{channel: CHANNEL.Y, field: 'O_100', scale: false, type: TYPE.ORDINAL}],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -112,8 +112,8 @@ describe('stylize', () => {
         {
           mark: MARK.BAR,
           encodings: [
-            {channel: CHANNEL.Y, field: 'O_100', scale: {name: 'scale', enum: [true, false]}, type: TYPE.ORDINAL}
-          ]
+            {channel: CHANNEL.Y, field: 'O_100', scale: {name: 'scale', enum: [true, false]}, type: TYPE.ORDINAL},
+          ],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -132,9 +132,9 @@ describe('stylize', () => {
             {
               channel: CHANNEL.Y,
               field: 'O_100',
-              type: TYPE.ORDINAL
-            }
-          ]
+              type: TYPE.ORDINAL,
+            },
+          ],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -143,7 +143,7 @@ describe('stylize', () => {
       specM = smallRangeStepForHighCardinalityOrFacet(specM, schema, {}, DEFAULT_QUERY_CONFIG);
       assert.deepEqual(specM.specQuery.height, {
         name: 'step',
-        enum: [{step: 17}, {step: 21}]
+        enum: [{step: 17}, {step: 21}],
       });
     });
   });
@@ -153,7 +153,7 @@ describe('stylize', () => {
       let specM = SpecQueryModel.build(
         {
           mark: MARK.POINT,
-          encodings: [{channel: CHANNEL.COLOR, field: 'N', scale: {}, type: TYPE.NOMINAL}]
+          encodings: [{channel: CHANNEL.COLOR, field: 'N', scale: {}, type: TYPE.NOMINAL}],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -170,7 +170,7 @@ describe('stylize', () => {
       let specM = SpecQueryModel.build(
         {
           mark: MARK.POINT,
-          encodings: [{channel: CHANNEL.COLOR, field: 'N20', scale: {range: [10, 20]}, type: TYPE.NOMINAL}]
+          encodings: [{channel: CHANNEL.COLOR, field: 'N20', scale: {range: [10, 20]}, type: TYPE.NOMINAL}],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -187,7 +187,7 @@ describe('stylize', () => {
       let specM = SpecQueryModel.build(
         {
           mark: MARK.POINT,
-          encodings: [{channel: CHANNEL.COLOR, field: 'N20', scale: {}, type: TYPE.NOMINAL}]
+          encodings: [{channel: CHANNEL.COLOR, field: 'N20', scale: {}, type: TYPE.NOMINAL}],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -204,7 +204,7 @@ describe('stylize', () => {
       let specM = SpecQueryModel.build(
         {
           mark: MARK.POINT,
-          encodings: [{channel: CHANNEL.COLOR, field: 'N20', scale: false, type: TYPE.NOMINAL}]
+          encodings: [{channel: CHANNEL.COLOR, field: 'N20', scale: false, type: TYPE.NOMINAL}],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -222,8 +222,8 @@ describe('stylize', () => {
         {
           mark: MARK.POINT,
           encodings: [
-            {channel: CHANNEL.COLOR, field: 'N20', scale: {name: 'scale', enum: [true, false]}, type: TYPE.NOMINAL}
-          ]
+            {channel: CHANNEL.COLOR, field: 'N20', scale: {name: 'scale', enum: [true, false]}, type: TYPE.NOMINAL},
+          ],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -245,9 +245,9 @@ describe('stylize', () => {
               channel: CHANNEL.COLOR,
               field: 'N20',
               scale: {range: {name: 'scaleRange', enum: [null]}},
-              type: TYPE.NOMINAL
-            }
-          ]
+              type: TYPE.NOMINAL,
+            },
+          ],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -256,7 +256,7 @@ describe('stylize', () => {
       specM = nominalColorScaleForHighCardinality(specM, schema, {}, DEFAULT_QUERY_CONFIG);
       assert.deepEqual(((specM.getEncodingQueryByChannel(CHANNEL.COLOR) as FieldQuery).scale as ScaleQuery).range, {
         name: 'scaleRange',
-        enum: [null]
+        enum: [null],
       });
     });
   });
@@ -269,8 +269,8 @@ describe('stylize', () => {
           encodings: [
             {channel: CHANNEL.COLUMN, field: 'A', type: TYPE.ORDINAL},
             {channel: CHANNEL.X, field: 'Q', type: TYPE.NOMINAL, axis: {}},
-            {channel: CHANNEL.Y, field: 'O_100', type: TYPE.ORDINAL}
-          ]
+            {channel: CHANNEL.Y, field: 'O_100', type: TYPE.ORDINAL},
+          ],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -289,8 +289,8 @@ describe('stylize', () => {
           mark: MARK.POINT,
           encodings: [
             {channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE, axis: {orient: 'bottom'}},
-            {channel: CHANNEL.Y, field: 'O_100', type: TYPE.ORDINAL}
-          ]
+            {channel: CHANNEL.Y, field: 'O_100', type: TYPE.ORDINAL},
+          ],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -306,8 +306,8 @@ describe('stylize', () => {
           mark: MARK.POINT,
           encodings: [
             {channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE, axis: false},
-            {channel: CHANNEL.Y, field: 'O_100', type: TYPE.ORDINAL}
-          ]
+            {channel: CHANNEL.Y, field: 'O_100', type: TYPE.ORDINAL},
+          ],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -326,8 +326,8 @@ describe('stylize', () => {
           mark: MARK.POINT,
           encodings: [
             {channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE, axis: {}},
-            {channel: CHANNEL.Y, field: 'Q2', type: TYPE.QUANTITATIVE}
-          ]
+            {channel: CHANNEL.Y, field: 'Q2', type: TYPE.QUANTITATIVE},
+          ],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -344,7 +344,7 @@ describe('stylize', () => {
       let specM = SpecQueryModel.build(
         {
           mark: MARK.POINT,
-          encodings: [{channel: CHANNEL.X, field: 'Q2', type: TYPE.QUANTITATIVE, axis: {}}]
+          encodings: [{channel: CHANNEL.X, field: 'Q2', type: TYPE.QUANTITATIVE, axis: {}}],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -363,8 +363,8 @@ describe('stylize', () => {
           mark: MARK.POINT,
           encodings: [
             {channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE, axis: {}},
-            {channel: CHANNEL.Y, field: 'O', type: TYPE.ORDINAL}
-          ]
+            {channel: CHANNEL.Y, field: 'O', type: TYPE.ORDINAL},
+          ],
         },
         schema,
         DEFAULT_QUERY_CONFIG
@@ -383,8 +383,8 @@ describe('stylize', () => {
           mark: MARK.POINT,
           encodings: [
             {channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE},
-            {channel: CHANNEL.Y, field: 'O_100', type: TYPE.ORDINAL}
-          ]
+            {channel: CHANNEL.Y, field: 'O_100', type: TYPE.ORDINAL},
+          ],
         },
         schema,
         DEFAULT_QUERY_CONFIG

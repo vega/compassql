@@ -10,7 +10,7 @@ import {duplicate} from '../util';
 export function normalize(q: Query): Query {
   if (q.groupBy) {
     const nest: Nest = {
-      groupBy: q.groupBy
+      groupBy: q.groupBy,
     };
 
     if (q.orderBy) {
@@ -19,7 +19,7 @@ export function normalize(q: Query): Query {
 
     const normalizedQ: Query = {
       spec: duplicate(q.spec), // We will cause side effect to q.spec in SpecQueryModel.build
-      nest: [nest]
+      nest: [nest],
     };
 
     if (q.chooseBy) {

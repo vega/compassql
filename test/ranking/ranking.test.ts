@@ -15,14 +15,14 @@ describe('ranking', () => {
         {
           name: '',
           path: '',
-          items: []
+          items: [],
         },
         {
           spec: {
             mark: MARK.BAR,
-            encodings: [{channel: CHANNEL.SHAPE, field: 'N', type: TYPE.NOMINAL}]
+            encodings: [{channel: CHANNEL.SHAPE, field: 'N', type: TYPE.NOMINAL}],
           },
-          chooseBy: 'effectiveness'
+          chooseBy: 'effectiveness',
         },
         schema,
         0
@@ -42,8 +42,8 @@ describe('ranking', () => {
               mark: MARK.LINE,
               encodings: [
                 {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: vegaTime.DAY},
-                {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE}
-              ]
+                {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE},
+              ],
             },
             schema,
             DEFAULT_QUERY_CONFIG
@@ -54,8 +54,8 @@ describe('ranking', () => {
               mark: MARK.POINT,
               encodings: [
                 {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: vegaTime.DAY},
-                {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE}
-              ]
+                {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE},
+              ],
             },
             schema,
             DEFAULT_QUERY_CONFIG
@@ -75,8 +75,8 @@ describe('ranking', () => {
               mark: MARK.POINT,
               encodings: [
                 {channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE},
-                {channel: CHANNEL.Y, field: 'Q1', type: TYPE.QUANTITATIVE}
-              ]
+                {channel: CHANNEL.Y, field: 'Q1', type: TYPE.QUANTITATIVE},
+              ],
             },
             schema,
             DEFAULT_QUERY_CONFIG
@@ -87,8 +87,8 @@ describe('ranking', () => {
               mark: MARK.POINT,
               encodings: [
                 {aggregate: 'mean', channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE},
-                {aggregate: 'mean', channel: CHANNEL.Y, field: 'Q1', type: TYPE.QUANTITATIVE}
-              ]
+                {aggregate: 'mean', channel: CHANNEL.Y, field: 'Q1', type: TYPE.QUANTITATIVE},
+              ],
             },
             schema,
             DEFAULT_QUERY_CONFIG
@@ -107,8 +107,8 @@ describe('ranking', () => {
             mark: MARK.LINE,
             encodings: [
               {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: vegaTime.DAY},
-              {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE}
-            ]
+              {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE},
+            ],
           },
           schema,
           DEFAULT_QUERY_CONFIG
@@ -119,8 +119,8 @@ describe('ranking', () => {
             mark: MARK.POINT,
             encodings: [
               {channel: CHANNEL.X, field: 'date', type: TYPE.TEMPORAL, timeUnit: vegaTime.DAY},
-              {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE}
-            ]
+              {aggregate: 'mean', channel: CHANNEL.Y, field: 'price', type: TYPE.QUANTITATIVE},
+            ],
           },
           schema,
           DEFAULT_QUERY_CONFIG
@@ -136,8 +136,8 @@ describe('ranking', () => {
             mark: MARK.POINT,
             encodings: [
               {channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE},
-              {channel: CHANNEL.Y, field: 'Q1', type: TYPE.QUANTITATIVE}
-            ]
+              {channel: CHANNEL.Y, field: 'Q1', type: TYPE.QUANTITATIVE},
+            ],
           },
           schema,
           DEFAULT_QUERY_CONFIG
@@ -148,8 +148,8 @@ describe('ranking', () => {
             mark: MARK.POINT,
             encodings: [
               {aggregate: 'mean', channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE},
-              {aggregate: 'mean', channel: CHANNEL.Y, field: 'Q1', type: TYPE.QUANTITATIVE}
-            ]
+              {aggregate: 'mean', channel: CHANNEL.Y, field: 'Q1', type: TYPE.QUANTITATIVE},
+            ],
           },
           schema,
           DEFAULT_QUERY_CONFIG

@@ -15,7 +15,7 @@ const SCORERS = [
   new FacetScorer(),
   new MarkScorer(),
   new SizeChannelScorer(),
-  new TypeChannelScorer()
+  new TypeChannelScorer(),
 ];
 
 // TODO: x/y, row/column preference
@@ -32,6 +32,6 @@ export function effectiveness(specM: SpecQueryModel, schema: Schema, opt: QueryC
     score: features.reduce((s, f) => {
       return s + f.score;
     }, 0),
-    features: features
+    features: features,
   };
 }

@@ -9,9 +9,9 @@ export const PREFERRED_FACET_RULESET: RuleSet<string> = {
   rules: [
     {
       name: 'preferredFacetScore',
-      items: [ROW, COLUMN] as any[]
-    }
-  ]
+      items: [ROW, COLUMN] as any[],
+    },
+  ],
 };
 
 describe('preferredFacetScore', () => {

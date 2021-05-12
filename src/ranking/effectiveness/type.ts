@@ -22,7 +22,7 @@ export enum ExtendedType {
   O = TYPE.ORDINAL as any,
   N = TYPE.NOMINAL as any,
   K = ExpandedType.KEY as any,
-  NONE = '-' as any
+  NONE = '-' as any,
 }
 
 export const Q = ExtendedType.Q;

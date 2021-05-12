@@ -11,10 +11,10 @@ export const PREFERRED_DIMENSION_RULESET: RuleSet<string> = {
       name: 'dimensionScore',
       items: [
         [COLOR, SIZE, OPACITY, SHAPE],
-        [ROW, COLUMN]
-      ] as any[]
-    }
-  ]
+        [ROW, COLUMN],
+      ] as any[],
+    },
+  ],
 };
 
 describe('dimensionScore', () => {

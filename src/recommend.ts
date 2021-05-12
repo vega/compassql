@@ -16,8 +16,8 @@ export function recommend(q: Query, schema: Schema, config?: QueryConfig): {quer
     config: {
       ...DEFAULT_QUERY_CONFIG,
       ...config,
-      ...q.config
-    }
+      ...q.config,
+    },
   };
   // 2. Generate
   const answerSet = generate(q.spec, schema, q.config);
@@ -26,6 +26,6 @@ export function recommend(q: Query, schema: Schema, config?: QueryConfig): {quer
 
   return {
     query: q,
-    result: result
+    result: result,
   };
 }

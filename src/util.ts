@@ -43,7 +43,7 @@ export function some<T>(arr: T[], f: (item: T, key: number | string, i: number) 
 }
 
 export function nestedMap(array: any[], f: (item: any) => any): any[] {
-  return array.map(a => {
+  return array.map((a) => {
     if (isArray(a)) {
       return nestedMap(a, f);
     }

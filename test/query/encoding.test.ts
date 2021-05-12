@@ -6,7 +6,7 @@ import {
   LOCAL_SINGLE_TIMEUNIT_INDEX,
   UTC_SINGLE_TIMEUNIT_INDEX,
   LOCAL_MULTI_TIMEUNIT_INDEX,
-  UTC_MULTI_TIMEUNIT_INDEX
+  UTC_MULTI_TIMEUNIT_INDEX,
 } from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import {scaleType, toFieldDef, toValueDef} from '../../src/query/encoding';
@@ -24,7 +24,7 @@ describe('query/encoding', () => {
       assert.deepEqual(toFieldDef({channel: 'x', autoCount: true, type: 'quantitative'}), {
         aggregate: 'count',
         field: '*',
-        type: 'quantitative'
+        type: 'quantitative',
       });
     });
 
@@ -64,7 +64,7 @@ describe('query/encoding', () => {
       const sType = scaleType({
         channel: 'x',
         scale: {type: ScaleType.LINEAR},
-        type: 'quantitative'
+        type: 'quantitative',
       });
       assert.equal(sType, ScaleType.LINEAR);
     });
@@ -73,7 +73,7 @@ describe('query/encoding', () => {
       const sType = scaleType({
         channel: 'x',
         scale: {type: '?'},
-        type: 'quantitative'
+        type: 'quantitative',
       });
       assert.equal(sType, undefined);
     });
@@ -81,7 +81,7 @@ describe('query/encoding', () => {
     it('should return undefined if type is a wildcard', () => {
       const sType = scaleType({
         channel: 'x',
-        type: '?'
+        type: '?',
       });
       assert.equal(sType, undefined);
     });
@@ -89,7 +89,7 @@ describe('query/encoding', () => {
     it('should return undefined if channel is a wildcard', () => {
       const sType = scaleType({
         channel: '?',
-        type: 'quantitative'
+        type: 'quantitative',
       });
       assert.equal(sType, undefined);
     });
@@ -126,7 +126,7 @@ describe('query/encoding', () => {
       const sType = scaleType({
         channel: 'x',
         timeUnit: '?',
-        type: 'temporal'
+        type: 'temporal',
       });
       assert.equal(sType, undefined);
     });
@@ -134,7 +134,7 @@ describe('query/encoding', () => {
     it('should return ScaleType.LINEAR if type is quantitative for x and scale type is not specified', () => {
       const sType = scaleType({
         channel: 'x',
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       });
       assert.equal(sType, ScaleType.LINEAR);
     });
@@ -143,7 +143,7 @@ describe('query/encoding', () => {
       const sType = scaleType({
         channel: SHORT_WILDCARD,
         timeUnit: SHORT_WILDCARD,
-        type: TYPE.TEMPORAL
+        type: TYPE.TEMPORAL,
       });
       assert.equal(sType, undefined);
     });
@@ -151,17 +151,17 @@ describe('query/encoding', () => {
     it('should return ScaleType.TIME if type is temporal and scale type and TimeUnit are not specified', () => {
       const sType = scaleType({
         channel: 'x',
-        type: TYPE.TEMPORAL
+        type: TYPE.TEMPORAL,
       });
       assert.equal(sType, ScaleType.TIME);
     });
 
-    TIMEUNITS.forEach(timeUnit => {
+    TIMEUNITS.forEach((timeUnit) => {
       it('should return ScaleType.TIME if type is temporal and has timeUnit', () => {
         const sType = scaleType({
           channel: 'x',
           timeUnit: timeUnit as TimeUnit,
-          type: TYPE.TEMPORAL
+          type: TYPE.TEMPORAL,
         });
         assert.equal(sType, ScaleType.TIME);
       });
@@ -170,7 +170,7 @@ describe('query/encoding', () => {
     it('should return ScaleType.TIME if type is temporal, TimeUnit is undefined, and scale type is not defined', () => {
       const sType = scaleType({
         channel: 'x',
-        type: TYPE.TEMPORAL
+        type: TYPE.TEMPORAL,
       });
       assert.equal(sType, ScaleType.TIME);
     });

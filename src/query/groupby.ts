@@ -17,7 +17,7 @@ export const REPLACE_MARK_STYLE_CHANNELS: Dict<string> = {
   color: 'style',
   opacity: 'style',
   shape: 'style',
-  size: 'style'
+  size: 'style',
 };
 
 export function isExtendedGroupBy(g: string | ExtendedGroupBy): g is ExtendedGroupBy {
@@ -51,7 +51,7 @@ export function parseGroupBy(
   return {
     include: include,
     replaceIndex: replaceIndex,
-    replacer: getReplacerIndex(replaceIndex)
+    replacer: getReplacerIndex(replaceIndex),
   };
 }
 
@@ -70,7 +70,7 @@ export function toString(groupBy: GroupBy): string {
             return (
               `${g.property}[` +
               keys(replaceIndex)
-                .map(valTo => {
+                .map((valTo) => {
                   const valsFrom = replaceIndex[valTo].sort();
                   return `${valsFrom.join(',')}=>${valTo}`;
                 })
@@ -94,7 +94,7 @@ export const GROUP_BY_FIELD_TRANSFORM = [
   Property.AGGREGATE,
   Property.BIN,
   Property.TIMEUNIT,
-  Property.STACK
+  Property.STACK,
 ];
 
 export const GROUP_BY_ENCODING = (GROUP_BY_FIELD_TRANSFORM as Array<string | ExtendedGroupBy>).concat([
@@ -108,7 +108,7 @@ export const GROUP_BY_ENCODING = (GROUP_BY_FIELD_TRANSFORM as Array<string | Ext
       shape: 'style',
       opacity: 'style',
       row: 'facet',
-      column: 'facet'
-    }
-  }
+      column: 'facet',
+    },
+  },
 ]);

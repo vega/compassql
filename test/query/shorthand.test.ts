@@ -16,7 +16,7 @@ import {
   shorthandParser,
   spec as specShorthand,
   splitWithTail,
-  vlSpec
+  vlSpec,
 } from '../../src/query/shorthand';
 import {SpecQuery} from '../../src/query/spec';
 import {SHORT_WILDCARD} from '../../src/wildcard';
@@ -29,8 +29,8 @@ describe('query/shorthand', () => {
           transform: [{filter: 'datum.x === 5'}, {calculate: 'datum.x*2', as: 'x2'}],
           mark: MARK.POINT,
           encoding: {
-            x: {field: 'x', type: TYPE.QUANTITATIVE}
-          }
+            x: {field: 'x', type: TYPE.QUANTITATIVE},
+          },
         }),
         'point|transform:[{"filter":"datum.x === 5"},{"calculate":"datum.x*2","as":"x2"}]|x:x,q'
       );
@@ -60,8 +60,8 @@ describe('query/shorthand', () => {
         mark: MARK.POINT,
         encodings: [
           {channel: CHANNEL.X, field: 'b2', type: TYPE.QUANTITATIVE},
-          {bin: {}, channel: CHANNEL.Y, field: 'balance', type: TYPE.QUANTITATIVE}
-        ]
+          {bin: {}, channel: CHANNEL.Y, field: 'balance', type: TYPE.QUANTITATIVE},
+        ],
       });
     });
 
@@ -75,7 +75,7 @@ describe('query/shorthand', () => {
         channel: '?',
         field: '?',
         hasFn: true,
-        type: '?'
+        type: '?',
       });
     });
 
@@ -89,7 +89,7 @@ describe('query/shorthand', () => {
         channel: '?',
         field: '?',
         hasFn: true,
-        type: '?'
+        type: '?',
       });
     });
   });
@@ -104,7 +104,7 @@ describe('query/shorthand', () => {
           channel: CHANNEL.X,
           field: 'a',
           type: TYPE.QUANTITATIVE,
-          scale: {type: ScaleType.LINEAR}
+          scale: {type: ScaleType.LINEAR},
         });
       });
     });
@@ -130,7 +130,7 @@ describe('query/shorthand', () => {
         assert.deepEqual(encQ, {
           bin: {maxbins: 20},
           field: 'a',
-          type: TYPE.QUANTITATIVE
+          type: TYPE.QUANTITATIVE,
         });
       });
 
@@ -139,7 +139,7 @@ describe('query/shorthand', () => {
         assert.deepEqual(encQ, {
           bin: {extent: [20, 20]},
           field: 'a',
-          type: TYPE.QUANTITATIVE
+          type: TYPE.QUANTITATIVE,
         });
       });
 
@@ -148,7 +148,7 @@ describe('query/shorthand', () => {
         assert.deepEqual(encQ, {
           bin: {base: 20},
           field: 'a',
-          type: TYPE.QUANTITATIVE
+          type: TYPE.QUANTITATIVE,
         });
       });
 
@@ -157,7 +157,7 @@ describe('query/shorthand', () => {
         assert.deepEqual(encQ, {
           bin: {step: 20},
           field: 'a',
-          type: TYPE.QUANTITATIVE
+          type: TYPE.QUANTITATIVE,
         });
       });
 
@@ -166,7 +166,7 @@ describe('query/shorthand', () => {
         assert.deepEqual(encQ, {
           bin: {steps: [2, 5]},
           field: 'a',
-          type: TYPE.QUANTITATIVE
+          type: TYPE.QUANTITATIVE,
         });
       });
 
@@ -175,7 +175,7 @@ describe('query/shorthand', () => {
         assert.deepEqual(encQ, {
           bin: {step: 20},
           field: 'a',
-          type: TYPE.QUANTITATIVE
+          type: TYPE.QUANTITATIVE,
         });
       });
 
@@ -184,7 +184,7 @@ describe('query/shorthand', () => {
         assert.deepEqual(encQ, {
           bin: {divide: [5, 2]},
           field: 'a',
-          type: TYPE.QUANTITATIVE
+          type: TYPE.QUANTITATIVE,
         });
       });
     });
@@ -198,7 +198,7 @@ describe('query/shorthand', () => {
           axis: {orient: 'top'},
           field: 'a',
           scale: {domain: [1, 2], exponent: 3, type: ScaleType.POW},
-          type: TYPE.QUANTITATIVE
+          type: TYPE.QUANTITATIVE,
         });
       });
 
@@ -215,7 +215,7 @@ describe('query/shorthand', () => {
     it('should return correct spec string for specific specQuery', () => {
       const str = specShorthand({
         mark: MARK.POINT,
-        encodings: [{channel: CHANNEL.X, field: 'a', type: TYPE.QUANTITATIVE}]
+        encodings: [{channel: CHANNEL.X, field: 'a', type: TYPE.QUANTITATIVE}],
       });
       assert.equal(str, 'point|x:a,q');
     });
@@ -225,8 +225,8 @@ describe('query/shorthand', () => {
         mark: MARK.POINT,
         encodings: [
           {channel: CHANNEL.X, field: 'a', type: TYPE.QUANTITATIVE},
-          {channel: CHANNEL.Y, autoCount: false, type: TYPE.QUANTITATIVE}
-        ]
+          {channel: CHANNEL.Y, autoCount: false, type: TYPE.QUANTITATIVE},
+        ],
       });
       assert.equal(str, 'point|x:a,q');
     });
@@ -237,8 +237,8 @@ describe('query/shorthand', () => {
           mark: MARK.POINT,
           encodings: [
             {channel: CHANNEL.X, field: 'a', type: TYPE.QUANTITATIVE},
-            {channel: CHANNEL.COLOR, field: 'b', type: TYPE.QUANTITATIVE}
-          ]
+            {channel: CHANNEL.COLOR, field: 'b', type: TYPE.QUANTITATIVE},
+          ],
         },
         INCLUDE_ALL,
         new PropIndex<Replacer>({
@@ -247,7 +247,7 @@ describe('query/shorthand', () => {
               return 'xy';
             }
             return channel;
-          }
+          },
         })
       );
       assert.equal(str, 'point|color:b,q|xy:a,q');
@@ -257,7 +257,7 @@ describe('query/shorthand', () => {
       const str = specShorthand(
         {
           mark: MARK.POINT,
-          encodings: [{channel: CHANNEL.X, field: 'a', type: TYPE.QUANTITATIVE}]
+          encodings: [{channel: CHANNEL.X, field: 'a', type: TYPE.QUANTITATIVE}],
         },
         new PropIndex<boolean>({channel: true, field: true, type: true})
       );
@@ -270,13 +270,13 @@ describe('query/shorthand', () => {
           mark: MARK.BAR,
           encodings: [
             {channel: CHANNEL.X, bin: true, field: 'a', type: TYPE.QUANTITATIVE},
-            {channel: CHANNEL.Y, autoCount: true, type: TYPE.QUANTITATIVE}
-          ]
+            {channel: CHANNEL.Y, autoCount: true, type: TYPE.QUANTITATIVE},
+          ],
         },
         new PropIndex<boolean>({field: true}),
         new PropIndex<Replacer>({
           // replacer
-          field: getReplacer(REPLACE_BLANK_FIELDS)
+          field: getReplacer(REPLACE_BLANK_FIELDS),
         })
       );
       assert.equal(str, 'a|autocount()');
@@ -291,9 +291,9 @@ describe('query/shorthand', () => {
             field: {enum: ['field1', 'field2']},
             type: {enum: [TYPE.NOMINAL, TYPE.ORDINAL]},
             aggregate: SHORT_WILDCARD,
-            bin: SHORT_WILDCARD
-          }
-        ]
+            bin: SHORT_WILDCARD,
+          },
+        ],
       });
 
       assert.equal(
@@ -311,9 +311,9 @@ describe('query/shorthand', () => {
             field: SHORT_WILDCARD,
             type: SHORT_WILDCARD,
             aggregate: SHORT_WILDCARD,
-            bin: SHORT_WILDCARD
-          }
-        ]
+            bin: SHORT_WILDCARD,
+          },
+        ],
       });
       assert.equal(str, '?|?:?{"aggregate":"?","bin":"?"}(?,?)');
     });
@@ -322,7 +322,7 @@ describe('query/shorthand', () => {
       const str = specShorthand({
         transform: [{calculate: '3*datum["b2"]', as: 'b2'}, {filter: 'datum["b2"] > 60'}],
         mark: MARK.POINT,
-        encodings: [{channel: CHANNEL.X, field: 'b2', type: TYPE.QUANTITATIVE}]
+        encodings: [{channel: CHANNEL.X, field: 'b2', type: TYPE.QUANTITATIVE}],
       });
       assert.equal(
         str,
@@ -336,10 +336,10 @@ describe('query/shorthand', () => {
           {filter: {field: 'color', equal: 'red'}},
           {filter: 'datum["b2"] > 60'},
           {filter: {field: 'color', oneOf: ['red', 'yellow']}},
-          {filter: {field: 'x', range: [0, 5]}}
+          {filter: {field: 'x', range: [0, 5]}},
         ],
         mark: MARK.POINT,
-        encodings: [{channel: CHANNEL.X, field: 'b2', type: TYPE.QUANTITATIVE}]
+        encodings: [{channel: CHANNEL.X, field: 'b2', type: TYPE.QUANTITATIVE}],
       });
       assert.deepEqual(
         str,
@@ -356,7 +356,7 @@ describe('query/shorthand', () => {
       const str = specShorthand({
         transform: [],
         mark: MARK.POINT,
-        encodings: [{channel: CHANNEL.X, field: 'a', type: TYPE.QUANTITATIVE}]
+        encodings: [{channel: CHANNEL.X, field: 'a', type: TYPE.QUANTITATIVE}],
       });
       assert.equal(str, 'point|x:a,q');
     });
@@ -369,8 +369,8 @@ describe('query/shorthand', () => {
         encodings: [
           {channel: CHANNEL.X, field: 'q', type: TYPE.QUANTITATIVE, aggregate: 'sum'},
           {channel: CHANNEL.Y, field: 'n', type: TYPE.NOMINAL},
-          {channel: CHANNEL.COLOR, field: 'n1', type: TYPE.NOMINAL}
-        ]
+          {channel: CHANNEL.COLOR, field: 'n1', type: TYPE.NOMINAL},
+        ],
       });
       assert.equal(str, 'bar|color:n1,n|x:sum(q,q,stack="zero")|y:n,n');
     });
@@ -382,8 +382,8 @@ describe('query/shorthand', () => {
           encodings: [
             {channel: CHANNEL.X, field: 'q', type: TYPE.QUANTITATIVE, aggregate: 'sum'},
             {channel: CHANNEL.Y, field: 'n', type: TYPE.NOMINAL},
-            {channel: CHANNEL.COLOR, field: 'n1', type: TYPE.NOMINAL}
-          ]
+            {channel: CHANNEL.COLOR, field: 'n1', type: TYPE.NOMINAL},
+          ],
         },
         INCLUDE_ALL.duplicate().set('stack', false)
       );
@@ -407,7 +407,7 @@ describe('query/shorthand', () => {
         bin: {maxbins: {enum: [10, 20]}},
         channel: {enum: [CHANNEL.X, CHANNEL.Y]},
         field: 'a',
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       });
       assert.equal(str, '?["x","y"]:bin(a,q,maxbins=?[10,20])');
     });
@@ -417,11 +417,11 @@ describe('query/shorthand', () => {
         {
           channel: CHANNEL.X,
           field: 'a',
-          type: TYPE.QUANTITATIVE
+          type: TYPE.QUANTITATIVE,
         },
         new PropIndex<boolean>({
           field: true,
-          type: true
+          type: true,
         })
       );
       assert.equal(str, 'a,q');
@@ -452,7 +452,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        aggregate: 'mean'
+        aggregate: 'mean',
       });
       assert.equal(str, 'mean(a,q)');
     });
@@ -463,7 +463,7 @@ describe('query/shorthand', () => {
           channel: CHANNEL.X,
           field: 'a',
           type: TYPE.QUANTITATIVE,
-          aggregate: 'mean'
+          aggregate: 'mean',
         },
         new PropIndex<boolean>({field: true, type: true})
       );
@@ -476,7 +476,7 @@ describe('query/shorthand', () => {
         field: 'a',
         type: TYPE.QUANTITATIVE,
         aggregate: SHORT_WILDCARD,
-        bin: SHORT_WILDCARD
+        bin: SHORT_WILDCARD,
       });
       assert.equal(str, '?{"aggregate":"?","bin":"?"}(a,q)');
     });
@@ -487,7 +487,7 @@ describe('query/shorthand', () => {
         field: 'a',
         type: TYPE.QUANTITATIVE,
         aggregate: {name: 'a1', enum: ['max', 'min']},
-        bin: {enum: [false, true], maxbins: 20}
+        bin: {enum: [false, true], maxbins: 20},
       });
       assert.equal(str, '?{"aggregate":["max","min"],"bin":[false,true]}(a,q,maxbins=20)');
     });
@@ -499,7 +499,7 @@ describe('query/shorthand', () => {
         type: TYPE.QUANTITATIVE,
         aggregate: {name: 'a1', enum: [undefined, 'min']},
         bin: {enum: [false, true], maxbins: 20},
-        hasFn: true
+        hasFn: true,
       });
       assert.equal(str, '?{"aggregate":[null,"min"],"bin":[false,true],"hasFn":true}(a,q,maxbins=20)');
     });
@@ -509,7 +509,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.TEMPORAL,
-        timeUnit: vegaTime.HOURS
+        timeUnit: vegaTime.HOURS,
       });
       assert.equal(str, 'hours(a,t)');
     });
@@ -519,7 +519,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        timeUnit: SHORT_WILDCARD
+        timeUnit: SHORT_WILDCARD,
       });
       assert.equal(str, '?{"timeUnit":"?"}(a,q)');
     });
@@ -529,7 +529,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        sort: 'ascending'
+        sort: 'ascending',
       });
       assert.equal(str, 'a,q,sort="ascending"');
     });
@@ -539,7 +539,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        sort: {field: 'a', op: 'mean', order: 'descending'}
+        sort: {field: 'a', op: 'mean', order: 'descending'},
       });
       assert.equal(str, 'a,q,sort={"field":"a","op":"mean","order":"descending"}');
     });
@@ -550,7 +550,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        scale: {type: ScaleType.LINEAR}
+        scale: {type: ScaleType.LINEAR},
       });
       assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"linear"})');
     });
@@ -561,7 +561,7 @@ describe('query/shorthand', () => {
         field: 'a',
         type: TYPE.ORDINAL,
         scale: {type: ScaleType.POINT},
-        sort: {field: 'b', op: 'mean'}
+        sort: {field: 'b', op: 'mean'},
       });
       assert.equal(str, 'a,o,scale={"type":"point"},sort={"field":"b","op":"mean"}');
     });
@@ -573,7 +573,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        scale: {type: ScaleType.LINEAR}
+        scale: {type: ScaleType.LINEAR},
       });
       assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"linear"},axis={"orient":"top"})');
     });
@@ -586,9 +586,9 @@ describe('query/shorthand', () => {
             channel: CHANNEL.X,
             field: 'a',
             type: TYPE.QUANTITATIVE,
-            axis: {orient: 'top', tickCount: 5, title: 'test x channel'}
-          }
-        ]
+            axis: {orient: 'top', tickCount: 5, title: 'test x channel'},
+          },
+        ],
       });
       assert.equal(str, 'point|x:a,q,axis={"orient":"top","tickCount":5,"title":"test x channel"}');
     });
@@ -601,9 +601,9 @@ describe('query/shorthand', () => {
             channel: CHANNEL.COLOR,
             field: 'a',
             type: TYPE.NOMINAL,
-            legend: {title: 'test title', orient: 'right'}
-          }
-        ]
+            legend: {title: 'test title', orient: 'right'},
+          },
+        ],
       });
       assert.equal(str, 'point|color:a,n,legend={"orient":"right","title":"test title"}');
     });
@@ -617,9 +617,9 @@ describe('query/shorthand', () => {
             channel: CHANNEL.X,
             field: 'a',
             type: TYPE.NOMINAL,
-            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'}
-          }
-        ]
+            legend: {orient: 'right', labelAlign: 'left', symbolSize: 12, title: 'test title'},
+          },
+        ],
       });
       assert.equal(str, 'point|x:a,n,axis={"orient":"right"}');
     });
@@ -634,10 +634,10 @@ describe('query/shorthand', () => {
             field: 'a',
             type: TYPE.NOMINAL,
             legend: {
-              zindex: 0
-            }
-          }
-        ]
+              zindex: 0,
+            },
+          },
+        ],
       });
       assert.equal(str, 'point|color:a,n,legend={"zindex":0}');
     });
@@ -647,7 +647,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.NOMINAL,
-        scale: {domain: ['cats', 'dogs']}
+        scale: {domain: ['cats', 'dogs']},
       });
       assert.equal(str, 'a,n,scale={"domain":["cats","dogs"]}');
     });
@@ -657,7 +657,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.NOMINAL,
-        scale: {domain: [1, 2]}
+        scale: {domain: [1, 2]},
       });
       assert.equal(str, 'a,n,scale={"domain":[1,2]}');
     });
@@ -667,7 +667,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.NOMINAL,
-        scale: {range: ['cats', 'dogs']}
+        scale: {range: ['cats', 'dogs']},
       });
       assert.equal(str, 'a,n,scale={"range":["cats","dogs"]}');
     });
@@ -677,7 +677,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.NOMINAL,
-        scale: {range: [1, 2]}
+        scale: {range: [1, 2]},
       });
       assert.equal(str, 'a,n,scale={"range":[1,2]}');
     });
@@ -687,7 +687,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        bin: true
+        bin: true,
       });
       assert.equal(str, 'bin(a,q)');
     });
@@ -697,7 +697,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        bin: {maxbins: 20}
+        bin: {maxbins: 20},
       });
       assert.equal(str, 'bin(a,q,maxbins=20)');
     });
@@ -707,7 +707,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        bin: {extent: [0, 20]}
+        bin: {extent: [0, 20]},
       });
       assert.equal(str, 'bin(a,q,extent=[0,20])');
     });
@@ -717,7 +717,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        bin: {base: 20}
+        bin: {base: 20},
       });
       assert.equal(str, 'bin(a,q,base=20)');
     });
@@ -727,7 +727,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        bin: {step: 20}
+        bin: {step: 20},
       });
       assert.equal(str, 'bin(a,q,step=20)');
     });
@@ -737,7 +737,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        bin: {steps: [2, 5]}
+        bin: {steps: [2, 5]},
       });
       assert.equal(str, 'bin(a,q,steps=[2,5])');
     });
@@ -747,7 +747,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        bin: {minstep: 20}
+        bin: {minstep: 20},
       });
       assert.equal(str, 'bin(a,q,minstep=20)');
     });
@@ -757,7 +757,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        bin: {divide: [5, 2]}
+        bin: {divide: [5, 2]},
       });
       assert.equal(str, 'bin(a,q,divide=[5,2])');
     });
@@ -768,7 +768,7 @@ describe('query/shorthand', () => {
         field: 'a',
         type: TYPE.QUANTITATIVE,
         bin: {maxbins: 20},
-        scale: {type: ScaleType.LINEAR}
+        scale: {type: ScaleType.LINEAR},
       });
       assert.equal(str, 'bin(a,q,maxbins=20,scale={"type":"linear"})');
     });
@@ -780,7 +780,7 @@ describe('query/shorthand', () => {
           field: 'a',
           type: TYPE.QUANTITATIVE,
           bin: {maxbins: 20},
-          scale: {type: ScaleType.LINEAR}
+          scale: {type: ScaleType.LINEAR},
         },
         new PropIndex<boolean>({field: true, bin: true, type: true})
       );
@@ -792,7 +792,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        scale: null
+        scale: null,
       });
       assert.equal(str, 'a,q,scale=false');
     });
@@ -802,7 +802,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        scale: false
+        scale: false,
       });
       assert.equal(str, 'a,q,scale=false');
     });
@@ -812,7 +812,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        scale: {}
+        scale: {},
       });
       assert.equal(str, 'a,q');
     });
@@ -822,7 +822,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        scale: {type: ScaleType.LOG}
+        scale: {type: ScaleType.LOG},
       });
       assert.equal(str, 'a,q,scale={"type":"log"}');
     });
@@ -832,7 +832,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        scale: {clamp: true}
+        scale: {clamp: true},
       });
       assert.equal(str, 'a,q,scale={"clamp":true}');
     });
@@ -842,7 +842,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        scale: {round: true}
+        scale: {round: true},
       });
       assert.equal(str, 'a,q,scale={"round":true}');
     });
@@ -852,7 +852,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        scale: {type: ScaleType.POW, exponent: 3}
+        scale: {type: ScaleType.POW, exponent: 3},
       });
       assert.equal(str, 'a,q,scale={"exponent":3,"type":"pow"}');
     });
@@ -862,7 +862,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        scale: {nice: true}
+        scale: {nice: true},
       });
       assert.equal(str, 'a,q,scale={"nice":true}');
     });
@@ -872,7 +872,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        scale: {round: true}
+        scale: {round: true},
       });
       assert.equal(str, 'a,q,scale={"round":true}');
     });
@@ -882,7 +882,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        scale: {zero: true}
+        scale: {zero: true},
       });
       assert.equal(str, 'a,q,scale={"zero":true}');
     });
@@ -894,7 +894,7 @@ describe('query/shorthand', () => {
         channel: CHANNEL.X,
         field: 'a',
         type: TYPE.QUANTITATIVE,
-        bin: SHORT_WILDCARD
+        bin: SHORT_WILDCARD,
       });
       assert.equal(str, '?{"bin":"?"}(a,q)');
     });
@@ -903,7 +903,7 @@ describe('query/shorthand', () => {
       const str = fieldDefShorthand({
         channel: CHANNEL.X,
         field: SHORT_WILDCARD,
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       });
       assert.equal(str, '?,q');
     });
@@ -911,7 +911,7 @@ describe('query/shorthand', () => {
     it('should return correct fieldDefShorthand string for autocount field', () => {
       const str = fieldDefShorthand({
         channel: CHANNEL.X,
-        autoCount: true
+        autoCount: true,
       });
       assert.equal(str, 'count(*,q)');
     });
@@ -919,7 +919,7 @@ describe('query/shorthand', () => {
     it('should return correct fieldDefShorthand string for ambiguous autocount field', () => {
       const str = fieldDefShorthand({
         channel: CHANNEL.X,
-        autoCount: SHORT_WILDCARD
+        autoCount: SHORT_WILDCARD,
       });
       assert.equal(str, '?{"autoCount":"?"}(*,q)');
     });
@@ -928,7 +928,7 @@ describe('query/shorthand', () => {
       const str = fieldDefShorthand({
         channel: CHANNEL.X,
         field: 'a',
-        type: SHORT_WILDCARD
+        type: SHORT_WILDCARD,
       });
       assert.equal(str, 'a,?');
     });
@@ -939,7 +939,7 @@ describe('query/shorthand', () => {
       const str = specShorthand({
         mark: MARK.POINT,
         encodings: [{channel: CHANNEL.X, field: 'a', type: TYPE.QUANTITATIVE}],
-        width: 1440
+        width: 1440,
       });
       assert.equal(str, 'point|x:a,q|width=1440');
     });
@@ -948,7 +948,7 @@ describe('query/shorthand', () => {
       const str = specShorthand({
         mark: MARK.POINT,
         encodings: [{channel: CHANNEL.X, field: 'a', type: TYPE.QUANTITATIVE}],
-        height: 1080
+        height: 1080,
       });
       assert.equal(str, 'point|x:a,q|height=1080');
     });
@@ -958,7 +958,7 @@ describe('query/shorthand', () => {
         mark: MARK.POINT,
         encodings: [{channel: CHANNEL.X, field: 'a', type: TYPE.QUANTITATIVE}],
         width: 1440,
-        height: 1080
+        height: 1080,
       });
       assert.equal(str, 'point|x:a,q|width=1440|height=1080');
     });
@@ -969,7 +969,7 @@ describe('query/shorthand', () => {
           mark: MARK.POINT,
           encodings: [{channel: CHANNEL.X, field: 'a', type: TYPE.QUANTITATIVE}],
           width: 1440,
-          height: 1080
+          height: 1080,
         },
         INCLUDE_ALL.duplicate().set('width', false).set('height', false)
       );

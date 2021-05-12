@@ -30,7 +30,7 @@ ENUMERATOR_INDEX.set('mark', (wildcardIndex: WildcardIndex, schema: Schema, opt:
     const markWildcard = specM.getMark() as Wildcard<Mark>;
 
     // enumerate the value
-    markWildcard.enum.forEach(mark => {
+    markWildcard.enum.forEach((mark) => {
       specM.setMark(mark);
       // Check spec constraint
       const violatedSpecConstraint = checkSpec('mark', wildcardIndex.mark, specM, schema, opt);
@@ -47,11 +47,11 @@ ENUMERATOR_INDEX.set('mark', (wildcardIndex: WildcardIndex, schema: Schema, opt:
   };
 });
 
-ENCODING_TOPLEVEL_PROPS.forEach(prop => {
+ENCODING_TOPLEVEL_PROPS.forEach((prop) => {
   ENUMERATOR_INDEX.set(prop, EncodingPropertyGeneratorFactory(prop));
 });
 
-ENCODING_NESTED_PROPS.forEach(nestedProp => {
+ENCODING_NESTED_PROPS.forEach((nestedProp) => {
   ENUMERATOR_INDEX.set(nestedProp, EncodingPropertyGeneratorFactory(nestedProp));
 });
 
@@ -93,7 +93,7 @@ export function EncodingPropertyGeneratorFactory(prop: Property): EnumeratorFact
           // TODO: encQ.excluded
           enumerate(jobIndex + 1);
         } else {
-          wildcard.enum.forEach(propVal => {
+          wildcard.enum.forEach((propVal) => {
             if (propVal === null) {
               // our duplicate() method use JSON.stringify, parse and thus can accidentally
               // convert undefined in an array into null

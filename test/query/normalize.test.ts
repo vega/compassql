@@ -11,25 +11,25 @@ describe('query', () => {
       const q: Query = {
         spec: {
           mark: MARK.POINT,
-          encodings: [{channel: CHANNEL.X, field: '*', type: TYPE.QUANTITATIVE}]
+          encodings: [{channel: CHANNEL.X, field: '*', type: TYPE.QUANTITATIVE}],
         },
         groupBy: 'fieldTransform',
         chooseBy: 'effectiveness',
-        orderBy: 'effectiveness'
+        orderBy: 'effectiveness',
       };
 
       assert.deepEqual(normalize(q), {
         spec: {
           mark: MARK.POINT,
-          encodings: [{channel: CHANNEL.X, field: '*', type: TYPE.QUANTITATIVE}]
+          encodings: [{channel: CHANNEL.X, field: '*', type: TYPE.QUANTITATIVE}],
         },
         nest: [
           {
             groupBy: 'fieldTransform',
-            orderGroupBy: 'effectiveness'
-          }
+            orderGroupBy: 'effectiveness',
+          },
         ],
-        chooseBy: 'effectiveness'
+        chooseBy: 'effectiveness',
       });
     });
   });

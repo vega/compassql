@@ -21,7 +21,7 @@ export class DimensionScorer extends Scorer {
       color: 0,
       opacity: 0,
       size: 0,
-      shape: 0
+      shape: 0,
     } as Dict<number>;
   }
 

@@ -64,7 +64,7 @@ const ENCODING_TOPLEVEL_PROP_INDEX: Flag<EncodingTopLevelProp> = {
   scale: 1,
   axis: 1,
   legend: 1,
-  value: 1
+  value: 1,
 };
 
 export const ENCODING_TOPLEVEL_PROPS = flagKeys(ENCODING_TOPLEVEL_PROP_INDEX);
@@ -80,7 +80,7 @@ const ENCODING_NESTED_PROP_PARENT_INDEX: Flag<EncodingNestedPropParent> = {
   scale: 1,
   sort: 1,
   axis: 1,
-  legend: 1
+  legend: 1,
 };
 
 export function isEncodingNestedParent(prop: string): prop is EncodingNestedPropParent {
@@ -138,7 +138,7 @@ export function fromKey(k: string): Property {
   } else if (split.length === 2) {
     return {
       parent: split[0],
-      child: split[1]
+      child: split[1],
     } as EncodingNestedProp;
   } else {
     throw `Invalid property key with ${split.length} dots: ${k}`;
@@ -183,7 +183,7 @@ export const DEFAULT_PROP_PRECEDENCE: Property[] = (
     'scale',
     'sort',
     'axis',
-    'legend'
+    'legend',
   ] as Property[]
 ).concat(BIN_PROPS, SCALE_PROPS, AXIS_PROPS, LEGEND_PROPS, SORT_PROPS);
 

@@ -25,8 +25,8 @@ describe('enumerator', () => {
         mark: {enum: [MARK.POINT, MARK.TICK]},
         encodings: [
           {channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE},
-          {channel: CHANNEL.Y, field: 'O', type: TYPE.ORDINAL}
-        ]
+          {channel: CHANNEL.Y, field: 'O', type: TYPE.ORDINAL},
+        ],
       });
       const enumerator = getEnumerator(Property.MARK)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -41,8 +41,8 @@ describe('enumerator', () => {
         mark: {enum: [MARK.POINT, MARK.BAR, MARK.LINE, MARK.AREA]},
         encodings: [
           {channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE},
-          {channel: CHANNEL.SHAPE, field: 'O', type: TYPE.ORDINAL}
-        ]
+          {channel: CHANNEL.SHAPE, field: 'O', type: TYPE.ORDINAL},
+        ],
       });
       const enumerator = getEnumerator(Property.MARK)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -61,9 +61,9 @@ describe('enumerator', () => {
             {
               channel: {enum: [CHANNEL.X, CHANNEL.Y]},
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const opt = extend({}, DEFAULT_QUERY_CONFIG, {omitVerticalDotPlot: false});
         const enumerator = getEnumerator(Property.CHANNEL)(specM.wildcardIndex, schema, opt);
@@ -81,9 +81,9 @@ describe('enumerator', () => {
             {
               channel: {enum: [CHANNEL.X, CHANNEL.SHAPE]},
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.CHANNEL)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -103,9 +103,9 @@ describe('enumerator', () => {
               channel: CHANNEL.X,
               aggregate: {enum: ['mean', 'median', undefined]},
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.AGGREGATE)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -124,9 +124,9 @@ describe('enumerator', () => {
               channel: CHANNEL.X,
               aggregate: {enum: ['mean', 'median', undefined]},
               field: 'N',
-              type: TYPE.NOMINAL
-            }
-          ]
+              type: TYPE.NOMINAL,
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.AGGREGATE)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -145,12 +145,12 @@ describe('enumerator', () => {
               channel: CHANNEL.X,
               bin: {
                 enum: [true, false],
-                maxbins: 10
+                maxbins: 10,
               },
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.BIN)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -167,12 +167,12 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               bin: {
-                enum: [true, false]
+                enum: [true, false],
               },
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.BIN)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -191,12 +191,12 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               bin: {
-                maxbins: {enum: [5, 10, 20]}
+                maxbins: {enum: [5, 10, 20]},
               },
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator({parent: 'bin', child: 'maxbins'})(
           specM.wildcardIndex,
@@ -221,12 +221,12 @@ describe('enumerator', () => {
               channel: CHANNEL.X,
               scale: {
                 enum: [true, false],
-                type: ScaleType.LOG
+                type: ScaleType.LOG,
               },
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.SCALE)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -243,12 +243,12 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               scale: {
-                enum: [true, false]
+                enum: [true, false],
               },
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.SCALE)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -267,12 +267,12 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               scale: {
-                clamp: {enum: [true, false, undefined]}
+                clamp: {enum: [true, false, undefined]},
               },
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator({parent: 'scale', child: 'clamp'})(
           specM.wildcardIndex,
@@ -299,12 +299,12 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               scale: {
-                domain: {enum: [undefined, ['cats', 'dogs'], ['chickens', 'pigs']]}
+                domain: {enum: [undefined, ['cats', 'dogs'], ['chickens', 'pigs']]},
               },
               field: 'N',
-              type: TYPE.NOMINAL
-            }
-          ]
+              type: TYPE.NOMINAL,
+            },
+          ],
         });
         const enumerator = getEnumerator({parent: 'scale', child: 'domain'})(
           specM.wildcardIndex,
@@ -320,11 +320,11 @@ describe('enumerator', () => {
         );
         assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).domain, [
           'cats',
-          'dogs'
+          'dogs',
         ]);
         assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).domain, [
           'chickens',
-          'pigs'
+          'pigs',
         ]);
       });
 
@@ -335,12 +335,12 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               scale: {
-                domain: {enum: [undefined, [1, 3], [5, 7]]}
+                domain: {enum: [undefined, [1, 3], [5, 7]]},
               },
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator({parent: 'scale', child: 'domain'})(
           specM.wildcardIndex,
@@ -368,12 +368,12 @@ describe('enumerator', () => {
               channel: CHANNEL.X,
               scale: {
                 base: {enum: [0.5, 1, 2, undefined]},
-                type: ScaleType.LOG
+                type: ScaleType.LOG,
               },
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator({parent: 'scale', child: 'base'})(
           specM.wildcardIndex,
@@ -398,12 +398,12 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               scale: {
-                nice: {enum: [undefined, true, false]}
+                nice: {enum: [undefined, true, false]},
               },
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator({parent: 'scale', child: 'nice'})(
           specM.wildcardIndex,
@@ -424,12 +424,12 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.COLOR,
               scale: {
-                range: {enum: [undefined, ['red', 'blue'], ['green', 'black']]}
+                range: {enum: [undefined, ['red', 'blue'], ['green', 'black']]},
               },
               field: 'N',
-              type: TYPE.NOMINAL
-            }
-          ]
+              type: TYPE.NOMINAL,
+            },
+          ],
         });
         const enumerator = getEnumerator({parent: 'scale', child: 'range'})(
           specM.wildcardIndex,
@@ -445,11 +445,11 @@ describe('enumerator', () => {
         );
         assert.deepEqual(((answerSet[1].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).range, [
           'red',
-          'blue'
+          'blue',
         ]);
         assert.deepEqual(((answerSet[2].getEncodingQueryByIndex(0) as FieldQuery).scale as ScaleQuery).range, [
           'green',
-          'black'
+          'black',
         ]);
       });
 
@@ -460,12 +460,12 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.SIZE,
               scale: {
-                range: {enum: [undefined, [1, 3], [5, 7]]}
+                range: {enum: [undefined, [1, 3], [5, 7]]},
               },
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator({parent: 'scale', child: 'range'})(
           specM.wildcardIndex,
@@ -492,12 +492,12 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               scale: {
-                round: {enum: [true, false, undefined]}
+                round: {enum: [true, false, undefined]},
               },
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator({parent: 'scale', child: 'round'})(
           specM.wildcardIndex,
@@ -524,12 +524,12 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               scale: {
-                type: {enum: [undefined, ScaleType.LOG, ScaleType.POW, ScaleType.POINT]}
+                type: {enum: [undefined, ScaleType.LOG, ScaleType.POW, ScaleType.POINT]},
               },
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator({parent: 'scale', child: 'type'})(
           specM.wildcardIndex,
@@ -560,9 +560,9 @@ describe('enumerator', () => {
               channel: CHANNEL.X,
               field: 'T',
               timeUnit: {enum: [vegaTime.MONTH, vegaTime.DAY, vegaTime.YEAR, undefined]},
-              type: TYPE.TEMPORAL
-            }
-          ]
+              type: TYPE.TEMPORAL,
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.TIMEUNIT)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -582,9 +582,9 @@ describe('enumerator', () => {
               channel: CHANNEL.X,
               field: 'Q',
               timeUnit: {enum: [vegaTime.MONTH, vegaTime.DAY, vegaTime.YEAR, undefined]},
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.TIMEUNIT)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -602,9 +602,9 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               field: {enum: ['Q', 'Q1', 'Q2', 'O', 'N', 'T']},
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.FIELD)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -622,9 +622,9 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               field: {enum: ['T', 'Q', 'O', 'N']},
-              type: TYPE.TEMPORAL
-            }
-          ]
+              type: TYPE.TEMPORAL,
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.FIELD)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -640,9 +640,9 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               field: {enum: ['O', 'O_10', 'O_20', 'O_100', 'Q', 'T', 'N']},
-              type: TYPE.ORDINAL
-            }
-          ]
+              type: TYPE.ORDINAL,
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.FIELD)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -661,9 +661,9 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               field: {enum: ['N', 'N20', 'Q', 'O', 'T']},
-              type: TYPE.NOMINAL
-            }
-          ]
+              type: TYPE.NOMINAL,
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.FIELD)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -682,9 +682,9 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               field: 'Q',
-              type: {enum: [TYPE.QUANTITATIVE, TYPE.NOMINAL, TYPE.ORDINAL, TYPE.TEMPORAL]}
-            }
-          ]
+              type: {enum: [TYPE.QUANTITATIVE, TYPE.NOMINAL, TYPE.ORDINAL, TYPE.TEMPORAL]},
+            },
+          ],
         });
         const noTypeMatchesSchema = extend({}, DEFAULT_QUERY_CONFIG, {typeMatchesSchemaType: false});
         const enumerator = getEnumerator(Property.TYPE)(specM.wildcardIndex, schema, noTypeMatchesSchema);
@@ -703,9 +703,9 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               field: 'Q',
-              type: {enum: [TYPE.QUANTITATIVE, TYPE.NOMINAL, TYPE.ORDINAL, TYPE.TEMPORAL]}
-            }
-          ]
+              type: {enum: [TYPE.QUANTITATIVE, TYPE.NOMINAL, TYPE.ORDINAL, TYPE.TEMPORAL]},
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.TYPE)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -721,9 +721,9 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               field: 'O',
-              type: {enum: [TYPE.ORDINAL, TYPE.TEMPORAL, TYPE.QUANTITATIVE, TYPE.NOMINAL]}
-            }
-          ]
+              type: {enum: [TYPE.ORDINAL, TYPE.TEMPORAL, TYPE.QUANTITATIVE, TYPE.NOMINAL]},
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.TYPE)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -739,9 +739,9 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               field: 'T',
-              type: {enum: [TYPE.TEMPORAL, TYPE.ORDINAL, TYPE.QUANTITATIVE, TYPE.NOMINAL]}
-            }
-          ]
+              type: {enum: [TYPE.TEMPORAL, TYPE.ORDINAL, TYPE.QUANTITATIVE, TYPE.NOMINAL]},
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.TYPE)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 
@@ -757,9 +757,9 @@ describe('enumerator', () => {
             {
               channel: CHANNEL.X,
               field: 'N',
-              type: {enum: [TYPE.NOMINAL, TYPE.TEMPORAL, TYPE.QUANTITATIVE, TYPE.ORDINAL]}
-            }
-          ]
+              type: {enum: [TYPE.NOMINAL, TYPE.TEMPORAL, TYPE.QUANTITATIVE, TYPE.ORDINAL]},
+            },
+          ],
         });
         const enumerator = getEnumerator(Property.TYPE)(specM.wildcardIndex, schema, DEFAULT_QUERY_CONFIG);
 

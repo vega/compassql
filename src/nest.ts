@@ -33,7 +33,7 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
     const rootGroup: SpecQueryModelGroup = {
       name: '',
       path: '',
-      items: []
+      items: [],
     };
     const groupIndex: Dict<SpecQueryModelGroup> = {};
 
@@ -58,7 +58,7 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
 
     // With includes and replacers, now we can construct the nesting tree
 
-    specModels.forEach(specM => {
+    specModels.forEach((specM) => {
       let path = '';
       let group: SpecQueryModelGroup = rootGroup;
       for (let l = 0; l < queryNest.length; l++) {
@@ -75,7 +75,7 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
           groupIndex[path] = {
             name: key,
             path: path,
-            items: []
+            items: [],
           };
 
           group.items.push(groupIndex[path]);
@@ -90,7 +90,7 @@ export function nest(specModels: SpecQueryModel[], queryNest: Nest[]): SpecQuery
     return {
       name: '',
       path: '',
-      items: specModels
+      items: specModels,
     };
   }
 }

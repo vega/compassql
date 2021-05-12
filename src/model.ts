@@ -12,7 +12,7 @@ import {
   ENCODING_TOPLEVEL_PROPS,
   isEncodingNestedParent,
   isEncodingNestedProp,
-  Property
+  Property,
 } from './property';
 import {
   AutoCountQuery,
@@ -20,7 +20,7 @@ import {
   isAutoCountQuery,
   isDisabledAutoCountQuery,
   isFieldQuery,
-  toEncoding
+  toEncoding,
 } from './query/encoding';
 import {ExtendedGroupBy, parseGroupBy} from './query/groupby';
 import {spec as specShorthand} from './query/shorthand';
@@ -80,7 +80,7 @@ export class SpecQueryModel {
       }
 
       // For each property of the encodingQuery, enumerate
-      ENCODING_TOPLEVEL_PROPS.forEach(prop => {
+      ENCODING_TOPLEVEL_PROPS.forEach((prop) => {
         if (isWildcard(encQ[prop])) {
           // Assign default wildcard name and enum values.
           const defaultWildcardName = getDefaultName(prop) + index;
@@ -93,7 +93,7 @@ export class SpecQueryModel {
       });
 
       // For each nested property of the encoding query  (e.g., encQ.bin.maxbins)
-      ENCODING_NESTED_PROPS.forEach(prop => {
+      ENCODING_NESTED_PROPS.forEach((prop) => {
         const propObj = encQ[prop.parent]; // the property object e.g., encQ.bin
         if (propObj) {
           const child = prop.child;
@@ -115,16 +115,16 @@ export class SpecQueryModel {
     if (opt.autoAddCount) {
       const channel: Wildcard<ExtendedChannel> = {
         name: getDefaultName(Property.CHANNEL) + specQ.encodings.length,
-        enum: getDefaultEnumValues(Property.CHANNEL, schema, opt)
+        enum: getDefaultEnumValues(Property.CHANNEL, schema, opt),
       };
       const autoCount: Wildcard<boolean> = {
         name: getDefaultName(Property.AUTOCOUNT) + specQ.encodings.length,
-        enum: [false, true]
+        enum: [false, true],
       };
       const countEncQ: AutoCountQuery = {
         channel,
         autoCount,
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       };
       specQ.encodings.push(countEncQ);
 
@@ -265,7 +265,7 @@ export class SpecQueryModel {
 
   public getEncodings(): EncodingQuery[] {
     // do not include encoding that has autoCount = false because it is not a part of the output spec.
-    return this._spec.encodings.filter(encQ => !isDisabledAutoCountQuery(encQ));
+    return this._spec.encodings.filter((encQ) => !isDisabledAutoCountQuery(encQ));
   }
 
   public getEncodingQueryByChannel(channel: ExtendedChannel) {

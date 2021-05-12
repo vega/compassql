@@ -6,7 +6,7 @@ import {
   toString,
   REPLACE_MARK_STYLE_CHANNELS,
   parseGroupBy,
-  GROUP_BY_ENCODING
+  GROUP_BY_ENCODING,
 } from '../../src/query/groupby';
 
 describe('query/groupby', () => {
@@ -20,7 +20,7 @@ describe('query/groupby', () => {
         bin: true,
         timeUnit: true,
         stack: true,
-        channel: true
+        channel: true,
       });
 
       assert.isTrue(parsed.replacer.has('channel'));
@@ -46,8 +46,8 @@ describe('query/groupby', () => {
           {property: Property.AGGREGATE},
           {
             property: Property.CHANNEL,
-            replace: REPLACE_MARK_STYLE_CHANNELS
-          }
+            replace: REPLACE_MARK_STYLE_CHANNELS,
+          },
         ]),
         'field,aggregate,channel[color,opacity,shape,size=>style]'
       );

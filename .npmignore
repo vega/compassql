@@ -6,5 +6,8 @@
 build/test
 codecov.yml
 tsconfig.json
-tslint.json
 yarn.lock
+.eslintrc.js
+prettier.config.js
+.prettierignore
+.eslintignore

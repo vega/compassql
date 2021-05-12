@@ -27,31 +27,31 @@ export class AxisScorer extends Scorer {
     const preferredAxes = [
       {
         feature: BIN_Q,
-        opt: 'preferredBinAxis'
+        opt: 'preferredBinAxis',
       },
       {
         feature: T,
-        opt: 'preferredTemporalAxis'
+        opt: 'preferredTemporalAxis',
       },
       {
         feature: TIMEUNIT_T,
-        opt: 'preferredTemporalAxis'
+        opt: 'preferredTemporalAxis',
       },
       {
         feature: TIMEUNIT_O,
-        opt: 'preferredTemporalAxis'
+        opt: 'preferredTemporalAxis',
       },
       {
         feature: O,
-        opt: 'preferredOrdinalAxis'
+        opt: 'preferredOrdinalAxis',
       },
       {
         feature: N,
-        opt: 'preferredNominalAxis'
-      }
+        opt: 'preferredNominalAxis',
+      },
     ];
 
-    preferredAxes.forEach(pAxis => {
+    preferredAxes.forEach((pAxis) => {
       if (opt[pAxis.opt] === CHANNEL.X) {
         // penalize the other axis
         score[`${pAxis.feature}_${CHANNEL.Y}`] = -0.01;

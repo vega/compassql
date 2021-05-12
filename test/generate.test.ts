@@ -26,9 +26,9 @@ describe('generate', function () {
             {
               channel: CHANNEL.SIZE,
               field: 'A',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         };
         const answerSet = generate(specQ, schema);
         assert.equal(answerSet.length, 1);
@@ -44,9 +44,9 @@ describe('generate', function () {
             {
               channel: '?',
               field: 'A',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         };
         const answerSet = generate(specQ, schema);
         assert.equal(answerSet.length, 2);
@@ -61,9 +61,9 @@ describe('generate', function () {
             {
               channel: '?',
               field: 'A',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         };
         const answerSet = generate(
           specQ,
@@ -85,9 +85,9 @@ describe('generate', function () {
               channel: CHANNEL.COLUMN,
               field: 'A',
               type: TYPE.QUANTITATIVE,
-              bin: {}
-            }
-          ]
+              bin: {},
+            },
+          ],
         };
         const answerSet = generate(specQ, schema);
         assert.equal(answerSet.length, 1);
@@ -103,9 +103,9 @@ describe('generate', function () {
             {
               channel: '?',
               field: 'A',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         };
 
         const answerSet = generate(
@@ -136,9 +136,9 @@ describe('generate', function () {
               bin: SHORT_WILDCARD,
               aggregate: SHORT_WILDCARD,
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         };
         const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
         assert.equal(answerSet.length, 3);
@@ -156,9 +156,9 @@ describe('generate', function () {
               aggregate: {name: 'aggregate', enum: [undefined, 'mean']},
               channel: CHANNEL.X,
               field: 'A',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         };
         const CONFIG_WITH_OMIT_AGGREGATE = extend({}, DEFAULT_QUERY_CONFIG, {omitAggregate: true});
         const answerSet = generate(specQ, schema, CONFIG_WITH_OMIT_AGGREGATE);
@@ -178,9 +178,9 @@ describe('generate', function () {
               aggregate: {name: 'aggregate', enum: [undefined, 'mean']},
               channel: CHANNEL.X,
               field: 'A',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         };
         const CONFIG_WITH_OMIT_RAW = extend({}, DEFAULT_QUERY_CONFIG, {omitRaw: true});
         const answerSet = generate(specQ, schema, CONFIG_WITH_OMIT_RAW);
@@ -198,24 +198,24 @@ describe('generate', function () {
           {
             channel: CHANNEL.X,
             field: 'N',
-            type: TYPE.NOMINAL
+            type: TYPE.NOMINAL,
           },
           {
             channel: CHANNEL.Y,
             field: 'N20',
-            type: TYPE.NOMINAL
-          }
+            type: TYPE.NOMINAL,
+          },
         ],
-        config: CONFIG_WITH_AUTO_ADD_COUNT
+        config: CONFIG_WITH_AUTO_ADD_COUNT,
       };
 
       const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
 
       it('should return counted heatmaps', () => {
         assert.isTrue(answerSet.length > 0);
-        answerSet.forEach(specM => {
+        answerSet.forEach((specM) => {
           assert.isTrue(
-            some(specM.getEncodings(), encQ => {
+            some(specM.getEncodings(), (encQ) => {
               return isAutoCountQuery(encQ) && encQ.autoCount === true;
             })
           );
@@ -223,7 +223,7 @@ describe('generate', function () {
       });
 
       it('should not use tick, bar, line, area, or rect', () => {
-        answerSet.forEach(specM => {
+        answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), MARK.AREA);
           assert.notEqual(specM.getMark(), MARK.LINE);
           assert.notEqual(specM.getMark(), MARK.BAR);
@@ -237,14 +237,14 @@ describe('generate', function () {
         mark: '?',
         encodings: [
           {channel: CHANNEL.Y, field: 'O', type: TYPE.ORDINAL},
-          {field: 'N', type: TYPE.NOMINAL, channel: '?'}
-        ]
+          {field: 'N', type: TYPE.NOMINAL, channel: '?'},
+        ],
       };
 
       const answerSet = generate(specQ, schema);
 
       it('should generate a rect table with x and y as dimensions with autocount turned off', () => {
-        answerSet.forEach(specM => {
+        answerSet.forEach((specM) => {
           assert.isTrue(
             (specM.getEncodingQueryByChannel(CHANNEL.X) as FieldQuery).type === TYPE.NOMINAL &&
               (specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).type === TYPE.ORDINAL
@@ -261,17 +261,17 @@ describe('generate', function () {
             {
               channel: CHANNEL.X,
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: CHANNEL.Y,
               field: 'Q1',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         };
         const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
-        answerSet.forEach(specM => {
+        answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), MARK.AREA);
           assert.notEqual(specM.getMark(), MARK.LINE);
           assert.notEqual(specM.getMark(), MARK.BAR);
@@ -289,18 +289,18 @@ describe('generate', function () {
               channel: CHANNEL.X,
               aggregate: 'mean',
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: CHANNEL.Y,
               aggregate: 'mean',
               field: 'Q1',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         };
         const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
-        answerSet.forEach(specM => {
+        answerSet.forEach((specM) => {
           assert.notEqual(specM.getMark(), MARK.AREA);
           assert.notEqual(specM.getMark(), MARK.LINE);
         });
@@ -316,25 +316,25 @@ describe('generate', function () {
           {
             channel: SHORT_WILDCARD,
             field: 'N',
-            type: TYPE.NOMINAL
+            type: TYPE.NOMINAL,
           },
           {
             channel: SHORT_WILDCARD,
             field: 'N20',
-            type: TYPE.NOMINAL
+            type: TYPE.NOMINAL,
           },
           {
             channel: SHORT_WILDCARD,
             field: 'Q',
-            type: TYPE.QUANTITATIVE
-          }
-        ]
+            type: TYPE.QUANTITATIVE,
+          },
+        ],
       };
 
       const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
 
       it('should not generate a plot with both x and y as dimensions with auto add count enabled', () => {
-        answerSet.forEach(specM => {
+        answerSet.forEach((specM) => {
           assert.isFalse(
             (specM.getEncodingQueryByChannel(CHANNEL.X) as FieldQuery).type === TYPE.NOMINAL &&
               (specM.getEncodingQueryByChannel(CHANNEL.Y) as FieldQuery).type === TYPE.NOMINAL
@@ -350,24 +350,24 @@ describe('generate', function () {
           {
             channel: CHANNEL.X,
             field: 'N',
-            type: TYPE.NOMINAL
+            type: TYPE.NOMINAL,
           },
           {
             channel: CHANNEL.Y,
             field: 'N20',
-            type: TYPE.NOMINAL
+            type: TYPE.NOMINAL,
           },
           {
             channel: SHORT_WILDCARD,
             field: 'Q',
-            type: TYPE.QUANTITATIVE
-          }
-        ]
+            type: TYPE.QUANTITATIVE,
+          },
+        ],
       };
 
       const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
       it('should generate a rect heatmap with color encoding the quantitative measure', () => {
-        answerSet.forEach(specM => {
+        answerSet.forEach((specM) => {
           assert.isTrue(
             specM.getMark() === MARK.RECT &&
               (specM.getEncodingQueryByChannel(CHANNEL.COLOR) as FieldQuery).type === TYPE.QUANTITATIVE
@@ -386,9 +386,9 @@ describe('generate', function () {
             channel: CHANNEL.X,
             field: 'Q',
             type: TYPE.QUANTITATIVE,
-            axis: {zindex: SHORT_WILDCARD}
-          }
-        ]
+            axis: {zindex: SHORT_WILDCARD},
+          },
+        ],
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
@@ -406,12 +406,12 @@ describe('generate', function () {
           {
             channel: CHANNEL.X,
             scale: {
-              type: {enum: [undefined, ScaleType.LOG, ScaleType.TIME, ScaleType.POINT]}
+              type: {enum: [undefined, ScaleType.LOG, ScaleType.TIME, ScaleType.POINT]},
             },
             field: 'Q',
-            type: TYPE.NOMINAL
-          }
-        ]
+            type: TYPE.NOMINAL,
+          },
+        ],
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
@@ -440,14 +440,14 @@ describe('generate', function () {
                   ScaleType.SQRT,
                   // TODO: add these back ScaleType.QUANTILE, ScaleType.QUANTIZE,
                   ScaleType.TIME,
-                  ScaleType.UTC
-                ]
-              }
+                  ScaleType.UTC,
+                ],
+              },
             },
             field: 'Q',
-            type: TYPE.QUANTITATIVE
-          }
-        ]
+            type: TYPE.QUANTITATIVE,
+          },
+        ],
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 1);
@@ -475,14 +475,14 @@ describe('generate', function () {
                   ScaleType.SQRT,
                   // TODO: add these back ScaleType.QUANTILE, ScaleType.QUANTIZE,
                   ScaleType.TIME,
-                  ScaleType.UTC
-                ] as ScaleType[]
-              }
+                  ScaleType.UTC,
+                ] as ScaleType[],
+              },
             },
             field: 'Q',
-            type: TYPE.QUANTITATIVE
-          }
-        ]
+            type: TYPE.QUANTITATIVE,
+          },
+        ],
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 5);
@@ -506,12 +506,12 @@ describe('generate', function () {
             channel: CHANNEL.X,
             scale: {
               zero: true,
-              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.POINT, ScaleType.TIME, ScaleType.UTC]}
+              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.POINT, ScaleType.TIME, ScaleType.UTC]},
             },
             field: 'Q',
-            type: TYPE.QUANTITATIVE
-          }
-        ]
+            type: TYPE.QUANTITATIVE,
+          },
+        ],
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
@@ -527,12 +527,12 @@ describe('generate', function () {
             channel: CHANNEL.X,
             scale: {
               zero: true,
-              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.POINT, ScaleType.TIME, ScaleType.UTC]}
+              type: {enum: [undefined, ScaleType.SQRT, ScaleType.LOG, ScaleType.POINT, ScaleType.TIME, ScaleType.UTC]},
             },
             field: 'Q',
-            type: TYPE.QUANTITATIVE
-          }
-        ]
+            type: TYPE.QUANTITATIVE,
+          },
+        ],
       };
       const answerSet = generate(specQ, schema);
       assert.equal(answerSet.length, 2);
@@ -550,12 +550,12 @@ describe('generate', function () {
             channel: CHANNEL.X,
             scale: {
               enum: [true, false],
-              type: {enum: [undefined, ScaleType.LOG, ScaleType.UTC]}
+              type: {enum: [undefined, ScaleType.LOG, ScaleType.UTC]},
             },
             field: 'Q',
-            type: TYPE.QUANTITATIVE
-          }
-        ]
+            type: TYPE.QUANTITATIVE,
+          },
+        ],
       };
 
       const answerSet = generate(specQ, schema);
@@ -573,9 +573,9 @@ describe('generate', function () {
             channel: CHANNEL.X,
             scale: {type: {enum: [undefined, ScaleType.LOG, ScaleType.UTC]}},
             field: 'Q',
-            type: TYPE.QUANTITATIVE
-          }
-        ]
+            type: TYPE.QUANTITATIVE,
+          },
+        ],
       };
 
       const answerSet = generate(specQ, schema);
@@ -592,9 +592,9 @@ describe('generate', function () {
             channel: CHANNEL.X,
             scale: {type: {enum: [ScaleType.TIME, ScaleType.UTC, ScaleType.POINT, undefined, ScaleType.LOG]}},
             field: 'T',
-            type: TYPE.TEMPORAL
-          }
-        ]
+            type: TYPE.TEMPORAL,
+          },
+        ],
       };
 
       const answerSet = generate(specQ, schema);
@@ -613,9 +613,9 @@ describe('generate', function () {
             scale: {type: {enum: [ScaleType.TIME, ScaleType.UTC, ScaleType.POINT, undefined, ScaleType.LOG]}},
             field: 'T',
             type: TYPE.TEMPORAL,
-            timeUnit: vegaTime.MINUTES
-          }
-        ]
+            timeUnit: vegaTime.MINUTES,
+          },
+        ],
       };
 
       const answerSet = generate(specQ, schema);
@@ -635,9 +635,9 @@ describe('generate', function () {
             scale: {type: {enum: [ScaleType.POINT, undefined, ScaleType.LOG]}},
             field: 'O',
             type: TYPE.ORDINAL,
-            timeUnit: vegaTime.MINUTES
-          }
-        ]
+            timeUnit: vegaTime.MINUTES,
+          },
+        ],
       };
 
       const answerSet = generate(specQ, schema);
@@ -654,9 +654,9 @@ describe('generate', function () {
             channel: 'x',
             scale: {type: {enum: [ScaleType.POINT, undefined, ScaleType.LOG]}},
             field: 'O',
-            type: TYPE.ORDINAL
-          }
-        ]
+            type: TYPE.ORDINAL,
+          },
+        ],
       };
 
       const answerSet = generate(specQ, schema);
@@ -673,9 +673,9 @@ describe('generate', function () {
             channel: CHANNEL.X,
             scale: {type: {enum: [undefined, ScaleType.LOG]}},
             field: 'N',
-            type: TYPE.NOMINAL
-          }
-        ]
+            type: TYPE.NOMINAL,
+          },
+        ],
       };
 
       const answerSet = generate(specQ, schema);
@@ -694,9 +694,9 @@ describe('generate', function () {
               channel: CHANNEL.X,
               bin: {maxbins: {enum: [10, 20, 30]}},
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         };
 
         const answerSet = generate(specQ, schema);
@@ -714,12 +714,12 @@ describe('generate', function () {
               channel: CHANNEL.X,
               bin: {
                 enum: [true, false],
-                maxbins: {enum: [10, 20, 30]}
+                maxbins: {enum: [10, 20, 30]},
               },
               field: 'Q',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         };
 
         const answerSet = generate(specQ, schema);
@@ -737,7 +737,7 @@ describe('generate', function () {
       it('should output autoCount in the answer set', () => {
         const specQ = {
           mark: MARK.POINT,
-          encodings: [{channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL}]
+          encodings: [{channel: CHANNEL.X, field: 'O', type: TYPE.ORDINAL}],
         };
         const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
         assert.equal(answerSet.length, 1);
@@ -748,7 +748,7 @@ describe('generate', function () {
     describe('non-binned quantitative only', () => {
       const specQ = {
         mark: MARK.POINT,
-        encodings: [{channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE}]
+        encodings: [{channel: CHANNEL.X, field: 'Q', type: TYPE.QUANTITATIVE}],
       };
       const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
 
@@ -768,15 +768,15 @@ describe('generate', function () {
           {
             channel: {enum: [CHANNEL.X, CHANNEL.SIZE, CHANNEL.COLOR]},
             field: 'Q',
-            type: TYPE.QUANTITATIVE
-          }
-        ]
+            type: TYPE.QUANTITATIVE,
+          },
+        ],
       };
       const answerSet = generate(specQ, schema, CONFIG_WITH_AUTO_ADD_COUNT);
 
       it('should not output point with only size for color', () => {
-        answerSet.forEach(model => {
-          model.getEncodings().forEach(encQ => {
+        answerSet.forEach((model) => {
+          model.getEncodings().forEach((encQ) => {
             assert.notEqual(encQ.channel, CHANNEL.COLOR);
             assert.notEqual(encQ.channel, CHANNEL.SIZE);
           });
@@ -793,9 +793,9 @@ describe('generate', function () {
           {
             channel: CHANNEL.X,
             field: 'A',
-            type: TYPE.QUANTITATIVE
-          }
-        ]
+            type: TYPE.QUANTITATIVE,
+          },
+        ],
       };
 
       const CONFIG_WITHOUT_HIGH_CARDINALITY_OR_FACET = extend(
@@ -818,9 +818,9 @@ describe('generate', function () {
               channel: CHANNEL.COLOR,
               field: 'N20',
               scale: {},
-              type: TYPE.NOMINAL
-            }
-          ]
+              type: TYPE.NOMINAL,
+            },
+          ],
         };
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
@@ -840,9 +840,9 @@ describe('generate', function () {
               channel: CHANNEL.Y,
               field: 'O_100',
               scale: {},
-              type: TYPE.ORDINAL
-            }
-          ]
+              type: TYPE.ORDINAL,
+            },
+          ],
         };
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
@@ -857,14 +857,14 @@ describe('generate', function () {
               channel: CHANNEL.Y,
               field: 'A',
               scale: {},
-              type: TYPE.ORDINAL
+              type: TYPE.ORDINAL,
             },
             {
               channel: CHANNEL.ROW,
               field: 'A',
-              type: TYPE.ORDINAL
-            }
-          ]
+              type: TYPE.ORDINAL,
+            },
+          ],
         };
 
         const answerSet = generate(specQ, schema, DEFAULT_QUERY_CONFIG);
