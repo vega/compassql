@@ -28,7 +28,7 @@ describe('schema', () => {
 
   const data = [
     {a: 1, b: 'a', c: 1.1, d: '1/1/2010'},
-    {a: 2, b: 'b', c: 1.1, d: '1/1/2010'}
+    {a: 2, b: 'b', c: 1.1, d: '1/1/2010'},
   ];
   const schema = build(data);
 
@@ -56,7 +56,7 @@ describe('schema', () => {
   describe('vlType', () => {
     const configWithOrdinalInference = extend({}, DEFAULT_QUERY_CONFIG, {
       numberOrdinalProportion: 0.05,
-      numberOrdinalLimit: 50
+      numberOrdinalLimit: 50,
     });
 
     it('should return the correct type of measurement for each field', () => {
@@ -135,7 +135,7 @@ describe('schema', () => {
       const cardinality: number = cardinalitySchema.cardinality({
         field: 'a',
         channel: CHANNEL.X,
-        bin: true // should cause maxbins to be 10
+        bin: true, // should cause maxbins to be 10
       });
       assert.equal(cardinality, 10);
     });
@@ -147,8 +147,8 @@ describe('schema', () => {
         field: 'a',
         channel: CHANNEL.X,
         bin: {
-          maxbins: 5
-        }
+          maxbins: 5,
+        },
       });
       assert.equal(cardinality, 5);
     });
@@ -160,8 +160,8 @@ describe('schema', () => {
         field: 'a',
         channel: CHANNEL.X,
         bin: {
-          maxbins: 7
-        }
+          maxbins: 7,
+        },
       });
       assert.equal(cardinality, 7);
     });
@@ -176,19 +176,19 @@ describe('schema', () => {
         {a: 3}, // bin 2-3
         // bin 4-5 (empty)
         {a: 6},
-        {a: 7} // bin 6-7
+        {a: 7}, // bin 6-7
       ];
       const cardinalitySchema = build(cardinalityData);
       const cardinalityNoBin: number = cardinalitySchema.cardinality({
         field: 'a',
-        channel: CHANNEL.X
+        channel: CHANNEL.X,
       });
       const cardinality: number = cardinalitySchema.cardinality({
         field: 'a',
         channel: CHANNEL.X,
         bin: {
-          maxbins: 4
-        }
+          maxbins: 4,
+        },
       });
 
       assert.equal(cardinalityNoBin, 6);
@@ -201,7 +201,7 @@ describe('schema', () => {
       const cardinality: number = cardinalitySchema.cardinality({
         field: 'a',
         channel: CHANNEL.X,
-        timeUnit: 'month'
+        timeUnit: 'month',
       });
       assert.equal(cardinality, 12);
     });
@@ -213,7 +213,7 @@ describe('schema', () => {
         {
           field: 'a',
           channel: CHANNEL.X,
-          timeUnit: 'month'
+          timeUnit: 'month',
         },
         false
       );
@@ -224,14 +224,14 @@ describe('schema', () => {
       const cardinalityData = [];
       for (let i = 1; i <= 30; i++) {
         cardinalityData.push({
-          a: `June ${i}, 2000`
+          a: `June ${i}, 2000`,
         });
       }
       const cardinalitySchema = build(cardinalityData);
       const cardinality: number = cardinalitySchema.cardinality({
         field: 'a',
         channel: CHANNEL.X,
-        timeUnit: 'yearmonth'
+        timeUnit: 'yearmonth',
       });
       assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 1);
@@ -242,14 +242,14 @@ describe('schema', () => {
       const cardinalityData = [];
       for (let i = 1; i <= numYears; i++) {
         cardinalityData.push({
-          a: `June ${i}, 200${i}`
+          a: `June ${i}, 200${i}`,
         });
       }
       const cardinalitySchema = build(cardinalityData);
       const cardinality: number = cardinalitySchema.cardinality({
         field: 'a',
         channel: CHANNEL.X,
-        timeUnit: 'yearmonth'
+        timeUnit: 'yearmonth',
       });
       assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, numYears);
@@ -261,7 +261,7 @@ describe('schema', () => {
       let cardinality: number = cardinalitySchema.cardinality({
         field: 'a',
         channel: CHANNEL.X,
-        timeUnit: 'yearquarter'
+        timeUnit: 'yearquarter',
       });
       assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 2);
@@ -271,7 +271,7 @@ describe('schema', () => {
       cardinality = cardinalitySchema.cardinality({
         field: 'a',
         channel: CHANNEL.X,
-        timeUnit: 'yearquarter'
+        timeUnit: 'yearquarter',
       });
       assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 1);
@@ -283,7 +283,7 @@ describe('schema', () => {
       let cardinality: number = cardinalitySchema.cardinality({
         field: 'a',
         channel: CHANNEL.X,
-        timeUnit: 'year'
+        timeUnit: 'year',
       });
       assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 1);
@@ -293,7 +293,7 @@ describe('schema', () => {
       cardinality = cardinalitySchema.cardinality({
         field: 'a',
         channel: CHANNEL.X,
-        timeUnit: 'year'
+        timeUnit: 'year',
       });
       assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 2);
@@ -306,7 +306,7 @@ describe('schema', () => {
       const cardinality: number = cardinalitySchema.cardinality({
         field: 'a',
         channel: CHANNEL.X,
-        timeUnit: 'quartermonth'
+        timeUnit: 'quartermonth',
       });
       assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 3);
@@ -318,13 +318,13 @@ describe('schema', () => {
         {a: 'June 1, 2000 00:00:00'},
         {a: 'June 1, 2000 01:01:00'},
         {a: 'May 15, 2000 01:01:00'},
-        {a: 'June 1, 2000 01:02:00'}
+        {a: 'June 1, 2000 01:02:00'},
       ];
       const cardinalitySchema = build(cardinalityData);
       const cardinality: number = cardinalitySchema.cardinality({
         field: 'a',
         channel: CHANNEL.X,
-        timeUnit: 'hoursminutes'
+        timeUnit: 'hoursminutes',
       });
       assert.equal(cardinalitySchema.primitiveType('a'), PrimitiveType.DATETIME);
       assert.equal(cardinality, 3);
@@ -337,14 +337,14 @@ describe('schema', () => {
         {a: null}, // maps to null
         {a: null},
         {a: NaN}, // maps to 'Invalid Date'
-        {a: NaN}
+        {a: NaN},
       ];
       const cardinalitySchema = build(cardinalityData);
       let cardinality: number = cardinalitySchema.cardinality(
         {
           field: 'a',
           channel: CHANNEL.X,
-          timeUnit: 'year'
+          timeUnit: 'year',
         },
         true,
         true
@@ -355,7 +355,7 @@ describe('schema', () => {
         {
           field: 'a',
           channel: CHANNEL.X,
-          timeUnit: 'year'
+          timeUnit: 'year',
         },
         true,
         false
@@ -369,7 +369,7 @@ describe('schema', () => {
       let cardinality: number = cardinalitySchema.cardinality(
         {
           field: 'a',
-          channel: CHANNEL.X
+          channel: CHANNEL.X,
         },
         true,
         true
@@ -379,7 +379,7 @@ describe('schema', () => {
       cardinality = cardinalitySchema.cardinality(
         {
           field: 'a',
-          channel: CHANNEL.X
+          channel: CHANNEL.X,
         },
         true,
         false
@@ -394,7 +394,7 @@ describe('schema', () => {
         {
           field: 'a',
           channel: CHANNEL.X,
-          bin: true
+          bin: true,
         },
         true,
         true
@@ -405,7 +405,7 @@ describe('schema', () => {
         {
           field: 'a',
           channel: CHANNEL.X,
-          bin: true
+          bin: true,
         },
         true,
         false
@@ -422,7 +422,7 @@ describe('schema', () => {
         variationSchema.timeUnitHasVariation({
           field: 'a',
           channel: CHANNEL.X,
-          timeUnit: 'yearmonth'
+          timeUnit: 'yearmonth',
         })
       );
     });
@@ -434,7 +434,7 @@ describe('schema', () => {
         variationSchema.timeUnitHasVariation({
           field: 'a',
           channel: CHANNEL.X,
-          timeUnit: 'yearmonth'
+          timeUnit: 'yearmonth',
         })
       );
     });
@@ -442,14 +442,14 @@ describe('schema', () => {
     it('should return false when date has no variation but day does have variation and the `day` unit is used', () => {
       const variationData = [
         {a: 'Jan 1, 2000'}, // saturday
-        {a: 'Feb 1, 2000'} // tuesday
+        {a: 'Feb 1, 2000'}, // tuesday
       ];
       const variationSchema = build(variationData);
       assert.isFalse(
         variationSchema.timeUnitHasVariation({
           field: 'a',
           channel: CHANNEL.X,
-          timeUnit: 'day'
+          timeUnit: 'day',
         })
       );
     });
@@ -460,7 +460,7 @@ describe('schema', () => {
       assert.isUndefined(
         variationSchema.timeUnitHasVariation({
           field: 'a',
-          channel: CHANNEL.X
+          channel: CHANNEL.X,
         })
       );
     });
@@ -487,7 +487,7 @@ describe('schema', () => {
       {a: 1, b: 1.1, c: 'a', d: 'a', e: 'July 14 2016'},
       {a: 2, b: 1.2, c: 'b', d: 'a', e: '7/14/2016'},
       {a: 3, b: 1.3, c: 'c', d: 'b', e: '6/14/2016'},
-      {a: 4, b: 1.4, c: 'd', d: 'b', e: '6-14-2016'}
+      {a: 4, b: 1.4, c: 'd', d: 'b', e: '6-14-2016'},
     ];
     const domainSchema: Schema = build(domainData);
     it('should return an array containing one of each datapoint corresponding to the given EncodingQuery for non-Q data', () => {
@@ -531,15 +531,15 @@ describe('schema', () => {
       {a: 1, b: 1.1, c: 'a', d: 2.3},
       {a: 2, b: 1.2, c: 'b', d: 3.4},
       {a: 3, b: 1.3, c: 'c', d: 6.0},
-      {a: 4, b: 1.4, c: 'd', d: 7.2}
+      {a: 4, b: 1.4, c: 'd', d: 7.2},
     ];
 
     const dataTable = {
       fields: [
         {name: 'a', type: PrimitiveType.INTEGER, title: 'a title', custom: 'la la la'},
-        {name: 'b', type: PrimitiveType.INTEGER}
+        {name: 'b', type: PrimitiveType.INTEGER},
       ],
-      primaryKey: 'a'
+      primaryKey: 'a',
     };
 
     // build schema with passed in dataTable schema

@@ -11,7 +11,7 @@
     <script src="./node_modules/d3/build/d3.min.js"></script>
     <script src="./build/compassql.js"></script>
     <script>
-      d3.json('node_modules/vega-datasets/data/cars.json', function (error, data) {
+      d3.json("node_modules/vega-datasets/data/cars.json", function (error, data) {
         // 1) Specify a query config
         var opt = {};
 
@@ -21,23 +21,23 @@
         // 3) Specify a Query (e.g., a query for automatically selecting a mark)
         var query = {
           spec: {
-            data: {url: 'node_modules/vega-datasets/data/cars.json'},
-            mark: '?',
+            data: { url: "node_modules/vega-datasets/data/cars.json" },
+            mark: "?",
             encodings: [
               {
-                channel: 'x',
-                aggregate: 'mean',
-                field: 'Horsepower',
-                type: 'quantitative'
+                channel: "x",
+                aggregate: "mean",
+                field: "Horsepower",
+                type: "quantitative",
               },
               {
-                channel: 'y',
-                field: 'Cylinders',
-                type: 'ordinal'
-              }
-            ]
+                channel: "y",
+                field: "Cylinders",
+                type: "ordinal",
+              },
+            ],
           },
-          chooseBy: 'effectiveness'
+          chooseBy: "effectiveness",
         };
 
         // 4) Execute a CompassQL `query`.
@@ -53,8 +53,8 @@
         // We can just get the top visualization by accessing the 0-th item.
         var topVlSpec = vlTree.items[0];
 
-        document.querySelector('#query').innerHTML = JSON.stringify(query, null, 2);
-        document.querySelector('#spec').innerHTML = JSON.stringify(topVlSpec, null, 2);
+        document.querySelector("#query").innerHTML = JSON.stringify(query, null, 2);
+        document.querySelector("#spec").innerHTML = JSON.stringify(topVlSpec, null, 2);
       });
     </script>
   </body>

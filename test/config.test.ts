@@ -9,9 +9,9 @@ describe('config', () => {
       enum: {
         mark: ['point'],
         binProps: {
-          maxbins: [100, 200]
-        }
-      }
+          maxbins: [100, 200],
+        },
+      },
     });
 
     it('should preserve default config for ones not overridden.', () => {

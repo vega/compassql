@@ -112,7 +112,7 @@ export function fromSpec(spec: TopLevel<FacetedUnitSpec>): SpecQuery {
         }
 
         return encQ;
-      })
+      }),
     },
     spec.config ? {config: spec.config} : {}
   );
@@ -186,11 +186,11 @@ export function hasRequiredStackProperties(specQ: SpecQuery) {
     Property.AUTOCOUNT,
     Property.SCALE,
     getEncodingNestedProp('scale', 'type'),
-    Property.TYPE
+    Property.TYPE,
   ];
   const exclude = toMap(without(ALL_ENCODING_PROPS, requiredEncodingProps));
 
-  const encodings = specQ.encodings.filter(encQ => !isDisabledAutoCountQuery(encQ));
+  const encodings = specQ.encodings.filter((encQ) => !isDisabledAutoCountQuery(encQ));
   for (const encQ of encodings) {
     if (objectContainsWildcard(encQ, {exclude: exclude})) {
       return false;

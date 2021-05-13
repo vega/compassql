@@ -20,7 +20,7 @@ import {
   isMeasure,
   isValueQuery,
   ScaleQuery,
-  scaleType
+  scaleType,
 } from '../query/encoding';
 import {ExpandedType} from '../query/expandedtype';
 import {Schema} from '../schema';
@@ -43,7 +43,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
   }
 
   public hasAllRequiredPropertiesSpecific(specM: SpecQueryModel): boolean {
-    return every(this.constraint.properties, prop => {
+    return every(this.constraint.properties, (prop) => {
       if (prop === Property.MARK) {
         return !isWildcard(specM.getMark());
       }
@@ -54,7 +54,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
         const parent = prop.parent;
         const child = prop.child;
 
-        return every(specM.getEncodings(), encQ => {
+        return every(specM.getEncodings(), (encQ) => {
           if (!encQ[parent]) {
             return true;
           }
@@ -67,7 +67,7 @@ export class SpecConstraintModel extends AbstractConstraintModel {
         throw new Error('UNIMPLEMENTED');
       }
 
-      return every(specM.getEncodings(), encQ => {
+      return every(specM.getEncodings(), (encQ) => {
         if (!encQ[prop]) {
           return true;
         }
@@ -104,7 +104,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       const usedChannel = {};
 
       // channel for all encodings should be valid
-      return every(specM.getEncodings(), encQ => {
+      return every(specM.getEncodings(), (encQ) => {
         if (!isWildcard(encQ.channel)) {
           // If channel is specified, it should no be used already
           if (usedChannel[encQ.channel]) {
@@ -115,7 +115,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         }
         return true; // unspecified channel is valid
       });
-    }
+    },
   },
   {
     name: 'alwaysIncludeZeroInScaleWithBarMark',
@@ -125,7 +125,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       Property.SCALE,
       getEncodingNestedProp('scale', 'zero'),
       Property.CHANNEL,
-      Property.TYPE
+      Property.TYPE,
     ],
     allowWildcardForProperties: false,
     strict: true,
@@ -149,7 +149,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       }
 
       return true;
-    }
+    },
   },
   {
     name: 'autoAddCount',
@@ -214,7 +214,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       }
 
       return true; // no auto count, no constraint
-    }
+    },
   },
   {
     name: 'channelPermittedByMarkType',
@@ -229,7 +229,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       if (isWildcard(mark)) return true;
 
       // TODO: can optimize this to detect only what's the changed property if needed.
-      return every(specM.getEncodings(), encQ => {
+      return every(specM.getEncodings(), (encQ) => {
         // channel unspecified, no need to check
         if (isWildcard(encQ.channel)) return true;
 
@@ -237,7 +237,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
 
         return !!supportMark(encQ.channel, mark as Mark);
       });
-    }
+    },
   },
   {
     name: 'hasAllRequiredChannelsForMark',
@@ -271,7 +271,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       }
       /* istanbul ignore next */
       throw new Error(`hasAllRequiredChannelsForMark not implemented for mark${JSON.stringify(mark)}`);
-    }
+    },
   },
   {
     name: 'omitAggregate',
@@ -284,7 +284,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         return false;
       }
       return true;
-    }
+    },
   },
   {
     name: 'omitAggregatePlotWithDimensionOnlyOnFacet',
@@ -320,7 +320,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         }
       }
       return true;
-    }
+    },
   },
   {
     name: 'omitAggregatePlotWithoutDimension',
@@ -339,7 +339,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         });
       }
       return true;
-    }
+    },
   },
   {
     // TODO: we can be smarter and check if bar has occlusion based on profiling statistics
@@ -353,7 +353,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         return specM.isAggregate();
       }
       return true;
-    }
+    },
   },
   {
     name: 'omitBarTickWithSize',
@@ -388,7 +388,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         }
       }
       return true; // skip
-    }
+    },
   },
   {
     name: 'omitBarAreaForLogScale',
@@ -398,7 +398,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       Property.CHANNEL,
       Property.SCALE,
       getEncodingNestedProp('scale', 'type'),
-      Property.TYPE
+      Property.TYPE,
     ],
     allowWildcardForProperties: false,
     strict: true,
@@ -419,7 +419,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         }
       }
       return true;
-    }
+    },
   },
   {
     name: 'omitMultipleNonPositionalChannels',
@@ -459,7 +459,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         }
       }
       return true;
-    }
+    },
   },
   {
     name: 'omitNonPositionalOrFacetOverPositionalChannels',
@@ -500,7 +500,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         return hasX && hasY;
       }
       return true;
-    }
+    },
   },
   {
     name: 'omitRaw',
@@ -513,7 +513,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         return false;
       }
       return true;
-    }
+    },
   },
   {
     name: 'omitRawContinuousFieldForAggregatePlot',
@@ -561,7 +561,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         }
       }
       return true;
-    }
+    },
   },
   {
     name: 'omitRawDetail',
@@ -588,7 +588,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         }
         return true;
       });
-    }
+    },
   },
   {
     name: 'omitRepeatedField',
@@ -633,7 +633,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         }
       }
       return true;
-    }
+    },
   },
   // TODO: omitShapeWithBin
   {
@@ -648,7 +648,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         return false;
       }
       return true;
-    }
+    },
   },
   // EXPENSIVE CONSTRAINTS -- check them later!
   {
@@ -661,7 +661,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       Property.TIMEUNIT,
       Property.BIN,
       Property.AGGREGATE,
-      Property.AUTOCOUNT
+      Property.AUTOCOUNT,
     ],
     allowWildcardForProperties: false,
     strict: false,
@@ -741,7 +741,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       }
       /* istanbul ignore next */
       throw new Error(`hasAllRequiredChannelsForMark not implemented for mark${mark}`);
-    }
+    },
   },
   {
     name: 'omitInvalidStackSpec',
@@ -755,7 +755,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       Property.AUTOCOUNT,
       Property.SCALE,
       getEncodingNestedProp('scale', 'type'),
-      Property.TYPE
+      Property.TYPE,
     ],
     allowWildcardForProperties: false,
     strict: true,
@@ -774,7 +774,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       }
 
       return true;
-    }
+    },
   },
   {
     name: 'omitNonSumStack',
@@ -786,7 +786,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       Property.AUTOCOUNT,
       Property.SCALE,
       getEncodingNestedProp('scale', 'type'),
-      Property.TYPE
+      Property.TYPE,
     ],
     allowWildcardForProperties: false,
     strict: true,
@@ -799,7 +799,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         }
       }
       return true;
-    }
+    },
   },
   {
     name: 'omitTableWithOcclusionIfAutoAddCount',
@@ -811,7 +811,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
       Property.TIMEUNIT,
       Property.BIN,
       Property.AGGREGATE,
-      Property.AUTOCOUNT
+      Property.AUTOCOUNT,
     ],
     allowWildcardForProperties: false,
     strict: false,
@@ -824,7 +824,7 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
           if (!specM.isAggregate()) {
             return false;
           } else {
-            return every(specM.getEncodings(), encQ => {
+            return every(specM.getEncodings(), (encQ) => {
               const channel = encQ.channel;
 
               if (
@@ -844,9 +844,9 @@ export const SPEC_CONSTRAINTS: SpecConstraintModel[] = [
         }
       }
       return true;
-    }
-  }
-].map(sc => new SpecConstraintModel(sc));
+    },
+  },
+].map((sc) => new SpecConstraintModel(sc));
 
 // For testing
 export const SPEC_CONSTRAINT_INDEX: {[name: string]: SpecConstraintModel} = SPEC_CONSTRAINTS.reduce(

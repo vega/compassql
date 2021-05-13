@@ -17,8 +17,8 @@ export const VALUE_CONSTRAINTS: EncodingConstraintModel<ValueQuery>[] = [
     strict: true,
     satisfy: (valueQ: ValueQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
       return !contains(['row', 'column', 'x', 'y', 'detail', 'order'], valueQ.channel);
-    }
-  }
+    },
+  },
 ].map((ec: EncodingConstraint<ValueQuery>) => new EncodingConstraintModel<ValueQuery>(ec));
 
 export const VALUE_CONSTRAINT_INDEX: {[name: string]: EncodingConstraintModel<ValueQuery>} = VALUE_CONSTRAINTS.reduce(

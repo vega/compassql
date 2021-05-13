@@ -8,7 +8,6 @@
     "build": true
   },
   "files.trimTrailingWhitespace": true,
-  "tslint.autoFixOnSave": true,
   "typescript.format.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces": false,
   "typescript.tsdk": "./node_modules/typescript/lib"
 }

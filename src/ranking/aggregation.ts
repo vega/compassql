@@ -12,7 +12,7 @@ export function score(specM: SpecQueryModel, schema: Schema, opt: QueryConfig): 
   const feature = aggregationQualityFeature(specM, schema, opt);
   return {
     score: feature.score,
-    features: [feature]
+    features: [feature],
   };
 }
 
@@ -33,11 +33,11 @@ function aggregationQualityFeature(specM: SpecQueryModel, _: Schema, __: QueryCo
       return {
         type: name,
         score: 0.1,
-        feature: 'Aggregate with raw continuous'
+        feature: 'Aggregate with raw continuous',
       };
     }
 
-    if (some(encodings, encQ => isFieldQuery(encQ) && isDimension(encQ))) {
+    if (some(encodings, (encQ) => isFieldQuery(encQ) && isDimension(encQ))) {
       const hasCount = some(encodings, (encQ: EncodingQuery) => {
         return (isFieldQuery(encQ) && encQ.aggregate === 'count') || isEnabledAutoCountQuery(encQ);
       });
@@ -51,20 +51,20 @@ function aggregationQualityFeature(specM: SpecQueryModel, _: Schema, __: QueryCo
         return {
           type: name,
           score: 0.8,
-          feature: 'Aggregate with count'
+          feature: 'Aggregate with count',
         };
       } else if (hasBin) {
         // This is not as good as binning all the Q and show heatmap
         return {
           type: name,
           score: 0.7,
-          feature: 'Aggregate with bin but without count'
+          feature: 'Aggregate with bin but without count',
         };
       } else {
         return {
           type: name,
           score: 0.9,
-          feature: 'Aggregate without count and without bin'
+          feature: 'Aggregate without count and without bin',
         };
       }
     }
@@ -72,22 +72,22 @@ function aggregationQualityFeature(specM: SpecQueryModel, _: Schema, __: QueryCo
     return {
       type: name,
       score: 0.3,
-      feature: 'Aggregate without dimension'
+      feature: 'Aggregate without dimension',
     };
   } else {
-    if (some(encodings, encQ => isFieldQuery(encQ) && !isDimension(encQ))) {
+    if (some(encodings, (encQ) => isFieldQuery(encQ) && !isDimension(encQ))) {
       // raw plots with measure -- simplest of all!
       return {
         type: name,
         score: 1,
-        feature: 'Raw with measure'
+        feature: 'Raw with measure',
       };
     }
     // raw plots with no measure -- often a lot of occlusion
     return {
       type: name,
       score: 0.2,
-      feature: 'Raw without measure'
+      feature: 'Raw without measure',
     };
   }
 }

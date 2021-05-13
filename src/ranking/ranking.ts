@@ -70,7 +70,7 @@ export function rank(group: SpecQueryModelGroup, query: Query, schema: Schema, l
     }
   } else {
     // sort lower-level nodes first because our ranking takes top-item in the subgroup
-    group.items.forEach(subgroup => {
+    group.items.forEach((subgroup) => {
       rank(subgroup as SpecQueryModelGroup, query, schema, level + 1);
     });
     if (query.nest[level].orderGroupBy) {

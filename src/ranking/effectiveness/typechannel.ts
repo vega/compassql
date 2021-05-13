@@ -36,10 +36,10 @@ export class TypeChannelScorer extends Scorer {
       shape: TERRIBLE,
       row: TERRIBLE,
       column: TERRIBLE,
-      detail: 2 * TERRIBLE
+      detail: 2 * TERRIBLE,
     };
 
-    [Q, T, TIMEUNIT_T].forEach(type => {
+    [Q, T, TIMEUNIT_T].forEach((type) => {
       keys(CONTINUOUS_TYPE_CHANNEL_SCORE).forEach((channel: Channel) => {
         SCORE[this.featurize(type, channel)] = CONTINUOUS_TYPE_CHANNEL_SCORE[channel];
       });
@@ -53,10 +53,10 @@ export class TypeChannelScorer extends Scorer {
 
       shape: -3.1,
       text: -3.2,
-      detail: -4
+      detail: -4,
     });
 
-    [BIN_Q, TIMEUNIT_O, O].forEach(type => {
+    [BIN_Q, TIMEUNIT_O, O].forEach((type) => {
       keys(ORDERED_TYPE_CHANNEL_SCORE).forEach((channel: Channel) => {
         SCORE[this.featurize(type, channel)] = ORDERED_TYPE_CHANNEL_SCORE[channel];
       });
@@ -73,7 +73,7 @@ export class TypeChannelScorer extends Scorer {
 
       detail: -2,
       size: -3,
-      opacity: -3.1
+      opacity: -3.1,
     };
 
     keys(NOMINAL_TYPE_CHANNEL_SCORE).forEach((channel: Channel) => {

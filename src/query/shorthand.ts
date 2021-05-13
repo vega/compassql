@@ -14,7 +14,7 @@ import {
   isEncodingNestedParent,
   Property,
   SORT_PROPS,
-  VIEW_PROPS
+  VIEW_PROPS,
 } from '../property';
 import {PropIndex} from '../propindex';
 import {Dict, isArray, isBoolean, keys} from '../util';
@@ -27,14 +27,14 @@ import {
   isDisabledAutoCountQuery,
   isEnabledAutoCountQuery,
   isFieldQuery,
-  isValueQuery
+  isValueQuery,
 } from './encoding';
 import {fromSpec, getVlStack, SpecQuery} from './spec';
 
 export type Replacer = (s: string) => string;
 
 export function getReplacerIndex(replaceIndex: PropIndex<Dict<string>>): PropIndex<Replacer> {
-  return replaceIndex.map(r => getReplacer(r));
+  return replaceIndex.map((r) => getReplacer(r));
 }
 
 export function getReplacer(replace: Dict<string>): Replacer {
@@ -90,7 +90,7 @@ export const PROPERTY_SUPPORTED_CHANNELS = {
   legend: {color: true, opacity: true, size: true, shape: true},
   scale: {x: true, y: true, color: true, opacity: true, row: true, column: true, size: true, shape: true},
   sort: {x: true, y: true, path: true, order: true},
-  stack: {x: true, y: true}
+  stack: {x: true, y: true},
 };
 
 /**
@@ -220,7 +220,7 @@ export function fieldDef(
     }
     // encoding properties
     fieldAndParams += props
-      .map(p => {
+      .map((p) => {
         const val = p.value instanceof Array ? `[${p.value}]` : p.value;
         return `,${p.key}=${val}`;
       })
@@ -285,7 +285,7 @@ function fieldDefProps(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer
       if (prop && include.get(prop) && bin[child] !== undefined) {
         props.push({
           key: child,
-          value: value(bin[child], replacer.get(prop))
+          value: value(bin[child], replacer.get(prop)),
         });
       }
     }
@@ -304,13 +304,13 @@ function fieldDefProps(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer
         // `scale`, `axis`, `legend` can be false/null.
         props.push({
           key: `${parent}`,
-          value: parentValue || false // return true or false (false if null)
+          value: parentValue || false, // return true or false (false if null)
         });
       } else if (isString(parentValue)) {
         // `sort` can be a string (ascending/descending).
         props.push({
           key: `${parent}`,
-          value: replace(JSON.stringify(parentValue), replacer.get(parent))
+          value: replace(JSON.stringify(parentValue), replacer.get(parent)),
         });
       } else {
         const nestedPropChildren = [];
@@ -319,7 +319,7 @@ function fieldDefProps(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer
           if (nestedProp && include.get(nestedProp) && parentValue[child] !== undefined) {
             nestedPropChildren.push({
               key: child,
-              value: value(parentValue[child], replacer.get(nestedProp))
+              value: value(parentValue[child], replacer.get(nestedProp)),
             });
           }
         }
@@ -335,7 +335,7 @@ function fieldDefProps(fieldQ: FieldQuery, include: PropIndex<boolean>, replacer
           // Sort to make sure that parameter are ordered consistently
           props.push({
             key: `${parent}`,
-            value: JSON.stringify(nestedPropObject)
+            value: JSON.stringify(nestedPropObject),
           });
         }
       }
@@ -351,7 +351,7 @@ export function parse(shorthand: string): SpecQuery {
 
   const specQ: SpecQuery = {
     mark: splitShorthand[0] as Mark,
-    encodings: [] as EncodingQuery[]
+    encodings: [] as EncodingQuery[],
   };
 
   for (let i = 1; i < splitShorthand.length; i++) {
@@ -417,7 +417,7 @@ export namespace shorthandParser {
         : rawFieldDef(splitWithTail(fieldDefShorthand, ',', 2));
     return {
       channel,
-      ...encQMixins
+      ...encQMixins,
     };
   }
 
@@ -510,7 +510,7 @@ export namespace shorthandParser {
         ...fieldQ,
         ...rawFieldDef(
           splitWithTail(fieldDefShorthand.substring(closingBraceIndex + 2, fieldDefShorthand.length - 1), ',', 2)
-        )
+        ),
       };
     } else {
       const func = fieldDefShorthand.substring(0, fieldDefShorthand.indexOf('('));
@@ -520,17 +520,17 @@ export namespace shorthandParser {
       if (isAggregateOp(func)) {
         return {
           aggregate: func,
-          ...rawFieldDef(insideFnParts)
+          ...rawFieldDef(insideFnParts),
         };
       } else if (isUTCTimeUnit(func) || isLocalSingleTimeUnit(func)) {
         return {
           timeUnit: func,
-          ...rawFieldDef(insideFnParts)
+          ...rawFieldDef(insideFnParts),
         };
       } else if (func === 'bin') {
         return {
           bin: {},
-          ...rawFieldDef(insideFnParts)
+          ...rawFieldDef(insideFnParts),
         };
       }
     }

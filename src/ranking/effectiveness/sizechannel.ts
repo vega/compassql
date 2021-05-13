@@ -17,7 +17,7 @@ export class SizeChannelScorer extends Scorer {
   protected initScore() {
     return {
       bar_size: -2,
-      tick_size: -2
+      tick_size: -2,
     } as Dict<number>;
   }
 

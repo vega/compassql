@@ -34,7 +34,7 @@ export function smallRangeStepForHighCardinalityOrFacet(
   encQIndex: Dict<EncodingQuery>,
   opt: QueryConfig
 ): SpecQueryModel {
-  [CHANNEL.ROW, CHANNEL.Y, CHANNEL.COLUMN, CHANNEL.X].forEach(channel => {
+  [CHANNEL.ROW, CHANNEL.Y, CHANNEL.COLUMN, CHANNEL.X].forEach((channel) => {
     encQIndex[channel] = specM.getEncodingQueryByChannel(channel);
   });
 
@@ -124,7 +124,7 @@ export function xAxisOnTopForHighYCardinalityWithoutColumn(
   encQIndex: Dict<EncodingQuery>,
   opt: QueryConfig
 ): SpecQueryModel {
-  [CHANNEL.COLUMN, CHANNEL.X, CHANNEL.Y].forEach(channel => {
+  [CHANNEL.COLUMN, CHANNEL.X, CHANNEL.Y].forEach((channel) => {
     encQIndex[channel] = specM.getEncodingQueryByChannel(channel);
   });
 

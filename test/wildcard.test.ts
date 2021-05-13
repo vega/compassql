@@ -10,7 +10,7 @@ describe('wildcard', () => {
       assert(
         isWildcard({
           name: 'a',
-          enum: [1, 2, 3]
+          enum: [1, 2, 3],
         })
       );
     });
@@ -18,7 +18,7 @@ describe('wildcard', () => {
     it('should return true for a wildcard with name.', () => {
       assert(
         isWildcard({
-          name: 'a'
+          name: 'a',
         })
       );
     });
@@ -26,7 +26,7 @@ describe('wildcard', () => {
     it('should return true for a wildcard with values', () => {
       assert(
         isWildcard({
-          enum: [1, 2, 3]
+          enum: [1, 2, 3],
         })
       );
     });
@@ -57,7 +57,7 @@ describe('wildcard', () => {
       const mark = initWildcard(SHORT_WILDCARD, 'm', [MARK.POINT]);
       assert.deepEqual(mark, {
         name: 'm',
-        enum: [MARK.POINT]
+        enum: [MARK.POINT],
       });
     });
 
@@ -102,7 +102,7 @@ describe('wildcard', () => {
     it('should return enum for every properties by default', () => {
       const missing = [];
       const mockSchema = {
-        fieldNames: () => ['a', 'b']
+        fieldNames: () => ['a', 'b'],
       } as any;
       for (const prop of DEFAULT_PROP_PRECEDENCE) {
         const e = getDefaultEnumValues(prop, mockSchema, DEFAULT_QUERY_CONFIG);
@@ -118,7 +118,7 @@ describe('wildcard', () => {
     it('should return enum for every properties by default.', () => {
       const missing = [];
       const mockSchema = {
-        fieldNames: () => ['a', 'b']
+        fieldNames: () => ['a', 'b'],
       } as any;
       for (const prop of DEFAULT_PROP_PRECEDENCE) {
         const e = getDefaultEnumValues(prop, mockSchema, DEFAULT_QUERY_CONFIG);

@@ -21,11 +21,11 @@ describe('constraints/field', () => {
   const defaultOpt = DEFAULT_QUERY_CONFIG;
 
   const CONSTRAINT_MANUALLY_SPECIFIED_CONFIG = extend({}, DEFAULT_QUERY_CONFIG, {
-    constraintManuallySpecifiedValue: true
+    constraintManuallySpecifiedValue: true,
   });
 
   // Make sure all non-strict constraints have their configs.
-  FIELD_CONSTRAINTS.forEach(constraint => {
+  FIELD_CONSTRAINTS.forEach((constraint) => {
     if (!constraint.strict()) {
       it(`${constraint.name()} should have default config for all non-strict constraints`, () => {
         assert.isDefined(DEFAULT_QUERY_CONFIG[constraint.name()]);
@@ -40,7 +40,7 @@ describe('constraints/field', () => {
       properties: [Property.AGGREGATE, Property.TYPE, Property.SCALE, {parent: 'scale', child: 'type'}],
       allowWildcardForProperties: false,
       strict: true,
-      satisfy: undefined
+      satisfy: undefined,
     });
 
     it('should return true if all properties is defined', () => {
@@ -49,7 +49,7 @@ describe('constraints/field', () => {
         aggregate: 'mean',
         field: 'A',
         scale: {type: ScaleType.LOG},
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       };
       assert.isTrue(encModel.hasAllRequiredPropertiesSpecific(encQ));
     });
@@ -59,7 +59,7 @@ describe('constraints/field', () => {
         channel: CHANNEL.X,
         field: 'A',
         scale: {type: ScaleType.LOG},
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       };
       assert.isTrue(encModel.hasAllRequiredPropertiesSpecific(encQ));
     });
@@ -69,7 +69,7 @@ describe('constraints/field', () => {
         channel: CHANNEL.X,
         aggregate: SHORT_WILDCARD,
         scale: {type: ScaleType.LOG},
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       };
       assert.isFalse(encModel.hasAllRequiredPropertiesSpecific(encQ));
     });
@@ -80,7 +80,7 @@ describe('constraints/field', () => {
         aggregate: 'mean',
         field: 'A',
         scale: {type: SHORT_WILDCARD},
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       };
       assert.isFalse(encModel.hasAllRequiredPropertiesSpecific(encQ));
     });
@@ -91,11 +91,11 @@ describe('constraints/field', () => {
       channel: CHANNEL.X,
       aggregate: 'mean',
       field: 'A',
-      type: undefined
+      type: undefined,
     };
 
     it('should return false if aggregate is applied to non-quantitative type', () => {
-      [TYPE.NOMINAL, TYPE.ORDINAL].forEach(type => {
+      [TYPE.NOMINAL, TYPE.ORDINAL].forEach((type) => {
         encQ.type = type;
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['aggregateOpSupportedByType'].satisfy(
@@ -110,7 +110,7 @@ describe('constraints/field', () => {
 
     it('should return true if aggregate is applied to quantitative field', () => {
       // TODO: verify if this really works with temporal
-      [TYPE.QUANTITATIVE, TYPE.TEMPORAL].forEach(type => {
+      [TYPE.QUANTITATIVE, TYPE.TEMPORAL].forEach((type) => {
         encQ.type = type;
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['aggregateOpSupportedByType'].satisfy(
@@ -161,12 +161,12 @@ describe('constraints/field', () => {
 
   describe('minCardinalityForBin', () => {
     it('should return false for binned quantitative field that has low cardinality', () => {
-      ['Q5', 'Q10'].forEach(field => {
+      ['Q5', 'Q10'].forEach((field) => {
         const encQ: EncodingQuery = {
           channel: CHANNEL.X,
           bin: true,
           field: field,
-          type: TYPE.QUANTITATIVE
+          type: TYPE.QUANTITATIVE,
         };
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['minCardinalityForBin'].satisfy(
@@ -180,12 +180,12 @@ describe('constraints/field', () => {
     });
 
     it('should return true for binned quantitative field that has high enough cardinality', () => {
-      ['Q15', 'Q20', 'Q'].forEach(field => {
+      ['Q15', 'Q20', 'Q'].forEach((field) => {
         const encQ: EncodingQuery = {
           channel: CHANNEL.X,
           bin: true,
           field: field,
-          type: TYPE.QUANTITATIVE
+          type: TYPE.QUANTITATIVE,
         };
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['minCardinalityForBin'].satisfy(
@@ -204,11 +204,11 @@ describe('constraints/field', () => {
       channel: CHANNEL.X,
       bin: true,
       field: 'A',
-      type: undefined
+      type: undefined,
     };
 
     it('should return false if bin is applied to non-quantitative type', () => {
-      [TYPE.NOMINAL, TYPE.ORDINAL, TYPE.TEMPORAL].forEach(type => {
+      [TYPE.NOMINAL, TYPE.ORDINAL, TYPE.TEMPORAL].forEach((type) => {
         encQ.type = type;
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['binAppliedForQuantitative'].satisfy(
@@ -235,7 +235,7 @@ describe('constraints/field', () => {
 
     it('should return true for any non-binned field', () => {
       encQ.bin = undefined;
-      [TYPE.NOMINAL, TYPE.ORDINAL, TYPE.TEMPORAL, TYPE.QUANTITATIVE].forEach(type => {
+      [TYPE.NOMINAL, TYPE.ORDINAL, TYPE.TEMPORAL, TYPE.QUANTITATIVE].forEach((type) => {
         encQ.type = type;
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['binAppliedForQuantitative'].satisfy(
@@ -250,7 +250,7 @@ describe('constraints/field', () => {
   });
 
   describe('channelFieldCompatible', () => {
-    [CHANNEL.X, CHANNEL.Y, CHANNEL.COLOR, CHANNEL.TEXT, CHANNEL.DETAIL].forEach(channel => {
+    [CHANNEL.X, CHANNEL.Y, CHANNEL.COLOR, CHANNEL.TEXT, CHANNEL.DETAIL].forEach((channel) => {
       it(`${channel} supports raw measure.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'Q', type: TYPE.QUANTITATIVE};
         assert.isTrue(
@@ -348,7 +348,7 @@ describe('constraints/field', () => {
       });
     });
 
-    [CHANNEL.ROW, CHANNEL.COLUMN].forEach(channel => {
+    [CHANNEL.ROW, CHANNEL.COLUMN].forEach((channel) => {
       it(`${channel} does not support raw measure.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'Q', type: TYPE.QUANTITATIVE};
         assert.isFalse(
@@ -436,7 +436,7 @@ describe('constraints/field', () => {
       });
     });
 
-    [CHANNEL.SIZE].forEach(channel => {
+    [CHANNEL.SIZE].forEach((channel) => {
       it(`${channel} supports raw measure.`, () => {
         const encQ: EncodingQuery = {channel: channel, field: 'Q', type: TYPE.QUANTITATIVE};
         assert.isTrue(
@@ -528,7 +528,7 @@ describe('constraints/field', () => {
       const encQ: EncodingQuery = {
         channel: CHANNEL.COLOR,
         field: 'Q',
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       };
       assert.isTrue(FIELD_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
@@ -538,7 +538,7 @@ describe('constraints/field', () => {
         hasFn: true,
         channel: CHANNEL.COLOR,
         field: 'Q',
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       };
       assert.isFalse(FIELD_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
@@ -549,7 +549,7 @@ describe('constraints/field', () => {
         channel: CHANNEL.COLOR,
         aggregate: 'mean',
         field: 'Q',
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       };
       assert.isTrue(FIELD_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
@@ -560,7 +560,7 @@ describe('constraints/field', () => {
         channel: CHANNEL.COLOR,
         bin: true,
         field: 'Q',
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       };
       assert.isTrue(FIELD_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
@@ -571,7 +571,7 @@ describe('constraints/field', () => {
         channel: CHANNEL.COLOR,
         timeUnit: vegaTime.HOURS,
         field: 'T',
-        type: TYPE.TEMPORAL
+        type: TYPE.TEMPORAL,
       };
       assert.isTrue(FIELD_CONSTRAINT_INDEX['hasFn'].satisfy(encQ, schema, new PropIndex<Wildcard<any>>(), defaultOpt));
     });
@@ -579,11 +579,11 @@ describe('constraints/field', () => {
 
   describe('maxCardinalityForCategoricalColor', () => {
     it('should return true for nominal color that has low cardinality', () => {
-      ['O', 'O_10', 'O_20'].forEach(field => {
+      ['O', 'O_10', 'O_20'].forEach((field) => {
         const encQ: EncodingQuery = {
           channel: CHANNEL.COLOR,
           field: field,
-          type: TYPE.NOMINAL
+          type: TYPE.NOMINAL,
         };
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['maxCardinalityForCategoricalColor'].satisfy(
@@ -597,11 +597,11 @@ describe('constraints/field', () => {
     });
 
     it('should return false for nominal color that has high cardinality', () => {
-      ['O_100'].forEach(field => {
+      ['O_100'].forEach((field) => {
         const encQ: EncodingQuery = {
           channel: CHANNEL.COLOR,
           field: field,
-          type: TYPE.NOMINAL
+          type: TYPE.NOMINAL,
         };
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['maxCardinalityForCategoricalColor'].satisfy(
@@ -621,12 +621,12 @@ describe('constraints/field', () => {
 
   describe('maxCardinalityForFacet', () => {
     it('should return true for nominal field that has low cardinality', () => {
-      [CHANNEL.ROW, CHANNEL.COLUMN].forEach(channel => {
-        ['O', 'O_10'].forEach(field => {
+      [CHANNEL.ROW, CHANNEL.COLUMN].forEach((channel) => {
+        ['O', 'O_10'].forEach((field) => {
           const encQ: EncodingQuery = {
             channel: channel,
             field: field,
-            type: TYPE.NOMINAL
+            type: TYPE.NOMINAL,
           };
           assert.isTrue(
             FIELD_CONSTRAINT_INDEX['maxCardinalityForFacet'].satisfy(
@@ -641,12 +641,12 @@ describe('constraints/field', () => {
     });
 
     it('should return false for nominal field that has high cardinality', () => {
-      [CHANNEL.ROW, CHANNEL.COLUMN].forEach(channel => {
-        ['O_100'].forEach(field => {
+      [CHANNEL.ROW, CHANNEL.COLUMN].forEach((channel) => {
+        ['O_100'].forEach((field) => {
           const encQ: EncodingQuery = {
             channel: channel,
             field: field,
-            type: TYPE.NOMINAL
+            type: TYPE.NOMINAL,
           };
           assert.isFalse(
             FIELD_CONSTRAINT_INDEX['maxCardinalityForFacet'].satisfy(
@@ -667,11 +667,11 @@ describe('constraints/field', () => {
 
   describe('maxCardinalityForShape', () => {
     it('should return true for nominal shape that has low cardinality', () => {
-      ['O'].forEach(field => {
+      ['O'].forEach((field) => {
         const encQ: EncodingQuery = {
           channel: CHANNEL.SHAPE,
           field: field,
-          type: TYPE.NOMINAL
+          type: TYPE.NOMINAL,
         };
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['maxCardinalityForShape'].satisfy(
@@ -685,11 +685,11 @@ describe('constraints/field', () => {
     });
 
     it('should return false for nominal shape that has high cardinality', () => {
-      ['O_10', 'O_20', 'O_100'].forEach(field => {
+      ['O_10', 'O_20', 'O_100'].forEach((field) => {
         const encQ: EncodingQuery = {
           channel: CHANNEL.SHAPE,
           field: field,
-          type: TYPE.NOMINAL
+          type: TYPE.NOMINAL,
         };
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['maxCardinalityForShape'].satisfy(
@@ -714,7 +714,7 @@ describe('constraints/field', () => {
         field: 'Q',
         bin: true,
         scale: {type: ScaleType.LOG},
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       };
       assert.isFalse(
         FIELD_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(
@@ -733,7 +733,7 @@ describe('constraints/field', () => {
       bin: true,
       field: 'A',
       scale: {zero: undefined},
-      type: TYPE.QUANTITATIVE
+      type: TYPE.QUANTITATIVE,
     };
 
     it('should return false if scale zero is used with binned field', () => {
@@ -762,14 +762,14 @@ describe('constraints/field', () => {
   });
 
   describe('dataTypeAndFunctionMatchScaleType', () => {
-    [ScaleType.ORDINAL, ScaleType.POINT, ScaleType.BAND].forEach(scaleType => {
+    [ScaleType.ORDINAL, ScaleType.POINT, ScaleType.BAND].forEach((scaleType) => {
       it(`scaleType of ${scaleType} matches data type ordinal with timeUnit`, () => {
         const encQ: EncodingQuery = {
           channel: CHANNEL.X,
           field: 'O',
           scale: {type: scaleType},
           type: TYPE.ORDINAL,
-          timeUnit: vegaTime.MINUTES
+          timeUnit: vegaTime.MINUTES,
         };
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(
@@ -782,14 +782,14 @@ describe('constraints/field', () => {
       });
     });
 
-    [ScaleType.ORDINAL, ScaleType.POINT, ScaleType.BAND].forEach(scaleType => {
+    [ScaleType.ORDINAL, ScaleType.POINT, ScaleType.BAND].forEach((scaleType) => {
       it(`scaleType of ${scaleType} matches data type nominal`, () => {
         const encQ: EncodingQuery = {
           channel: CHANNEL.X,
           field: 'N',
           scale: {type: scaleType},
           type: TYPE.NOMINAL,
-          timeUnit: vegaTime.MINUTES
+          timeUnit: vegaTime.MINUTES,
         };
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(
@@ -802,14 +802,14 @@ describe('constraints/field', () => {
       });
     });
 
-    [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, ScaleType.POINT, ScaleType.BAND].forEach(scaleType => {
+    [ScaleType.TIME, ScaleType.UTC, ScaleType.ORDINAL, ScaleType.POINT, ScaleType.BAND].forEach((scaleType) => {
       it(`scaleType of ${scaleType} matches data type temporal`, () => {
         const encQ: EncodingQuery = {
           channel: CHANNEL.X,
           field: 'T',
           scale: {type: scaleType},
           type: TYPE.TEMPORAL,
-          timeUnit: vegaTime.MINUTES
+          timeUnit: vegaTime.MINUTES,
         };
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['dataTypeAndFunctionMatchScaleType'].satisfy(
@@ -826,8 +826,8 @@ describe('constraints/field', () => {
       ScaleType.LOG,
       ScaleType.POW,
       ScaleType.SQRT, // ScaleType.QUANTILE, ScaleType.QUANTIZE,
-      ScaleType.LINEAR
-    ].forEach(scaleType => {
+      ScaleType.LINEAR,
+    ].forEach((scaleType) => {
       it(`scaleType of ${scaleType} matches data type quantitative`, () => {
         const encQ: EncodingQuery = {channel: CHANNEL.X, field: 'Q', scale: {type: scaleType}, type: TYPE.QUANTITATIVE};
         assert.isTrue(
@@ -846,7 +846,7 @@ describe('constraints/field', () => {
     const encQ: EncodingQuery = {
       channel: CHANNEL.X,
       field: 'A',
-      type: TYPE.QUANTITATIVE
+      type: TYPE.QUANTITATIVE,
     };
 
     it('should return true if there is no function', () => {
@@ -865,7 +865,7 @@ describe('constraints/field', () => {
         ['aggregate', 'mean'],
         ['timeUnit', vegaTime.MONTH],
         ['bin', true],
-        ['autoCount', true]
+        ['autoCount', true],
       ].forEach((tuple: any) => {
         const modifiedEncQ = duplicate(encQ);
         modifiedEncQ[tuple[0]] = tuple[1];
@@ -885,8 +885,8 @@ describe('constraints/field', () => {
         ['mean', vegaTime.MONTH, true],
         ['mean', undefined, true],
         ['mean', vegaTime.MONTH, undefined],
-        [undefined, vegaTime.MONTH, true]
-      ].forEach(tuple => {
+        [undefined, vegaTime.MONTH, true],
+      ].forEach((tuple) => {
         encQ.aggregate = tuple[0] as AggregateOp;
         encQ.timeUnit = tuple[1] as TimeUnit;
         encQ.bin = tuple[2] as boolean;
@@ -908,11 +908,11 @@ describe('constraints/field', () => {
       channel: CHANNEL.X,
       timeUnit: vegaTime.MONTH,
       field: 'A',
-      type: undefined
+      type: undefined,
     };
 
     it('should return false if timeUnit is applied to non-temporal type', () => {
-      [TYPE.NOMINAL, TYPE.ORDINAL, TYPE.QUANTITATIVE].forEach(type => {
+      [TYPE.NOMINAL, TYPE.ORDINAL, TYPE.QUANTITATIVE].forEach((type) => {
         encQ.type = type;
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['timeUnitAppliedForTemporal'].satisfy(
@@ -944,7 +944,7 @@ describe('constraints/field', () => {
       const encQ: EncodingQuery = {
         channel: '?',
         field: 'A',
-        type: '?'
+        type: '?',
       };
 
       assert.isTrue(
@@ -963,7 +963,7 @@ describe('constraints/field', () => {
         channel: '?',
         field: 'A',
         type: '?',
-        scale: {}
+        scale: {},
       };
 
       assert.isTrue(
@@ -984,8 +984,8 @@ describe('constraints/field', () => {
         type: 'nominal',
         scale: {
           // type: point
-          clamp: true // clamp should not work with discreteDomain scale
-        }
+          clamp: true, // clamp should not work with discreteDomain scale
+        },
       };
 
       assert.isFalse(
@@ -1006,8 +1006,8 @@ describe('constraints/field', () => {
         type: 'quantitative',
         scale: {
           type: 'linear',
-          round: true
-        }
+          round: true,
+        },
       };
 
       assert.isTrue(
@@ -1029,8 +1029,8 @@ describe('constraints/field', () => {
         scale: {
           // type: point
           // paddingInner is actually a band scale property, but our scaleType doesn't distinguish point and band.
-          paddingInner: 20
-        }
+          paddingInner: 20,
+        },
       };
 
       assert.isTrue(
@@ -1051,8 +1051,8 @@ describe('constraints/field', () => {
         field: 'A',
         type: '?',
         scale: {
-          paddingInner: 20
-        }
+          paddingInner: 20,
+        },
       };
 
       assert.isTrue(
@@ -1072,8 +1072,8 @@ describe('constraints/field', () => {
         field: 'A',
         type: 'quantitative',
         scale: {
-          range: [0, 10]
-        }
+          range: [0, 10],
+        },
       };
 
       assert.isTrue(
@@ -1093,8 +1093,8 @@ describe('constraints/field', () => {
         field: 'A',
         type: 'quantitative',
         scale: {
-          range: [0, 10]
-        }
+          range: [0, 10],
+        },
       };
 
       assert.isTrue(
@@ -1114,8 +1114,8 @@ describe('constraints/field', () => {
         field: 'A',
         type: 'quantitative',
         scale: {
-          range: [0, 10]
-        }
+          range: [0, 10],
+        },
       };
 
       assert.isFalse(
@@ -1135,8 +1135,8 @@ describe('constraints/field', () => {
         field: 'A',
         type: 'quantitative',
         scale: {
-          range: [0, 10]
-        }
+          range: [0, 10],
+        },
       };
 
       assert.isFalse(
@@ -1156,8 +1156,8 @@ describe('constraints/field', () => {
         field: 'A',
         type: 'quantitative',
         scale: {
-          range: [0, 10]
-        }
+          range: [0, 10],
+        },
       };
 
       assert.isTrue(
@@ -1179,8 +1179,8 @@ describe('constraints/field', () => {
         scale: {
           type: 'linear',
           name: '?',
-          enum: DEFAULT_ENUM_INDEX.scale
-        }
+          enum: DEFAULT_ENUM_INDEX.scale,
+        },
       };
 
       assert.isTrue(
@@ -1200,8 +1200,8 @@ describe('constraints/field', () => {
         field: 'A',
         type: 'quantitative',
         scale: {
-          padding: 1.0
-        }
+          padding: 1.0,
+        },
       };
 
       assert.isTrue(
@@ -1219,7 +1219,7 @@ describe('constraints/field', () => {
         // Scale type depends on channel, so this will make scale type ambiguous.
         channel: 'x',
         field: 'A',
-        type: 'quantitative'
+        type: 'quantitative',
       };
 
       assert.isTrue(
@@ -1237,11 +1237,11 @@ describe('constraints/field', () => {
     const encQ: FieldQuery = {
       channel: CHANNEL.X,
       field: 'O',
-      type: undefined
+      type: undefined,
     };
 
     it("should return false if type does not match schema's type", () => {
-      [TYPE.TEMPORAL, TYPE.QUANTITATIVE, TYPE.NOMINAL].forEach(type => {
+      [TYPE.TEMPORAL, TYPE.QUANTITATIVE, TYPE.NOMINAL].forEach((type) => {
         encQ.type = type;
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(
@@ -1255,7 +1255,7 @@ describe('constraints/field', () => {
     });
 
     it("should return true if string matches schema's type", () => {
-      [TYPE.ORDINAL].forEach(type => {
+      [TYPE.ORDINAL].forEach((type) => {
         encQ.type = type;
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(
@@ -1281,12 +1281,12 @@ describe('constraints/field', () => {
     });
 
     it('should return false if field="*" has non-quantitative type', () => {
-      [TYPE.TEMPORAL, TYPE.ORDINAL, TYPE.NOMINAL].forEach(type => {
+      [TYPE.TEMPORAL, TYPE.ORDINAL, TYPE.NOMINAL].forEach((type) => {
         const countEncQ: EncodingQuery = {
           channel: CHANNEL.X,
           aggregate: 'count',
           field: '*',
-          type: type
+          type: type,
         };
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(
@@ -1304,7 +1304,7 @@ describe('constraints/field', () => {
         channel: CHANNEL.X,
         aggregate: 'count',
         field: '*',
-        type: TYPE.QUANTITATIVE
+        type: TYPE.QUANTITATIVE,
       };
       assert.isTrue(
         FIELD_CONSTRAINT_INDEX['typeMatchesSchemaType'].satisfy(
@@ -1321,11 +1321,11 @@ describe('constraints/field', () => {
     const encQ: FieldQuery = {
       channel: CHANNEL.X,
       field: 'O',
-      type: undefined
+      type: undefined,
     };
 
     it('should return false if string is used as quantitative or temporal', () => {
-      [TYPE.TEMPORAL, TYPE.QUANTITATIVE].forEach(type => {
+      [TYPE.TEMPORAL, TYPE.QUANTITATIVE].forEach((type) => {
         encQ.type = type;
         assert.isFalse(
           FIELD_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(
@@ -1339,7 +1339,7 @@ describe('constraints/field', () => {
     });
 
     it('should return true if string is used as ordinal or nominal', () => {
-      [TYPE.NOMINAL, TYPE.ORDINAL].forEach(type => {
+      [TYPE.NOMINAL, TYPE.ORDINAL].forEach((type) => {
         encQ.type = type;
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(
@@ -1365,12 +1365,12 @@ describe('constraints/field', () => {
     });
 
     it('should return true if field="*" has non-quantitative type', () => {
-      [TYPE.TEMPORAL, TYPE.ORDINAL, TYPE.NOMINAL, TYPE.QUANTITATIVE].forEach(type => {
+      [TYPE.TEMPORAL, TYPE.ORDINAL, TYPE.NOMINAL, TYPE.QUANTITATIVE].forEach((type) => {
         const countEncQ: EncodingQuery = {
           channel: CHANNEL.X,
           aggregate: 'count',
           field: '*',
-          type: type
+          type: type,
         };
         assert.isTrue(
           FIELD_CONSTRAINT_INDEX['typeMatchesPrimitiveType'].satisfy(
@@ -1386,10 +1386,10 @@ describe('constraints/field', () => {
 
   describe('stackIsOnlyUsedWithXY', () => {
     it('should return true for stack specified in X or Y channel', () => {
-      [CHANNEL.X, CHANNEL.Y].forEach(_channel => {
+      [CHANNEL.X, CHANNEL.Y].forEach((_channel) => {
         const encQ: FieldQuery = {
           channel: _channel,
-          stack: 'zero'
+          stack: 'zero',
         };
 
         assert.isTrue(
@@ -1405,10 +1405,10 @@ describe('constraints/field', () => {
 
     it('should return false for stack specified in non X or Y channel', () => {
       const NON_XY_CHANNELS = without(CHANNELS, [CHANNEL.X, CHANNEL.Y]);
-      NON_XY_CHANNELS.forEach(_channel => {
+      NON_XY_CHANNELS.forEach((_channel) => {
         const encQ: FieldQuery = {
           channel: _channel,
-          stack: 'zero'
+          stack: 'zero',
         };
 
         assert.isFalse(

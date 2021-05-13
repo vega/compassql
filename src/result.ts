@@ -26,6 +26,6 @@ export function getTopResultTreeItem<T>(specQuery: ResultTree<T>): T {
 export function mapLeaves<T, U>(group: ResultTree<T>, f: (item: T) => U): ResultTree<U> {
   return {
     ...group,
-    items: group.items.map(item => (isResultTree(item) ? mapLeaves(item, f) : f(item)))
+    items: group.items.map((item) => (isResultTree(item) ? mapLeaves(item, f) : f(item))),
   };
 }

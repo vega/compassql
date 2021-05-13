@@ -53,7 +53,7 @@ export function initWildcard(
     {},
     {
       name: defaultName,
-      enum: defaultEnumValues
+      enum: defaultEnumValues,
     },
     prop === SHORT_WILDCARD ? {} : prop
   );
@@ -74,7 +74,7 @@ function initNestedPropName(fullNames: string[]) {
       }
     }
     let shortName = initialIndices
-      .map(i => fullName.charAt(i))
+      .map((i) => fullName.charAt(i))
       .join('')
       .toLowerCase();
     if (!has[shortName]) {
@@ -86,7 +86,7 @@ function initNestedPropName(fullNames: string[]) {
     if (initialIndices[initialIndices.length - 1] !== fullName.length - 1) {
       shortName = initialIndices
         .concat([fullName.length - 1])
-        .map(i => fullName.charAt(i))
+        .map((i) => fullName.charAt(i))
         .join('')
         .toLowerCase();
       if (!has[shortName]) {
@@ -134,16 +134,16 @@ export const DEFAULT_NAME = {
     step: 's',
     steps: 'ss',
     minstep: 'ms',
-    divide: 'd'
+    divide: 'd',
   },
   sortProps: {
     field: 'f',
     op: 'o',
-    order: 'or'
+    order: 'or',
   },
   scaleProps: initNestedPropName(SCALE_PROPERTIES),
   axisProps: initNestedPropName(AXIS_PROPERTIES),
-  legendProps: initNestedPropName(LEGEND_PROPERTIES)
+  legendProps: initNestedPropName(LEGEND_PROPERTIES),
 };
 
 export function getDefaultName(prop: Property) {
@@ -195,13 +195,13 @@ const DEFAULT_BIN_PROPS_ENUM: DefEnumIndex<BinParams> = {
   divide: [[5, 2]],
   binned: [false],
   anchor: [undefined],
-  nice: [true]
+  nice: [true],
 };
 
 const DEFAULT_SORT_PROPS: DefEnumIndex<EncodingSortField<string>> = {
   field: [undefined], // This should be never call and instead read from the schema
   op: ['min', 'mean'],
-  order: ['ascending', 'descending']
+  order: ['ascending', 'descending'],
 };
 
 const DEFAULT_SCALE_PROPS_ENUM: DefEnumIndex<Scale> = {
@@ -232,7 +232,7 @@ const DEFAULT_SCALE_PROPS_ENUM: DefEnumIndex<Scale> = {
   range: [undefined],
   rangeMax: [undefined],
   rangeMin: [undefined],
-  scheme: [undefined]
+  scheme: [undefined],
 };
 
 const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
@@ -324,7 +324,7 @@ const DEFAULT_AXIS_PROPS_ENUM: DefEnumIndex<Axis> = {
   titleX: [undefined],
   titleY: [undefined],
 
-  translate: [undefined]
+  translate: [undefined],
 };
 
 const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend<any>> = {
@@ -401,7 +401,7 @@ const DEFAULT_LEGEND_PROPS_ENUM: DefEnumIndex<Legend<any>> = {
   titleLineHeight: [undefined],
   titleOpacity: [undefined],
   titleOrient: [undefined],
-  titlePadding: [undefined]
+  titlePadding: [undefined],
 };
 
 // Use FullEnumIndex to make sure we have all properties specified here!
@@ -433,7 +433,7 @@ export const DEFAULT_ENUM_INDEX: EnumIndex = {
   sortProps: DEFAULT_SORT_PROPS,
   scaleProps: DEFAULT_SCALE_PROPS_ENUM,
   axisProps: DEFAULT_AXIS_PROPS_ENUM,
-  legendProps: DEFAULT_LEGEND_PROPS_ENUM
+  legendProps: DEFAULT_LEGEND_PROPS_ENUM,
 };
 
 // TODO: rename this to getDefaultEnum

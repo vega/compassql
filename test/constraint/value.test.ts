@@ -11,14 +11,14 @@ import {schema} from '../fixture';
 
 describe('constraints/value', () => {
   const CONSTRAINT_MANUALLY_SPECIFIED_CONFIG = extend({}, DEFAULT_QUERY_CONFIG, {
-    constraintManuallySpecifiedValue: true
+    constraintManuallySpecifiedValue: true,
   });
 
   describe('Value Constraint Checks', () => {
     it('should return true if value is not a constant', () => {
       const validValueQ: ValueQuery = {
         value: 'color',
-        channel: CHANNEL.COLOR
+        channel: CHANNEL.COLOR,
       };
       assert.isTrue(
         VALUE_CONSTRAINT_INDEX['doesNotSupportConstantValue'].satisfy(
@@ -34,7 +34,7 @@ describe('constraints/value', () => {
       ['row', 'column', 'x', 'y', 'detail'].forEach((channel: Channel) => {
         const invalidValueQ: ValueQuery = {
           value: channel,
-          channel
+          channel,
         };
 
         assert.isFalse(

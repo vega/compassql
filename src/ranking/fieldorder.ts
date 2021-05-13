@@ -20,7 +20,7 @@ export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): Ra
   if (!fieldWildcardIndices) {
     return {
       score: 0,
-      features: []
+      features: [],
     };
   }
 
@@ -54,7 +54,7 @@ export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): Ra
     features.push({
       score: score,
       type: 'fieldOrder',
-      feature: `field ${fieldWildcard.name} is ${field} (#${fieldIndex} in the schema)`
+      feature: `field ${fieldWildcard.name} is ${field} (#${fieldIndex} in the schema)`,
     });
 
     base *= numFields;
@@ -62,6 +62,6 @@ export function score(specM: SpecQueryModel, schema: Schema, _: QueryConfig): Ra
 
   return {
     score: totalScore,
-    features: features
+    features: features,
   };
 }

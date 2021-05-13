@@ -72,23 +72,23 @@ You can reuse the same schema for querying the same dataset multiple times.
 ```js
 var query = {
   spec: {
-    data: {url: 'node_modules/vega-datasets/data/cars.json'},
-    mark: '?',
+    data: { url: "node_modules/vega-datasets/data/cars.json" },
+    mark: "?",
     encodings: [
       {
-        channel: 'x',
-        aggregate: 'mean',
-        field: 'Horsepower',
-        type: 'quantitative'
+        channel: "x",
+        aggregate: "mean",
+        field: "Horsepower",
+        type: "quantitative",
       },
       {
-        channel: 'y',
-        field: 'Cylinders',
-        type: 'ordinal'
-      }
-    ]
+        channel: "y",
+        field: "Cylinders",
+        type: "ordinal",
+      },
+    ],
   },
-  chooseBy: 'effectiveness'
+  chooseBy: "effectiveness",
 };
 ```
 

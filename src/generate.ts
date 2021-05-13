@@ -14,7 +14,7 @@ export function generate(specQ: SpecQuery, schema: Schema, opt: QueryConfig = DE
   // 2. Enumerate each of the properties based on propPrecedence.
 
   let answerSet = [specM]; // Initialize Answer Set with only the input spec query.
-  opt.propertyPrecedence.forEach(propKey => {
+  opt.propertyPrecedence.forEach((propKey) => {
     const prop = fromKey(propKey);
     // If the original specQuery contains wildcard for this prop
     if (wildcardIndex.hasProperty(prop)) {

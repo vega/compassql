@@ -8,7 +8,7 @@ describe('wildcardindex', () => {
     it('should return false if encoding property is set', () => {
       const wildcardIndex = new WildcardIndex().setEncodingProperty(0, Property.SCALE, {
         name: 'scale',
-        enum: [true, false]
+        enum: [true, false],
       });
       assert.equal(wildcardIndex.isEmpty(), false);
     });
@@ -35,7 +35,7 @@ describe('wildcardindex', () => {
     it('should return true if encodingIndicesByProperty contains a specified encoding property', () => {
       const wildcardIndex = new WildcardIndex().setEncodingProperty(0, Property.SCALE, {
         name: 'scale',
-        enum: [true, false]
+        enum: [true, false],
       });
       assert.equal(wildcardIndex.hasProperty(Property.SCALE), true);
     });

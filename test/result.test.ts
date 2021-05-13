@@ -13,11 +13,11 @@ describe('ResultGroup', () => {
   }
 
   function buildSpecQueryModelGroup(specQs: SpecQuery[]) {
-    const items = specQs.map(specQ => buildSpecQueryModel(specQ));
+    const items = specQs.map((specQ) => buildSpecQueryModel(specQ));
     return {
       name: 'a name',
       path: 'path',
-      items: items
+      items: items,
     };
   }
 
@@ -26,12 +26,12 @@ describe('ResultGroup', () => {
       const group = buildSpecQueryModelGroup([
         {
           mark: MARK.BAR,
-          encodings: [{channel: CHANNEL.X, autoCount: true}]
+          encodings: [{channel: CHANNEL.X, autoCount: true}],
         },
         {
           mark: MARK.POINT,
-          encodings: [{channel: CHANNEL.X, autoCount: true}]
-        }
+          encodings: [{channel: CHANNEL.X, autoCount: true}],
+        },
       ]);
       const top = getTopResultTreeItem(group);
       assert.equal(top.getMark(), MARK.BAR);
@@ -40,14 +40,14 @@ describe('ResultGroup', () => {
       const group = buildSpecQueryModelGroup([
         {
           mark: MARK.BAR,
-          encodings: [{channel: CHANNEL.X, autoCount: true}]
-        }
+          encodings: [{channel: CHANNEL.X, autoCount: true}],
+        },
       ]);
 
       const root: SpecQueryModelGroup = {
         name: 'root',
         path: '',
-        items: [group]
+        items: [group],
       };
 
       const top = getTopResultTreeItem(root);
@@ -60,7 +60,7 @@ describe('ResultGroup', () => {
       const group: SpecQueryModelGroup = {
         name: '',
         path: '',
-        items: []
+        items: [],
       };
       assert.isTrue(isResultTree<SpecQueryModel>(group));
     });

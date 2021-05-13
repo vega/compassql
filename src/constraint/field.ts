@@ -6,7 +6,7 @@ import {
   hasDiscreteDomain,
   Scale,
   ScaleType,
-  scaleTypeSupportProperty
+  scaleTypeSupportProperty,
 } from 'vega-lite/build/src/scale';
 import {normalizeTimeUnit, isLocalSingleTimeUnit, isUTCTimeUnit} from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
@@ -33,7 +33,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
       }
       // TODO: some aggregate function are actually supported by ordinal
       return true; // no aggregate is okay with any type.
-    }
+    },
   },
   {
     name: 'asteriskFieldWithCountOnly',
@@ -43,7 +43,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     strict: true,
     satisfy: (fieldQ: FieldQuery, _: Schema, __: PropIndex<Wildcard<any>>, ___: QueryConfig) => {
       return (fieldQ.field === '*') === (fieldQ.aggregate === 'count');
-    }
+    },
   },
   {
     name: 'minCardinalityForBin',
@@ -57,12 +57,12 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         const fieldQwithoutBin: FieldQuery = {
           channel: fieldQ.channel,
           field: fieldQ.field,
-          type: fieldQ.type
+          type: fieldQ.type,
         };
         return schema.cardinality(fieldQwithoutBin) >= opt.minCardinalityForBin;
       }
       return true;
-    }
+    },
   },
   {
     name: 'binAppliedForQuantitative',
@@ -76,7 +76,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         return fieldQ.type === TYPE.QUANTITATIVE;
       }
       return true;
-    }
+    },
   },
   {
     name: 'channelFieldCompatible',
@@ -87,7 +87,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
     satisfy: (fieldQ: FieldQuery, schema: Schema, encWildcardIndex: PropIndex<Wildcard<any>>, opt: QueryConfig) => {
       const fieldDef: TypedFieldDef<string> = {
         field: 'f', // actual field doesn't really matter here
-        ...toFieldDef(fieldQ, {schema, props: ['bin', 'timeUnit', 'type']})
+        ...toFieldDef(fieldQ, {schema, props: ['bin', 'timeUnit', 'type']}),
       };
 
       const {compatible} = channelCompatibility(fieldDef, fieldQ.channel as ExtendedChannel);
@@ -104,7 +104,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         }
         return false;
       }
-    }
+    },
   },
   {
     name: 'hasFn',
@@ -117,7 +117,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         return !!fieldQ.aggregate || !!fieldQ.bin || !!fieldQ.timeUnit;
       }
       return true;
-    }
+    },
   },
   {
     name: 'omitScaleZeroWithBinnedField',
@@ -132,7 +132,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         }
       }
       return true;
-    }
+    },
   },
   {
     name: 'onlyOneTypeOfFunction',
@@ -150,7 +150,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
       }
       // For autoCount there is always only one type of function
       return true;
-    }
+    },
   },
   {
     name: 'timeUnitAppliedForTemporal',
@@ -163,7 +163,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         return false;
       }
       return true;
-    }
+    },
   },
   {
     name: 'timeUnitShouldHaveVariation',
@@ -180,7 +180,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         return schema.timeUnitHasVariation(fieldQ);
       }
       return true;
-    }
+    },
   },
   {
     name: 'scalePropertiesSupportedByScaleType',
@@ -221,7 +221,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         }
       }
       return true;
-    }
+    },
   },
   {
     name: 'scalePropertiesSupportedByChannel',
@@ -252,7 +252,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         }
       }
       return true;
-    }
+    },
   },
   {
     name: 'typeMatchesPrimitiveType',
@@ -288,7 +288,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
           return false;
       }
       throw new Error('Not implemented');
-    }
+    },
   },
   {
     name: 'typeMatchesSchemaType',
@@ -307,7 +307,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
       }
 
       return schema.vlType(fieldQ.field as string) === fieldQ.type;
-    }
+    },
   },
   {
     name: 'maxCardinalityForCategoricalColor',
@@ -322,7 +322,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         return schema.cardinality(fieldQ) <= opt.maxCardinalityForCategoricalColor;
       }
       return true; // other channel is irrelevant to this constraint
-    }
+    },
   },
   {
     name: 'maxCardinalityForFacet',
@@ -335,7 +335,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         return schema.cardinality(fieldQ) <= opt.maxCardinalityForFacet;
       }
       return true; // other channel is irrelevant to this constraint
-    }
+    },
   },
   {
     name: 'maxCardinalityForShape',
@@ -348,7 +348,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         return schema.cardinality(fieldQ) <= opt.maxCardinalityForShape;
       }
       return true; // other channel is irrelevant to this constraint
-    }
+    },
   },
   {
     name: 'dataTypeAndFunctionMatchScaleType',
@@ -358,7 +358,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
       Property.SCALE,
       getEncodingNestedProp('scale', 'type'),
       Property.TIMEUNIT,
-      Property.BIN
+      Property.BIN,
     ],
     allowWildcardForProperties: false,
     strict: true,
@@ -387,7 +387,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
                 ScaleType.QUANTILE,
                 ScaleType.QUANTIZE,
                 ScaleType.LINEAR,
-                undefined
+                undefined,
               ],
               sType
             );
@@ -395,7 +395,7 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         }
       }
       return true;
-    }
+    },
   },
   {
     name: 'stackIsOnlyUsedWithXY',
@@ -408,8 +408,8 @@ export const FIELD_CONSTRAINTS: EncodingConstraintModel<FieldQuery>[] = [
         return fieldQ.channel === CHANNEL.X || fieldQ.channel === CHANNEL.Y;
       }
       return true;
-    }
-  }
+    },
+  },
 ].map((ec: EncodingConstraint<FieldQuery>) => new EncodingConstraintModel<FieldQuery>(ec));
 
 export const FIELD_CONSTRAINT_INDEX: {

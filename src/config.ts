@@ -81,7 +81,7 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
   verbose: false,
   defaultSpecConfig: {
     line: {point: true},
-    scale: {useUnaggregatedDomain: true}
+    scale: {useUnaggregatedDomain: true},
   },
   propertyPrecedence: DEFAULT_PROP_PRECEDENCE.map(toKey),
   enum: DEFAULT_ENUM_INDEX,
@@ -136,14 +136,14 @@ export const DEFAULT_QUERY_CONFIG: QueryConfig = {
 
   // HIGH CARDINALITY STRINGS
   minPercentUniqueForKey: 0.8,
-  minCardinalityForKey: 50
+  minCardinalityForKey: 50,
 };
 
 export function extendConfig(opt: QueryConfig) {
   return {
     ...DEFAULT_QUERY_CONFIG,
     ...opt,
-    enum: extendEnumIndex(opt.enum)
+    enum: extendEnumIndex(opt.enum),
   };
 }
 
@@ -154,7 +154,7 @@ function extendEnumIndex(enumIndex: Partial<EnumIndex>) {
     binProps: extendNestedEnumIndex(enumIndex, 'bin'),
     scaleProps: extendNestedEnumIndex(enumIndex, 'scale'),
     axisProps: extendNestedEnumIndex(enumIndex, 'axis'),
-    legendProps: extendNestedEnumIndex(enumIndex, 'legend')
+    legendProps: extendNestedEnumIndex(enumIndex, 'legend'),
   };
   return enumOpt;
 }
@@ -162,6 +162,6 @@ function extendEnumIndex(enumIndex: Partial<EnumIndex>) {
 function extendNestedEnumIndex(enumIndex: Partial<EnumIndex>, prop: 'bin' | 'scale' | 'axis' | 'legend') {
   return {
     ...DEFAULT_ENUM_INDEX[`${prop}Props`],
-    ...enumIndex[`${prop}Props`]
+    ...enumIndex[`${prop}Props`],
   };
 }

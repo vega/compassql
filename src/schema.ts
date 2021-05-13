@@ -9,7 +9,7 @@ import {
   isUTCTimeUnit,
   containsTimeUnit,
   TimeUnit,
-  TIMEUNIT_PARTS
+  TIMEUNIT_PARTS,
 } from 'vega-lite/build/src/timeunit';
 import * as TYPE from 'vega-lite/build/src/type';
 import * as vegaTime from 'vega-time';
@@ -151,7 +151,7 @@ export function build(
       type: type,
       stats: fieldProfile,
       timeStats: {} as {[timeUnit: string]: DLFieldProfile},
-      binStats: {} as {[key: string]: DLFieldProfile}
+      binStats: {} as {[key: string]: DLFieldProfile},
     };
 
     // extend field schema with table schema field - if present
@@ -187,7 +187,7 @@ export function build(
 
   const derivedTableSchema: TableSchema<FieldSchema> = {
     ...tableSchema,
-    fields: fieldSchemas
+    fields: fieldSchemas,
   };
 
   return new Schema(derivedTableSchema);
@@ -200,7 +200,7 @@ const order = {
   key: 1,
   ordinal: 2,
   temporal: 3,
-  quantitative: 4
+  quantitative: 4,
 };
 
 export class Schema {
@@ -233,7 +233,7 @@ export class Schema {
 
   /** @return a list of the field names (for enumerating). */
   public fieldNames() {
-    return this._tableSchema.fields.map(fieldSchema => fieldSchema.name);
+    return this._tableSchema.fields.map((fieldSchema) => fieldSchema.name);
   }
 
   /** @return a list of FieldSchemas */
@@ -281,11 +281,11 @@ export class Schema {
       if (typeof fieldQ.bin === 'boolean') {
         // autoMaxBins defaults to 10 if channel is Wildcard
         bin = {
-          maxbins: autoMaxBins(fieldQ.channel as Channel)
+          maxbins: autoMaxBins(fieldQ.channel as Channel),
         };
       } else if (fieldQ.bin === '?') {
         bin = {
-          enum: [true, false]
+          enum: [true, false],
         };
       } else {
         bin = fieldQ.bin;
@@ -325,7 +325,7 @@ export class Schema {
       if (!timeStats || !timeStats[unit]) {
         timeStats = {
           ...timeStats,
-          [unit]: timeSummary(fieldQ.timeUnit as TimeUnit, fieldSchema.stats)
+          [unit]: timeSummary(fieldQ.timeUnit as TimeUnit, fieldSchema.stats),
         };
       }
 
@@ -393,14 +393,14 @@ export class Schema {
       return [fieldSchema.stats.min, fieldSchema.stats.max];
     } else if (fieldSchema.type === PrimitiveType.INTEGER || fieldSchema.type === PrimitiveType.NUMBER) {
       // coerce non-quantitative numerical data into number type
-      domain = domain.map(x => +x);
+      domain = domain.map((x) => +x);
       return domain.sort(cmp);
     } else if (fieldSchema.vlType === TYPE.ORDINAL && fieldSchema.ordinalDomain) {
       return fieldSchema.ordinalDomain;
     }
 
     return domain
-      .map(x => {
+      .map((x) => {
         // Convert 'null' to null as it is encoded similarly in datalib.
         // This is wrong when it is a string 'null' but that rarely happens.
         return x === 'null' ? null : x;
@@ -425,7 +425,7 @@ function binSummary(maxbins: number, summary: DLFieldProfile): DLFieldProfile {
   const bin = dlBin({
     min: summary.min,
     max: summary.max,
-    maxbins: maxbins
+    maxbins: maxbins,
   });
 
   // start with summary, pre-binning
@@ -450,7 +450,7 @@ const SET_DATE_METHOD: Record<LocalSingleTimeUnit, any> = {
   dayofyear: null,
   week: null,
   quarter: null,
-  day: null
+  day: null,
 };
 
 function dateMethods(singleUnit: SingleTimeUnit, isUtc: boolean) {
@@ -550,5 +550,5 @@ export enum PrimitiveType {
   NUMBER = 'number' as any,
   INTEGER = 'integer' as any,
   BOOLEAN = 'boolean' as any,
-  DATETIME = 'datetime' as any
+  DATETIME = 'datetime' as any,
 }

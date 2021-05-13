@@ -53,8 +53,8 @@ function init() {
 
   const SCORE = {} as Dict<number>;
   // QxQ
-  MEASURES.forEach(xType => {
-    MEASURES.forEach(yType => {
+  MEASURES.forEach((xType) => {
+    MEASURES.forEach((yType) => {
       // has occlusion
       const occludedQQMark = {
         point: 0,
@@ -64,7 +64,7 @@ function init() {
         bar: -2,
         line: -2,
         area: -2,
-        rule: -2.5
+        rule: -2.5,
       };
       forEach(occludedQQMark, (score, mark: Mark) => {
         const feature = featurize(xType, yType, true, mark);
@@ -80,7 +80,7 @@ function init() {
         bar: -2,
         line: -2,
         area: -2,
-        rule: -2.5
+        rule: -2.5,
       };
       forEach(noOccludedQQMark, (score, mark: Mark) => {
         const feature = featurize(xType, yType, false, mark);
@@ -90,9 +90,9 @@ function init() {
   });
 
   // DxQ, QxD
-  MEASURES.forEach(xType => {
+  MEASURES.forEach((xType) => {
     // HAS OCCLUSION
-    DISCRETE_OR_NONE.forEach(yType => {
+    DISCRETE_OR_NONE.forEach((yType) => {
       const occludedDimensionMeasureMark = {
         tick: 0,
         point: -0.2,
@@ -100,7 +100,7 @@ function init() {
         bar: -2,
         line: -2,
         area: -2,
-        rule: -2.5
+        rule: -2.5,
       };
       forEach(occludedDimensionMeasureMark, (score, mark: Mark) => {
         const feature = featurize(xType, yType, true, mark);
@@ -111,7 +111,7 @@ function init() {
       });
     });
 
-    [TIMEUNIT_T].forEach(yType => {
+    [TIMEUNIT_T].forEach((yType) => {
       const occludedDimensionMeasureMark = {
         // For Time Dimension with time scale, tick is not good
         point: 0,
@@ -120,7 +120,7 @@ function init() {
         bar: -2,
         line: -2,
         area: -2,
-        rule: -2.5
+        rule: -2.5,
       };
       forEach(occludedDimensionMeasureMark, (score, mark: Mark) => {
         const feature = featurize(xType, yType, true, mark);
@@ -132,7 +132,7 @@ function init() {
     });
 
     // NO OCCLUSION
-    [NONE, N, O, K].forEach(yType => {
+    [NONE, N, O, K].forEach((yType) => {
       const noOccludedQxN = {
         bar: 0,
         point: -0.2,
@@ -142,7 +142,7 @@ function init() {
         line: -2, // FIXME line vs area?
         area: -2,
         // Non-sense to use rule here
-        rule: -2.5
+        rule: -2.5,
       };
       forEach(noOccludedQxN, (score, mark: Mark) => {
         const feature = featurize(xType, yType, false, mark);
@@ -154,7 +154,7 @@ function init() {
       });
     });
 
-    [BIN_Q].forEach(yType => {
+    [BIN_Q].forEach((yType) => {
       const noOccludedQxBinQ = {
         bar: 0,
         point: -0.2,
@@ -164,7 +164,7 @@ function init() {
         line: -0.5, // FIXME line vs area?
         area: -0.5,
         // Non-sense to use rule here
-        rule: -2.5
+        rule: -2.5,
       };
       forEach(noOccludedQxBinQ, (score, mark: Mark) => {
         const feature = featurize(xType, yType, false, mark);
@@ -176,7 +176,7 @@ function init() {
       });
     });
 
-    [TIMEUNIT_T, TIMEUNIT_O].forEach(yType => {
+    [TIMEUNIT_T, TIMEUNIT_O].forEach((yType) => {
       // For aggregate / surely no occlusion plot, Temporal with time or ordinal
       // are not that different.
       const noOccludedQxBinQ = {
@@ -187,7 +187,7 @@ function init() {
         tick: -0.35,
         text: -0.4,
         // Non-sense to use rule here
-        rule: -2.5
+        rule: -2.5,
       };
       forEach(noOccludedQxBinQ, (score, mark: Mark) => {
         const feature = featurize(xType, yType, false, mark);
@@ -200,8 +200,8 @@ function init() {
     });
   });
 
-  [TIMEUNIT_T].forEach(xType => {
-    [TIMEUNIT_T].forEach(yType => {
+  [TIMEUNIT_T].forEach((xType) => {
+    [TIMEUNIT_T].forEach((yType) => {
       // has occlusion
       const ttMark = {
         point: 0,
@@ -211,7 +211,7 @@ function init() {
         bar: -2,
         line: -2,
         area: -2,
-        rule: -2.5
+        rule: -2.5,
       };
       // No difference between has occlusion and no occlusion
       // as most of the time, it will be the occluded case.
@@ -225,7 +225,7 @@ function init() {
       });
     });
 
-    DISCRETE_OR_NONE.forEach(yType => {
+    DISCRETE_OR_NONE.forEach((yType) => {
       // has occlusion
       const tdMark = {
         tick: 0,
@@ -235,7 +235,7 @@ function init() {
         bar: -2,
         line: -2,
         area: -2,
-        rule: -2.5
+        rule: -2.5,
       };
       // No difference between has occlusion and no occlusion
       // as most of the time, it will be the occluded case.
@@ -271,7 +271,7 @@ function init() {
         bar: -2,
         line: -2,
         area: -2,
-        rule: -2.5
+        rule: -2.5,
       };
 
       forEach(ddMark, (score, mark: Mark) => {

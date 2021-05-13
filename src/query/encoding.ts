@@ -131,7 +131,7 @@ const DEFAULT_PROPS = [
   Property.AXIS,
   Property.LEGEND,
   Property.STACK,
-  Property.FORMAT
+  Property.FORMAT,
 ];
 
 export interface ConversionParams {
@@ -231,7 +231,7 @@ export function toFieldDef(
           fieldDef[Property.SCALE] = {
             domain: ordinalDomain,
             // explicitly specfied domain property should override ordinalDomain
-            ...(isObject(scale) ? scale : {})
+            ...(isObject(scale) ? scale : {}),
           };
         }
       }
@@ -244,7 +244,7 @@ export function toFieldDef(
       return {
         aggregate: 'count',
         field: '*',
-        type: 'quantitative'
+        type: 'quantitative',
       };
     }
   }
@@ -328,7 +328,7 @@ export function scaleType(fieldQ: FieldQuery) {
   const fieldDef = {
     type: vegaLiteType,
     timeUnit: timeUnit as TimeUnit,
-    bin: bin as BinParams
+    bin: bin as BinParams,
   };
   return compileScaleType({type: scale.type}, channel, fieldDef, markType);
 }

@@ -34,7 +34,7 @@ function getScore(shortenedFields: string) {
   const specM = SpecQueryModel.build(
     {
       mark: SHORT_WILDCARD,
-      encodings: encodings
+      encodings: encodings,
     },
     schema,
     DEFAULT_QUERY_CONFIG
@@ -50,7 +50,7 @@ describe('ranking/aggregation', () => {
       rules: [
         {
           name: '1D',
-          items: [['Q', 'T'], ['bin_Q x count_*', 'year_T x count_*'], 'mean_Q', ['O', 'N']]
+          items: [['Q', 'T'], ['bin_Q x count_*', 'year_T x count_*'], 'mean_Q', ['O', 'N']],
         },
         {
           name: '2D',
@@ -62,7 +62,7 @@ describe('ranking/aggregation', () => {
               'NxT',
               'year_TxQ',
               'TxT1',
-              'Txyear_T1' // TODO: possibly move these two to the next tier
+              'Txyear_T1', // TODO: possibly move these two to the next tier
             ],
             ['N x mean_Q', 'year_T x mean_Q'],
             [
@@ -71,15 +71,15 @@ describe('ranking/aggregation', () => {
               'N x bin_Q x count_*',
               'year_T x year_T1 x count_*',
               'year_T x bin_Q x count_*',
-              'bin_Q x bin_Q1 x count_*'
+              'bin_Q x bin_Q1 x count_*',
             ],
             ['bin_Q x mean_Q1'],
             ['mean_Q x mean_Q'],
             ['NxN', 'N x year_T', 'N x bin_Q', 'year_T x year_T1', 'year_T x bin_Q', 'bin_Q x bin_Q1'],
-            ['T x mean_Q', 'Q x mean_Q'] // FIXME this is not necessarily bad depending on the data distribution
-          ]
-        }
-      ]
+            ['T x mean_Q', 'Q x mean_Q'], // FIXME this is not necessarily bad depending on the data distribution
+          ],
+        },
+      ],
     };
 
     testRuleSet(SUMMARY_RULESET, getScore);

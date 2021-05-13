@@ -11,7 +11,7 @@ import {
   REPLACE_BLANK_FIELDS,
   REPLACE_FACET_CHANNELS,
   REPLACE_MARK_STYLE_CHANNELS,
-  REPLACE_XY_CHANNELS
+  REPLACE_XY_CHANNELS,
 } from '../src/query/groupby';
 import {Query} from '../src/query/query';
 import {contains, extend} from '../src/util';
@@ -32,22 +32,22 @@ describe('nest', () => {
                 type: TYPE.QUANTITATIVE,
                 aggregate: {
                   name: 'a0',
-                  enum: ['mean', 'median']
-                }
+                  enum: ['mean', 'median'],
+                },
               },
               {
                 channel: SHORT_WILDCARD,
                 field: 'O',
-                type: TYPE.ORDINAL
-              }
-            ]
+                type: TYPE.ORDINAL,
+              },
+            ],
           },
           nest: [
             {
-              groupBy: [{property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}]
-            }
+              groupBy: [{property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}],
+            },
           ],
-          config: DEFAULT_QUERY_CONFIG
+          config: DEFAULT_QUERY_CONFIG,
         };
 
         const answerSet = generate(query.spec, schema);
@@ -67,19 +67,19 @@ describe('nest', () => {
                 field: 'Q',
                 type: TYPE.QUANTITATIVE,
                 bin: SHORT_WILDCARD,
-                aggregate: SHORT_WILDCARD
-              }
-            ]
+                aggregate: SHORT_WILDCARD,
+              },
+            ],
           },
           nest: [
             {
-              groupBy: [{property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}]
+              groupBy: [{property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}],
             },
             {
-              groupBy: [Property.AGGREGATE, Property.TIMEUNIT, Property.BIN, Property.STACK]
-            }
+              groupBy: [Property.AGGREGATE, Property.TIMEUNIT, Property.BIN, Property.STACK],
+            },
           ],
-          config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG)
+          config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG),
         };
 
         const answerSet = generate(query.spec, schema);
@@ -98,21 +98,21 @@ describe('nest', () => {
               {
                 channel: SHORT_WILDCARD,
                 field: 'N',
-                type: TYPE.NOMINAL
+                type: TYPE.NOMINAL,
               },
               {
                 channel: SHORT_WILDCARD,
                 field: 'N1',
-                type: TYPE.NOMINAL
-              }
-            ]
+                type: TYPE.NOMINAL,
+              },
+            ],
           },
           nest: [
             {
-              groupBy: [{property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}]
-            }
+              groupBy: [{property: Property.FIELD, replace: REPLACE_BLANK_FIELDS}],
+            },
           ],
-          config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG)
+          config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG),
         };
 
         const answerSet = generate(query.spec, schema);
@@ -136,15 +136,15 @@ describe('nest', () => {
               type: TYPE.QUANTITATIVE,
               aggregate: {
                 name: 'a0',
-                enum: ['mean', 'median']
-              }
+                enum: ['mean', 'median'],
+              },
             },
             {
               channel: SHORT_WILDCARD,
               field: 'O',
-              type: TYPE.ORDINAL
-            }
-          ]
+              type: TYPE.ORDINAL,
+            },
+          ],
         },
         nest: [
           {
@@ -154,11 +154,11 @@ describe('nest', () => {
               Property.AGGREGATE,
               Property.BIN,
               Property.TIMEUNIT,
-              Property.STACK
-            ]
-          }
+              Property.STACK,
+            ],
+          },
         ],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
@@ -180,19 +180,19 @@ describe('nest', () => {
             {
               channel: CHANNEL.X,
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: CHANNEL.Y,
               field: 'Q1',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: {enum: [CHANNEL.COLOR, CHANNEL.SIZE]},
               field: 'Q2',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         },
         nest: [
           {
@@ -203,11 +203,11 @@ describe('nest', () => {
               Property.BIN,
               Property.TIMEUNIT,
               Property.STACK,
-              {property: Property.CHANNEL, replace: REPLACE_MARK_STYLE_CHANNELS}
-            ]
-          }
+              {property: Property.CHANNEL, replace: REPLACE_MARK_STYLE_CHANNELS},
+            ],
+          },
         ],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
@@ -223,19 +223,19 @@ describe('nest', () => {
             {
               channel: CHANNEL.X,
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: CHANNEL.Y,
               field: 'Q1',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: {enum: [CHANNEL.COLOR, CHANNEL.SHAPE]},
               field: 'O',
-              type: TYPE.ORDINAL
-            }
-          ]
+              type: TYPE.ORDINAL,
+            },
+          ],
         },
         nest: [
           {
@@ -246,11 +246,11 @@ describe('nest', () => {
               Property.BIN,
               Property.TIMEUNIT,
               Property.STACK,
-              {property: Property.CHANNEL, replace: REPLACE_MARK_STYLE_CHANNELS}
-            ]
-          }
+              {property: Property.CHANNEL, replace: REPLACE_MARK_STYLE_CHANNELS},
+            ],
+          },
         ],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
@@ -266,19 +266,19 @@ describe('nest', () => {
             {
               channel: {enum: [CHANNEL.X, CHANNEL.Y]},
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: {enum: [CHANNEL.X, CHANNEL.Y]},
               field: 'Q1',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: {enum: [CHANNEL.COLOR, CHANNEL.SIZE]},
               field: 'Q2',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         },
         nest: [
           {
@@ -289,11 +289,11 @@ describe('nest', () => {
               Property.BIN,
               Property.TIMEUNIT,
               Property.STACK,
-              {property: Property.CHANNEL, replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)}
-            ]
-          }
+              {property: Property.CHANNEL, replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)},
+            ],
+          },
         ],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
@@ -310,19 +310,19 @@ describe('nest', () => {
               channel: CHANNEL.X,
               aggregate: 'sum',
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: CHANNEL.Y,
               field: 'N',
-              type: TYPE.NOMINAL
+              type: TYPE.NOMINAL,
             },
             {
               channel: CHANNEL.COLOR,
               field: 'N1',
-              type: TYPE.NOMINAL
-            }
-          ]
+              type: TYPE.NOMINAL,
+            },
+          ],
         },
         nest: [
           {
@@ -335,12 +335,12 @@ describe('nest', () => {
               Property.STACK,
               {
                 property: Property.CHANNEL,
-                replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)
-              }
-            ]
-          }
+                replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS),
+              },
+            ],
+          },
         ],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
@@ -366,19 +366,19 @@ describe('nest', () => {
               channel: CHANNEL.X,
               aggregate: 'sum',
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: CHANNEL.Y,
               field: 'N',
-              type: TYPE.NOMINAL
+              type: TYPE.NOMINAL,
             },
             {
               channel: CHANNEL.COLOR,
               field: 'N1',
-              type: TYPE.NOMINAL
-            }
-          ]
+              type: TYPE.NOMINAL,
+            },
+          ],
         },
         nest: [
           {
@@ -391,15 +391,15 @@ describe('nest', () => {
               Property.STACK,
               {
                 property: Property.CHANNEL,
-                replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS)
-              }
-            ]
+                replace: extend({}, REPLACE_XY_CHANNELS, REPLACE_FACET_CHANNELS, REPLACE_MARK_STYLE_CHANNELS),
+              },
+            ],
           },
           {
-            groupBy: [{property: Property.CHANNEL, replace: extend({}, REPLACE_MARK_STYLE_CHANNELS)}]
-          }
+            groupBy: [{property: Property.CHANNEL, replace: extend({}, REPLACE_MARK_STYLE_CHANNELS)}],
+          },
         ],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
@@ -429,18 +429,18 @@ describe('nest', () => {
               type: TYPE.QUANTITATIVE,
               aggregate: {
                 name: 'a0',
-                enum: ['mean', 'median']
-              }
+                enum: ['mean', 'median'],
+              },
             },
             {
               channel: SHORT_WILDCARD,
               field: 'O',
-              type: TYPE.ORDINAL
-            }
-          ]
+              type: TYPE.ORDINAL,
+            },
+          ],
         },
         nest: [{groupBy: FIELD}],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
@@ -461,12 +461,12 @@ describe('nest', () => {
               field: 'Q',
               type: TYPE.QUANTITATIVE,
               bin: SHORT_WILDCARD,
-              aggregate: SHORT_WILDCARD
-            }
-          ]
+              aggregate: SHORT_WILDCARD,
+            },
+          ],
         },
         nest: [{groupBy: FIELD}, {groupBy: FIELD_TRANSFORM}],
-        config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG)
+        config: extend({autoAddCount: true}, DEFAULT_QUERY_CONFIG),
       };
 
       const answerSet = generate(query.spec, schema);
@@ -491,18 +491,18 @@ describe('nest', () => {
               type: TYPE.QUANTITATIVE,
               aggregate: {
                 name: 'a0',
-                enum: ['mean', 'median']
-              }
+                enum: ['mean', 'median'],
+              },
             },
             {
               channel: SHORT_WILDCARD,
               field: 'O',
-              type: TYPE.ORDINAL
-            }
-          ]
+              type: TYPE.ORDINAL,
+            },
+          ],
         },
         nest: [{groupBy: FIELD_TRANSFORM}],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
@@ -524,22 +524,22 @@ describe('nest', () => {
             {
               channel: CHANNEL.X,
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: CHANNEL.Y,
               field: 'Q1',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: {enum: [CHANNEL.COLOR, CHANNEL.SIZE]},
               field: 'Q2',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         },
         nest: [{groupBy: ENCODING}],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
@@ -555,22 +555,22 @@ describe('nest', () => {
             {
               channel: CHANNEL.X,
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: CHANNEL.Y,
               field: 'Q1',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: {enum: [CHANNEL.COLOR, CHANNEL.SHAPE]},
               field: 'O',
-              type: TYPE.ORDINAL
-            }
-          ]
+              type: TYPE.ORDINAL,
+            },
+          ],
         },
         nest: [{groupBy: ENCODING}],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
@@ -586,22 +586,22 @@ describe('nest', () => {
             {
               channel: {enum: [CHANNEL.X, CHANNEL.Y]},
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: {enum: [CHANNEL.X, CHANNEL.Y]},
               field: 'Q1',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: {enum: [CHANNEL.COLOR, CHANNEL.SIZE]},
               field: 'Q2',
-              type: TYPE.QUANTITATIVE
-            }
-          ]
+              type: TYPE.QUANTITATIVE,
+            },
+          ],
         },
         nest: [{groupBy: ENCODING}],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
@@ -618,22 +618,22 @@ describe('nest', () => {
               channel: CHANNEL.X,
               aggregate: 'sum',
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: CHANNEL.Y,
               field: 'N',
-              type: TYPE.NOMINAL
+              type: TYPE.NOMINAL,
             },
             {
               channel: CHANNEL.COLOR,
               field: 'N1',
-              type: TYPE.NOMINAL
-            }
-          ]
+              type: TYPE.NOMINAL,
+            },
+          ],
         },
         nest: [{groupBy: ENCODING}],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
@@ -659,22 +659,22 @@ describe('nest', () => {
               channel: CHANNEL.X,
               aggregate: 'sum',
               field: 'Q',
-              type: TYPE.QUANTITATIVE
+              type: TYPE.QUANTITATIVE,
             },
             {
               channel: CHANNEL.Y,
               field: 'N',
-              type: TYPE.NOMINAL
+              type: TYPE.NOMINAL,
             },
             {
               channel: CHANNEL.COLOR,
               field: 'N1',
-              type: TYPE.NOMINAL
-            }
-          ]
+              type: TYPE.NOMINAL,
+            },
+          ],
         },
         nest: [{groupBy: ENCODING}],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
@@ -686,7 +686,7 @@ describe('nest', () => {
   });
 
   describe('encoding', () => {
-    [ENCODING].forEach(groupBy => {
+    [ENCODING].forEach((groupBy) => {
       it(`${groupBy} should group transposed visualizations`, () => {
         const query: Query = {
           spec: {
@@ -695,17 +695,17 @@ describe('nest', () => {
               {
                 channel: {enum: [CHANNEL.X, CHANNEL.Y]},
                 field: 'Q',
-                type: TYPE.QUANTITATIVE
+                type: TYPE.QUANTITATIVE,
               },
               {
                 channel: {enum: [CHANNEL.X, CHANNEL.Y]},
                 field: 'Q2',
-                type: TYPE.QUANTITATIVE
-              }
-            ]
+                type: TYPE.QUANTITATIVE,
+              },
+            ],
           },
           nest: [{groupBy: ENCODING}],
-          config: DEFAULT_QUERY_CONFIG
+          config: DEFAULT_QUERY_CONFIG,
         };
 
         const answerSet = generate(query.spec, schema);
@@ -721,27 +721,27 @@ describe('nest', () => {
               {
                 channel: CHANNEL.X,
                 field: 'Q',
-                type: TYPE.QUANTITATIVE
+                type: TYPE.QUANTITATIVE,
               },
               {
                 channel: CHANNEL.Y,
                 field: 'Q1',
-                type: TYPE.QUANTITATIVE
+                type: TYPE.QUANTITATIVE,
               },
               {
                 channel: {enum: [CHANNEL.ROW, CHANNEL.COLUMN]},
                 field: 'O',
-                type: TYPE.ORDINAL
+                type: TYPE.ORDINAL,
               },
               {
                 channel: {enum: [CHANNEL.ROW, CHANNEL.COLUMN]},
                 field: 'N',
-                type: TYPE.NOMINAL
-              }
-            ]
+                type: TYPE.NOMINAL,
+              },
+            ],
           },
           nest: [{groupBy: groupBy}],
-          config: DEFAULT_QUERY_CONFIG
+          config: DEFAULT_QUERY_CONFIG,
         };
 
         const answerSet = generate(query.spec, schema);
@@ -757,17 +757,17 @@ describe('nest', () => {
               {
                 channel: CHANNEL.X,
                 field: 'Q',
-                type: TYPE.QUANTITATIVE
+                type: TYPE.QUANTITATIVE,
               },
               {
                 channel: {enum: [CHANNEL.Y, CHANNEL.COLOR]},
                 field: 'Q1',
-                type: TYPE.QUANTITATIVE
-              }
-            ]
+                type: TYPE.QUANTITATIVE,
+              },
+            ],
           },
           nest: [{groupBy: groupBy}],
-          config: extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOrFacetOverPositionalChannels: false})
+          config: extend({}, DEFAULT_QUERY_CONFIG, {omitNonPositionalOrFacetOverPositionalChannels: false}),
         };
 
         const answerSet = generate(query.spec, schema, query.config);
@@ -789,18 +789,18 @@ describe('nest', () => {
               type: TYPE.QUANTITATIVE,
               aggregate: {
                 name: 'a0',
-                enum: ['mean', 'median']
-              }
+                enum: ['mean', 'median'],
+              },
             },
             {
               channel: {enum: [CHANNEL.X, CHANNEL.Y]},
               field: 'O',
-              type: TYPE.ORDINAL
-            }
-          ]
+              type: TYPE.ORDINAL,
+            },
+          ],
         },
         nest: [{groupBy: FIELD_TRANSFORM}, {groupBy: ENCODING}],
-        config: DEFAULT_QUERY_CONFIG
+        config: DEFAULT_QUERY_CONFIG,
       };
 
       const answerSet = generate(query.spec, schema);
