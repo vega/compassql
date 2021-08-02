@@ -76,7 +76,7 @@
     "typescript": "^4.0.5",
     "typescript-json-schema": "^0.50.0",
     "vega-datasets": "latest",
-    "vega-lite-dev-config": "^0.17.3"
+    "vega-lite-dev-config": "^0.18.0"
   },
   "dependencies": {
     "datalib": "~1.9.3",
