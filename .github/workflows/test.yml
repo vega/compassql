@@ -37,5 +37,5 @@ jobs:
       - run: yarn check:examples
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2.0.2
         if: ${{ matrix.node == 14 }}
