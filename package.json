@@ -62,7 +62,7 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@types/chai": "^4.2.14",
-    "@types/jest": "^26.0.15",
+    "@types/jest": "^27.0.1",
     "babel-jest": "^27.0.2",
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
