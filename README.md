@@ -179,4 +179,4 @@ The main method is `cql.recommend`, which is in `src/recommend.ts`.
 
 ## Pro-Tip
 
-- When you add a new source file to the project, don't forget to the file to `files` in `tsconfig.json`.
+- When you add a new source file to the project, don't forget to add the file to `files` in `tsconfig.json`.
