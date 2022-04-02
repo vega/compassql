@@ -1430,7 +1430,7 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@jest/types@^27.0.6", "@jest/types@^27.4.2", "@jest/types@^27.5.1":
+"@jest/types@^27.0.6", "@jest/types@^27.5.1":
   version "27.5.1"
   resolved "https://registry.yarnpkg.com/@jest/types/-/types-27.5.1.tgz#3c79ec4a8ba61c170bf937bcf9e98a9df175ec80"
   integrity sha512-Cx46iJ9QpwQTjIdq5VJu2QTMMs3QlEjI0x1QbBP5W1+nMzyc2XmimiRR/CbX9TO0cPTeUlxWMOu8mslYsJ8DEw==
@@ -6000,9 +6000,9 @@ rollup-plugin-sourcemaps@^0.6.3:
     source-map-resolve "^0.6.0"
 
 rollup@^2.33.1:
-  version "2.68.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.68.0.tgz#6ccabfd649447f8f21d62bf41662e5caece3bd66"
-  integrity sha512-XrMKOYK7oQcTio4wyTz466mucnd8LzkiZLozZ4Rz0zQD+HeX4nUK4B8GrTX/2EvN2/vBF/i2WnaXboPxo0JylA==
+  version "2.70.1"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-2.70.1.tgz#824b1f1f879ea396db30b0fc3ae8d2fead93523e"
+  integrity sha512-CRYsI5EuzLbXdxC6RnYhOuRdtz4bhejPMSWjsFLfVM/7w/85n2szZv6yExqUXsBdz5KT8eoubeyDUDjhLHEslA==
   optionalDependencies:
     fsevents "~2.3.2"
 
