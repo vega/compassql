@@ -1430,7 +1430,7 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@jest/types@^27.0.6", "@jest/types@^27.4.2", "@jest/types@^27.5.1":
+"@jest/types@^27.0.6", "@jest/types@^27.5.1":
   version "27.5.1"
   resolved "https://registry.yarnpkg.com/@jest/types/-/types-27.5.1.tgz#3c79ec4a8ba61c170bf937bcf9e98a9df175ec80"
   integrity sha512-Cx46iJ9QpwQTjIdq5VJu2QTMMs3QlEjI0x1QbBP5W1+nMzyc2XmimiRR/CbX9TO0cPTeUlxWMOu8mslYsJ8DEw==
@@ -3032,10 +3032,17 @@ cssstyle@^2.3.0:
   dependencies:
     cssom "~0.3.6"
 
-"d3-array@1 - 2", d3-array@>=2.5, d3-array@^2.3.0, d3-array@^2.7.1:
+"d3-array@1 - 2", d3-array@^2.3.0, d3-array@^2.7.1:
   version "2.8.0"
   resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-2.8.0.tgz#f76e10ad47f1f4f75f33db5fc322eb9ffde5ef23"
   integrity sha512-6V272gsOeg7+9pTW1jSYOR1QE37g95I3my1hBmY+vOUNHRrk9yt4OTz/gK7PMkVAVDrYYq4mq3grTiZ8iJdNIw==
+
+"d3-array@2 - 3", d3-array@>=2.5, d3-array@^3.1.1:
+  version "3.1.3"
+  resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-3.1.3.tgz#6b293acd0e9fa035aa84da30ecc133f2c54c04d1"
+  integrity sha512-qwW+3phQqmogYyRDI9hC8AWNeTdyYexazuq/dDM7QgujVDVexwNOxVMUJt+0BRpCw/4S4+byuYTV51kttK/Bzw==
+  dependencies:
+    internmap "1 - 2"
 
 "d3-color@1 - 2", d3-color@^2.0.0:
   version "2.0.0"
@@ -3167,6 +3174,13 @@ d3-time@0.1, d3-time@~0.1.1:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/d3-time/-/d3-time-2.0.0.tgz#ad7c127d17c67bd57a4c61f3eaecb81108b1e0ab"
   integrity sha512-2mvhstTFcMvwStWd9Tj3e6CEqtOivtD8AUiHT8ido/xmzrI9ijrUUihZ6nHuf/vsScRBonagOdj0Vv+SEL5G3Q==
+
+d3-time@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/d3-time/-/d3-time-3.0.0.tgz#65972cb98ae2d4954ef5c932e8704061335d4975"
+  integrity sha512-zmV3lRnlaLI08y9IMRXSDshQb5Nj77smnfpnd2LrBa/2K281Jijactokeak14QacHs/kKq0AQ121nidNYlarbQ==
+  dependencies:
+    d3-array "2 - 3"
 
 "d3-timer@1 - 2", d3-timer@^2.0.0:
   version "2.0.0"
@@ -4287,6 +4301,11 @@ internal-slot@^1.0.3:
     get-intrinsic "^1.1.0"
     has "^1.0.3"
     side-channel "^1.0.4"
+
+"internmap@1 - 2":
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/internmap/-/internmap-2.0.3.tgz#6685f23755e43c524e251d29cbc97248e3061009"
+  integrity sha512-5Hh7Y1wQbvY5ooGgPbDaL5iYLAPzMTUrjMulskHLH6wnv/A+1q5rgEaiuqEjB+oxGXIVZs1FF+R/KPN3ZSQYYg==
 
 invariant@^2.2.2:
   version "2.2.4"
@@ -7024,7 +7043,16 @@ vega-statistics@^1.7.9, vega-statistics@~1.7.10:
   dependencies:
     d3-array "^2.7.1"
 
-vega-time@^2.0.3, vega-time@^2.0.4, vega-time@~2.0.4:
+vega-time@^2.0.3, vega-time@^2.0.4:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vega-time/-/vega-time-2.1.0.tgz#acfbab88d7798b87ff63913b0dce2ca5eb0d46ca"
+  integrity sha512-Q9/l3S6Br1RPX5HZvyLD/cQ4K6K8DtpR09/1y7D66gxNorg2+HGzYZINH9nUvN3mxoXcBWg4cCUh3+JvmkDaEg==
+  dependencies:
+    d3-array "^3.1.1"
+    d3-time "^3.0.0"
+    vega-util "^1.15.2"
+
+vega-time@~2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/vega-time/-/vega-time-2.0.4.tgz#ff308358a831de927caa44e281cdc96f0863ba08"
   integrity sha512-U314UDR9+ZlWrD3KBaeH+j/c2WSMdvcZq5yJfFT0yTg1jsBKAQBYFGvl+orackD8Zx3FveHOxx3XAObaQeDX+Q==
