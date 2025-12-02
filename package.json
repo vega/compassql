@@ -80,7 +80,7 @@
   },
   "dependencies": {
     "datalib": "~1.9.3",
-    "vega": "^5.4.0",
+    "vega": "^6.2.0",
     "vega-lite": "^4.17.0",
     "vega-time": "^2.0.4",
     "yargs": "^17.0.1"
