@@ -57,10 +57,10 @@ var opt = {}; // Use all default query configs
 
 For all query configuration properties, see [`src/config.ts`](https://github.com/vega/compassql/blob/master/src/config.ts).
 
-2. Build a data schema.
+2. Build a data schema using the specified `opt` config.
 
 ```js
-var schema = cql.schema.build(data);
+var schema = cql.schema.build(data, opt);
 ```
 
 The `data` property is a row-based array of data objects where each object represents a row in the data table (e.g., `[{"a": 1, "b":2}, {"a": 2, "b": 3}]`).
